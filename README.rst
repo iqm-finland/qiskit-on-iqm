@@ -1,49 +1,47 @@
-.. These are examples of badges you might want to add to your README:
-   please update the URLs accordingly
+|CI badge| |Release badge|
 
-    .. image:: https://api.cirrus-ci.com/github/<USER>/qiskit-iqm.svg?branch=main
-        :alt: Built Status
-        :target: https://cirrus-ci.com/github/<USER>/qiskit-iqm
-    .. image:: https://readthedocs.org/projects/qiskit-iqm/badge/?version=latest
-        :alt: ReadTheDocs
-        :target: https://qiskit-iqm.readthedocs.io/en/stable/
-    .. image:: https://img.shields.io/coveralls/github/<USER>/qiskit-iqm/main.svg
-        :alt: Coveralls
-        :target: https://coveralls.io/r/<USER>/qiskit-iqm
-    .. image:: https://img.shields.io/pypi/v/qiskit-iqm.svg
-        :alt: PyPI-Server
-        :target: https://pypi.org/project/qiskit-iqm/
-    .. image:: https://img.shields.io/conda/vn/conda-forge/qiskit-iqm.svg
-        :alt: Conda-Forge
-        :target: https://anaconda.org/conda-forge/qiskit-iqm
-    .. image:: https://pepy.tech/badge/qiskit-iqm/month
-        :alt: Monthly Downloads
-        :target: https://pepy.tech/project/qiskit-iqm
-    .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter
-        :alt: Twitter
-        :target: https://twitter.com/qiskit-iqm
-
-.. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
-    :alt: Project generated with PyScaffold
-    :target: https://pyscaffold.org/
-
-|
-
-==========
-qiskit-iqm
-==========
+.. |CI badge| image:: https://github.com/iqm-finland/qiskit-on-iqm/actions/workflows/ci.yml/badge.svg
+.. |Release badge| image:: https://img.shields.io/github/release/iqm-finland/qiskit-on-iqm.svg
 
 
-    Add a short description here!
+Qiskit on IQM
+###########
+
+`IBM Qiskit <https://qiskit.org/>`_ adapter for `IQM's <https://www.meetiqm.com>`_ quantum architectures.
 
 
-A longer description of your project goes here...
+What is it good for?
+====================
+
+Currently Qiskit on IQM is currently work in progress
 
 
-.. _pyscaffold-notes:
+Installation
+============
 
-Note
-====
+The recommended way is to install the distribution package ``qiskit-iqm`` directly from the
+Python Package Index (PyPI):
 
-This project has been set up using PyScaffold 4.1.2. For details and usage
-information on PyScaffold see https://pyscaffold.org/.
+.. code-block:: bash
+
+   $ pip install qiskit-iqm
+
+
+Documentation
+=============
+
+The documentation of the latest Qiskit on IQM release is available
+`here <https://iqm-finland.github.io/qiskit-on-iqm/index.html>`_.
+
+Jump to our `User guide <https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html>`_
+for a quick introduction on how to use Qiskit on IQM.
+
+Take a look at the `Jupyter notebook <https://jupyter.org/>`_ with examples: ``examples/usage.ipynb``.
+
+
+Copyright
+=========
+
+Qiskit on IQM is free software, released under the Apache License, version 2.0.
+
+Copyright 2020–2022 Qiskit on IQM developers.
