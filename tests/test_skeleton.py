@@ -1,6 +1,6 @@
 import pytest
 
-from qiskit_iqm.skeleton import fib, main
+from qiskit_iqm_provider.skeleton import fib, main
 
 __author__ = "IQM"
 __copyright__ = "IQM"

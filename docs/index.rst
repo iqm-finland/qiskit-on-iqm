@@ -1,8 +1,8 @@
 ==========
-qiskit_iqm
+qiskit_iqm_provider
 ==========
 
-This is the documentation of **qiskit_iqm**.
+This is the documentation of **qiskit_iqm_provider**.
 
 .. note::
 

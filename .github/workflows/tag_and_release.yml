@@ -40,7 +40,7 @@ jobs:
   # created by the above job create_tag_and_release. Here we trigger the said workflow manually.
   trigger_publishing:
     needs: create_tag_and_release
-    uses: iqm-finland/cirq-on-iqm/.github/workflows/publish.yml@main
+    uses: iqm-finland/qiskit-on-iqm/.github/workflows/publish.yml@main
     secrets:
       PYPI_USER: ${{ secrets.PYPI_USER }}
       PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
