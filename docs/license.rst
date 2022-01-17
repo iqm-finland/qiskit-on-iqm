@@ -4,4 +4,5 @@
 License
 =======
 
-.. include:: ../LICENSE.txt
+.. include:: ../LICENSE
+   :literal:

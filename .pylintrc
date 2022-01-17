@@ -1,0 +1,19 @@
+[MASTER]
+disable=
+    protected-access,
+    too-few-public-methods,
+    invalid-name,
+    abstract-method,
+    fixme,
+    duplicate-code,
+    too-many-locals
+extension-pkg-whitelist=pydantic
+
+[FORMAT]
+max-line-length=120
+
+[STRING]
+check-quote-consistency=yes
+
+[SIMILARITIES]
+ignore-imports=yes

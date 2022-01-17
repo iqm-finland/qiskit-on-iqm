@@ -1,3 +1,4 @@
+"""Test skeleton"""
 import pytest
 
 from qiskit_iqm_provider.skeleton import fib, main
