@@ -26,8 +26,8 @@ import sys
 
 from qiskit_iqm import __version__
 
-__author__ = "Leon Wubben"
-__copyright__ = "Leon Wubben"
+__author__ = "IQM"
+__copyright__ = "IQM"
 __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)

@@ -2,8 +2,8 @@ import pytest
 
 from qiskit_iqm.skeleton import fib, main
 
-__author__ = "Leon Wubben"
-__copyright__ = "Leon Wubben"
+__author__ = "IQM"
+__copyright__ = "IQM"
 __license__ = "MIT"
 
 

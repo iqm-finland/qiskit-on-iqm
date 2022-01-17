@@ -1,0 +1,61 @@
+name: Upload to PyPI and publish documentation
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      PYPI_USER:
+        required: true
+      PYPI_PASSWORD:
+        required: true
+
+jobs:
+  push_to_pypi:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,cicd]"
+      - name: Build and publish
+        run: |
+          tox -e build
+          python -m twine check dist/*
+          python -m twine upload dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USER }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+
+  publish_docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev, docs]"
+          sudo apt-get install graphviz
+      - name: Build docs
+        run: |
+          tox -e docs
+          touch build/sphinx/html/.nojekyll  # allow underscores in URL path
+      - name: Publish to gh-pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: build/sphinx/html
