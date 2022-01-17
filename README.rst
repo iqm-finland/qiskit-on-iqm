@@ -19,12 +19,12 @@ Currently Qiskit on IQM is currently work in progress
 Installation
 ============
 
-The recommended way is to install the distribution package ``qiskit-iqm`` directly from the
+The recommended way is to install the distribution package ``qiskit_iqm`` directly from the
 Python Package Index (PyPI):
 
 .. code-block:: bash
 
-   $ pip install qiskit-iqm
+   $ pip install qiskit_iqm
 
 
 Documentation

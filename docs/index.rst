@@ -1,8 +1,8 @@
 ==========
-qiskit-iqm
+qiskit_iqm
 ==========
 
-This is the documentation of **qiskit-iqm**.
+This is the documentation of **qiskit_iqm**.
 
 .. note::
 
