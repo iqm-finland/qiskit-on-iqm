@@ -5,26 +5,26 @@
 
 
 Qiskit on IQM
-###########
+#############
 
-`IBM Qiskit <https://qiskit.org/>`_ adapter for `IQM's <https://www.meetiqm.com>`_ quantum architectures.
+`Qiskit <https://qiskit.org/>`_ adapter for `IQM's <https://www.meetiqm.com>`_ quantum architectures.
 
 
 What is it good for?
 ====================
 
-Currently Qiskit on IQM is currently work in progress
+Qiskit on IQM is currently a work in progress.
 
 
 Installation
 ============
 
-The recommended way is to install the distribution package ``qiskit_iqm_provider`` directly from the
+The recommended way is to install the distribution package ``qiskit-iqm-provider`` directly from the
 Python Package Index (PyPI):
 
 .. code-block:: bash
 
-   $ pip install qiskit_iqm_provider
+   $ pip install qiskit-iqm-provider
 
 
 Documentation
@@ -44,4 +44,4 @@ Copyright
 
 Qiskit on IQM is free software, released under the Apache License, version 2.0.
 
-Copyright 2020–2022 Qiskit on IQM developers.
+Copyright 2022 Qiskit on IQM developers.

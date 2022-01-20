@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath(py_path))
 # -- Project information -----------------------------------------------------
 
 project = 'Qiskit on IQM'
-copyright = '2020–2022, Qiskit on IQM developers'
+copyright = '2022, Qiskit on IQM developers'
 author = 'Qiskit on IQM developers'
 
 # The short X.Y version.
@@ -37,7 +37,7 @@ else:
 # -- General configuration ---------------------------------------------------
 
 # require a recent version of Sphinx
-needs_sphinx = '4.0'
+needs_sphinx = '4.4'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -105,10 +105,18 @@ html_theme = 'nature'
 # so a file named "default.css" will overwrite the builtin "default.css".
 #html_static_path = ['_static']
 
+# The name of an image file (within the static path) to use as favicon of the
+# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
+# pixels large.
+html_favicon = '_static/images/favicon.ico'
+
+# The name of an image file (relative to this directory) to place at the top
+# of the sidebar.
+html_logo = '_static/images/logo.jpg'
+
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'qiskit_iqm_provider-doc'
 
-html_favicon = 'images/favicon.ico'
 
 # -- MathJax options ----------------------------------------------------------
 

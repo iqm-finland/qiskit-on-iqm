@@ -1,4 +1,4 @@
-# Copyright 2020–2022 Qiskit on IQM developers
+# Copyright 2022 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-    # Change here if project is renamed and does not equal the package name
-    dist_name = "qiskit-iqm"
+    dist_name = "qiskit-iqm-provider"
     __version__ = version(dist_name)
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
