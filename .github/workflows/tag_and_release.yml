@@ -1,0 +1,46 @@
+name: Create tag and release
+
+on:
+  pull_request:
+    paths:
+      - 'CHANGELOG.rst'
+  push:
+    branches:
+      - main
+    paths:
+      - 'CHANGELOG.rst'
+
+jobs:
+  check_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check version in changelog
+        run: bash ./tag-from-pipeline.sh verify_changelog_version
+
+  create_tag_and_release:
+    needs: check_version
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Create new tag and release
+        run: bash ./tag-from-pipeline.sh create_new_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # GitHub works so that events ('release' event in this case) triggered while using the GITHUB_TOKEN will not create a
+  # new workflow run. This means the publishing workflow will not be triggered even though a new release is successfully
+  # created by the above job create_tag_and_release. Here we trigger the said workflow manually.
+  trigger_publishing:
+    needs: create_tag_and_release
+    uses: iqm-finland/qiskit-on-iqm/.github/workflows/publish.yml@main
+    secrets:
+      PYPI_USER: ${{ secrets.PYPI_USER }}
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}

@@ -1,0 +1,19 @@
+# Temporary and binary files
+*~
+__pycache__/
+.ipynb_checkpoints/
+
+# Package files
+.eggs/
+*.egg-info
+
+# Unittest and coverage
+.coverage
+.tox/
+test_report.xml
+.pytest_cache/
+
+# Build and docs folder/files
+/build/
+/dist/
+/docs/api/
