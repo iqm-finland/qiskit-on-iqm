@@ -41,6 +41,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -50,6 +52,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev, docs]"
           sudo apt-get install graphviz
+      - name: Checkout latest tagged commit
+        run:
+          git checkout $(git describe --tags --abbrev=0)
       - name: Build docs
         run: |
           tox -e docs
