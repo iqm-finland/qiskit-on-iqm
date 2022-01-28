@@ -54,7 +54,7 @@ jobs:
           sudo apt-get install graphviz
       - name: Checkout latest tagged commit
         run:
-          git checkout $(git tag -l | tail -1)
+          git checkout $(git describe --tags --abbrev=0)
       - name: Build docs
         run: |
           tox -e docs
