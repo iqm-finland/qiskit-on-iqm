@@ -25,9 +25,9 @@ def serialize_circuit(circuit: qiskit.QuantumCircuit) -> iqm_client.Circuit:
     Returns:
         data transfer object representing the circuit
     """
-    instructions = list(map(map_operation, circuit))
+    instructions = list(map(lambda x: map_operation(x[0], x[1], x[2]), circuit))
     return iqm_client.Circuit(
-        name='Serialized from Cirq',
+        name='Serialized from Qiskit',
         instructions=instructions
     )
 

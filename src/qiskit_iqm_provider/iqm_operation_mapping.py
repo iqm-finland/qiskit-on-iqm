@@ -11,7 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Tuple, List
+from typing import List
+import numpy as np
 
 from qiskit.circuit import Instruction as QiskitInstruction, Qubit, Clbit
 from iqm_client.iqm_client import Instruction
@@ -21,30 +22,31 @@ class OperationNotSupportedError(RuntimeError):
     """Raised when a given operation is not supported by the IQM server."""
 
 
-def map_operation(operation: Tuple[QiskitInstruction, List[Qubit], List[Clbit]]) -> Instruction:
+def map_operation(instruction: QiskitInstruction, qubits: List[Qubit], cbits: List[Clbit]) -> Instruction:
     """Map a Qiskit Instruction to the IQM data transfer format.
 
     Assumes the circuit has been transpiled so that it only contains operations natively supported by the
     given IQM quantum architecture.
 
     Args:
-        operation: a Qiskit Operation
+        instruction: The qiskit instruction to map
+        qubits: List of qubits that the instruction acts on or works with
+        cbits: List of classical bits that the instruction acts on or works with
 
     Returns:
-        Instruction: the converted operation
+        `iqm_client.iqm_client.Instruction`: the converted operation
 
     Raises:
-        OperationNotSupportedError When the circuit contains an unsupported operation.
+        `~OperationNotSupportedError` When the circuit contains an unsupported operation.
 
     """
-    instruction, qubits, classical_bits = operation
-    qubit_names = [qubit.register.name for qubit in qubits]
-    creg_names = [bit.register.name + str(bit.index) for bit in classical_bits]
+    qubit_names = [qubit.register.name + str(qubit.index) for qubit in qubits]
+    creg_names = [bit.register.name + str(bit.index) for bit in cbits]
     phased_rx_name = 'phased_rx'
     # TODO, num_qubits > n for n qubit operations
     if instruction.name == 'r':
-        angle_t = instruction.params[0]
-        phase_t = instruction.params[1]
+        angle_t = instruction.params[0] / (2*np.pi)
+        phase_t = instruction.params[1] / (2*np.pi)
         return Instruction(name=phased_rx_name, qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
     if instruction.name == 'cz':
         return Instruction(name='cz', qubits=qubit_names, args={})
