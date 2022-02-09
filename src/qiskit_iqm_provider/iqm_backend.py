@@ -14,14 +14,15 @@
 import warnings
 from typing import Iterable, Union, List
 
-from qiskit.providers import BackendV2 as Backend, QubitProperties
+from qiskit.providers import BackendV2 as Backend, QubitProperties, Options
+from qiskit.transpiler import Target
 from qiskit_iqm_provider.iqm_job import IQMJob
-
+from qiskit_iqm_provider.iqm_sampler import serialize_circuit
 
 
 class IQMBackend(Backend):
     @property
-    def target(self):
+    def target(self) -> Target:
         raise NotImplementedError
 
     @property
@@ -29,8 +30,8 @@ class IQMBackend(Backend):
         raise NotImplementedError
 
     @classmethod
-    def _default_options(cls):
-        raise NotImplementedError
+    def _default_options(cls) -> Options:
+        return Options(shots=1)
 
     @property
     def dtm(self) -> float:
@@ -55,22 +56,15 @@ class IQMBackend(Backend):
     def control_channel(self, qubits: Iterable[int]):
         raise NotImplementedError
 
-    def run(self, circuit, **options):
-        for option in options:
+    def run(self, circuit, **kwargs):
+        for option in kwargs:
             if not hasattr(option, self.options):
                 warnings.warn(
                     "Option %s is not used by the IQM backend" % option,
                     UserWarning, stacklevel=2)
-        options = {
-            'shots': options.get('shots', self.options.shots),
-            'memory': options.get('memory', self.options.shots),
-        }
-        job_json = self._convert_to_iqm_json(circuit, options)
+        job_json = serialize_circuit(circuit)
         job_handle = self._submit(job_json)
         return IQMJob(backend=self, job_id=job_handle)
-
-    def _convert_to_iqm_json(self, circuit, options):
-        raise NotImplementedError
 
     def _submit(self, iqm_json):
         raise NotImplementedError

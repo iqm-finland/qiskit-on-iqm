@@ -11,16 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Types for representing and methods for manipulating operations on IQM's quantum computers.
-"""
-from importlib.metadata import PackageNotFoundError, version
-from qiskit_iqm_provider.iqm_backend import IQMBackend
-from qiskit_iqm_provider.iqm_job import IQMJob
+from qiskit_iqm_provider.iqm_operation_mapping import map_operation
+from iqm_client import iqm_client
+import qiskit
 
-try:
-    dist_name = "qiskit-iqm-provider"
-    __version__ = version(dist_name)
-except PackageNotFoundError:  # pragma: no cover
-    __version__ = "unknown"
-finally:
-    del version, PackageNotFoundError
+
+def serialize_circuit(circuit: qiskit.QuantumCircuit) -> iqm_client.Circuit:
+    """Serializes a quantum circuit into the IQM data transfer format.
+
+    Args:
+        circuit: quantum circuit to serialize
+
+    Returns:
+        data transfer object representing the circuit
+    """
+    instructions = list(map(map_operation, circuit))
+    return iqm_client.Circuit(
+        name='Serialized from Cirq',
+        instructions=instructions
+    )
+
