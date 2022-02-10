@@ -18,11 +18,11 @@ from qiskit.circuit import Instruction as QiskitInstruction, Qubit, Clbit
 from iqm_client.iqm_client import Instruction
 
 
-class OperationNotSupportedError(RuntimeError):
+class InstructionNotSupportedError(RuntimeError):
     """Raised when a given operation is not supported by the IQM server."""
 
 
-def map_operation(instruction: QiskitInstruction, qubits: List[Qubit], cbits: List[Clbit]) -> Instruction:
+def map_instruction(instruction: QiskitInstruction, qubits: List[Qubit], cbits: List[Clbit]) -> Instruction:
     """Map a Qiskit Instruction to the IQM data transfer format.
 
     Assumes the circuit has been transpiled so that it only contains operations natively supported by the
@@ -53,4 +53,4 @@ def map_operation(instruction: QiskitInstruction, qubits: List[Qubit], cbits: Li
     elif instruction.name == 'measure':
         return Instruction(name='measurement', qubits=qubit_names, args={'key': creg_names[0]})
     else:
-        raise OperationNotSupportedError(f'Instruction {instruction.name} not natively supported.')
+        raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')

@@ -16,7 +16,7 @@ from iqm_client.iqm_client import Instruction
 from qiskit import QuantumCircuit
 from qiskit.circuit import Measure
 from qiskit.circuit.library import HGate, RGate, CZGate
-from qiskit_iqm_provider.iqm_operation_mapping import map_operation, OperationNotSupportedError
+from qiskit_iqm_provider.iqm_instruction_mapping import map_instruction, InstructionNotSupportedError
 import numpy as np
 
 
@@ -26,12 +26,12 @@ def circuit() -> QuantumCircuit:
 
 
 def test_raises_error_for_unsupported_operation(circuit):
-    with pytest.raises(OperationNotSupportedError):
-        map_operation(HGate(), [], [])
+    with pytest.raises(InstructionNotSupportedError):
+        map_instruction(HGate(), [], [])
 
 
 def test_maps_measurement_gate(circuit):
-    mapped = map_operation(Measure(), circuit.qubits[1:2], circuit.clbits[1:2])
+    mapped = map_instruction(Measure(), circuit.qubits[1:2], circuit.clbits[1:2])
     expected = Instruction(
         name='measurement',
         qubits=['q1'],
@@ -47,7 +47,7 @@ def test_maps_measurement_gate(circuit):
                           (RGate(theta=2 * np.pi, phi=np.pi), 1, 1 / 2),
                           ])
 def test_maps_to_phased_rx(circuit, gate, expected_angle, expected_phase):
-    mapped = map_operation(gate, circuit.qubits[:1], circuit.clbits[:1])
+    mapped = map_instruction(gate, circuit.qubits[:1], circuit.clbits[:1])
     assert mapped.name == 'phased_rx'
     assert mapped.qubits == ['q0']
     # The unit for angle and phase is full turns
@@ -56,7 +56,7 @@ def test_maps_to_phased_rx(circuit, gate, expected_angle, expected_phase):
 
 
 def test_maps_cz_gate(circuit):
-    mapped = map_operation(CZGate(), circuit.qubits[0:2], circuit.clbits[0:2])
+    mapped = map_instruction(CZGate(), circuit.qubits[0:2], circuit.clbits[0:2])
     expected = Instruction(
         name='cz',
         qubits=['q0', 'q1'],

@@ -14,10 +14,29 @@
 import warnings
 from typing import Iterable, Union, List
 
+from iqm_client import iqm_client
+from qiskit import QuantumCircuit
 from qiskit.providers import BackendV2 as Backend, QubitProperties, Options
 from qiskit.transpiler import Target
+
 from qiskit_iqm_provider.iqm_job import IQMJob
-from qiskit_iqm_provider.iqm_sampler import serialize_circuit
+from qiskit_iqm_provider.iqm_instruction_mapping import map_instruction
+
+
+def serialize_circuit(circuit: QuantumCircuit) -> iqm_client.Circuit:
+    """Serializes a quantum circuit into the IQM data transfer format.
+
+    Args:
+        circuit: quantum circuit to serialize
+
+    Returns:
+        data transfer object representing the circuit
+    """
+    instructions = list(map(lambda x: map_instruction(x[0], x[1], x[2]), circuit))
+    return iqm_client.Circuit(
+        name='Serialized from Qiskit',
+        instructions=instructions
+    )
 
 
 class IQMBackend(Backend):
