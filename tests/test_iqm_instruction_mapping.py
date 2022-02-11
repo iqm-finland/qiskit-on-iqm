@@ -16,7 +16,7 @@ from iqm_client.iqm_client import Instruction
 from qiskit import QuantumCircuit
 from qiskit.circuit import Measure
 from qiskit.circuit.library import HGate, RGate, CZGate
-from qiskit_iqm_provider.iqm_instruction_mapping import map_instruction, InstructionNotSupportedError
+from qiskit_iqm_provider.qiskit_to_iqm import map_instruction, InstructionNotSupportedError
 import numpy as np
 
 

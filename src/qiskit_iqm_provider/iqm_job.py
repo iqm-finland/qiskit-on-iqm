@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from qiskit.providers import JobV1 as Job, JobStatus
+from qiskit.result import Result
+from qiskit.result.models import ExperimentResultData
 
 
 class IQMJob(Job):
@@ -19,6 +21,11 @@ class IQMJob(Job):
         raise NotImplementedError
 
     def result(self):
+        # Rough sketch of implementation
+        # 1. get result from iqm client
+        # 2. extract measurement results: a=result.measurements['mk']
+        # 3. Construct Qiskit ExperimentResultData object with b=ExperimentResultData(memory=a)
+        # 4. return Result([b])
         raise NotImplementedError
 
     def cancel(self):
