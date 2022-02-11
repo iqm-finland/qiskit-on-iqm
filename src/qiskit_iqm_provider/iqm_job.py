@@ -11,14 +11,41 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import List
+
+from iqm_client.iqm_client import IQMClient, Circuit, SingleQubitMapping
 from qiskit.providers import JobV1 as Job, JobStatus
-from qiskit.result import Result
-from qiskit.result.models import ExperimentResultData
+from qiskit_iqm_provider import IQMBackend
 
 
 class IQMJob(Job):
+
+    def __init__(self,
+                 backend: IQMBackend,
+                 circuit_json:
+                 Circuit, mapping_json: List[SingleQubitMapping],
+                 shots: int,
+                 **kwargs):
+        self.circuit_json = circuit_json
+        self.mapping_json = mapping_json
+        self.shots = shots
+        if 'job_id' in kwargs:
+            job_id = kwargs['job_id']
+            del kwargs['job_id']
+        else:
+            job_id = 'pending'  # Users should not create jobs without job_id
+        super().__init__(backend, job_id=job_id, **kwargs)
+
+    def backend(self) -> IQMBackend:
+        """Return the backend where this job was executed."""
+        if not isinstance(self._backend, IQMBackend):
+            raise TypeError("Backend of IQMJob should be an IQMBackend")
+        return self._backend
+
     def submit(self):
-        raise NotImplementedError
+        client = IQMClient(self.backend().url, self.backend().settings)
+        job_id = client.submit_circuit(self.circuit_json, qubit_mapping=self.mapping_json, shots=self.shots)
+        self._job_id = str(job_id)
 
     def result(self):
         # Rough sketch of implementation
