@@ -15,10 +15,9 @@ import uuid
 from datetime import date
 from typing import List
 
-from iqm_client.iqm_client import IQMClient, Circuit, SingleQubitMapping, RunStatus
+from iqm_client.iqm_client import IQMClient, Circuit, SingleQubitMapping
 from qiskit.providers import JobV1 as Job, JobStatus
 from qiskit.result import Result
-from qiskit.result.models import ExperimentResultData
 from qiskit_iqm_provider import IQMBackend
 
 
@@ -57,23 +56,22 @@ class IQMJob(Job):
     def result(self) -> Result:
         if self.status() != JobStatus.RUNNING and self.status() != JobStatus.DONE:
             raise RuntimeError  # TODO custom Exception
-        # Rough sketch of implementation
-        # 1. get result from iqm client
         result = self._client.wait_for_results(uuid.UUID(self._job_id))
         self._status = JobStatus.DONE
-        # 2. extract measurement results: a=result.measurements['mk']
-        # 3. Construct Qiskit ExperimentResultData object with b=ExperimentResultData(memory=a)
-        qiskit_results = ExperimentResultData(memory=result.measurements['mk'])
-        # 4. return Result([b])
-        return Result(
-            backend_name=self.backend().name,
-            backend_version=self.backend().backend_version,
-            qobj_id=None,
-            job_id=self._job_id,
-            success=True,
-            results=[qiskit_results],
-            date=date.today(),
-        )
+        # Qiskit needs bitstrings in hex. FIXME: how to achieve this in a less ugly way? :D
+        measurements = [hex(int(''.join(str(bit) for bit in row), 2)) for row in result.measurements['mk']]
+        result_dict = {
+            'backend_name': None,
+            'backend_version': None,
+            'qobj_id': None,
+            'job_id': self._job_id,
+            'success': True,
+            'results': [{'memory': measurements}],
+            'date': date.today()
+        }
+        # Use factory method to create results instead of manually constructing it, so that all methods work properly,
+        # for example you can now call the get_counts() method on the results object and get proper data.
+        return Result.from_dict(result_dict)
 
     def cancel(self):
         pass

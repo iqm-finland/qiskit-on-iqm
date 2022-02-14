@@ -62,8 +62,10 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
     for instruction, qubits, clbits in circuit.data:
         qubit_names = [qubit_to_name(qubit, circuit) for qubit in qubits]
         if instruction.name == 'r':
-            angle_t = instruction.params[0] / (2 * np.pi)
-            phase_t = instruction.params[1] / (2 * np.pi)
+            # FIXME: sometimes param is a ParameterExpression and not a number. How to handle this correctly?
+            # casting to float seems to work, but maybe there is a more creative idea.
+            angle_t = float(instruction.params[0] / (2 * np.pi))
+            phase_t = float(instruction.params[1] / (2 * np.pi))
             instructions.append(Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t}))
         elif instruction.name == 'cz':
             instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))
