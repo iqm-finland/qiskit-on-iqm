@@ -76,7 +76,7 @@ class IQMJob(Job):
             return JobStatus.DONE
 
         try:
-            result = self._client.get_run(self._job_id)
+            result = self._client.get_run(uuid.UUID(self._job_id))
             if result.status == RunStatus.PENDING:
                 return JobStatus.RUNNING
             if result.status == RunStatus.READY:
@@ -84,6 +84,6 @@ class IQMJob(Job):
                 return JobStatus.DONE
         except CircuitExecutionError:
             return JobStatus.ERROR
-        except HTTPError:
+        except HTTPError as e:
             # FIXME: this scenario should be handled by IQMClient instead
-            raise RuntimeError(f'Job with id {self._job_id} does not exist.')
+            raise RuntimeError(f'Job with id {self._job_id} does not exist.') from e
