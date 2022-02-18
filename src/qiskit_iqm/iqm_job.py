@@ -15,6 +15,7 @@
 """
 IQM Job
 """
+from __future__ import annotations
 from collections import Counter
 from datetime import date
 import uuid
@@ -46,7 +47,10 @@ class IQMJob(Job):
         return [''.join(str(bit) for bit in row) for row in iqm_result.measurements['mk']]
 
     def submit(self):
-        raise NotImplementedError('Instead, use run method of backend to submit jobs')
+        raise NotImplementedError('Instead, use run method of backend to submit jobs.')
+
+    def cancel(self):
+        raise NotImplementedError('Canceling jobs is currently not supported.')
 
     def result(self) -> Result:
         result = self._client.wait_for_results(uuid.UUID(self._job_id))
@@ -67,9 +71,6 @@ class IQMJob(Job):
             'date': date.today()
         }
         return Result.from_dict(result_dict)
-
-    def cancel(self):
-        raise NotImplementedError('Canceling jobs is currently not supported.')
 
     def status(self) -> JobStatus:
         if self._result:

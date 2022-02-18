@@ -11,12 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import pytest
-from iqm_client.iqm_client import Instruction
-from qiskit import QuantumCircuit
-from qiskit.circuit import Measure
-from qiskit.circuit.library import HGate, RGate, CZGate
-from qiskit_iqm_provider.qiskit_to_iqm import map_instruction, InstructionNotSupportedError
+from iqm_client.iqm_client import SingleQubitMapping
+from qiskit import QuantumCircuit, QuantumRegister
+from qiskit.circuit.library import RGate
+from qiskit_iqm.qiskit_to_iqm import InstructionNotSupportedError, serialize_circuit, serialize_qubit_mapping, qubit_to_name
 import numpy as np
 
 
@@ -25,19 +25,33 @@ def circuit() -> QuantumCircuit:
     return QuantumCircuit(3, 3)
 
 
-def test_raises_error_for_unsupported_operation(circuit):
-    with pytest.raises(InstructionNotSupportedError):
-        map_instruction(HGate(), [], [])
+def test_qubit_to_name_no_explicit_register(circuit):
+    for i, qubit in enumerate(circuit.qubits):
+        assert qubit_to_name(qubit, circuit) == f'Qubit_{i}'
 
 
-def test_maps_measurement_gate(circuit):
-    mapped = map_instruction(Measure(), circuit.qubits[1:2], circuit.clbits[1:2])
-    expected = Instruction(
-        name='measurement',
-        qubits=['q1'],
-        args={'key': 'c1'}
-    )
-    assert expected == mapped
+def test_qubit_to_name_uniqueness_for_multiple_registers():
+    qreg1 = QuantumRegister(2)
+    qreg2 = QuantumRegister(1)
+    circuit = QuantumCircuit(qreg1, qreg2)
+    qubit_names = set(qubit_to_name(qubit, circuit) for qubit in circuit.qubits)
+    assert len(qubit_names) == len(circuit.qubits)  # assert that generated qubit names are unique
+
+
+def test_serialize_qubit_mapping(circuit):
+    mapping = dict(zip(circuit.qubits, ['Alice', 'Bob', 'Charlie']))
+    mapping_serialized = serialize_qubit_mapping(mapping, circuit)
+    assert mapping_serialized == [
+        SingleQubitMapping(logical_name='Qubit_0', physical_name='Alice'),
+        SingleQubitMapping(logical_name='Qubit_1', physical_name='Bob'),
+        SingleQubitMapping(logical_name='Qubit_2', physical_name='Charlie')
+    ]
+
+
+def test_serialize_circuit_raises_error_for_unsupported_instruction(circuit):
+    circuit.sx(0)
+    with pytest.raises(InstructionNotSupportedError, match="Instruction sx not natively supported."):
+        serialize_circuit(circuit)
 
 
 @pytest.mark.parametrize('gate, expected_angle, expected_phase',
@@ -46,20 +60,53 @@ def test_maps_measurement_gate(circuit):
                           (RGate(theta=0, phi=2 * np.pi), 0, 1),
                           (RGate(theta=2 * np.pi, phi=np.pi), 1, 1 / 2),
                           ])
-def test_maps_to_phased_rx(circuit, gate, expected_angle, expected_phase):
-    mapped = map_instruction(gate, circuit.qubits[:1], circuit.clbits[:1])
-    assert mapped.name == 'phased_rx'
-    assert mapped.qubits == ['q0']
-    # The unit for angle and phase is full turns
-    assert mapped.args['angle_t'] == expected_angle
-    assert mapped.args['phase_t'] == expected_phase
+def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_phase):
+    circuit.append(gate, [0])
+    circuit_ser = serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    instr = circuit_ser.instructions[0]
+    assert instr.name == 'phased_rx'
+    assert instr.qubits == ['Qubit_0']
+    # Serialized angles should be in full turns
+    assert instr.args['angle_t'] == expected_angle
+    assert instr.args['phase_t'] == expected_phase
 
 
-def test_maps_cz_gate(circuit):
-    mapped = map_instruction(CZGate(), circuit.qubits[0:2], circuit.clbits[0:2])
-    expected = Instruction(
-        name='cz',
-        qubits=['q0', 'q1'],
-        args={}
-    )
-    assert expected == mapped
+def test_serialize_circuit_maps_cz_gate(circuit):
+    circuit.cz(0, 2)
+    circuit_ser = serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'cz'
+    assert circuit_ser.instructions[0].qubits == ['Qubit_0', 'Qubit_2']
+    assert circuit_ser.instructions[0].args == {}
+
+
+def test_serialize_circuit_maps_individual_measurements(circuit):
+    circuit.measure(0, 2)
+    circuit.measure(1, 1)
+    circuit.measure(2, 0)
+    circuit_ser = serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'measurement'
+    assert circuit_ser.instructions[0].qubits == ['Qubit_0', 'Qubit_1', 'Qubit_2']
+    assert circuit_ser.instructions[0].args == {'key': 'mk'}
+
+
+def test_serialize_circuit_respects_measurement_order(circuit):
+    circuit.measure(1, 1)
+    circuit.measure(2, 0)
+    circuit.measure(0, 2)
+    circuit_ser = serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'measurement'
+    assert circuit_ser.instructions[0].qubits == ['Qubit_1', 'Qubit_2', 'Qubit_0']
+    assert circuit_ser.instructions[0].args == {'key': 'mk'}
+
+
+def test_serialize_circuit_batch_measurement(circuit):
+    circuit.measure([1, 0, 2], [0, 1, 2])
+    circuit_ser = serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'measurement'
+    assert circuit_ser.instructions[0].qubits == ['Qubit_1', 'Qubit_0', 'Qubit_2']
+    assert circuit_ser.instructions[0].args == {'key': 'mk'}

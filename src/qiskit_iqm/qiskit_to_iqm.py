@@ -57,6 +57,10 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
 
     Assumes the circuit has been transpiled so that it only contains operations natively supported by the
     given IQM quantum architecture.
+    Qiskit uses one measurement gate per qubit, and does not use measurement key/identifiers. The bitstrings in the
+    circuit execution results have bits from left to right corresponding to the order in which the measurements were
+    added. While serializing we collect all measurements in the order they appear and add one measurement operation,
+    with measurement key 'mk'.
 
     Args:
         circuit: quantum circuit to serialize
@@ -65,7 +69,7 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
         Data transfer object representing the circuit
 
     Raises:
-        `~InstructionNotSupportedError` When the circuit contains an unsupported instruction.
+        `InstructionNotSupportedError` When the circuit contains an unsupported instruction.
     """
     instructions = []
     measured_qubits = []
@@ -84,5 +88,6 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
         else:
             raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')
 
-    instructions.append(Instruction(name='measurement', qubits=measured_qubits, args={'key': 'mk'}))
+    if measured_qubits:
+        instructions.append(Instruction(name='measurement', qubits=measured_qubits, args={'key': 'mk'}))
     return Circuit(name='Serialized from Qiskit', instructions=instructions)

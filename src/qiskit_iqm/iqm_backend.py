@@ -15,6 +15,9 @@
 """
 Implementation of Qiskit backend for IQM quantum computers.
 """
+from __future__ import annotations
+from typing import Union
+
 from iqm_client.iqm_client import IQMClient
 from qiskit import QuantumCircuit
 from qiskit.providers import BackendV2 as Backend, Options
@@ -35,10 +38,6 @@ class IQMBackend(Backend):
         super().__init__(**kwargs)
         self.client = client
 
-    @property
-    def max_circuits(self) -> int:
-        return 1
-
     @classmethod
     def _default_options(cls) -> Options:
         return Options(shots=1024, qubit_mapping=None)
@@ -47,17 +46,25 @@ class IQMBackend(Backend):
     def target(self) -> Target:
         raise NotImplementedError
 
-    def run(self, run_input: QuantumCircuit, **options) -> 'qiskit_iqm.IQMJob':
+    @property
+    def max_circuits(self) -> int:
+        return 1
+
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> qiskit_iqm.IQMJob:
+        if isinstance(run_input, list) and len(run_input) > 1:
+            raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
+        circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
+
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
 
-        circuit_serialized = serialize_circuit(run_input)
-        mapping_serialized = serialize_qubit_mapping(qubit_mapping, run_input)
+        circuit_serialized = serialize_circuit(circuit)
+        mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
 
         uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots)
         return qiskit_iqm.IQMJob(self, str(uuid))
 
-    def retrieve_job(self, job_id: str) -> 'qiskit_iqm.IQMJob':
+    def retrieve_job(self, job_id: str) -> qiskit_iqm.IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id.
         """
         return qiskit_iqm.IQMJob(self, job_id)
