@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Testing IQM provider.
+"""
 from qiskit_iqm import IQMBackend, IQMProvider
 
 
 def test_get_backend(tmp_path):
     settings_file = tmp_path / 'a_file'
     settings_file.write_text('{}')
-    provider = IQMProvider('some_url', str(settings_file))
+    provider = IQMProvider('http://some_url', str(settings_file))
     backend = provider.get_backend()
     assert isinstance(backend, IQMBackend)

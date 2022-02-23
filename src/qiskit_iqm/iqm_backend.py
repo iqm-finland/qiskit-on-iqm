@@ -16,14 +16,16 @@
 Implementation of Qiskit backend for IQM quantum computers.
 """
 from __future__ import annotations
+
 from typing import Union
 
 from iqm_client.iqm_client import IQMClient
 from qiskit import QuantumCircuit
-from qiskit.providers import BackendV2 as Backend, Options
+from qiskit.providers import BackendV2 as Backend
+from qiskit.providers import Options
 from qiskit.transpiler import Target
 
-import qiskit_iqm
+from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import serialize_circuit, serialize_qubit_mapping
 
 
@@ -50,7 +52,7 @@ class IQMBackend(Backend):
     def max_circuits(self) -> int:
         return 1
 
-    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> qiskit_iqm.IQMJob:
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
         if isinstance(run_input, list) and len(run_input) > 1:
             raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
         circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
@@ -62,9 +64,9 @@ class IQMBackend(Backend):
         mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
 
         uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots)
-        return qiskit_iqm.IQMJob(self, str(uuid))
+        return IQMJob(self, str(uuid), shots=shots)
 
-    def retrieve_job(self, job_id: str) -> qiskit_iqm.IQMJob:
+    def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id.
         """
-        return qiskit_iqm.IQMJob(self, job_id)
+        return IQMJob(self, job_id)

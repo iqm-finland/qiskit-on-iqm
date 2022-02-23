@@ -14,6 +14,7 @@
 """Types for representing and methods for manipulating operations on IQM's quantum computers.
 """
 from importlib.metadata import PackageNotFoundError, version
+
 from qiskit_iqm.iqm_backend import IQMBackend
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.iqm_provider import IQMProvider

@@ -12,17 +12,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Testing Qiskit to IQM conversion tools.
+"""
+import numpy as np
 import pytest
 from iqm_client.iqm_client import SingleQubitMapping
-from qiskit import QuantumCircuit, QuantumRegister
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 from qiskit.circuit.library import RGate
-from qiskit_iqm.qiskit_to_iqm import InstructionNotSupportedError, serialize_circuit, serialize_qubit_mapping, qubit_to_name
-import numpy as np
+
+from qiskit_iqm.qiskit_to_iqm import (InstructionNotSupportedError,
+                                      MeasurementKey, qubit_to_name,
+                                      serialize_circuit,
+                                      serialize_qubit_mapping)
 
 
 @pytest.fixture()
 def circuit() -> QuantumCircuit:
     return QuantumCircuit(3, 3)
+
+
+def test_measurement_key_to_str():
+    mk = MeasurementKey('abc', 1, 2, 3)
+    assert str(mk) == 'abc_1_2_3'
+
+
+def test_measurement_key_from_circuit():
+    qreg = QuantumRegister(3)
+    creg1, creg2 = ClassicalRegister(2, name='cr1'), ClassicalRegister(1, name='cr2')
+
+    circuit = QuantumCircuit(qreg, creg1, creg2)
+    mk1 = MeasurementKey.from_circuit(circuit, creg1[0])
+    mk2 = MeasurementKey.from_circuit(circuit, creg1[1])
+    mk3 = MeasurementKey.from_circuit(circuit, creg2[0])
+    assert str(mk1) == 'cr1_2_0_0'
+    assert str(mk2) == 'cr1_2_0_1'
+    assert str(mk3) == 'cr2_1_1_0'
+
+
+@pytest.mark.parametrize('key_str', ['abc_4_5_6', 'a_bc_4_5_6'])
+def test_measurement_key_from_string(key_str):
+    mk = MeasurementKey.from_string(key_str)
+    assert str(mk) == key_str
 
 
 def test_qubit_to_name_no_explicit_register(circuit):
@@ -50,7 +80,7 @@ def test_serialize_qubit_mapping(circuit):
 
 def test_serialize_circuit_raises_error_for_unsupported_instruction(circuit):
     circuit.sx(0)
-    with pytest.raises(InstructionNotSupportedError, match="Instruction sx not natively supported."):
+    with pytest.raises(InstructionNotSupportedError, match='Instruction sx not natively supported.'):
         serialize_circuit(circuit)
 
 
@@ -72,6 +102,10 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     assert instr.args['phase_t'] == expected_phase
 
 
+def test_serialize_handles_parameter_expressions():
+    pass
+
+
 def test_serialize_circuit_maps_cz_gate(circuit):
     circuit.cz(0, 2)
     circuit_ser = serialize_circuit(circuit)
@@ -82,31 +116,22 @@ def test_serialize_circuit_maps_cz_gate(circuit):
 
 
 def test_serialize_circuit_maps_individual_measurements(circuit):
-    circuit.measure(0, 2)
+    circuit.measure(0, 0)
     circuit.measure(1, 1)
-    circuit.measure(2, 0)
+    circuit.measure(2, 2)
     circuit_ser = serialize_circuit(circuit)
-    assert len(circuit_ser.instructions) == 1
-    assert circuit_ser.instructions[0].name == 'measurement'
-    assert circuit_ser.instructions[0].qubits == ['Qubit_0', 'Qubit_1', 'Qubit_2']
-    assert circuit_ser.instructions[0].args == {'key': 'mk'}
-
-
-def test_serialize_circuit_respects_measurement_order(circuit):
-    circuit.measure(1, 1)
-    circuit.measure(2, 0)
-    circuit.measure(0, 2)
-    circuit_ser = serialize_circuit(circuit)
-    assert len(circuit_ser.instructions) == 1
-    assert circuit_ser.instructions[0].name == 'measurement'
-    assert circuit_ser.instructions[0].qubits == ['Qubit_1', 'Qubit_2', 'Qubit_0']
-    assert circuit_ser.instructions[0].args == {'key': 'mk'}
+    assert len(circuit_ser.instructions) == 3
+    for i, instruction in enumerate(circuit_ser.instructions):
+        assert instruction.name == 'measurement'
+        assert instruction.qubits == [f'Qubit_{i}']
+        assert instruction.args == {'key': f'c_3_0_{i}'}
 
 
 def test_serialize_circuit_batch_measurement(circuit):
-    circuit.measure([1, 0, 2], [0, 1, 2])
+    circuit.measure([0, 1, 2], [0, 1, 2])
     circuit_ser = serialize_circuit(circuit)
-    assert len(circuit_ser.instructions) == 1
-    assert circuit_ser.instructions[0].name == 'measurement'
-    assert circuit_ser.instructions[0].qubits == ['Qubit_1', 'Qubit_0', 'Qubit_2']
-    assert circuit_ser.instructions[0].args == {'key': 'mk'}
+    assert len(circuit_ser.instructions) == 3
+    for i, instruction in enumerate(circuit_ser.instructions):
+        assert instruction.name == 'measurement'
+        assert instruction.qubits == [f'Qubit_{i}']
+        assert instruction.args == {'key': f'c_3_0_{i}'}

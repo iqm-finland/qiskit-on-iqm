@@ -11,12 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Testing IQM backend.
+"""
 import uuid
 
+import pytest
 from iqm_client.iqm_client import IQMClient
 from mockito import mock, when
 from qiskit import QuantumCircuit
-import pytest
 
 from qiskit_iqm import IQMBackend, IQMJob
 from qiskit_iqm.qiskit_to_iqm import serialize_circuit
@@ -47,18 +50,18 @@ def test_run(backend):
     circuit = QuantumCircuit(1, 1)
     circuit.measure(0, 0)
     circuit_ser = serialize_circuit(circuit)
-    id = uuid.uuid4()
+    some_id = uuid.uuid4()
     shots = 10
-    when(backend.client).submit_circuit(circuit_ser, [], shots=shots).thenReturn(id)
+    when(backend.client).submit_circuit(circuit_ser, [], shots=shots).thenReturn(some_id)
 
     job = backend.run(circuit, qubit_mapping={}, shots=shots)
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(id)
+    assert job.job_id() == str(some_id)
 
     # Should also work if the circuit is passed inside a list
     job = backend.run([circuit], qubit_mapping={}, shots=shots)
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(id)
+    assert job.job_id() == str(some_id)
 
     # Should raise exception if more than one circuit is present in the list
     with pytest.raises(ValueError):
