@@ -16,6 +16,7 @@
 """
 import uuid
 
+import mockito
 import pytest
 from iqm_client.iqm_client import (CircuitExecutionError, IQMClient, RunResult,
                                    RunStatus)
@@ -73,8 +74,9 @@ def test_status_done(job, iqm_result_single_register):
     assert job.status() == JobStatus.DONE
     assert job._result is not None
 
-    # Assert that repeated call does not query the client (i.e. works without mocking get_run)
+    # Assert that repeated call does not query the client (i.e. works without calling the mocked get_run)
     assert job.status() == JobStatus.DONE
+    mockito.verify(job._client, times=1).get_run(uuid.UUID(job.job_id()))
 
 
 def test_status_running(job):
@@ -93,14 +95,13 @@ def test_result(job, iqm_result_two_registers):
     when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
 
     result = job.result()
-    assert job.status() == JobStatus.DONE
 
     assert isinstance(result, QiskitResult)
     assert result.get_memory() == ['0100 11', '0100 10', '0100 01', '0100 10']
     assert result.get_counts() == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
 
-    return {
-        'c_2_0_0': [[1], [0], [1], [0]],
-        'c_2_0_1': [[1], [1], [0], [1]],
-        'd_4_1_2': [[1], [1], [1], [1]]
-    }
+    # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
+    # and call to status() does not call any functions from client.
+    job.result()
+    assert job.status() == JobStatus.DONE
+    mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))
