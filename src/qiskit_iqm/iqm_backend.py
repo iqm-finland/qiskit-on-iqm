@@ -11,9 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""
-Implementation of Qiskit backend for IQM quantum computers.
+"""Qiskit backend for IQM quantum computers.
 """
 from __future__ import annotations
 
@@ -21,20 +19,19 @@ from typing import Union
 
 from iqm_client.iqm_client import IQMClient
 from qiskit import QuantumCircuit
-from qiskit.providers import BackendV2 as Backend
-from qiskit.providers import Options
+from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import Target
 
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import serialize_circuit, serialize_qubit_mapping
 
 
-class IQMBackend(Backend):
-    """Qiskit backend enabling execution of quantum circuits on IQM quantum computers.
+class IQMBackend(BackendV2):
+    """Qiskit backend enabling the execution of quantum circuits on IQM quantum computers.
 
     Args:
-        client: IQMClient instance used for submitting circuits for execution on IQM server.
-        **kwargs: Optional arguments to be passed to the parent Qiskit Backend initializer.
+        client: IQM Cortex client used for submitting circuits for execution on an IQM server
+        **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
     """
     def __init__(self, client: IQMClient, **kwargs):
         super().__init__(**kwargs)

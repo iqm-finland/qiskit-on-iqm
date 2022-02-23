@@ -36,14 +36,14 @@ def test_measurement_key_to_str():
     assert str(mk) == 'abc_1_2_3'
 
 
-def test_measurement_key_from_circuit():
+def test_measurement_key_from_clbit():
     qreg = QuantumRegister(3)
     creg1, creg2 = ClassicalRegister(2, name='cr1'), ClassicalRegister(1, name='cr2')
 
     circuit = QuantumCircuit(qreg, creg1, creg2)
-    mk1 = MeasurementKey.from_circuit(circuit, creg1[0])
-    mk2 = MeasurementKey.from_circuit(circuit, creg1[1])
-    mk3 = MeasurementKey.from_circuit(circuit, creg2[0])
+    mk1 = MeasurementKey.from_clbit(creg1[0], circuit)
+    mk2 = MeasurementKey.from_clbit(creg1[1], circuit)
+    mk3 = MeasurementKey.from_clbit(creg2[0], circuit)
     assert str(mk1) == 'cr1_2_0_0'
     assert str(mk2) == 'cr1_2_0_1'
     assert str(mk3) == 'cr2_1_1_0'
@@ -57,7 +57,7 @@ def test_measurement_key_from_string(key_str):
 
 def test_qubit_to_name_no_explicit_register(circuit):
     for i, qubit in enumerate(circuit.qubits):
-        assert qubit_to_name(qubit, circuit) == f'Qubit_{i}'
+        assert qubit_to_name(qubit, circuit) == f'qubit_{i}'
 
 
 def test_qubit_to_name_uniqueness_for_multiple_registers():
@@ -72,9 +72,9 @@ def test_serialize_qubit_mapping(circuit):
     mapping = dict(zip(circuit.qubits, ['Alice', 'Bob', 'Charlie']))
     mapping_serialized = serialize_qubit_mapping(mapping, circuit)
     assert mapping_serialized == [
-        SingleQubitMapping(logical_name='Qubit_0', physical_name='Alice'),
-        SingleQubitMapping(logical_name='Qubit_1', physical_name='Bob'),
-        SingleQubitMapping(logical_name='Qubit_2', physical_name='Charlie')
+        SingleQubitMapping(logical_name='qubit_0', physical_name='Alice'),
+        SingleQubitMapping(logical_name='qubit_1', physical_name='Bob'),
+        SingleQubitMapping(logical_name='qubit_2', physical_name='Charlie')
     ]
 
 
@@ -96,7 +96,7 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
     assert instr.name == 'phased_rx'
-    assert instr.qubits == ['Qubit_0']
+    assert instr.qubits == ['qubit_0']
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
@@ -111,7 +111,7 @@ def test_serialize_circuit_maps_cz_gate(circuit):
     circuit_ser = serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     assert circuit_ser.instructions[0].name == 'cz'
-    assert circuit_ser.instructions[0].qubits == ['Qubit_0', 'Qubit_2']
+    assert circuit_ser.instructions[0].qubits == ['qubit_0', 'qubit_2']
     assert circuit_ser.instructions[0].args == {}
 
 
@@ -123,7 +123,7 @@ def test_serialize_circuit_maps_individual_measurements(circuit):
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measurement'
-        assert instruction.qubits == [f'Qubit_{i}']
+        assert instruction.qubits == [f'qubit_{i}']
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
 
@@ -133,5 +133,5 @@ def test_serialize_circuit_batch_measurement(circuit):
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measurement'
-        assert instruction.qubits == [f'Qubit_{i}']
+        assert instruction.qubits == [f'qubit_{i}']
         assert instruction.args == {'key': f'c_3_0_{i}'}

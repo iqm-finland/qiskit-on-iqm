@@ -11,9 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""
-Provider for IQM backend.
+"""Qiskit Backend Provider for IQM backends.
 """
 import json
 
@@ -23,20 +21,21 @@ from qiskit_iqm.iqm_backend import IQMBackend
 
 
 class IQMProvider:
-    """Provider for IQM backend.
+    """Provider for IQM backends.
 
     Args:
-        url: URL of the IQM server.
-        settings_path: Path to the JSON settings file for the IQM backend.
-        username: Username, if required by the IQM Cortex server. This can also be set in the IQM_SERVER_USERNAME
-                  environment variable.
-        api_key: API key, if required by the IQM Cortex server. This can also be set in the IQM_SERVER_API_KEY
-                 environment variable.
+        url: URL of the IQM Cortex server
+        settings_path: path to the JSON settings file for the IQM backend
+        username: Username, if required by the IQM Cortex server. Can also be set in the ``IQM_SERVER_USERNAME``
+            environment variable.
+        api_key: API key, if required by the IQM Cortex server. Can also be set in the ``IQM_SERVER_API_KEY``
+            environment variable.
     """
     def __init__(self, url: str, settings_path: str, username: str = None, api_key: str = None):
         with open(settings_path, 'r', encoding='utf-8') as f:
             self._client = IQMClient(url, json.loads(f.read()), username, api_key)
 
     def get_backend(self) -> IQMBackend:
-        """Get IQMBackend instance associated with this provider"""
+        """An IQMBackend instance associated with this provider.
+        """
         return IQMBackend(self._client)

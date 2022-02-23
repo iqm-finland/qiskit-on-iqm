@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Testing IQM job.
+"""Testing IQMJob.
 """
 import uuid
 
@@ -32,14 +32,14 @@ from qiskit_iqm import IQMBackend, IQMJob
 def job():
     client = mock(IQMClient)
     backend = IQMBackend(client)
-    return IQMJob(backend, str(uuid.uuid4()))
+    return IQMJob(backend, str(uuid.uuid4()), shots=4)
 
 
 @pytest.fixture()
 def iqm_result_single_register():
     return {
-        'c_2_0_0': [[1], [0], [1]],
-        'c_2_0_1': [[1], [1], [0]]
+        'c_2_0_0': [[0], [1], [0], [1]],
+        'c_2_0_1': [[1], [1], [1], [0]]
     }
 
 
@@ -53,7 +53,7 @@ def iqm_result_two_registers():
 
 
 def test_submit_raises(job):
-    with pytest.raises(NotImplementedError, match='Instead, use run method of backend to submit jobs.'):
+    with pytest.raises(NotImplementedError, match='Instead, use IQMBackend.run to submit jobs.'):
         job.submit()
 
 
