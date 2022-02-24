@@ -73,11 +73,10 @@ class IQMJob(JobV1):
         raise NotImplementedError('Canceling jobs is currently not supported.')
 
     def result(self) -> Result:
-        if self._result:
-            return self._result
+        if not self._result:
+            result = self._client.wait_for_results(uuid.UUID(self._job_id))
+            self._result = self._format_iqm_result(result)
 
-        result = self._client.wait_for_results(uuid.UUID(self._job_id))
-        self._result = self._format_iqm_result(result)
         result_dict = {
             'backend_name': None,
             'backend_version': None,

@@ -65,7 +65,9 @@ def test_cancel_raises(job):
 def test_status_for_ready_result(job):
     job._result = ['11', '10', '10']
     assert job.status() == JobStatus.DONE
-    assert job.result() == ['11', '10', '10']
+    result = job.result()
+    assert isinstance(result, QiskitResult)
+    assert result.get_memory() == ['11', '10', '10']
 
 
 def test_status_done(job, iqm_result_single_register):
@@ -102,6 +104,7 @@ def test_result(job, iqm_result_two_registers):
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
-    job.result()
+    result = job.result()
+    assert isinstance(result, QiskitResult)
     assert job.status() == JobStatus.DONE
     mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))

@@ -121,11 +121,10 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
     Assumes that ``circuit`` has been transpiled so that it only contains operations natively supported by the
     given IQM quantum architecture.
 
-    Qiskit uses one measurement gate per qubit, and does not use measurement keys/identifiers.
-    The bitstrings in the circuit execution result have bits (from left to right) in the order in which the
-    measurements were added.
-    While serializing we collect all measurements in the order they appear, and add one measurement operation,
-    with measurement key 'mk'.
+    Qiskit uses one measurement instruction per qubit (i.e. there are no multi-qubit measurement instructions).
+    While serializing we do not group any measurements together but rather associate a unique measurement key with each
+    measurement instruction, so that the results can later be reconstructed correctly (see :class:`MeasurementKey`
+    documentation for more details).
 
     Args:
         circuit: quantum circuit to serialize
