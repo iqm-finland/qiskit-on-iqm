@@ -43,15 +43,17 @@ class IQMJob(JobV1):
     def _format_iqm_result(self, iqm_result: RunResult) -> list[str]:
         """Convert the measurement results from a circuit run into the Qiskit format.
         """
-        shots = self.metadata['shots']
+        # if not available in the metadata, use the number of shots in an arbitrary measurement
+        shots = self.metadata.get('shots', len(next(iter(iqm_result.measurements.values()))))
+        shape = (shots, 1)  # only one qubit is measured per measurement op
+
         measurements = {}
         for k, v in iqm_result.measurements.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
 
-            # only one qubit is measured per measurement op
-            if res.shape != (shots, 1):
-                raise ValueError(f'Measurement results have the wrong shape: {res.shape}')
+            if res.shape != shape:
+                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected {shape}')
             res = res[:, 0]
 
             # group the measurements into cregs, fill in zeros for unused bits
