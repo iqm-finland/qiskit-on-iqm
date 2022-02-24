@@ -27,7 +27,7 @@ version = ''
 # The full version, including alpha/beta/rc tags.
 release = ''
 try:
-    from qiskit_iqm_provider import __version__ as version
+    from qiskit_iqm import __version__ as version
 except ImportError:
     pass
 else:
@@ -115,7 +115,7 @@ html_favicon = '_static/images/favicon.ico'
 html_logo = '_static/images/logo.jpg'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'qiskit_iqm_provider-doc'
+htmlhelp_basename = 'qiskit_iqm-doc'
 
 
 # -- MathJax options ----------------------------------------------------------

@@ -15,8 +15,12 @@
 """
 from importlib.metadata import PackageNotFoundError, version
 
+from qiskit_iqm.iqm_backend import IQMBackend
+from qiskit_iqm.iqm_job import IQMJob
+from qiskit_iqm.iqm_provider import IQMProvider
+
 try:
-    dist_name = "qiskit-iqm-provider"
+    dist_name = "qiskit-iqm"
     __version__ = version(dist_name)
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"

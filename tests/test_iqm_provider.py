@@ -11,8 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""TODO replace with real tests.
-"""
 
-def test_fake():
-    assert True
+"""Testing IQM provider.
+"""
+from qiskit_iqm import IQMBackend, IQMProvider
+
+
+def test_get_backend(tmp_path):
+    settings_file = tmp_path / 'a_file'
+    settings_file.write_text('{}')
+    provider = IQMProvider('http://some_url', str(settings_file))
+    backend = provider.get_backend()
+    assert isinstance(backend, IQMBackend)
