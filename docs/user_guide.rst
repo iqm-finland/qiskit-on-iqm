@@ -120,3 +120,6 @@ Now that we have everything ready, we can run the circuit against the available 
 Note that the code snippet above assumes that you have set the variables ``iqm_server_url`` and ``iqm_settings_path``.
 If the IQM server you are connecting to requires authentication, you will also have to set the IQM_SERVER_USERNAME
 and IQM_SERVER_API_KEY environment variables or pass them as arguments to the constructor of :class:`.IQMProvider`.
+
+
+.. include:: ../CONTRIBUTING.rst
