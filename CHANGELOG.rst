@@ -12,4 +12,4 @@ Version 0.2
 Version 0.1
 ===========
 
-* Project skeleton created
+* Project skeleton created.
