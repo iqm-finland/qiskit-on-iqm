@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>qiskit_iqm.iqm_backend.IQMBackend &#8212; Qiskit on IQM 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="qiskit_iqm.iqm_job" href="qiskit_iqm.iqm_job.html" />
+    <link rel="prev" title="qiskit_iqm.iqm_backend" href="qiskit_iqm.iqm_backend.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qiskit_iqm.iqm_job.html" title="qiskit_iqm.iqm_job"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="qiskit_iqm.iqm_backend.html" title="qiskit_iqm.iqm_backend"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Qiskit on IQM 0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../API.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="qiskit_iqm.html" >qiskit_iqm</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="qiskit_iqm.iqm_backend.html" accesskey="U">qiskit_iqm.iqm_backend</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">qiskit_iqm.iqm_backend.IQMBackend</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="qiskit-iqm-iqm-backend-iqmbackend">
+<h1>qiskit_iqm.iqm_backend.IQMBackend<a class="headerlink" href="#qiskit-iqm-iqm-backend-iqmbackend" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.iqm_backend.</span></span><span class="sig-name descname"><span class="pre">IQMBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.providers.backend.BackendV2</span></code></p>
+<p>Qiskit backend enabling the execution of quantum circuits on IQM quantum computers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>IQMClient</em>) – IQM Cortex client used for submitting circuits for execution on an IQM server</p></li>
+<li><p><strong>**kwargs</strong> – optional arguments to be passed to the parent Qiskit Backend initializer</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize a BackendV2 based backend</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>provider</strong> – An optional backwards reference to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> object that the backend
+is from</p></li>
+<li><p><strong>name</strong> – An optional name for the backend</p></li>
+<li><p><strong>description</strong> – An optional description of the backend</p></li>
+<li><p><strong>online_date</strong> – An optional datetime the backend was brought online</p></li>
+<li><p><strong>backend_version</strong> – An optional backend version string. This differs
+from the <code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code> attribute
+as <code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code> is for the
+abstract <code class="xref py py-attr docutils literal notranslate"><span class="pre">Backend</span></code> abstract interface
+version of the object while <code class="docutils literal notranslate"><span class="pre">backend_version</span></code> is for
+versioning the backend itself.</p></li>
+<li><p><strong>fields</strong> – kwargs for the values to use to override the default
+options.</p></li>
+<li><p><strong>client</strong> (<em>IQMClient</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#AttributeError" title="(in Python v3.9)"><strong>AttributeError</strong></a> – If a field is specified that’s outside the backend’s
+    options</p>
+</dd>
+</dl>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.max_circuits" title="qiskit_iqm.iqm_backend.IQMBackend.max_circuits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_circuits</span></code></a></p></td>
+<td><p>The maximum number of circuits (or Pulse schedules) that can be run in a single job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.target" title="qiskit_iqm.iqm_backend.IQMBackend.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a></p></td>
+<td><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.Target</span></code> object for the backend.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_default_options</span></code>()</p></td>
+<td><p>Return the default options</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.retrieve_job" title="qiskit_iqm.iqm_backend.IQMBackend.retrieve_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_job</span></code></a>(job_id)</p></td>
+<td><p>Create and return an IQMJob instance associated with this backend with given job id.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.run" title="qiskit_iqm.iqm_backend.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, **options)</p></td>
+<td><p>Run on the backend.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py property">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.target">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">qiskit.transpiler.target.Target</span></em><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.target" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.Target</span></code> object for the backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Target</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.max_circuits">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_circuits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a></em><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.max_circuits" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum number of circuits (or Pulse schedules) that can be
+run in a single job.</p>
+<p>If there is no limit this will return None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run on the backend.</p>
+<p>This method that will return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code> object
+that run circuits. Depending on the backend this may be either an async
+or sync call. It is the discretion of the provider to decide whether
+running should  block until the execution is finished or not. The Job
+class can handle either situation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_input</strong> (<em>QuantumCircuit</em><em> or </em><em>Schedule</em><em> or </em><em>ScheduleBlock</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – An
+individual or a list of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduleBlock</span></code>, or
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Schedule</span></code> objects to run on the backend.</p></li>
+<li><p><strong>options</strong> – Any kwarg options to pass to the backend for running the
+config. If a key is also present in the options
+attribute/object then the expectation is that the value
+specified will be used instead of what’s set in the options
+object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The job object for the run</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Job</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.retrieve_job">
+<span class="sig-name descname"><span class="pre">retrieve_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.retrieve_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and return an IQMJob instance associated with this backend with given job id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="qiskit_iqm.iqm_job.IQMJob.html#qiskit_iqm.iqm_job.IQMJob" title="qiskit_iqm.iqm_job.IQMJob">qiskit_iqm.iqm_job.IQMJob</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/logo.jpg" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="qiskit_iqm.iqm_backend.html"
+                          title="previous chapter">qiskit_iqm.iqm_backend</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="qiskit_iqm.iqm_job.html"
+                          title="next chapter">qiskit_iqm.iqm_job</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/qiskit_iqm.iqm_backend.IQMBackend.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="qiskit_iqm.iqm_job.html" title="qiskit_iqm.iqm_job"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="qiskit_iqm.iqm_backend.html" title="qiskit_iqm.iqm_backend"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Qiskit on IQM 0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../API.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="qiskit_iqm.html" >qiskit_iqm</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="qiskit_iqm.iqm_backend.html" >qiskit_iqm.iqm_backend</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">qiskit_iqm.iqm_backend.IQMBackend</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Qiskit on IQM developers.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>
