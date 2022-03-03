@@ -13,7 +13,11 @@ Qiskit on IQM
 What is it good for?
 ====================
 
-Qiskit on IQM is currently a work in progress.
+Qiskit on IQM is still a work in progress.
+
+Currently Qiskit on IQM can
+
+* run a compatible Qiskit quantum circuit on an IQM quantum computer.
 
 
 Installation
@@ -35,8 +39,6 @@ The documentation of the latest Qiskit on IQM release is available
 
 Jump to our `User guide <https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html>`_
 for a quick introduction on how to use Qiskit on IQM.
-
-Take a look at the `Jupyter notebook <https://jupyter.org/>`_ with examples: ``examples/usage.ipynb``.
 
 
 Copyright
