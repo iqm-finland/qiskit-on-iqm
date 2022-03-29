@@ -19,8 +19,10 @@ from typing import Union
 
 from iqm_client.iqm_client import IQMClient
 from qiskit import QuantumCircuit
+from qiskit.circuit import Parameter
+from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import BackendV2, Options
-from qiskit.transpiler import Target
+from qiskit.transpiler import InstructionProperties, Target
 
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import serialize_circuit, serialize_qubit_mapping
@@ -43,7 +45,35 @@ class IQMBackend(BackendV2):
 
     @property
     def target(self) -> Target:
-        raise NotImplementedError
+        adonis_target = Target()
+
+        theta = Parameter('theta')
+        phi = Parameter('phi')
+
+        # No properties, just list the qubits that support phased_rx, i.e. all qubits
+        phased_rx_properties = {
+            (0,): InstructionProperties(),  # QB1
+            (1,): InstructionProperties(),  # QB2
+            (2,): InstructionProperties(),  # QB3
+            (3,): InstructionProperties(),  # QB4
+            (4,): InstructionProperties(),  # QB5
+        }
+        adonis_target.add_instruction(RGate(theta, phi), phased_rx_properties)
+        adonis_target.add_instruction(Measure(), phased_rx_properties)
+
+        # Again, no properties, just list the connectivity
+        cz_properties = {
+            (0, 2): InstructionProperties(),  # QB1 - QB3
+            (2, 0): InstructionProperties(),  # reverse direction
+            (1, 2): InstructionProperties(),  # QB2 - QB3
+            (2, 1): InstructionProperties(),  # reverse direction
+            (3, 2): InstructionProperties(),  # QB4 - QB3
+            (2, 3): InstructionProperties(),  # reverse direction
+            (4, 2): InstructionProperties(),  # QB5 - QB3
+            (2, 4): InstructionProperties(),  # reverse direction
+        }
+        adonis_target.add_instruction(CZGate(), cz_properties)
+        return adonis_target
 
     @property
     def max_circuits(self) -> int:
@@ -54,14 +84,20 @@ class IQMBackend(BackendV2):
             raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
         circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
 
-        qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
 
+        if not circuit._layout and (len(circuit.qregs) != 1 or len(circuit.qregs[0]) != 5):
+            raise ValueError('Circuit should either be transpiled or shall contain exactly one quantum register of '
+                             'length 5, in which case it will be assumed that qubit at index i corresponds to QB{i+1}.')
+        qubit_mapping = dict(zip(circuit.qubits, ['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
         circuit_serialized = serialize_circuit(circuit)
         mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
 
         uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots)
-        return IQMJob(self, str(uuid), shots=shots)
+        print(f'job id: {str(uuid)}')
+        job = IQMJob(self, str(uuid), shots=shots)
+        job._metadata = circuit.metadata
+        return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id.

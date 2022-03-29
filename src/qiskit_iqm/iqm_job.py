@@ -89,7 +89,7 @@ class IQMJob(JobV1):
                 {
                     'shots': len(self._result),
                     'success': True,
-                    'data': {'memory': self._result, 'counts': Counts(Counter(self._result))}
+                    'data': {'memory': self._result, 'counts': Counts(Counter(self._result)), 'metadata': self._metadata},
                 }
             ],
             'date': date.today()

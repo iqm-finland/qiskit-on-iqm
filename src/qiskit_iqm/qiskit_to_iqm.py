@@ -100,6 +100,10 @@ def qubit_to_name(qubit: Qubit, circuit: QiskitQuantumCircuit) -> str:
     return f'qubit_{circuit.find_bit(qubit).index}'
 
 
+def qubit_index_to_name(idx: int) -> str:
+    return f'QB{idx + 1}'
+
+
 def serialize_qubit_mapping(qubit_mapping: dict[Qubit, str], circuit: QiskitQuantumCircuit) -> list[SingleQubitMapping]:
     """Serialize a qubit mapping into the IQM data transfer format.
 
@@ -149,7 +153,7 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
         elif instruction.name == 'measure':
             mk = MeasurementKey.from_clbit(clbits[0], circuit)
             instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
-        else:
+        elif not instruction.name == 'barrier':  # Silently ignore any barriers
             raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')
 
     return Circuit(name='Serialized from Qiskit', instructions=instructions)
