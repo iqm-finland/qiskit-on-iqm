@@ -50,7 +50,7 @@ class IQMBackend(BackendV2):
         theta = Parameter('theta')
         phi = Parameter('phi')
 
-        # No properties, just list the qubits that support phased_rx, i.e. all qubits
+        # No properties, just list the qubits that support phased_rx and measurement, i.e. all qubits
         single_qubit_properties = {
             (0,): InstructionProperties(),  # QB1
             (1,): InstructionProperties(),  # QB2
