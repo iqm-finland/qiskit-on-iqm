@@ -51,15 +51,15 @@ class IQMBackend(BackendV2):
         phi = Parameter('phi')
 
         # No properties, just list the qubits that support phased_rx, i.e. all qubits
-        phased_rx_properties = {
+        single_qubit_properties = {
             (0,): InstructionProperties(),  # QB1
             (1,): InstructionProperties(),  # QB2
             (2,): InstructionProperties(),  # QB3
             (3,): InstructionProperties(),  # QB4
             (4,): InstructionProperties(),  # QB5
         }
-        adonis_target.add_instruction(RGate(theta, phi), phased_rx_properties)
-        adonis_target.add_instruction(Measure(), phased_rx_properties)
+        adonis_target.add_instruction(RGate(theta, phi), single_qubit_properties)
+        adonis_target.add_instruction(Measure(), single_qubit_properties)
 
         # Again, no properties, just list the connectivity
         cz_properties = {
