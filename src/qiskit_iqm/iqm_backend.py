@@ -97,7 +97,7 @@ class IQMBackend(BackendV2):
         print(f'job id: {str(uuid)}')
         job = IQMJob(self, str(uuid), shots=shots)
         # FIXME: monkeypatch the job object with metadata from circuit (needed for quantum volume experiments)
-        job.metadata = circuit.metadata
+        job.circuit_metadata = circuit.metadata
         return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
