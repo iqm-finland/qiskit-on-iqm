@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 1.0
+===========
+
+* Updated documentation layout to use sphinx-book-theme. :mr:`6`
+
 Version 0.2
 ===========
 
