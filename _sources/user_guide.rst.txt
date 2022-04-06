@@ -32,8 +32,9 @@ In this section we construct a simple quantum circuit and demonstrate how to exe
 
 .. note::
 
-   At the moment IQM provides on-premises deployments of quantum computers only and does not have a quantum
-   computing service open to the general public.
+   At the moment IQM does not provide a quantum computing service open to the general public.
+   Please contact our `sales team <https://www.meetiqm.com/contact/>`_ to set up your access to an IQM quantum computer.
+
 
 Let's consider the following quantum circuit which prepares and measures a Bell state:
 
