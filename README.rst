@@ -13,11 +13,7 @@ Qiskit on IQM
 What is it good for?
 ====================
 
-Qiskit on IQM is still a work in progress.
-
-Currently Qiskit on IQM can
-
-* run a compatible Qiskit quantum circuit on an IQM quantum computer.
+Currently Qiskit on IQM can run a compatible Qiskit quantum circuit on an IQM quantum computer.
 
 
 Installation
