@@ -16,7 +16,8 @@ and install it in editable mode with all the extras:
    $ pip install -e ".[dev,docs,testing]"
 
 
-Build and view the docs:
+To be able to build the docs `graphviz <https://graphviz.org/>`_ has to be installed. 
+Then to build and view the docs run:
 
 .. code-block:: bash
 
