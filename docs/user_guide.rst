@@ -47,7 +47,7 @@ Let's consider the following quantum circuit which prepares and measures a Bell 
     qc.cx(0, 1)
     qc.measure([0, 1], [0, 1])
 
-    qc.draw()
+    print(qc.draw(output='text'))
 
 ::
 
