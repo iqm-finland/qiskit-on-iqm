@@ -67,7 +67,7 @@ First, we need to decompose it into IQM's native gate family:
 
     qc_decomposed = transpile(qc, basis_gates=['r', 'cz'])
 
-    qc_decomposed.draw()
+    print(qc_decomposed.draw(output='text'))
 
 ::
 
