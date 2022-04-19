@@ -5,13 +5,13 @@ Changelog
 Version 1.0
 ===========
 
-* Updated documentation layout to use sphinx-book-theme. :mr:`6`
+* Updated documentation layout to use sphinx-book-theme. `#6 <https://github.com/iqm-finland/qiskit-on-iqm/pull/6>`_
 
 Version 0.2
 ===========
 
-* Publish ``qiskit_iqm``. :mr:`4`
-* Implement functionality to serialize compatible circuits, send for execution and parse returned results. :mr:`3`
+* Publish ``qiskit_iqm``. `#4 <https://github.com/iqm-finland/qiskit-on-iqm/pull/4>`_
+* Implement functionality to serialize compatible circuits, send for execution and parse returned results. `#3 <https://github.com/iqm-finland/qiskit-on-iqm/pull/3>`_
 
 
 Version 0.1
