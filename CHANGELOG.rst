@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 1.1
+===========
+
+* Fix code examples in `user guide <https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html>`_, add missing dependency in `developer guide <https://github.com/iqm-finland/qiskit-on-iqm/blob/main/CONTRIBUTING.rst>`_. `#8 <https://github.com/iqm-finland/qiskit-on-iqm/pull/8>`_
+
 Version 1.0
 ===========
 
