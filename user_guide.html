@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 1.0 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 1.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -452,7 +452,7 @@ Please contact our <a class="reference external" href="https://www.meetiqm.com/c
 <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">measure</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
-<span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>     ┌───┐     ┌─┐
@@ -469,7 +469,7 @@ c: 2/═══════════╩══╩═
 
 <span class="n">qc_decomposed</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">basis_gates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">])</span>
 
-<span class="n">qc_decomposed</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global phase: 3π/2
@@ -531,7 +531,8 @@ $ <span class="nb">cd</span> qiskit-on-iqm
 $ pip install -e <span class="s2">&quot;.[dev,docs,testing]&quot;</span>
 </pre></div>
 </div>
-<p>Build and view the docs:</p>
+<p>To be able to build the docs <a class="reference external" href="https://graphviz.org/">graphviz</a> has to be installed.
+Then to build and view the docs run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tox -e docs
 $ firefox build/sphinx/html/index.html
 </pre></div>

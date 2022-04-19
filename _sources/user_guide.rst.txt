@@ -47,7 +47,7 @@ Let's consider the following quantum circuit which prepares and measures a Bell 
     qc.cx(0, 1)
     qc.measure([0, 1], [0, 1])
 
-    qc.draw()
+    print(qc.draw(output='text'))
 
 ::
 
@@ -67,7 +67,7 @@ First, we need to decompose it into IQM's native gate family:
 
     qc_decomposed = transpile(qc, basis_gates=['r', 'cz'])
 
-    qc_decomposed.draw()
+    print(qc_decomposed.draw(output='text'))
 
 ::
 
