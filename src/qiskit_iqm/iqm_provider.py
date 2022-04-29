@@ -41,15 +41,13 @@ class IQMProvider:
             settings_path: str,
             **user_auth_args  # contains keyword args auth_server_url, username, password
     ):
-        with open(settings_path, 'r', encoding='utf-8') as f:
-            self._client = IQMClient(url, json.loads(f.read()), **user_auth_args)
+        self.url = url
+        self.settings_path = settings_path
+        self.user_auth_args = user_auth_args
 
     def get_backend(self) -> IQMBackend:
         """An IQMBackend instance associated with this provider.
         """
-        return IQMBackend(self._client)
-
-    def close(self):
-        """Close IQMClient's session with the user authentication server. Discard the client."""
-        self._client.close()
-        self._client = None
+        with open(self.settings_path, 'r', encoding='utf-8') as f:
+            client = IQMClient(self.url, json.loads(f.read()), **self.user_auth_args)
+        return IQMBackend(client)
