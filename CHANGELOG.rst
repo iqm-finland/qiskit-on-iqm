@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 2.0
+===========
+
+* Update user authentication to use access token. `#11 <https://github.com/iqm-finland/qiskit-on-iqm/pull/11>`_
+* Upgrade IQMClient to version >= 2.0 `#11 <https://github.com/iqm-finland/qiskit-on-iqm/pull/11>`_
+
 Version 1.1
 ===========
 

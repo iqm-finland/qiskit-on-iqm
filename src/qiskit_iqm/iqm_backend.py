@@ -67,3 +67,9 @@ class IQMBackend(BackendV2):
         """Create and return an IQMJob instance associated with this backend with given job id.
         """
         return IQMJob(self, job_id)
+
+    def close_client(self):
+        """Close IQMClient's session with the authentication server. Discard the client."""
+        if self.client is not None:
+            self.client.close()
+        self.client = None
