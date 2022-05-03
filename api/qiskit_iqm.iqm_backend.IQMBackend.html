@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>qiskit_iqm.iqm_backend.IQMBackend &#8212; Qiskit on IQM 1.1 documentation</title>
+    <title>qiskit_iqm.iqm_backend.IQMBackend &#8212; Qiskit on IQM 2.0 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -419,10 +419,13 @@ options.</p></li>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_default_options</span></code>()</p></td>
 <td><p>Return the default options</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.retrieve_job" title="qiskit_iqm.iqm_backend.IQMBackend.retrieve_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_job</span></code></a>(job_id)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.close_client" title="qiskit_iqm.iqm_backend.IQMBackend.close_client"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close_client</span></code></a>()</p></td>
+<td><p>Close IQMClient's session with the authentication server.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.retrieve_job" title="qiskit_iqm.iqm_backend.IQMBackend.retrieve_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_job</span></code></a>(job_id)</p></td>
 <td><p>Create and return an IQMJob instance associated with this backend with given job id.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.run" title="qiskit_iqm.iqm_backend.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, **options)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.run" title="qiskit_iqm.iqm_backend.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, **options)</p></td>
 <td><p>Run on the backend.</p></td>
 </tr>
 </tbody>
@@ -490,6 +493,12 @@ object.</p></li>
 <dd class="field-even"><p><a class="reference internal" href="qiskit_iqm.iqm_job.IQMJob.html#qiskit_iqm.iqm_job.IQMJob" title="qiskit_iqm.iqm_job.IQMJob">qiskit_iqm.iqm_job.IQMJob</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.close_client">
+<span class="sig-name descname"><span class="pre">close_client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.close_client" title="Permalink to this definition">#</a></dt>
+<dd><p>Close IQMClient’s session with the authentication server. Discard the client.</p>
 </dd></dl>
 
 </dd></dl>

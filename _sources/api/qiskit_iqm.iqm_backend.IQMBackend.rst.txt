@@ -26,6 +26,7 @@ qiskit\_iqm.iqm\_backend.IQMBackend
    .. autosummary::
    
       ~IQMBackend._default_options
+      ~IQMBackend.close_client
       ~IQMBackend.retrieve_job
       ~IQMBackend.run
    
