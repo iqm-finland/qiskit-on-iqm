@@ -47,7 +47,7 @@ Let's consider the following quantum circuit which prepares and measures a Bell 
     qc.cx(0, 1)
     qc.measure([0, 1], [0, 1])
 
-    qc.draw()
+    print(qc.draw(output='text'))
 
 ::
 
@@ -67,7 +67,7 @@ First, we need to decompose it into IQM's native gate family:
 
     qc_decomposed = transpile(qc, basis_gates=['r', 'cz'])
 
-    qc_decomposed.draw()
+    print(qc_decomposed.draw(output='text'))
 
 ::
 
@@ -119,8 +119,9 @@ Now that we have everything ready, we can run the circuit against the available 
     print(job.result().get_counts())
 
 Note that the code snippet above assumes that you have set the variables ``iqm_server_url`` and ``iqm_settings_path``.
-If the IQM server you are connecting to requires authentication, you will also have to set the IQM_SERVER_USERNAME
-and IQM_SERVER_API_KEY environment variables or pass them as arguments to the constructor of :class:`.IQMProvider`.
+If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
+IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
+:class:`.IQMProvider`.
 
 
 .. include:: ../CONTRIBUTING.rst

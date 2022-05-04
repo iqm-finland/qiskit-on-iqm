@@ -26,16 +26,28 @@ class IQMProvider:
     Args:
         url: URL of the IQM Cortex server
         settings_path: path to the JSON settings file for the IQM backend
-        username: Username, if required by the IQM Cortex server. Can also be set in the ``IQM_SERVER_USERNAME``
-            environment variable.
-        api_key: API key, if required by the IQM Cortex server. Can also be set in the ``IQM_SERVER_API_KEY``
-            environment variable.
+
+    Keyword Args:
+        auth_server_url: URL of the user authentication server, if required by the IQM Cortex server.
+            Can also be set in the ``IQM_AUTH_SERVER`` environment variable.
+        username: Username, if required by the IQM Cortex server.
+            Can also be set in the ``IQM_AUTH_USERNAME`` environment variable.
+        password: Password, if required by the IQM Cortex server.
+            Can also be set in the ``IQM_AUTH_PASSWORD`` environment variable.
     """
-    def __init__(self, url: str, settings_path: str, username: str = None, api_key: str = None):
-        with open(settings_path, 'r', encoding='utf-8') as f:
-            self._client = IQMClient(url, json.loads(f.read()), username, api_key)
+    def __init__(
+            self,
+            url: str,
+            settings_path: str,
+            **user_auth_args  # contains keyword args auth_server_url, username, password
+    ):
+        self.url = url
+        self.settings_path = settings_path
+        self.user_auth_args = user_auth_args
 
     def get_backend(self) -> IQMBackend:
         """An IQMBackend instance associated with this provider.
         """
-        return IQMBackend(self._client)
+        with open(self.settings_path, 'r', encoding='utf-8') as f:
+            client = IQMClient(self.url, json.loads(f.read()), **self.user_auth_args)
+        return IQMBackend(client)
