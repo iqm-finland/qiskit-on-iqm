@@ -89,7 +89,11 @@ class IQMJob(JobV1):
                 {
                     'shots': len(self._result),
                     'success': True,
-                    'data': {'memory': self._result, 'counts': Counts(Counter(self._result)), 'metadata': self.circuit_metadata},
+                    'data': {
+                        'memory': self._result,
+                        'counts': Counts(Counter(self._result)),
+                        'metadata': self.circuit_metadata if hasattr(self, 'circuit_metadata') else {}
+                    },
                 }
             ],
             'date': date.today()
