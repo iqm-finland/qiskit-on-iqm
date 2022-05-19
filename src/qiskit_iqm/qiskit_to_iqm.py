@@ -146,6 +146,8 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
             )
         elif instruction.name == 'cz':
             instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))
+        elif instruction.name == 'barrier':
+            instructions.append(Instruction(name='barrier', qubits=qubit_names, args={}))
         elif instruction.name == 'measure':
             mk = MeasurementKey.from_clbit(clbits[0], circuit)
             instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
