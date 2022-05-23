@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 2.1
+===========
+
+* Allow serialization of ``barrier`` operations. `#12 <https://github.com/iqm-finland/qiskit-on-iqm/pull/12>`_
+
 Version 2.0
 ===========
 
