@@ -18,8 +18,7 @@ import uuid
 
 import mockito
 import pytest
-from iqm_client.iqm_client import (CircuitExecutionError, IQMClient, RunResult,
-                                   RunStatus)
+from iqm_client.iqm_client import IQMClient, RunResult, RunStatus
 from mockito import mock, when
 from qiskit.providers import JobStatus
 from qiskit.result import Counts
@@ -83,9 +82,8 @@ def test_status_running(job):
 
 
 def test_status_fail(job):
-    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenRaise(CircuitExecutionError)
-    with pytest.raises(CircuitExecutionError):
-        job.status()
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunResult(status=RunStatus.FAILED))
+    assert job.status() == JobStatus.ERROR
 
 
 def test_result(job, iqm_result_two_registers):
