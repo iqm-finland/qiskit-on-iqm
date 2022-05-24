@@ -70,24 +70,20 @@ def test_status_for_ready_result(job):
     assert result.get_memory() == ['11', '10', '10']
 
 
-def test_status_done(job, iqm_result_single_register):
-    client_result = RunResult(status=RunStatus.READY, measurements=iqm_result_single_register)
-    when(job._client).get_run(uuid.UUID(job.job_id())).thenReturn(client_result)
+def test_status_done(job):
+    client_result = RunResult(status=RunStatus.READY, measurements=None)
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(client_result)
     assert job.status() == JobStatus.DONE
-    assert job._result is not None
-
-    # Assert that repeated call does not query the client (i.e. works without calling the mocked get_run)
-    assert job.status() == JobStatus.DONE
-    mockito.verify(job._client, times=1).get_run(uuid.UUID(job.job_id()))
+    assert job._result is None
 
 
 def test_status_running(job):
-    when(job._client).get_run(uuid.UUID(job.job_id())).thenReturn(RunResult(status=RunStatus.PENDING))
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunResult(status=RunStatus.PENDING))
     assert job.status() == JobStatus.RUNNING
 
 
 def test_status_fail(job):
-    when(job._client).get_run(uuid.UUID(job.job_id())).thenRaise(CircuitExecutionError)
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenRaise(CircuitExecutionError)
     with pytest.raises(CircuitExecutionError):
         job.status()
 

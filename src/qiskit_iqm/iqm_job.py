@@ -100,8 +100,7 @@ class IQMJob(JobV1):
         if self._result:
             return JobStatus.DONE
 
-        result = self._client.get_run(uuid.UUID(self._job_id))
+        result = self._client.get_run_status(uuid.UUID(self._job_id))
         if result.status == RunStatus.READY:
-            self._result = self._format_iqm_result(result)
             return JobStatus.DONE
         return JobStatus.RUNNING
