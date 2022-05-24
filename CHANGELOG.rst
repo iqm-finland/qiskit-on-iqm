@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 2.2
+===========
+
+* Use IQM Client's ``get_run_status`` instead of ``get_run`` to retrieve status. `#13 <https://github.com/iqm-finland/qiskit-on-iqm/pull/13>`_
+* Requires iqm-client 3.2
+
 Version 2.1
 ===========
 
