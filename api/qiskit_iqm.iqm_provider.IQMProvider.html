@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>qiskit_iqm.iqm_provider.IQMProvider &#8212; Qiskit on IQM 2.2 documentation</title>
+    <title>qiskit_iqm.iqm_provider.IQMProvider &#8212; Qiskit on IQM 2.3 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -357,14 +357,15 @@ title="Print to PDF"
 <h1>qiskit_iqm.iqm_provider.IQMProvider<a class="headerlink" href="#qiskit-iqm-iqm-provider-iqmprovider" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qiskit_iqm.iqm_provider.IQMProvider">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.iqm_provider.</span></span><span class="sig-name descname"><span class="pre">IQMProvider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">user_auth_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_provider.IQMProvider" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.iqm_provider.</span></span><span class="sig-name descname"><span class="pre">IQMProvider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">user_auth_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_provider.IQMProvider" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Provider for IQM backends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – URL of the IQM Cortex server</p></li>
-<li><p><strong>settings_path</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to the JSON settings file for the IQM backend</p></li>
+<li><p><strong>settings_path</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – path to the JSON settings file for the IQM backend, or None (default) to use latest
+calibration data available</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
