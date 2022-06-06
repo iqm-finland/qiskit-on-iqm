@@ -25,7 +25,8 @@ class IQMProvider:
 
     Args:
         url: URL of the IQM Cortex server
-        settings_path: path to the JSON settings file for the IQM backend
+        settings_path: path to the JSON settings file for the IQM backend, or None (default) to use latest
+                       calibration data available
 
     Keyword Args:
         auth_server_url: URL of the user authentication server, if required by the IQM Cortex server.
@@ -38,7 +39,7 @@ class IQMProvider:
     def __init__(
             self,
             url: str,
-            settings_path: str,
+            settings_path: str = None,
             **user_auth_args  # contains keyword args auth_server_url, username, password
     ):
         self.url = url
@@ -48,6 +49,9 @@ class IQMProvider:
     def get_backend(self) -> IQMBackend:
         """An IQMBackend instance associated with this provider.
         """
-        with open(self.settings_path, 'r', encoding='utf-8') as f:
-            client = IQMClient(self.url, json.loads(f.read()), **self.user_auth_args)
+        settings = None
+        if self.settings_path:
+            with open(self.settings_path, 'r', encoding='utf-8') as f:
+                settings = json.loads(f.read())
+        client = IQMClient(self.url, settings, **self.user_auth_args)
         return IQMBackend(client)
