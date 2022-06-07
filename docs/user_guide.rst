@@ -102,7 +102,7 @@ We can choose any pair of connected physical qubits and map the two virtual qubi
 
     Currently, :class:`IQMBackend` does not support automatic generation of mapping from virtual qubits to physical ones
     using Qiskit transpilers, so it has to be done manually. In a simple scenario as above it is pretty straightforward
-    to do the mapping manually. However in more complicated cases were SWAP gates need to be inserted to accomplish the
+    to do the mapping manually. However in more complicated cases where SWAP gates need to be inserted to accomplish the
     mapping you can still use Qiskit tools to transpile the circuit against a certain coupling map and then extract
     ``qubit_mapping`` from the result.
 
