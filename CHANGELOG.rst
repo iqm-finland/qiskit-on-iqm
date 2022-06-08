@@ -2,6 +2,23 @@
 Changelog
 =========
 
+Version 2.3
+===========
+
+* Make ``settings_path`` optional parameter for ``IQMProvider``. `#14 <https://github.com/iqm-finland/qiskit-on-iqm/pull/14>`_
+* Requires iqm-client 3.3 if ``settings_path`` is not specified.
+
+Version 2.2
+===========
+
+* Use IQM Client's ``get_run_status`` instead of ``get_run`` to retrieve status. `#13 <https://github.com/iqm-finland/qiskit-on-iqm/pull/13>`_
+* Requires iqm-client 3.2
+
+Version 2.1
+===========
+
+* Allow serialization of ``barrier`` operations. `#12 <https://github.com/iqm-finland/qiskit-on-iqm/pull/12>`_
+
 Version 2.0
 ===========
 
