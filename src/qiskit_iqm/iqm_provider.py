@@ -15,7 +15,7 @@
 """
 import json
 
-from iqm_client.iqm_client import IQMClient
+from iqm_client import IQMClient
 
 from qiskit_iqm.iqm_backend import IQMBackend
 

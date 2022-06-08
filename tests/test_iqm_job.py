@@ -18,7 +18,7 @@ import uuid
 
 import mockito
 import pytest
-from iqm_client.iqm_client import IQMClient, RunResult, RunStatus
+from iqm_client import IQMClient, RunResult, RunStatus
 from mockito import mock, when
 from qiskit.providers import JobStatus
 from qiskit.result import Counts

@@ -18,7 +18,7 @@ from numbers import Number
 
 import numpy as np
 import pytest
-from iqm_client.iqm_client import SingleQubitMapping
+from iqm_client import SingleQubitMapping
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.library import RGate

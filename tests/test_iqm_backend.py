@@ -17,7 +17,7 @@
 import uuid
 
 import pytest
-from iqm_client.iqm_client import IQMClient
+from iqm_client import IQMClient
 from mockito import mock, when
 from qiskit import QuantumCircuit
 

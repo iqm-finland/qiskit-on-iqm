@@ -20,7 +20,7 @@ from collections import Counter
 from datetime import date
 
 import numpy as np
-from iqm_client.iqm_client import RunResult, RunStatus
+from iqm_client import RunResult, RunStatus
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
 

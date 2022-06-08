@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import Union
 
-from iqm_client.iqm_client import IQMClient
+from iqm_client import IQMClient
 from qiskit import QuantumCircuit
 from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import Target
