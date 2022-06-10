@@ -20,14 +20,8 @@ from qiskit_iqm import IQMBackend, IQMProvider
 def test_get_backend(tmp_path):
     settings_file = tmp_path / 'a_file'
     settings_file.write_text('{}')
-    provider = IQMProvider('http://some_url', str(settings_file))
+    url = 'http://some_url'
+    provider = IQMProvider(url)
     backend = provider.get_backend()
     assert isinstance(backend, IQMBackend)
-    assert backend.client._settings is not None
-
-
-def test_provider_with_default_settings():
-    provider = IQMProvider('http://some_url')
-    backend = provider.get_backend()
-    assert isinstance(backend, IQMBackend)
-    assert backend.client._settings is None
+    assert backend.client._base_url == url

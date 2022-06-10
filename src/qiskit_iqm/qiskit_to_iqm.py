@@ -19,7 +19,7 @@ import re
 from dataclasses import dataclass
 
 import numpy as np
-from iqm_client.iqm_client import Circuit, Instruction, SingleQubitMapping
+from iqm_client import Circuit, Instruction, SingleQubitMapping
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
 from qiskit.circuit import Clbit, Qubit
 

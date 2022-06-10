@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 3.0
+===========
+
+* Move ``settings_path`` from ``IQMProvider`` to ``IQMBackend.run``. `#17 <https://github.com/iqm-finland/qiskit-on-iqm/pull/17>`_
+
 Version 2.3
 ===========
 
