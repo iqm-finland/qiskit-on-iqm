@@ -53,7 +53,7 @@ def test_run(backend):
     circuit_ser = serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
-    when(backend.client).submit_circuit(circuit_ser, [], shots=shots, settings=None).thenReturn(some_id)
+    when(backend.client).submit_circuit(circuit_ser, [], settings=None, shots=shots).thenReturn(some_id)
 
     job = backend.run(circuit, qubit_mapping={}, shots=shots)
     assert isinstance(job, IQMJob)
@@ -77,6 +77,6 @@ def test_run_with_non_default_settings(backend):
     shots = 10
     settings_path = os.path.join(os.path.dirname(__file__), "resources", "test_settings.json")
     expected_settings = {"setting1": 5}
-    when(backend.client).submit_circuit(circuit_ser, [], shots=shots, settings=expected_settings).thenReturn(some_id)
+    when(backend.client).submit_circuit(circuit_ser, [], settings=expected_settings, shots=shots).thenReturn(some_id)
 
     backend.run(circuit, qubit_mapping={}, shots=shots, settings_path=settings_path)

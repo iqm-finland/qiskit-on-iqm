@@ -65,7 +65,7 @@ class IQMBackend(BackendV2):
         circuit_serialized = serialize_circuit(circuit)
         mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
 
-        uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots, settings=settings)
+        uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, settings=settings, shots=shots)
         return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:
