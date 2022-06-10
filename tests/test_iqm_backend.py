@@ -14,6 +14,7 @@
 
 """Testing IQM backend.
 """
+import os
 import uuid
 
 import pytest
@@ -52,7 +53,7 @@ def test_run(backend):
     circuit_ser = serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
-    when(backend.client).submit_circuit(circuit_ser, [], shots=shots).thenReturn(some_id)
+    when(backend.client).submit_circuit(circuit_ser, [], shots=shots, settings=None).thenReturn(some_id)
 
     job = backend.run(circuit, qubit_mapping={}, shots=shots)
     assert isinstance(job, IQMJob)
@@ -66,3 +67,16 @@ def test_run(backend):
     # Should raise exception if more than one circuit is present in the list
     with pytest.raises(ValueError):
         backend.run([circuit, circuit])
+
+
+def test_run_with_non_default_settings(backend):
+    circuit = QuantumCircuit(1, 1)
+    circuit.measure(0, 0)
+    circuit_ser = serialize_circuit(circuit)
+    some_id = uuid.uuid4()
+    shots = 10
+    settings_path = os.path.join(os.path.dirname(__file__), "resources", "test_settings.json")
+    expected_settings = {"setting1": 5}
+    when(backend.client).submit_circuit(circuit_ser, [], shots=shots, settings=expected_settings).thenReturn(some_id)
+
+    backend.run(circuit, qubit_mapping={}, shots=shots, settings_path=settings_path)

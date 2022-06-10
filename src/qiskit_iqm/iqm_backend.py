@@ -15,6 +15,7 @@
 """
 from __future__ import annotations
 
+import json
 from typing import Union
 
 from iqm_client import IQMClient
@@ -49,18 +50,22 @@ class IQMBackend(BackendV2):
     def max_circuits(self) -> int:
         return 1
 
-    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], settings_path=None, **options) -> IQMJob:
         if isinstance(run_input, list) and len(run_input) > 1:
             raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
         circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
 
+        settings = None
+        if settings_path:
+            with open(settings_path, 'r', encoding='utf-8') as f:
+                settings = json.loads(f.read())
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
 
         circuit_serialized = serialize_circuit(circuit)
         mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
 
-        uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots)
+        uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots, settings=settings)
         return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:
