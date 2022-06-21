@@ -14,6 +14,7 @@
 """Qiskit Backend Provider for IQM backends.
 """
 import json
+from typing import Optional
 
 from iqm_client.iqm_client import IQMClient
 
@@ -39,7 +40,7 @@ class IQMProvider:
     def __init__(
             self,
             url: str,
-            settings_path: str = None,
+            settings_path: Optional[str] = None,
             **user_auth_args  # contains keyword args auth_server_url, username, password
     ):
         self.url = url

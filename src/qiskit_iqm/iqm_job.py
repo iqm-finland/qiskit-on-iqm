@@ -43,6 +43,8 @@ class IQMJob(JobV1):
     def _format_iqm_result(self, iqm_result: RunResult) -> list[str]:
         """Convert the measurement results from a circuit run into the Qiskit format.
         """
+        if iqm_result.measurements is None:
+            raise ValueError('Cannot format IQM result without measurements.')
         # if not available in the metadata, use the number of shots in an arbitrary measurement
         shots = self.metadata.get('shots', len(next(iter(iqm_result.measurements.values()))))
         shape = (shots, 1)  # only one qubit is measured per measurement op

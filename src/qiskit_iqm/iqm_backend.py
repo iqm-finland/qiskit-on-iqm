@@ -50,6 +50,8 @@ class IQMBackend(BackendV2):
         return 1
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
+        if self.client is None:
+            raise RuntimeError('Session to IQM client has been closed.')
         if isinstance(run_input, list) and len(run_input) > 1:
             raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
         circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
