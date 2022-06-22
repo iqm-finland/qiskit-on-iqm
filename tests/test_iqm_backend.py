@@ -82,16 +82,29 @@ def test_run_circuit_with_qubit_mapping(backend):
     assert job.job_id() == str(some_id)
 
 def test_run_batch_of_circuits(backend):
-    qc = QuantumCircuit(1)
+    qc = QuantumCircuit(2)
     theta = Parameter('theta')
     theta_range = np.linspace(0, 2*np.pi, 3)
     shots = 10
     some_id = uuid.uuid4()
+    qc.cz(0,1)
     qc.r(theta, 0, 0)
+    qc.cz(0,1)
     circuits = [qc.bind_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
-    when(backend.client).submit_circuits(circuits_serialized, [], shots=shots).thenReturn(some_id)
+    when(backend.client).submit_circuits(
+        circuits_serialized,
+        [
+            SingleQubitMapping(logical_name='qubit_0', physical_name='QB1'),
+            SingleQubitMapping(logical_name='qubit_1', physical_name='QB2')
+        ],
+        shots=shots
+    ).thenReturn(some_id)
 
-    job = backend.run(circuits, qubit_mapping={}, shots=shots)
+    job = backend.run(
+        circuits,
+        qubit_mapping={qc.qubits[0]: 'QB1', qc.qubits[1]: 'QB2'},
+        shots=shots
+    )
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
