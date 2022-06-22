@@ -123,5 +123,30 @@ If the IQM server you are connecting to requires authentication, you will also h
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
 :class:`.IQMProvider`.
 
+Batch execution of circuits is currently still an experimental feature and meant to use with parameterized circuits 
+only. A parameterized circuit can be constructed as follows:
+
+.. code-block:: python
+        import numpy as np
+        from qiskit.circuit import Parameter
+
+        qc = QuantumCircuit(2,2)
+        theta = Parameter('theta')
+        theta_range = np.linspace(0, 2*np.pi, 3)
+
+        qc.h(0)
+        qc.cx(0,1)
+        qc.rz(theta, range(2))
+        qc.cx(0,1)
+        qc.h(0)
+        qc.measure(0,0)
+
+        qc_decomposed = transpile(qc, basis_gates=['r', 'cz'])
+
+        circuits = [qc_decomposed.bind_parameters({theta: n})
+                        for n in theta_range]
+
+Make sure to transpile the parameterized circuit before binding the values to ensure a consistent qubit mapping for
+all circuits.
 
 .. include:: ../CONTRIBUTING.rst

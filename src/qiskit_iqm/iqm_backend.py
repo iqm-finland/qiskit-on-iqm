@@ -52,17 +52,25 @@ class IQMBackend(BackendV2):
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
-        if isinstance(run_input, list) and len(run_input) > 1:
-            raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
-        circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
+
+        circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
 
-        circuit_serialized = serialize_circuit(circuit)
-        mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
+        circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
+        mappings_serialized = [
+            serialize_qubit_mapping(qubit_mapping, circuit)
+            for circuit in circuits
+        ]
+        if (
+            all(mapping == mappings_serialized[0] for mapping in mappings_serialized)
+            and not mappings_serialized
+        ):
+            raise ValueError("""All circuits must use the same qubit mapping. This error might have
+            occurred by providing circuits that were not generated from a parameterized circuit.""")
 
-        uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots)
+        uuid = self.client.submit_circuits(circuits_serialized, mappings_serialized[0], shots=shots)
         return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:

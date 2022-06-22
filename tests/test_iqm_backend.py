@@ -17,9 +17,11 @@
 import uuid
 
 import pytest
-from iqm_client.iqm_client import IQMClient
+from iqm_client.iqm_client import IQMClient, SingleQubitMapping
 from mockito import mock, when
+import numpy as np
 from qiskit import QuantumCircuit
+from qiskit.circuit import Parameter
 
 from qiskit_iqm import IQMBackend, IQMJob
 from qiskit_iqm.qiskit_to_iqm import serialize_circuit
@@ -37,22 +39,22 @@ def test_default_options(backend):
 
 
 def test_retrieve_job(backend):
-    job = backend.retrieve_job("a job id")
+    job = backend.retrieve_job('a job id')
     assert job.backend() == backend
-    assert job.job_id() == "a job id"
+    assert job.job_id() == 'a job id'
 
 
 def test_max_circuits(backend):
     assert backend.max_circuits == 1
 
 
-def test_run(backend):
+def test_run_single_circuit(backend):
     circuit = QuantumCircuit(1, 1)
     circuit.measure(0, 0)
     circuit_ser = serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
-    when(backend.client).submit_circuit(circuit_ser, [], shots=shots).thenReturn(some_id)
+    when(backend.client).submit_circuits([circuit_ser], [], shots=shots).thenReturn(some_id)
 
     job = backend.run(circuit, qubit_mapping={}, shots=shots)
     assert isinstance(job, IQMJob)
@@ -63,6 +65,33 @@ def test_run(backend):
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
 
-    # Should raise exception if more than one circuit is present in the list
-    with pytest.raises(ValueError):
-        backend.run([circuit, circuit])
+def test_run_circuit_with_qubit_mapping(backend):
+    circuit = QuantumCircuit(1, 1)
+    circuit.measure(0, 0)
+    circuit_ser = serialize_circuit(circuit)
+    some_id = uuid.uuid4()
+    shots = 10
+    when(backend.client).submit_circuits(
+        [circuit_ser],
+        [SingleQubitMapping(logical_name='qubit_0', physical_name='QB1')],
+        shots=shots
+    ).thenReturn(some_id)
+
+    job = backend.run(circuit, qubit_mapping={circuit.qubits[0]: 'QB1'}, shots=shots)
+    assert isinstance(job, IQMJob)
+    assert job.job_id() == str(some_id)
+
+def test_run_batch_of_circuits(backend):
+    qc = QuantumCircuit(1)
+    theta = Parameter('theta')
+    theta_range = np.linspace(0, 2*np.pi, 3)
+    shots = 10
+    some_id = uuid.uuid4()
+    qc.r(theta, 0, 0)
+    circuits = [qc.bind_parameters({theta: t}) for t in theta_range]
+    circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
+    when(backend.client).submit_circuits(circuits_serialized, [], shots=shots).thenReturn(some_id)
+
+    job = backend.run(circuits, qubit_mapping={}, shots=shots)
+    assert isinstance(job, IQMJob)
+    assert job.job_id() == str(some_id)
