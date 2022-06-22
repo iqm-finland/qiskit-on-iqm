@@ -62,7 +62,7 @@ def test_cancel_raises(job):
 
 
 def test_status_for_ready_result(job):
-    job._result = ['11', '10', '10']
+    job._result = [['11', '10', '10']]
     assert job.status() == JobStatus.DONE
     result = job.result()
     assert isinstance(result, QiskitResult)
@@ -87,7 +87,7 @@ def test_status_fail(job):
 
 
 def test_result(job, iqm_result_two_registers):
-    client_result = RunResult(status=RunStatus.READY, measurements=iqm_result_two_registers)
+    client_result = RunResult(status=RunStatus.READY, measurements=[iqm_result_two_registers])
     when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
 
     result = job.result()
@@ -102,3 +102,14 @@ def test_result(job, iqm_result_two_registers):
     assert isinstance(result, QiskitResult)
     assert job.status() == JobStatus.DONE
     mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))
+
+def test_result_multiple_circuits(job, iqm_result_two_registers):
+    client_result = RunResult(status=RunStatus.READY, measurements=[iqm_result_two_registers, iqm_result_two_registers])
+    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+
+    result = job.result()
+
+    assert isinstance(result, QiskitResult)
+    for circuit_idx in range(2):
+        assert result.get_memory(circuit_idx) == ['0100 11', '0100 10', '0100 01', '0100 10']
+        assert result.get_counts(circuit_idx) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})

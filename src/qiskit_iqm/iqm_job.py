@@ -20,7 +20,7 @@ from collections import Counter
 from datetime import date
 
 import numpy as np
-from iqm_client.iqm_client import RunResult, RunStatus
+from iqm_client.iqm_client import CircuitMeasurementResults, RunResult, RunStatus
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
 
@@ -40,33 +40,53 @@ class IQMJob(JobV1):
         self._result = None
         self._client = backend.client
 
-    def _format_iqm_result(self, iqm_result: RunResult) -> list[str]:
+    def _format_iqm_result(self, iqm_result: RunResult) -> list[list[str]]:
         """Convert the measurement results from a circuit run into the Qiskit format.
         """
         if iqm_result.measurements is None:
-            raise ValueError('Cannot format IQM result without measurements.')
+            raise ValueError(
+                f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}'
+            )
+
         # if not available in the metadata, use the number of shots in an arbitrary measurement
-        shots = self.metadata.get('shots', len(next(iter(iqm_result.measurements.values()))))
+        shots = self.metadata.get('shots', len(next(iter(iqm_result.measurements[0].values()))))
         shape = (shots, 1)  # only one qubit is measured per measurement op
 
-        measurements = {}
-        for k, v in iqm_result.measurements.items():
+        return [
+            self._format_measurement_results(measurements, shots, shape)
+            for measurements in iqm_result.measurements
+        ]
+
+    def _format_measurement_results(
+        self,
+        measurement_results: CircuitMeasurementResults,
+        shots: int,
+        shape: tuple[int,int]
+    ) -> list[str]:
+        formatted_results = {}
+        for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
 
             if res.shape != shape:
-                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected {shape}')
+                raise ValueError(
+                    f'Measurement result {mk} has the wrong shape {res.shape}, expected {shape}'
+                )
             res = res[:, 0]
 
             # group the measurements into cregs, fill in zeros for unused bits
-            creg = measurements.setdefault(mk.creg_idx, np.zeros((shots, mk.creg_len), dtype=int))
+            creg = formatted_results.setdefault(
+                mk.creg_idx,
+                np.zeros((shots, mk.creg_len), dtype=int)
+            )
             creg[:, mk.clbit_idx] = res
 
         # 1. Loop over the registers in the reverse order they were added to the circuit.
         # 2. Within each register the highest index is the most significant, so it goes to the leftmost position.
         return [
             ' '.join(
-                ''.join(map(str, res[s, ::-1])) for _, res in sorted(measurements.items(), reverse=True)
+                ''.join(map(str, res[s, ::-1]))
+                for _, res in sorted(formatted_results.items(), reverse=True)
             ) for s in range(shots)
         ]
 
@@ -78,8 +98,8 @@ class IQMJob(JobV1):
 
     def result(self) -> Result:
         if not self._result:
-            result = self._client.wait_for_results(uuid.UUID(self._job_id))
-            self._result = self._format_iqm_result(result)
+            results = self._client.wait_for_results(uuid.UUID(self._job_id))
+            self._result = self._format_iqm_result(results)
 
         result_dict = {
             'backend_name': None,
@@ -89,10 +109,14 @@ class IQMJob(JobV1):
             'success': True,
             'results': [
                 {
-                    'shots': len(self._result),
+                    'shots': len(measurement_results),
                     'success': True,
-                    'data': {'memory': self._result, 'counts': Counts(Counter(self._result))}
+                    'data': {
+                        'memory': measurement_results,
+                        'counts': Counts(Counter(measurement_results))
+                    }
                 }
+                for measurement_results in self._result
             ],
             'date': date.today()
         }
