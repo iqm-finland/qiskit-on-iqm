@@ -145,6 +145,12 @@ only. A parameterized circuit can be constructed as follows:
 
         circuits = [qc_decomposed.bind_parameters({theta: n})
                         for n in theta_range]
+        
+        qubit_mapping={qc_decomposed.qubits[0]: 'QB1', qc_decomposed.qubits[1]: 'QB2'}
+        
+        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
+
+        print(job.result().get_counts())
 
 Make sure to transpile the parameterized circuit before binding the values to ensure a consistent qubit mapping for
 all circuits.
