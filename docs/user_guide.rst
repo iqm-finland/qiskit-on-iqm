@@ -127,6 +127,7 @@ Batch execution of circuits is currently still an experimental feature and meant
 only. A parameterized circuit can be constructed as follows:
 
 .. code-block:: python
+        
         import numpy as np
         from qiskit.circuit import Parameter
 
