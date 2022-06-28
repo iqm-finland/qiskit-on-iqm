@@ -16,10 +16,10 @@
 """
 import uuid
 
+import numpy as np
 import pytest
 from iqm_client.iqm_client import IQMClient, SingleQubitMapping
 from mockito import mock, when
-import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 
