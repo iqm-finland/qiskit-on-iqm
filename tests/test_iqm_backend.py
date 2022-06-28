@@ -45,7 +45,7 @@ def test_retrieve_job(backend):
 
 
 def test_max_circuits(backend):
-    assert backend.max_circuits == 1
+    assert backend.max_circuits == None
 
 
 def test_run_single_circuit(backend):
@@ -108,3 +108,11 @@ def test_run_batch_of_circuits(backend):
     )
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
+
+def test_error_on_empty_circuit_list(backend):
+    with pytest.raises(ValueError, match='Empty list of circuits submitted for execution.'):
+        backend.run(
+            [],
+            qubit_mapping={},
+            shots=42
+        )

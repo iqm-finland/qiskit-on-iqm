@@ -40,8 +40,8 @@ class IQMJob(JobV1):
         self._result = None
         self._client = backend.client
 
-    def _format_iqm_result(self, iqm_result: RunResult) -> list[list[str]]:
-        """Convert the measurement results from a circuit run into the Qiskit format.
+    def _format_iqm_results(self, iqm_result: RunResult) -> list[list[str]]:
+        """Convert the measurement results from a circuit(s) run into the Qiskit format.
         """
         if iqm_result.measurements is None:
             raise ValueError(
@@ -99,7 +99,7 @@ class IQMJob(JobV1):
     def result(self) -> Result:
         if not self._result:
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
-            self._result = self._format_iqm_result(results)
+            self._result = self._format_iqm_results(results)
 
         result_dict = {
             'backend_name': None,

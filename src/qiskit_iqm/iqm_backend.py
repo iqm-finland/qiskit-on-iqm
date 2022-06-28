@@ -15,7 +15,7 @@
 """
 from __future__ import annotations
 
-from typing import Union
+from typing import Optional, Union
 
 from iqm_client.iqm_client import IQMClient
 from qiskit import QuantumCircuit
@@ -46,8 +46,8 @@ class IQMBackend(BackendV2):
         raise NotImplementedError
 
     @property
-    def max_circuits(self) -> int:
-        return 1
+    def max_circuits(self) -> Optional[int]:
+        return None
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
         if self.client is None:
@@ -55,6 +55,8 @@ class IQMBackend(BackendV2):
 
         circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
+        if len(circuits) == 0:
+            raise ValueError('Empty list of circuits submitted for execution.')
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
 
@@ -64,8 +66,7 @@ class IQMBackend(BackendV2):
             for circuit in circuits
         ]
         if (
-            all(mapping == mappings_serialized[0] for mapping in mappings_serialized)
-            and not mappings_serialized
+            any(mapping != mappings_serialized[0] for mapping in mappings_serialized)
         ):
             raise ValueError("""All circuits must use the same qubit mapping. This error might have
             occurred by providing circuits that were not generated from a parameterized circuit.""")
