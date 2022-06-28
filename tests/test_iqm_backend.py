@@ -45,7 +45,7 @@ def test_retrieve_job(backend):
 
 
 def test_max_circuits(backend):
-    assert backend.max_circuits == None
+    assert backend.max_circuits is None
 
 
 def test_run_single_circuit(backend):
