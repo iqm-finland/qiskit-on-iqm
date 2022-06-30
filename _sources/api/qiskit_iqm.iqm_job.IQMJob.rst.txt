@@ -23,7 +23,8 @@ qiskit\_iqm.iqm\_job.IQMJob
 
    .. autosummary::
    
-      ~IQMJob._format_iqm_result
+      ~IQMJob._format_iqm_results
+      ~IQMJob._format_measurement_results
       ~IQMJob.cancel
       ~IQMJob.result
       ~IQMJob.status
