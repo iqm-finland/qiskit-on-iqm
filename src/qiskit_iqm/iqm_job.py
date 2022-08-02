@@ -21,7 +21,7 @@ from datetime import date
 
 import numpy as np
 from iqm_client.iqm_client import (CircuitMeasurementResults, RunResult,
-                                   RunStatus)
+                                   Status)
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
 
@@ -41,7 +41,7 @@ class IQMJob(JobV1):
         self._result = None
         self._client = backend.client
 
-    def _format_iqm_results(self, iqm_result: RunResult) -> list[list[str]]:
+    def _format_iqm_results(self, iqm_result: RunResult) -> dict[str, list[str]]:
         """Convert the measurement results from a circuit(s) run into the Qiskit format.
         """
         if iqm_result.measurements is None:
@@ -49,22 +49,21 @@ class IQMJob(JobV1):
                 f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}'
             )
 
-        # if not available in the metadata, use the number of shots in an arbitrary measurement
-        shots = self.metadata.get('shots', len(next(iter(iqm_result.measurements[0].values()))))
+        shots = self.metadata.get('shots', iqm_result.metadata.shots)
         shape = (shots, 1)  # only one qubit is measured per measurement op
 
-        return [
-            self._format_measurement_results(measurements, shots, shape)
-            for measurements in iqm_result.measurements
-        ]
+        return {
+            circuit.name: self._format_measurement_results(measurements, shape)
+            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
+        }
 
     def _format_measurement_results(
         self,
         measurement_results: CircuitMeasurementResults,
-        shots: int,
         shape: tuple[int,int]
     ) -> list[str]:
         formatted_results = {}
+        shots = shape[0]
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
@@ -115,9 +114,12 @@ class IQMJob(JobV1):
                     'data': {
                         'memory': measurement_results,
                         'counts': Counts(Counter(measurement_results))
+                    },
+                    'header': {
+                        'name': name
                     }
                 }
-                for measurement_results in self._result
+                for name, measurement_results in self._result.items()
             ],
             'date': date.today()
         }
@@ -128,8 +130,8 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
-        if result.status == RunStatus.READY:
+        if result.status == Status.READY:
             return JobStatus.DONE
-        if result.status == RunStatus.FAILED:
+        if result.status == Status.FAILED:
             return JobStatus.ERROR
         return JobStatus.RUNNING
