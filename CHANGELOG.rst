@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 3.1
+===========
+
+* Use metadata returned from iqm-client for minor improvements. `#19 <https://github.com/iqm-finland/qiskit-on-iqm/pull/19>`_
+
 Version 3.0
 ===========
 
