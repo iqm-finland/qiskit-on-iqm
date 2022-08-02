@@ -70,7 +70,7 @@ def test_cancel_raises(job):
 
 
 def test_status_for_ready_result(job):
-    job._result = {'circuit_1': ['11', '10', '10']}
+    job._result = [('circuit_1', ['11', '10', '10'])]
     assert job.status() == JobStatus.DONE
     result = job.result()
     assert isinstance(result, QiskitResult)

@@ -41,7 +41,7 @@ class IQMJob(JobV1):
         self._result = None
         self._client = backend.client
 
-    def _format_iqm_results(self, iqm_result: RunResult) -> dict[str, list[str]]:
+    def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
         """Convert the measurement results from a circuit(s) run into the Qiskit format.
         """
         if iqm_result.measurements is None:
@@ -52,10 +52,10 @@ class IQMJob(JobV1):
         shots = self.metadata.get('shots', iqm_result.metadata.shots)
         shape = (shots, 1)  # only one qubit is measured per measurement op
 
-        return {
-            circuit.name: self._format_measurement_results(measurements, shape)
+        return [
+            (circuit.name, self._format_measurement_results(measurements, shape))
             for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
-        }
+        ]
 
     def _format_measurement_results(
         self,
@@ -119,7 +119,7 @@ class IQMJob(JobV1):
                         'name': name
                     }
                 }
-                for name, measurement_results in self._result.items()
+                for name, measurement_results in self._result
             ],
             'date': date.today()
         }
