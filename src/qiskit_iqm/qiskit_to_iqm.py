@@ -156,4 +156,4 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
         else:
             raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')
 
-    return Circuit(name='Serialized from Qiskit', instructions=instructions)
+    return Circuit(name=circuit.name, instructions=instructions)
