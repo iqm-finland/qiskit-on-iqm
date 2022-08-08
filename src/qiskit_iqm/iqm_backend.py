@@ -40,7 +40,7 @@ class IQMBackend(BackendV2):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None)
+        return Options(shots=1024, qubit_mapping=None, settings_path=None)
 
     @property
     def target(self) -> Target:
@@ -50,7 +50,7 @@ class IQMBackend(BackendV2):
     def max_circuits(self) -> Optional[int]:
         return None
 
-    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], settings_path=None, **options) -> IQMJob:
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
 
@@ -59,13 +59,14 @@ class IQMBackend(BackendV2):
         if len(circuits) == 0:
             raise ValueError('Empty list of circuits submitted for execution.')
 
+        qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
+        shots = options.get('shots', self.options.shots)
+        settings_path = options.get('settings_path', self.options.settings_path)
+
         settings = None
         if settings_path:
             with open(settings_path, 'r', encoding='utf-8') as f:
                 settings = json.loads(f.read())
-
-        qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
-        shots = options.get('shots', self.options.shots)
 
         circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
         mappings_serialized = [
