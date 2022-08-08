@@ -2,10 +2,20 @@
 Changelog
 =========
 
-Version 3.0
+Version 3.2
 ===========
 
 * Move ``settings_path`` from ``IQMProvider`` to ``IQMBackend.run``. `#17 <https://github.com/iqm-finland/qiskit-on-iqm/pull/17>`_
+
+Version 3.1
+===========
+
+* Use metadata returned from iqm-client for minor improvements. `#19 <https://github.com/iqm-finland/qiskit-on-iqm/pull/19>`_
+
+Version 3.0
+===========
+
+* Experimental enabling of batch circuit exection. `#18 <https://github.com/iqm-finland/qiskit-on-iqm/pull/18>`_
 
 Version 2.3
 ===========

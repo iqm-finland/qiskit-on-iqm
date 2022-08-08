@@ -13,6 +13,9 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
+import json
+from typing import Optional
+
 from iqm_client import IQMClient
 
 from qiskit_iqm.iqm_backend import IQMBackend

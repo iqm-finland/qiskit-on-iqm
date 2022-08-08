@@ -74,6 +74,8 @@ class MeasurementKey:
         """Create a MeasurementKey from its string representation.
         """
         match = re.match(r'^(.*)_(\d+)_(\d+)_(\d+)$', string)
+        if match is None:
+            raise ValueError('Invalid measurement key string representation.')
         return cls(match.group(1), int(match.group(2)), int(match.group(3)), int(match.group(4)))
 
     @classmethod
@@ -154,4 +156,4 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
         else:
             raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')
 
-    return Circuit(name='Serialized from Qiskit', instructions=instructions)
+    return Circuit(name=circuit.name, instructions=instructions)
