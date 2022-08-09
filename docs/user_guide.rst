@@ -126,8 +126,9 @@ If the IQM server you are connecting to requires authentication, you will also h
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
 :class:`.IQMProvider`.
 
-Batch execution of circuits is currently still an experimental feature and meant to use with parameterized circuits 
-only. A parameterized circuit can be constructed as follows:
+It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
+running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
+only. A parameterized circuit can be constructed and ran with various values of the parameter(s) as follows:
 
 .. code-block:: python
         
@@ -152,7 +153,7 @@ only. A parameterized circuit can be constructed as follows:
         
         qubit_mapping={qc_decomposed.qubits[0]: 'QB1', qc_decomposed.qubits[1]: 'QB2'}
         
-        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
+        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
         print(job.result().get_counts())
 
