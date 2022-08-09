@@ -110,11 +110,14 @@ Now that we have everything ready, we can run the circuit against the available 
 
 .. code-block:: python
 
+    import json
     from qiskit_iqm import IQMProvider
 
-    provider = IQMProvider(iqm_server_url, iqm_settings_path)
+    provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
-    job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
+    with open(iqm_settings_path, 'r', encoding='utf-8') as f:
+        settings = json.loads(f.read())
+    job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
     print(job.result().get_counts())
 
@@ -123,8 +126,9 @@ If the IQM server you are connecting to requires authentication, you will also h
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
 :class:`.IQMProvider`.
 
-Batch execution of circuits is currently still an experimental feature and meant to use with parameterized circuits 
-only. A parameterized circuit can be constructed as follows:
+It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
+running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
+only. A parameterized circuit can be constructed and ran with various values of the parameter(s) as follows:
 
 .. code-block:: python
         
@@ -149,7 +153,7 @@ only. A parameterized circuit can be constructed as follows:
         
         qubit_mapping={qc_decomposed.qubits[0]: 'QB1', qc_decomposed.qubits[1]: 'QB2'}
         
-        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
+        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
         print(job.result().get_counts())
 

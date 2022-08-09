@@ -17,13 +17,14 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from iqm_client.iqm_client import IQMClient
+from iqm_client import IQMClient
 from qiskit import QuantumCircuit
 from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import serialize_circuit, serialize_qubit_mapping
+from qiskit_iqm.qiskit_to_iqm import (qubit_mapping_with_names,
+                                      serialize_circuit)
 
 
 class IQMBackend(BackendV2):
@@ -39,7 +40,7 @@ class IQMBackend(BackendV2):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None)
+        return Options(shots=1024, qubit_mapping=None, settings=None)
 
     @property
     def target(self) -> Target:
@@ -57,21 +58,28 @@ class IQMBackend(BackendV2):
 
         if len(circuits) == 0:
             raise ValueError('Empty list of circuits submitted for execution.')
+
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
+        settings = options.get('settings', self.options.settings)
+
+        if qubit_mapping is not None:
+            # process qubit mapping for each circuit separately
+            mappings = [
+                qubit_mapping_with_names(qubit_mapping, circuit)
+                for circuit in circuits
+            ]
+            # Check that all resulted into the same mapping, otherwise raise error
+            if any(mapping != mappings[0] for mapping in mappings):
+                raise ValueError("""All circuits must use the same qubit mapping. This error might have
+                occurred by providing circuits that were not generated from a parameterized circuit.""")
+            qubit_mapping = mappings[0]
 
         circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
-        mappings_serialized = [
-            serialize_qubit_mapping(qubit_mapping, circuit)
-            for circuit in circuits
-        ]
-        if (
-            any(mapping != mappings_serialized[0] for mapping in mappings_serialized)
-        ):
-            raise ValueError("""All circuits must use the same qubit mapping. This error might have
-            occurred by providing circuits that were not generated from a parameterized circuit.""")
-
-        uuid = self.client.submit_circuits(circuits_serialized, mappings_serialized[0], shots=shots)
+        uuid = self.client.submit_circuits(circuits_serialized,
+                                           qubit_mapping=qubit_mapping,
+                                           settings=settings,
+                                           shots=shots)
         return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:

@@ -20,7 +20,7 @@ from collections import Counter
 from datetime import date
 
 import numpy as np
-from iqm_client.iqm_client import CircuitMeasurementResults, RunResult, Status
+from iqm_client import CircuitMeasurementResults, RunResult, Status
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
 
@@ -56,10 +56,10 @@ class IQMJob(JobV1):
             for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
         ]
 
+    @staticmethod
     def _format_measurement_results(
-        self,
         measurement_results: CircuitMeasurementResults,
-        shape: tuple[int,int]
+        shape: tuple[int, int]
     ) -> list[str]:
         formatted_results = {}
         shots = shape[0]

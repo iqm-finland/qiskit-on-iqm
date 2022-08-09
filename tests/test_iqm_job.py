@@ -18,7 +18,7 @@ import uuid
 
 import mockito
 import pytest
-from iqm_client.iqm_client import IQMClient, RunResult, RunStatus, Status
+from iqm_client import IQMClient, RunResult, RunStatus, Status
 from mockito import mock, when
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
@@ -58,6 +58,7 @@ def iqm_metadata():
         'shots': 4,
         'circuits': [{'name': 'circuit_1', 'instructions': []}]
     }
+
 
 def test_submit_raises(job):
     with pytest.raises(NotImplementedError, match='Instead, use IQMBackend.run to submit jobs.'):
@@ -110,6 +111,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert isinstance(result, QiskitResult)
     assert job.status() == JobStatus.DONE
     mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))
+
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
     iqm_metadata_multiple_circuits = {
