@@ -15,7 +15,6 @@
 """
 from __future__ import annotations
 
-import json
 from typing import Optional, Union
 
 from iqm_client import IQMClient
@@ -40,7 +39,7 @@ class IQMBackend(BackendV2):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None, settings_path=None)
+        return Options(shots=1024, qubit_mapping=None, settings=None)
 
     @property
     def target(self) -> Target:
@@ -61,12 +60,7 @@ class IQMBackend(BackendV2):
 
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
-        settings_path = options.get('settings_path', self.options.settings_path)
-
-        settings = None
-        if settings_path:
-            with open(settings_path, 'r', encoding='utf-8') as f:
-                settings = json.loads(f.read())
+        settings = options.get('settings', self.options.settings)
 
         if qubit_mapping is not None:
             # process qubit mapping for each circuit separately

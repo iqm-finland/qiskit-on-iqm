@@ -2,10 +2,10 @@
 Changelog
 =========
 
-Version 3.2
+Version 4.0
 ===========
 
-* Move ``settings_path`` from ``IQMProvider`` to ``IQMBackend.run``. `#17 <https://github.com/iqm-finland/qiskit-on-iqm/pull/17>`_
+* Remove ``settings_path`` from ``IQMProvider`` and ``settings`` option to ``IQMBackend.run``. `#17 <https://github.com/iqm-finland/qiskit-on-iqm/pull/17>`_
 
 Version 3.1
 ===========

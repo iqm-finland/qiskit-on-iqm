@@ -110,13 +110,16 @@ Now that we have everything ready, we can run the circuit against the available 
 
 .. code-block:: python
 
+    import json
     from qiskit_iqm import IQMProvider
 
-    provider = IQMProvider(iqm_server_url, iqm_settings_path)
+    provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
-    job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
+    with open(iqm_settings_path, 'r', encoding='utf-8') as f:
+        settings = json.loads(f.read())
+        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
-    print(job.result().get_counts())
+        print(job.result().get_counts())
 
 Note that the code snippet above assumes that you have set the variables ``iqm_server_url`` and ``iqm_settings_path``.
 If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,

@@ -14,7 +14,6 @@
 
 """Testing IQM backend.
 """
-import os
 import uuid
 
 import numpy as np
@@ -76,15 +75,14 @@ def test_run_with_non_default_settings(backend):
     circuit_ser = serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
-    settings_path = os.path.join(os.path.dirname(__file__), "resources", "test_settings.json")
-    expected_settings = {"setting1": 5}
+    settings = {"setting1": 5}
     when(backend.client).submit_circuits([circuit_ser],
                                         qubit_mapping=None,
-                                        settings=expected_settings,
+                                        settings=settings,
                                         shots=shots
                                         ).thenReturn(some_id)
 
-    backend.run([circuit], qubit_mapping=None, shots=shots, settings_path=settings_path)
+    backend.run([circuit], qubit_mapping=None, shots=shots, settings=settings)
 
 
 def test_run_circuit_with_qubit_mapping(backend):
