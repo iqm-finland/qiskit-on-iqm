@@ -119,7 +119,7 @@ Now that we have everything ready, we can run the circuit against the available 
         settings = json.loads(f.read())
     job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
-        print(job.result().get_counts())
+    print(job.result().get_counts())
 
 Note that the code snippet above assumes that you have set the variables ``iqm_server_url`` and ``iqm_settings_path``.
 If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
