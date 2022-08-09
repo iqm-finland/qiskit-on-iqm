@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 3.1 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 4.0 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -174,6 +174,11 @@
       </label>
       <ul>
        <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names.html">
+         qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.qubit_to_name.html">
          qiskit_iqm.qiskit_to_iqm.qubit_to_name
         </a>
@@ -181,11 +186,6 @@
        <li class="toctree-l4">
         <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.serialize_circuit.html">
          qiskit_iqm.qiskit_to_iqm.serialize_circuit
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.serialize_qubit_mapping.html">
-         qiskit_iqm.qiskit_to_iqm.serialize_qubit_mapping
         </a>
        </li>
        <li class="toctree-l4">
@@ -505,11 +505,14 @@ mapping you can still use Qiskit tools to transpile the circuit against a certai
 <code class="docutils literal notranslate"><span class="pre">qubit_mapping</span></code> from the result.</p>
 </div>
 <p>Now that we have everything ready, we can run the circuit against the available IQM backend:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
-<span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">,</span> <span class="n">iqm_settings_path</span><span class="p">)</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">qubit_mapping</span><span class="o">=</span><span class="n">qubit_mapping</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">iqm_settings_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">qubit_mapping</span><span class="o">=</span><span class="n">qubit_mapping</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
@@ -518,8 +521,9 @@ mapping you can still use Qiskit tools to transpile the circuit against a certai
 If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
 <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>.</p>
-<p>Batch execution of circuits is currently still an experimental feature and meant to use with parameterized circuits
-only. A parameterized circuit can be constructed as follows:</p>
+<p>It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
+running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
+only. A parameterized circuit can be constructed and ran with various values of the parameter(s) as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
 
@@ -541,7 +545,7 @@ only. A parameterized circuit can be constructed as follows:</p>
 
 <span class="n">qubit_mapping</span><span class="o">=</span><span class="p">{</span><span class="n">qc_decomposed</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="s1">&#39;QB1&#39;</span><span class="p">,</span> <span class="n">qc_decomposed</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;QB2&#39;</span><span class="p">}</span>
 
-<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">qubit_mapping</span><span class="o">=</span><span class="n">qubit_mapping</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">qubit_mapping</span><span class="o">=</span><span class="n">qubit_mapping</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>

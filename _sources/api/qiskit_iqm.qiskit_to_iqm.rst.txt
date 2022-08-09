@@ -14,9 +14,9 @@ qiskit\_iqm.qiskit\_to\_iqm
    .. autosummary::
       :toctree:
    
+      qubit_mapping_with_names
       qubit_to_name
       serialize_circuit
-      serialize_qubit_mapping
    
    
 
