@@ -69,9 +69,7 @@ class IQMBackend(BackendV2):
                 for circuit in circuits
             ]
             # Check that all resulted into the same mapping, otherwise raise error
-            if (
-                any(mapping != mappings[0] for mapping in mappings)
-            ):
+            if any(mapping != mappings[0] for mapping in mappings):
                 raise ValueError("""All circuits must use the same qubit mapping. This error might have
                 occurred by providing circuits that were not generated from a parameterized circuit.""")
             qubit_mapping = mappings[0]
