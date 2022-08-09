@@ -23,8 +23,8 @@ from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.library import RGate
 
 from qiskit_iqm.qiskit_to_iqm import (InstructionNotSupportedError,
-                                      MeasurementKey, qubit_mapping_with_names, qubit_to_name,
-                                      serialize_circuit)
+                                      MeasurementKey, qubit_mapping_with_names,
+                                      qubit_to_name, serialize_circuit)
 
 
 @pytest.fixture()

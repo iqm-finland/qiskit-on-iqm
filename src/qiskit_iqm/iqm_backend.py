@@ -23,7 +23,8 @@ from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import qubit_mapping_with_names, serialize_circuit
+from qiskit_iqm.qiskit_to_iqm import (qubit_mapping_with_names,
+                                      serialize_circuit)
 
 
 class IQMBackend(BackendV2):
