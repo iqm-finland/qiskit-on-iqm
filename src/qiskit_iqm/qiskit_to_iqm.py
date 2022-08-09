@@ -113,9 +113,7 @@ def qubit_mapping_with_names(qubit_mapping: dict[Qubit, str], circuit: QiskitQua
     Returns:
         dict mapping logical qubit names to physical names
     """
-    return {
-        qubit_to_name(k, circuit): v for k, v in qubit_mapping.items()
-    }
+    return {qubit_to_name(k, circuit): v for k, v in qubit_mapping.items()}
 
 
 def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
