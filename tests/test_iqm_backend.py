@@ -19,7 +19,7 @@ import uuid
 
 import numpy as np
 import pytest
-from iqm_client import IQMClient, SingleQubitMapping
+from iqm_client import IQMClient
 from mockito import mock, when
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
@@ -56,16 +56,16 @@ def test_run_single_circuit(backend):
     some_id = uuid.uuid4()
     shots = 10
     when(backend.client).submit_circuits([circuit_ser],
-                                         qubit_mapping=[],
+                                         qubit_mapping=None,
                                          settings=None,
                                          shots=shots
                                          ).thenReturn(some_id)
-    job = backend.run(circuit, qubit_mapping={}, shots=shots)
+    job = backend.run(circuit, qubit_mapping=None, shots=shots)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
 
     # Should also work if the circuit is passed inside a list
-    job = backend.run([circuit], qubit_mapping={}, shots=shots)
+    job = backend.run([circuit], qubit_mapping=None, shots=shots)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
 
@@ -79,12 +79,12 @@ def test_run_with_non_default_settings(backend):
     settings_path = os.path.join(os.path.dirname(__file__), "resources", "test_settings.json")
     expected_settings = {"setting1": 5}
     when(backend.client).submit_circuits([circuit_ser],
-                                        qubit_mapping=[],
+                                        qubit_mapping=None,
                                         settings=expected_settings,
                                         shots=shots
                                         ).thenReturn(some_id)
 
-    backend.run([circuit], qubit_mapping={}, shots=shots, settings_path=settings_path)
+    backend.run([circuit], qubit_mapping=None, shots=shots, settings_path=settings_path)
 
 
 def test_run_circuit_with_qubit_mapping(backend):
@@ -95,7 +95,7 @@ def test_run_circuit_with_qubit_mapping(backend):
     shots = 10
     when(backend.client).submit_circuits(
         [circuit_ser],
-        qubit_mapping=[SingleQubitMapping(logical_name='qubit_0', physical_name='QB1')],
+        qubit_mapping={'qubit_0': 'QB1'},
         settings=None,
         shots=shots
     ).thenReturn(some_id)
@@ -118,10 +118,7 @@ def test_run_batch_of_circuits(backend):
     circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
     when(backend.client).submit_circuits(
         circuits_serialized,
-        qubit_mapping=[
-            SingleQubitMapping(logical_name='qubit_0', physical_name='QB1'),
-            SingleQubitMapping(logical_name='qubit_1', physical_name='QB2')
-        ],
+        qubit_mapping={'qubit_0': 'QB1', 'qubit_1': 'QB2'},
         settings=None,
         shots=shots
     ).thenReturn(some_id)

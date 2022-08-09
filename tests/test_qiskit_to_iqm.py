@@ -18,15 +18,13 @@ from numbers import Number
 
 import numpy as np
 import pytest
-from iqm_client import SingleQubitMapping
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.library import RGate
 
 from qiskit_iqm.qiskit_to_iqm import (InstructionNotSupportedError,
-                                      MeasurementKey, qubit_to_name,
-                                      serialize_circuit,
-                                      serialize_qubit_mapping)
+                                      MeasurementKey, qubit_mapping_with_names, qubit_to_name,
+                                      serialize_circuit)
 
 
 @pytest.fixture()
@@ -71,14 +69,14 @@ def test_qubit_to_name_uniqueness_for_multiple_registers():
     assert len(qubit_names) == len(circuit.qubits)  # assert that generated qubit names are unique
 
 
-def test_serialize_qubit_mapping(circuit):
+def test_qubit_mapping_with_names(circuit):
     mapping = dict(zip(circuit.qubits, ['Alice', 'Bob', 'Charlie']))
-    mapping_serialized = serialize_qubit_mapping(mapping, circuit)
-    assert mapping_serialized == [
-        SingleQubitMapping(logical_name='qubit_0', physical_name='Alice'),
-        SingleQubitMapping(logical_name='qubit_1', physical_name='Bob'),
-        SingleQubitMapping(logical_name='qubit_2', physical_name='Charlie')
-    ]
+    mapping_serialized = qubit_mapping_with_names(mapping, circuit)
+    assert mapping_serialized == {
+        'qubit_0': 'Alice',
+        'qubit_1': 'Bob',
+        'qubit_2': 'Charlie'
+    }
 
 
 def test_serialize_circuit_raises_error_for_unsupported_instruction(circuit):

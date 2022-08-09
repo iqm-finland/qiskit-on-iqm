@@ -24,7 +24,7 @@ from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import serialize_circuit, serialize_qubit_mapping
+from qiskit_iqm.qiskit_to_iqm import qubit_mapping_with_names, serialize_circuit
 
 
 class IQMBackend(BackendV2):
@@ -68,19 +68,23 @@ class IQMBackend(BackendV2):
             with open(settings_path, 'r', encoding='utf-8') as f:
                 settings = json.loads(f.read())
 
-        circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
-        mappings_serialized = [
-            serialize_qubit_mapping(qubit_mapping, circuit)
-            for circuit in circuits
-        ]
-        if (
-            any(mapping != mappings_serialized[0] for mapping in mappings_serialized)
-        ):
-            raise ValueError("""All circuits must use the same qubit mapping. This error might have
-            occurred by providing circuits that were not generated from a parameterized circuit.""")
+        if qubit_mapping is not None:
+            # process qubit mapping for each circuit separately
+            mappings = [
+                qubit_mapping_with_names(qubit_mapping, circuit)
+                for circuit in circuits
+            ]
+            # Check that all resulted into the same mapping, otherwise raise error
+            if (
+                any(mapping != mappings[0] for mapping in mappings)
+            ):
+                raise ValueError("""All circuits must use the same qubit mapping. This error might have
+                occurred by providing circuits that were not generated from a parameterized circuit.""")
+            qubit_mapping = mappings[0]
 
+        circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
         uuid = self.client.submit_circuits(circuits_serialized,
-                                           qubit_mapping=mappings_serialized[0],
+                                           qubit_mapping=qubit_mapping,
                                            settings=settings,
                                            shots=shots)
         return IQMJob(self, str(uuid), shots=shots)

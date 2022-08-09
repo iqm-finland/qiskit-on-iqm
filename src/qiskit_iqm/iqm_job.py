@@ -56,10 +56,10 @@ class IQMJob(JobV1):
             for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
         ]
 
+    @staticmethod
     def _format_measurement_results(
-        self,
         measurement_results: CircuitMeasurementResults,
-        shape: tuple[int,int]
+        shape: tuple[int, int]
     ) -> list[str]:
         formatted_results = {}
         shots = shape[0]
