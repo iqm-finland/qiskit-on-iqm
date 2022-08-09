@@ -117,7 +117,7 @@ Now that we have everything ready, we can run the circuit against the available 
     backend = provider.get_backend()
     with open(iqm_settings_path, 'r', encoding='utf-8') as f:
         settings = json.loads(f.read())
-        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
+    job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
         print(job.result().get_counts())
 
