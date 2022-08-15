@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 4.1
+===========
+
+* Add optional ``calibration_set_id`` parameter to ``IQMBackend.run``. `#20 <https://github.com/iqm-finland/qiskit-on-iqm/pull/20>`_
+
 Version 4.0
 ===========
 
