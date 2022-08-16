@@ -158,3 +158,11 @@ def test_error_on_empty_circuit_list(backend):
             qubit_mapping={},
             shots=42
         )
+
+
+def test_close_client(backend):
+    when(backend.client).close_auth_session().thenReturn(True)
+    try:
+        backend.close_client()
+    except Exception as exc:  # pylint: disable=broad-except
+        assert False, f'backend raised an exception {exc} on .close_client()'

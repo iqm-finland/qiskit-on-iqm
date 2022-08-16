@@ -92,5 +92,5 @@ class IQMBackend(BackendV2):
     def close_client(self):
         """Close IQMClient's session with the authentication server. Discard the client."""
         if self.client is not None:
-            self.client.close()
+            self.client.close_auth_session()
         self.client = None
