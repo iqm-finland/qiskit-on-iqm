@@ -84,7 +84,7 @@ def test_run_with_non_default_settings(backend):
                                         shots=shots
                                         ).thenReturn(some_id)
 
-    backend.run([circuit], qubit_mapping=None, shots=shots, settings=settings)
+    backend.run([circuit], qubit_mapping=None, settings=settings, shots=shots)
 
 
 def test_run_with_custom_calibration_set_id(backend):
@@ -101,7 +101,7 @@ def test_run_with_custom_calibration_set_id(backend):
                                         shots=shots
                                         ).thenReturn(some_id)
 
-    backend.run([circuit], qubit_mapping=None, shots=shots, settings=None, calibration_set_id=calibration_set_id)
+    backend.run([circuit], qubit_mapping=None, settings=None, calibration_set_id=calibration_set_id, shots=shots)
 
 
 def test_run_circuit_with_qubit_mapping(backend):
