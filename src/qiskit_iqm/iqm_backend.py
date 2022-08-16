@@ -40,7 +40,7 @@ class IQMBackend(BackendV2):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None, settings=None)
+        return Options(shots=1024, qubit_mapping=None, settings=None, calibration_set_id=None)
 
     @property
     def target(self) -> Target:
