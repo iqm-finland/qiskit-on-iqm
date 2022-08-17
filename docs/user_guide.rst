@@ -128,10 +128,9 @@ If you want to use a particular calibration set, provide a ``calibration_set_id`
 
 If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
-:class:`.IQMProvider`. Alternatively, you can use `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_, which
-retrieves access tokens and refreshes them periodically in the background; set the ``IQM_TOKENS_FILE`` environment
-variable to use those tokens. See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`_
-for details.
+:class:`.IQMProvider`. Alternatively, authorize with `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to
+retrieve and automatically refresh access tokens, then set the ``IQM_TOKENS_FILE`` environment variable to use those
+tokens. See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`_ for details.
 
 It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
 running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
