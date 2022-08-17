@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 4.1 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 4.2 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -518,9 +518,14 @@ mapping you can still use Qiskit tools to transpile the circuit against a certai
 </pre></div>
 </div>
 <p>Note that the code snippet above assumes that you have set the variables <code class="docutils literal notranslate"><span class="pre">iqm_server_url</span></code> and <code class="docutils literal notranslate"><span class="pre">iqm_settings_path</span></code>.
-If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
+If you want to use the latest calibration set, omit <code class="docutils literal notranslate"><span class="pre">settings</span></code> argument from the <code class="docutils literal notranslate"><span class="pre">backend.run</span></code> call.
+If you want to use a particular calibration set, provide a <code class="docutils literal notranslate"><span class="pre">calibration_set_id</span></code> integer argument. You cannot set both
+<code class="docutils literal notranslate"><span class="pre">settings</span></code> and <code class="docutils literal notranslate"><span class="pre">calibration_set_id</span></code> simultaneously, as IQM server rejects such requests.</p>
+<p>If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
-<a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>.</p>
+<a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>. Alternatively, authorize with <a class="reference external" href="https://github.com/iqm-finland/cortex-cli">Cortex CLI</a> to
+retrieve and automatically refresh access tokens, then set the <code class="docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable to use those
+tokens. See Cortex CLI’s <a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html">documentation</a> for details.</p>
 <p>It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
 running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
 only. A parameterized circuit can be constructed and ran with various values of the parameter(s) as follows:</p>
