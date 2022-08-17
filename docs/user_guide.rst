@@ -122,16 +122,22 @@ Now that we have everything ready, we can run the circuit against the available 
     print(job.result().get_counts())
 
 Note that the code snippet above assumes that you have set the variables ``iqm_server_url`` and ``iqm_settings_path``.
+If you want to use the latest calibration set, omit ``settings`` argument from the ``backend.run`` call.
+If you want to use a particular calibration set, provide a ``calibration_set_id`` integer argument. You cannot set both
+``settings`` and ``calibration_set_id`` simultaneously, as IQM server rejects such requests.
+
 If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
 IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
-:class:`.IQMProvider`.
+:class:`.IQMProvider`. Alternatively, authorize with `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to
+retrieve and automatically refresh access tokens, then set the ``IQM_TOKENS_FILE`` environment variable to use those
+tokens. See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`_ for details.
 
 It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
 running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
 only. A parameterized circuit can be constructed and ran with various values of the parameter(s) as follows:
 
 .. code-block:: python
-        
+
         import numpy as np
         from qiskit.circuit import Parameter
 
@@ -150,9 +156,9 @@ only. A parameterized circuit can be constructed and ran with various values of 
 
         circuits = [qc_decomposed.bind_parameters({theta: n})
                         for n in theta_range]
-        
+
         qubit_mapping={qc_decomposed.qubits[0]: 'QB1', qc_decomposed.qubits[1]: 'QB2'}
-        
+
         job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
 
         print(job.result().get_counts())

@@ -40,7 +40,7 @@ class IQMBackend(BackendV2):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None, settings=None)
+        return Options(shots=1024, qubit_mapping=None, settings=None, calibration_set_id=None)
 
     @property
     def target(self) -> Target:
@@ -62,6 +62,7 @@ class IQMBackend(BackendV2):
         qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
         settings = options.get('settings', self.options.settings)
+        calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
 
         if qubit_mapping is not None:
             # process qubit mapping for each circuit separately
@@ -79,6 +80,7 @@ class IQMBackend(BackendV2):
         uuid = self.client.submit_circuits(circuits_serialized,
                                            qubit_mapping=qubit_mapping,
                                            settings=settings,
+                                           calibration_set_id=calibration_set_id,
                                            shots=shots)
         return IQMJob(self, str(uuid), shots=shots)
 

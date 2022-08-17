@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 4.2
+===========
+
+* Add optional ``calibration_set_id`` parameter to ``IQMBackend.run``. `#20 <https://github.com/iqm-finland/qiskit-on-iqm/pull/20>`_
+* Update documentation regarding the use of Cortex CLI. `#20 <https://github.com/iqm-finland/qiskit-on-iqm/pull/20>`_
+
 Version 4.1
 ===========
 
