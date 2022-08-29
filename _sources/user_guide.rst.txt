@@ -126,11 +126,13 @@ If you want to use the latest calibration set, omit ``settings`` argument from t
 If you want to use a particular calibration set, provide a ``calibration_set_id`` integer argument. You cannot set both
 ``settings`` and ``calibration_set_id`` simultaneously, as IQM server rejects such requests.
 
-If the IQM server you are connecting to requires authentication, you will also have to set the IQM_AUTH_SERVER,
-IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables or pass them as arguments to the constructor of
-:class:`.IQMProvider`. Alternatively, authorize with `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to
-retrieve and automatically refresh access tokens, then set the ``IQM_TOKENS_FILE`` environment variable to use those
-tokens. See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`_ for details.
+If the IQM server you are connecting to requires authentication, you will also have to use
+`Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
+then set the ``IQM_TOKENS_FILE`` environment variable to use those tokens.
+See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`_ for details.
+Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
+or pass them as arguments to the constructor of :class:`.IQMProvider`, however this approach is less secure
+and considered as deprecated.
 
 It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
 running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
