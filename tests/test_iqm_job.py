@@ -56,7 +56,8 @@ def iqm_result_two_registers():
 def iqm_metadata():
     return {
         'shots': 4,
-        'circuits': [{'name': 'circuit_1', 'instructions': []}]
+        'circuits': [{'name': 'circuit_1', 'instructions': []}],
+        'calibration_set_id': 123
     }
 
 
@@ -96,7 +97,11 @@ def test_status_fail(job):
 
 
 def test_result(job, iqm_result_two_registers, iqm_metadata):
-    client_result = RunResult(status=Status.READY, measurements=[iqm_result_two_registers], metadata=iqm_metadata)
+    client_result = RunResult(
+        status=Status.READY,
+        measurements=[iqm_result_two_registers],
+        metadata=iqm_metadata,
+    )
     when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
 
     result = job.result()
@@ -104,6 +109,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert isinstance(result, QiskitResult)
     assert result.get_memory() == ['0100 11', '0100 10', '0100 01', '0100 10']
     assert result.get_counts() == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
+    assert result._metadata['calibration_set_id'] == 123
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
@@ -116,7 +122,8 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
 def test_result_multiple_circuits(job, iqm_result_two_registers):
     iqm_metadata_multiple_circuits = {
         'shots': 4,
-        'circuits': [{'name': 'circuit_1', 'instructions': []}, {'name': 'circuit_2', 'instructions': []}]
+        'circuits': [{'name': 'circuit_1', 'instructions': []}, {'name': 'circuit_2', 'instructions': []}],
+        'calibration_set_id': 234
     }
     client_result = RunResult(
         status=Status.READY,
@@ -133,3 +140,4 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
         assert result.get_counts(circuit_idx) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     assert result.get_counts(QuantumCircuit(name='circuit_1')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     assert result.get_counts(QuantumCircuit(name='circuit_2')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
+    assert result._metadata['calibration_set_id'] == 234

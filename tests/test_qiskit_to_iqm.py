@@ -152,6 +152,7 @@ def test_serialize_circuit_batch_measurement(circuit):
         assert instruction.qubits == [f'qubit_{i}']
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
+
 def test_serialize_circuit_barrier(circuit: QuantumCircuit):
     circuit.r(theta= np.pi, phi=0, qubit=0)
     circuit.barrier([0,1])
