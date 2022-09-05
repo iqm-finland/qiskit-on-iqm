@@ -38,6 +38,7 @@ class IQMJob(JobV1):
     def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, **kwargs):
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result = None
+        self._calibration_set_id = None
         self._client = backend.client
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
@@ -98,6 +99,7 @@ class IQMJob(JobV1):
     def result(self) -> Result:
         if not self._result:
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
+            self._calibration_set_id = results.metadata.calibration_set_id
             self._result = self._format_iqm_results(results)
 
         result_dict = {
@@ -120,7 +122,8 @@ class IQMJob(JobV1):
                 }
                 for name, measurement_results in self._result
             ],
-            'date': date.today()
+            'date': date.today(),
+            'calibration_set_id': self._calibration_set_id
         }
         return Result.from_dict(result_dict)
 

@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 4.4
+===========
+
+* Upgrade to iqm-client 7.0. `#24 <https://github.com/iqm-finland/qiskit-on-iqm/pull/24>`_
+* Add calibration set ID to result's metadata. `#24 <https://github.com/iqm-finland/qiskit-on-iqm/pull/24>`_
+
 Version 4.3
 ===========
 
