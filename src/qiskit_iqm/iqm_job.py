@@ -114,16 +114,16 @@ class IQMJob(JobV1):
                     'success': True,
                     'data': {
                         'memory': measurement_results,
-                        'counts': Counts(Counter(measurement_results)),
-                        'calibration_set_id': self._calibration_set_id
+                        'counts': Counts(Counter(measurement_results))
                     },
                     'header': {
                         'name': name
-                    }
+                    },
+                    'calibration_set_id': self._calibration_set_id
                 }
                 for name, measurement_results in self._result
             ],
-            'date': date.today(),
+            'date': date.today()
         }
         return Result.from_dict(result_dict)
 

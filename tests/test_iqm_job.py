@@ -110,7 +110,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert result.get_memory() == ['0100 11', '0100 10', '0100 01', '0100 10']
     assert result.get_counts() == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     for r in result.results:
-        assert r.data.calibration_set_id == 123
+        assert r.calibration_set_id == 123
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
@@ -142,4 +142,4 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
     assert result.get_counts(QuantumCircuit(name='circuit_1')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     assert result.get_counts(QuantumCircuit(name='circuit_2')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     for r in result.results:
-        assert r.data.calibration_set_id == 234
+        assert r.calibration_set_id == 234
