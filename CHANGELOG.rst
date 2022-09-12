@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 4.5
+===========
+
+* Move calibration set ID from result's metadata to the individual results' data. `#25 <https://github.com/iqm-finland/qiskit-on-iqm/pull/25>`_
+
 Version 4.4
 ===========
 
