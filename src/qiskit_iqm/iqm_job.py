@@ -118,12 +118,12 @@ class IQMJob(JobV1):
                     },
                     'header': {
                         'name': name
-                    }
+                    },
+                    'calibration_set_id': self._calibration_set_id
                 }
                 for name, measurement_results in self._result
             ],
-            'date': date.today(),
-            'calibration_set_id': self._calibration_set_id
+            'date': date.today()
         }
         return Result.from_dict(result_dict)
 
