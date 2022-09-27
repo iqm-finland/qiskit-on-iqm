@@ -115,16 +115,12 @@ Now that we have everything ready, we can run the circuit against the available 
 
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
-    with open(iqm_settings_path, 'r', encoding='utf-8') as f:
-        settings = json.loads(f.read())
-    job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
+    job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
 
     print(job.result().get_counts())
 
-Note that the code snippet above assumes that you have set the variables ``iqm_server_url`` and ``iqm_settings_path``.
-If you want to use the latest calibration set, omit ``settings`` argument from the ``backend.run`` call.
-If you want to use a particular calibration set, provide a ``calibration_set_id`` integer argument. You cannot set both
-``settings`` and ``calibration_set_id`` simultaneously, as IQM server rejects such requests.
+Note that the code snippet above assumes that you have set the variable ``iqm_server_url``.
+If you want to use a particular calibration set, provide a ``calibration_set_id`` integer argument.
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
@@ -161,7 +157,7 @@ only. A parameterized circuit can be constructed and ran with various values of 
 
         qubit_mapping={qc_decomposed.qubits[0]: 'QB1', qc_decomposed.qubits[1]: 'QB2'}
 
-        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping, settings=settings)
+        job = backend.run(qc_decomposed, shots=1000, qubit_mapping=qubit_mapping)
 
         print(job.result().get_counts())
 
