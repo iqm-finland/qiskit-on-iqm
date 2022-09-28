@@ -38,9 +38,9 @@ class IQMJob(JobV1):
     """
     def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, **kwargs): # type: ignore
         super().__init__(backend, job_id=job_id, **kwargs)
-        self._result:Union[None, list[tuple[str, list[str]]]] = None
-        self._calibration_set_id:Optional[int] = None
-        self._client:IQMClient = backend.client
+        self._result: Union[None, list[tuple[str, list[str]]]] = None
+        self._calibration_set_id: Optional[int] = None
+        self._client: IQMClient = backend.client
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
         """Convert the measurement results from a circuit(s) run into the Qiskit format.
