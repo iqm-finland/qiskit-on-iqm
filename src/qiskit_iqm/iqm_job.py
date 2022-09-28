@@ -63,7 +63,7 @@ class IQMJob(JobV1):
         measurement_results: CircuitMeasurementResults,
         shape: tuple[int, int]
     ) -> list[str]:
-        formatted_results:dict[int, np.ndarray] = {}
+        formatted_results: dict[int, np.ndarray] = {}
         shots = shape[0]
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
