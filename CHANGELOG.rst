@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 4.6
+===========
+
+* Enable mypy support. `#27 <https://github.com/iqm-finland/qiskit-on-iqm/pull/27>`_
+
 Version 4.5
 ===========
 
