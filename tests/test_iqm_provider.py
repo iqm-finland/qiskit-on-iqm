@@ -17,9 +17,7 @@
 from qiskit_iqm import IQMBackend, IQMProvider
 
 
-def test_get_backend(tmp_path):
-    settings_file = tmp_path / 'a_file'
-    settings_file.write_text('{}')
+def test_get_backend():
     url = 'http://some_url'
     provider = IQMProvider(url)
     backend = provider.get_backend()

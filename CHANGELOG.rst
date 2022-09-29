@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 5.0
+===========
+
+* Remove ``settings`` option from ``IQMBackend.run``. `#28 <https://github.com/iqm-finland/qiskit-on-iqm/pull/28>`_
+
 Version 4.6
 ===========
 
