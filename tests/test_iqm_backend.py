@@ -55,7 +55,7 @@ def test_run_single_circuit(backend):
     some_id = uuid.uuid4()
     shots = 10
     when(backend.client).submit_circuits([circuit_ser],
-                                         qubit_mapping=None,
+                                         qubit_mappings=None,
                                          calibration_set_id=None,
                                          shots=shots
                                          ).thenReturn(some_id)
@@ -77,7 +77,7 @@ def test_run_with_custom_calibration_set_id(backend):
     shots = 10
     calibration_set_id = 24
     when(backend.client).submit_circuits([circuit_ser],
-                                        qubit_mapping=None,
+                                        qubit_mappings=None,
                                         calibration_set_id=calibration_set_id,
                                         shots=shots
                                         ).thenReturn(some_id)
@@ -93,7 +93,7 @@ def test_run_circuit_with_qubit_mapping(backend):
     shots = 10
     when(backend.client).submit_circuits(
         [circuit_ser],
-        qubit_mapping={'qubit_0': 'QB1'},
+        qubit_mappings=[{'qubit_0': 'QB1'}],
         calibration_set_id=None,
         shots=shots
     ).thenReturn(some_id)
@@ -116,7 +116,7 @@ def test_run_batch_of_circuits(backend):
     circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
     when(backend.client).submit_circuits(
         circuits_serialized,
-        qubit_mapping={'qubit_0': 'QB1', 'qubit_1': 'QB2'},
+        qubit_mappings=[{'qubit_0': 'QB1', 'qubit_1': 'QB2'}],
         calibration_set_id=None,
         shots=shots
     ).thenReturn(some_id)

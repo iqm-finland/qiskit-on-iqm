@@ -77,7 +77,7 @@ class IQMBackend(BackendV2):
 
         circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
         uuid = self.client.submit_circuits(circuits_serialized,
-                                           qubit_mapping=qubit_mapping,
+                                           qubit_mappings=None if qubit_mapping is None else [qubit_mapping],
                                            calibration_set_id=calibration_set_id,
                                            shots=shots)
         return IQMJob(self, str(uuid), shots=shots)
