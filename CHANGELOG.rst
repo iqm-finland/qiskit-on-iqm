@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 5.1
+===========
+
+* Upgrade ``iqm-client`` dependency to v9. `#29 <https://github.com/iqm-finland/qiskit-on-iqm/pull/29>`_
+
 Version 5.0
 ===========
 
