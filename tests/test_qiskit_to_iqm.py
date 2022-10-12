@@ -22,9 +22,13 @@ from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.library import RGate
 
-from qiskit_iqm.qiskit_to_iqm import (InstructionNotSupportedError,
-                                      MeasurementKey, qubit_mapping_with_names,
-                                      qubit_to_name, serialize_circuit)
+from qiskit_iqm.qiskit_to_iqm import (
+    InstructionNotSupportedError,
+    MeasurementKey,
+    qubit_mapping_with_names,
+    qubit_to_name,
+    serialize_circuit,
+)
 
 
 @pytest.fixture()
@@ -72,11 +76,7 @@ def test_qubit_to_name_uniqueness_for_multiple_registers():
 def test_qubit_mapping_with_names(circuit):
     mapping = dict(zip(circuit.qubits, ['Alice', 'Bob', 'Charlie']))
     mapping_serialized = qubit_mapping_with_names(mapping, circuit)
-    assert mapping_serialized == {
-        'qubit_0': 'Alice',
-        'qubit_1': 'Bob',
-        'qubit_2': 'Charlie'
-    }
+    assert mapping_serialized == {'qubit_0': 'Alice', 'qubit_1': 'Bob', 'qubit_2': 'Charlie'}
 
 
 def test_serialize_circuit_raises_error_for_unsupported_instruction(circuit):
@@ -85,19 +85,22 @@ def test_serialize_circuit_raises_error_for_unsupported_instruction(circuit):
         serialize_circuit(circuit)
 
 
-@pytest.mark.parametrize('gate, expected_angle, expected_phase',
-                         [(RGate(theta=np.pi, phi=0), 1 / 2, 0),
-                          (RGate(theta=0, phi=np.pi), 0, 1 / 2),
-                          (RGate(theta=0, phi=2 * np.pi), 0, 1),
-                          (RGate(theta=2 * np.pi, phi=np.pi), 1, 1 / 2),
-                          ])
+@pytest.mark.parametrize(
+    'gate, expected_angle, expected_phase',
+    [
+        (RGate(theta=np.pi, phi=0), 1 / 2, 0),
+        (RGate(theta=0, phi=np.pi), 0, 1 / 2),
+        (RGate(theta=0, phi=2 * np.pi), 0, 1),
+        (RGate(theta=2 * np.pi, phi=np.pi), 1, 1 / 2),
+    ],
+)
 def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_phase):
     circuit.append(gate, [0])
     circuit_ser = serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
     assert instr.name == 'phased_rx'
-    assert instr.qubits == ['qubit_0']
+    assert instr.qubits == ('qubit_0',)
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
@@ -127,7 +130,7 @@ def test_serialize_circuit_maps_cz_gate(circuit):
     circuit_ser = serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     assert circuit_ser.instructions[0].name == 'cz'
-    assert circuit_ser.instructions[0].qubits == ['qubit_0', 'qubit_2']
+    assert circuit_ser.instructions[0].qubits == ('qubit_0', 'qubit_2')
     assert circuit_ser.instructions[0].args == {}
 
 
@@ -139,7 +142,7 @@ def test_serialize_circuit_maps_individual_measurements(circuit):
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measurement'
-        assert instruction.qubits == [f'qubit_{i}']
+        assert instruction.qubits == (f'qubit_{i}',)
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
 
@@ -149,15 +152,15 @@ def test_serialize_circuit_batch_measurement(circuit):
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measurement'
-        assert instruction.qubits == [f'qubit_{i}']
+        assert instruction.qubits == (f'qubit_{i}',)
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
 
 def test_serialize_circuit_barrier(circuit: QuantumCircuit):
-    circuit.r(theta= np.pi, phi=0, qubit=0)
-    circuit.barrier([0,1])
+    circuit.r(theta=np.pi, phi=0, qubit=0)
+    circuit.barrier([0, 1])
     circuit_ser = serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 2
     assert circuit_ser.instructions[1].name == 'barrier'
-    assert circuit_ser.instructions[1].qubits == ['qubit_0', 'qubit_1']
+    assert circuit_ser.instructions[1].qubits == ('qubit_0', 'qubit_1')
     assert circuit_ser.instructions[1].args == {}

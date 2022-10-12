@@ -15,11 +15,11 @@
 """
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
+import re
 
-import numpy as np
 from iqm_client import Circuit, Instruction
+import numpy as np
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
 from qiskit.circuit import Clbit, Qubit
 
@@ -61,6 +61,7 @@ class MeasurementKey:
             to the circuit relative to the others.
         clbit_idx: index of the classical bit within the classical register
     """
+
     creg_name: str
     creg_len: int
     creg_idx: int
@@ -71,8 +72,7 @@ class MeasurementKey:
 
     @classmethod
     def from_string(cls, string: str) -> MeasurementKey:
-        """Create a MeasurementKey from its string representation.
-        """
+        """Create a MeasurementKey from its string representation."""
         match = re.match(r'^(.*)_(\d+)_(\d+)_(\d+)$', string)
         if match is None:
             raise ValueError('Invalid measurement key string representation.')
@@ -80,8 +80,7 @@ class MeasurementKey:
 
     @classmethod
     def from_clbit(cls, clbit: Clbit, circuit: QiskitQuantumCircuit) -> MeasurementKey:
-        """Create a MeasurementKey for a classical bit in a quantum circuit.
-        """
+        """Create a MeasurementKey for a classical bit in a quantum circuit."""
         bitloc = circuit.find_bit(clbit)
         creg = bitloc.registers[0][0]
         creg_idx = circuit.cregs.index(creg)

@@ -23,8 +23,7 @@ from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import (qubit_mapping_with_names,
-                                      serialize_circuit)
+from qiskit_iqm.qiskit_to_iqm import qubit_mapping_with_names, serialize_circuit
 
 
 class IQMBackend(BackendV2):
@@ -34,6 +33,7 @@ class IQMBackend(BackendV2):
         client: IQM Cortex client used for submitting circuits for execution on an IQM server
         **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
     """
+
     def __init__(self, client: IQMClient, **kwargs):
         super().__init__(**kwargs)
         self.client = client
@@ -65,26 +65,23 @@ class IQMBackend(BackendV2):
 
         if qubit_mapping is not None:
             # process qubit mapping for each circuit separately
-            mappings = [
-                qubit_mapping_with_names(qubit_mapping, circuit)
-                for circuit in circuits
-            ]
+            mappings = [qubit_mapping_with_names(qubit_mapping, circuit) for circuit in circuits]
             # Check that all resulted into the same mapping, otherwise raise error
             if any(mapping != mappings[0] for mapping in mappings):
-                raise ValueError("""All circuits must use the same qubit mapping. This error might have
-                occurred by providing circuits that were not generated from a parameterized circuit.""")
+                raise ValueError(
+                    """All circuits must use the same qubit mapping. This error might have
+                occurred by providing circuits that were not generated from a parameterized circuit."""
+                )
             qubit_mapping = mappings[0]
 
         circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
-        uuid = self.client.submit_circuits(circuits_serialized,
-                                           qubit_mapping=qubit_mapping,
-                                           calibration_set_id=calibration_set_id,
-                                           shots=shots)
+        uuid = self.client.submit_circuits(
+            circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
+        )
         return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:
-        """Create and return an IQMJob instance associated with this backend with given job id.
-        """
+        """Create and return an IQMJob instance associated with this backend with given job id."""
         return IQMJob(self, job_id)
 
     def close_client(self):
