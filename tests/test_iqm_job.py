@@ -16,10 +16,10 @@
 """
 import uuid
 
-import mockito
-import pytest
 from iqm_client import IQMClient, RunResult, RunStatus, Status
+import mockito
 from mockito import mock, when
+import pytest
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
 from qiskit.result import Counts

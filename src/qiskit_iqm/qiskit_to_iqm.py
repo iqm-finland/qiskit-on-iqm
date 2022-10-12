@@ -15,11 +15,11 @@
 """
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
+import re
 
-import numpy as np
 from iqm_client import Circuit, Instruction
+import numpy as np
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
 from qiskit.circuit import Clbit, Qubit
 

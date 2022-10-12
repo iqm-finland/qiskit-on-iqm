@@ -15,13 +15,13 @@
 """
 from __future__ import annotations
 
-import uuid
 from collections import Counter
 from datetime import date
 from typing import Optional, Union
+import uuid
 
-import numpy as np
 from iqm_client import CircuitMeasurementResults, IQMClient, RunResult, Status
+import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
 
