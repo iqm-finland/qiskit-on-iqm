@@ -1,8 +1,9 @@
-|CI badge| |Release badge|
+|CI badge| |Release badge| |Black badge|
 
 .. |CI badge| image:: https://github.com/iqm-finland/qiskit-on-iqm/actions/workflows/ci.yml/badge.svg
 .. |Release badge| image:: https://img.shields.io/github/release/iqm-finland/qiskit-on-iqm.svg
-
+.. |Black badge| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 Qiskit on IQM
 #############
