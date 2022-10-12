@@ -15,9 +15,9 @@
 """
 from __future__ import annotations
 
-from typing import Union
+from typing import Optional, Union
 
-from iqm_client.iqm_client import IQMClient
+from iqm_client import IQMClient
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, Measure, RGate
@@ -25,7 +25,8 @@ from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import InstructionProperties, Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import serialize_circuit, serialize_qubit_mapping
+from qiskit_iqm.qiskit_to_iqm import (qubit_mapping_with_names,
+                                      serialize_circuit)
 
 
 class IQMBackend(BackendV2):
@@ -41,7 +42,7 @@ class IQMBackend(BackendV2):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None)
+        return Options(shots=1024, calibration_set_id=None)
 
     @property
     def target(self) -> Target:
@@ -76,29 +77,35 @@ class IQMBackend(BackendV2):
         return adonis_target
 
     @property
-    def max_circuits(self) -> int:
-        return 1
+    def max_circuits(self) -> Optional[int]:
+        return None
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
-        if isinstance(run_input, list) and len(run_input) > 1:
-            raise ValueError('IQM backend currently does not support execution of multiple circuits at once.')
-        circuit = run_input if isinstance(run_input, QuantumCircuit) else run_input[0]
+        if self.client is None:
+            raise RuntimeError('Session to IQM client has been closed.')
+
+        circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
+
+        if len(circuits) == 0:
+            raise ValueError('Empty list of circuits submitted for execution.')
 
         shots = options.get('shots', self.options.shots)
+        calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
 
-        if not circuit._layout and (len(circuit.qregs) != 1 or len(circuit.qregs[0]) != 5):
-            raise ValueError('Circuit should either be transpiled or shall contain exactly one quantum register of '
-                             'length 5, in which case it will be assumed that qubit at index i corresponds to QB{i+1}.')
-        qubit_mapping = dict(zip(circuit.qubits, ['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
-        circuit_serialized = serialize_circuit(circuit)
-        mapping_serialized = serialize_qubit_mapping(qubit_mapping, circuit)
+        qubit_mappings = []
+        for circuit in circuits:
+            if not circuit._layout and (len(circuit.qregs) != 1 or len(circuit.qregs[0]) != 5):
+                raise ValueError('Circuit should either be transpiled or shall contain exactly one quantum register of '
+                                 'length 5, in which case it will be assumed that qubit at index i corresponds to QB{i+1}.')
+            qm = qubit_mapping_with_names(dict(zip(circuit.qubits, ['QB1', 'QB2', 'QB3', 'QB4', 'QB5'])), circuit)
+            qubit_mappings.append(qm)
 
-        uuid = self.client.submit_circuit(circuit_serialized, mapping_serialized, shots=shots)
-        print(f'job id: {str(uuid)}')
-        job = IQMJob(self, str(uuid), shots=shots)
-        # FIXME: monkeypatch the job object with metadata from circuit (needed for quantum volume experiments)
-        job.circuit_metadata = circuit.metadata
-        return job
+        circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
+        uuid = self.client.submit_circuits(circuits_serialized,
+                                           qubit_mappings=qubit_mappings,
+                                           calibration_set_id=calibration_set_id,
+                                           shots=shots)
+        return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id.
@@ -108,5 +115,5 @@ class IQMBackend(BackendV2):
     def close_client(self):
         """Close IQMClient's session with the authentication server. Discard the client."""
         if self.client is not None:
-            self.client.close()
+            self.client.close_auth_session()
         self.client = None

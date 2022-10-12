@@ -8,3 +8,4 @@ Contributors
 * Ville Bergholm <ville@meetiqm.com>
 * Olli Ahonen <olli@meetiqm.com>
 * Matthias Beuerle <matthias.beuerle@meetiqm.com>
+* Rakhim Davletkaliyev <rakhim.davletkaliyev@meetiqm.com>

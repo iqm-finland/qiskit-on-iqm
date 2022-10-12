@@ -19,7 +19,7 @@ import re
 from dataclasses import dataclass
 
 import numpy as np
-from iqm_client.iqm_client import Circuit, Instruction, SingleQubitMapping
+from iqm_client import Circuit, Instruction
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
 from qiskit.circuit import Clbit, Qubit
 
@@ -74,6 +74,8 @@ class MeasurementKey:
         """Create a MeasurementKey from its string representation.
         """
         match = re.match(r'^(.*)_(\d+)_(\d+)_(\d+)$', string)
+        if match is None:
+            raise ValueError('Invalid measurement key string representation.')
         return cls(match.group(1), int(match.group(2)), int(match.group(3)), int(match.group(4)))
 
     @classmethod
@@ -100,23 +102,18 @@ def qubit_to_name(qubit: Qubit, circuit: QiskitQuantumCircuit) -> str:
     return f'qubit_{circuit.find_bit(qubit).index}'
 
 
-def qubit_index_to_name(idx: int) -> str:
-    return f'QB{idx + 1}'
-
-
-def serialize_qubit_mapping(qubit_mapping: dict[Qubit, str], circuit: QiskitQuantumCircuit) -> list[SingleQubitMapping]:
-    """Serialize a qubit mapping into the IQM data transfer format.
+def qubit_mapping_with_names(qubit_mapping: dict[Qubit, str], circuit: QiskitQuantumCircuit) -> dict[str, str]:
+    """
+    Create a qubit mapping dict such that the logical qubits are represented by their names instead of Qubit instances.
 
     Args:
         qubit_mapping: mapping from logical qubits in the circuit to physical qubit names
         circuit: quantum circuit containing the logical qubits
 
     Returns:
-        data transfer object representing the qubit mapping
+        dict mapping logical qubit names to physical names
     """
-    return [
-        SingleQubitMapping(logical_name=qubit_to_name(k, circuit), physical_name=v) for k, v in qubit_mapping.items()
-    ]
+    return {qubit_to_name(k, circuit): v for k, v in qubit_mapping.items()}
 
 
 def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
@@ -158,4 +155,4 @@ def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
         else:
             raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')
 
-    return Circuit(name='Serialized from Qiskit', instructions=instructions)
+    return Circuit(name=circuit.name, instructions=instructions)

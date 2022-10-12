@@ -6,11 +6,35 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ${{ matrix.platform }}
+
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest, macos-latest, windows-latest ]
+        python-version: [ '3.9', '3.10' ]
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install tox-gh-actions
+      - name: Run tests
+        run: tox
+  test_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -18,9 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          python -m pip install -e ".[dev, docs]"
           sudo apt-get install graphviz
-      - name: Run tests
-        run: tox -e tests
-      - name: Test docs can be built
+      - name: Test if docs can be built
         run: tox -e docs
