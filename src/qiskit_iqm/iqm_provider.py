@@ -32,16 +32,12 @@ class IQMProvider:
         password: Password, if required by the IQM Cortex server.
             Can also be set in the ``IQM_AUTH_PASSWORD`` environment variable.
     """
-    def __init__(
-            self,
-            url: str,
-            **user_auth_args  # contains keyword args auth_server_url, username, password
-    ):
+
+    def __init__(self, url: str, **user_auth_args):  # contains keyword args auth_server_url, username, password
         self.url = url
         self.user_auth_args = user_auth_args
 
     def get_backend(self) -> IQMBackend:
-        """An IQMBackend instance associated with this provider.
-        """
+        """An IQMBackend instance associated with this provider."""
         client = IQMClient(self.url, **self.user_auth_args)
         return IQMBackend(client)

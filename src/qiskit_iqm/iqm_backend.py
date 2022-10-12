@@ -25,8 +25,7 @@ from qiskit.providers import BackendV2, Options
 from qiskit.transpiler import InstructionProperties, Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import (qubit_mapping_with_names,
-                                      serialize_circuit)
+from qiskit_iqm.qiskit_to_iqm import qubit_mapping_with_names, serialize_circuit
 
 
 class IQMBackend(BackendV2):
@@ -36,6 +35,7 @@ class IQMBackend(BackendV2):
         client: IQM Cortex client used for submitting circuits for execution on an IQM server
         **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
     """
+
     def __init__(self, client: IQMClient, **kwargs):
         super().__init__(**kwargs)
         self.client = client
@@ -95,21 +95,21 @@ class IQMBackend(BackendV2):
         qubit_mappings = []
         for circuit in circuits:
             if not circuit._layout and (len(circuit.qregs) != 1 or len(circuit.qregs[0]) != 5):
-                raise ValueError('Circuit should either be transpiled or shall contain exactly one quantum register of '
-                                 'length 5, in which case it will be assumed that qubit at index i corresponds to QB{i+1}.')
+                raise ValueError(
+                    'Circuit should either be transpiled or shall contain exactly one quantum register of '
+                    'length 5, in which case it will be assumed that qubit at index i corresponds to QB{i+1}.'
+                )
             qm = qubit_mapping_with_names(dict(zip(circuit.qubits, ['QB1', 'QB2', 'QB3', 'QB4', 'QB5'])), circuit)
             qubit_mappings.append(qm)
 
         circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
-        uuid = self.client.submit_circuits(circuits_serialized,
-                                           qubit_mappings=qubit_mappings,
-                                           calibration_set_id=calibration_set_id,
-                                           shots=shots)
+        uuid = self.client.submit_circuits(
+            circuits_serialized, qubit_mappings=qubit_mappings, calibration_set_id=calibration_set_id, shots=shots
+        )
         return IQMJob(self, str(uuid), shots=shots)
 
     def retrieve_job(self, job_id: str) -> IQMJob:
-        """Create and return an IQMJob instance associated with this backend with given job id.
-        """
+        """Create and return an IQMJob instance associated with this backend with given job id."""
         return IQMJob(self, job_id)
 
     def close_client(self):

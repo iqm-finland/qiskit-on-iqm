@@ -37,28 +37,17 @@ def job():
 
 @pytest.fixture()
 def iqm_result_single_register():
-    return {
-        'c_2_0_0': [[0], [1], [0], [1]],
-        'c_2_0_1': [[1], [1], [1], [0]]
-    }
+    return {'c_2_0_0': [[0], [1], [0], [1]], 'c_2_0_1': [[1], [1], [1], [0]]}
 
 
 @pytest.fixture()
 def iqm_result_two_registers():
-    return {
-        'c_2_0_0': [[1], [0], [1], [0]],
-        'c_2_0_1': [[1], [1], [0], [1]],
-        'd_4_1_2': [[1], [1], [1], [1]]
-    }
+    return {'c_2_0_0': [[1], [0], [1], [0]], 'c_2_0_1': [[1], [1], [0], [1]], 'd_4_1_2': [[1], [1], [1], [1]]}
 
 
 @pytest.fixture()
 def iqm_metadata():
-    return {
-        'shots': 4,
-        'circuits': [{'name': 'circuit_1', 'instructions': []}],
-        'calibration_set_id': 123
-    }
+    return {'shots': 4, 'circuits': [{'name': 'circuit_1', 'instructions': []}], 'calibration_set_id': 123}
 
 
 def test_submit_raises(job):
@@ -124,12 +113,12 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
     iqm_metadata_multiple_circuits = {
         'shots': 4,
         'circuits': [{'name': 'circuit_1', 'instructions': []}, {'name': 'circuit_2', 'instructions': []}],
-        'calibration_set_id': 234
+        'calibration_set_id': 234,
     }
     client_result = RunResult(
         status=Status.READY,
         measurements=[iqm_result_two_registers, iqm_result_two_registers],
-        metadata=iqm_metadata_multiple_circuits
+        metadata=iqm_metadata_multiple_circuits,
     )
     when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
 
