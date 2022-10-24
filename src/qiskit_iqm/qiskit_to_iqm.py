@@ -18,10 +18,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 import re
 
-from iqm_client import Circuit, Instruction
-import numpy as np
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
-from qiskit.circuit import Clbit, Qubit
+from qiskit.circuit import Clbit
 
 
 class InstructionNotSupportedError(RuntimeError):
@@ -86,72 +84,3 @@ class MeasurementKey:
         creg_idx = circuit.cregs.index(creg)
         clbit_idx = bitloc.registers[0][1]
         return cls(creg.name, len(creg), creg_idx, clbit_idx)
-
-
-def qubit_to_name(qubit: Qubit, circuit: QiskitQuantumCircuit) -> str:
-    """Construct a unique name for a qubit based on its index in the circuit.
-
-    Args:
-        qubit: logical qubit
-        circuit: circuit the qubit belongs to
-
-    Returns:
-        logical qubit name
-    """
-    return f'qubit_{circuit.find_bit(qubit).index}'
-
-
-def qubit_mapping_with_names(qubit_mapping: dict[Qubit, str], circuit: QiskitQuantumCircuit) -> dict[str, str]:
-    """
-    Create a qubit mapping dict such that the logical qubits are represented by their names instead of Qubit instances.
-
-    Args:
-        qubit_mapping: mapping from logical qubits in the circuit to physical qubit names
-        circuit: quantum circuit containing the logical qubits
-
-    Returns:
-        dict mapping logical qubit names to physical names
-    """
-    return {qubit_to_name(k, circuit): v for k, v in qubit_mapping.items()}
-
-
-def serialize_circuit(circuit: QiskitQuantumCircuit) -> Circuit:
-    """Serialize a quantum circuit into the IQM data transfer format.
-
-    Assumes that ``circuit`` has been transpiled so that it only contains operations natively supported by the
-    given IQM quantum architecture.
-
-    Qiskit uses one measurement instruction per qubit (i.e. there are no multi-qubit measurement instructions).
-    While serializing we do not group any measurements together but rather associate a unique measurement key with each
-    measurement instruction, so that the results can later be reconstructed correctly (see :class:`MeasurementKey`
-    documentation for more details).
-
-    Args:
-        circuit: quantum circuit to serialize
-
-    Returns:
-        data transfer object representing the circuit
-
-    Raises:
-        InstructionNotSupportedError: circuit contains an unsupported instruction
-    """
-    instructions = []
-    for instruction, qubits, clbits in circuit.data:
-        qubit_names = [qubit_to_name(qubit, circuit) for qubit in qubits]
-        if instruction.name == 'r':
-            angle_t = float(instruction.params[0] / (2 * np.pi))
-            phase_t = float(instruction.params[1] / (2 * np.pi))
-            instructions.append(
-                Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
-            )
-        elif instruction.name == 'cz':
-            instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))
-        elif instruction.name == 'barrier':
-            instructions.append(Instruction(name='barrier', qubits=qubit_names, args={}))
-        elif instruction.name == 'measure':
-            mk = MeasurementKey.from_clbit(clbits[0], circuit)
-            instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
-        else:
-            raise InstructionNotSupportedError(f'Instruction {instruction.name} not natively supported.')
-
-    return Circuit(name=circuit.name, instructions=instructions)

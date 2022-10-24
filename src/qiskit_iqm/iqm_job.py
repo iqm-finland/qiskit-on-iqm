@@ -82,7 +82,11 @@ class IQMJob(JobV1):
         ]
 
     def submit(self):
-        raise NotImplementedError('Instead, use IQMBackend.run to submit jobs.')
+        raise NotImplementedError(
+            'You shall never need to submit jobs by calling this method. When running circuits through IQMBackend, '
+            'the submission will happen under the hood. The job instance that you get is only for checking '
+            'the progress and retrieving the results of the submitted job.'
+        )
 
     def cancel(self):
         raise NotImplementedError('Canceling jobs is currently not supported.')

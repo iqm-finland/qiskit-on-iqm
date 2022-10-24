@@ -14,12 +14,20 @@
 
 """Testing IQM provider.
 """
+from iqm_client import IQMClient
+from mockito import when
+
 from qiskit_iqm import IQMBackend, IQMProvider
 
 
-def test_get_backend():
+def test_get_backend(linear_architecture_3q):
     url = 'http://some_url'
+    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+
     provider = IQMProvider(url)
     backend = provider.get_backend()
+
     assert isinstance(backend, IQMBackend)
     assert backend.client._base_url == url
+    assert backend.num_qubits == 3
+    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2)}
