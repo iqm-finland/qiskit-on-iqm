@@ -42,6 +42,7 @@ class IQMJob(JobV1):
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[int] = None
         self._client: IQMClient = backend.client
+        self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
         """Convert the measurement results from a circuit(s) run into the Qiskit format."""
@@ -107,11 +108,15 @@ class IQMJob(JobV1):
                 {
                     'shots': len(measurement_results),
                     'success': True,
-                    'data': {'memory': measurement_results, 'counts': Counts(Counter(measurement_results))},
+                    'data': {
+                        'memory': measurement_results,
+                        'counts': Counts(Counter(measurement_results)),
+                        'metadata': self.circuit_metadata[i] if self.circuit_metadata is not None else {},
+                    },
                     'header': {'name': name},
                     'calibration_set_id': self._calibration_set_id,
                 }
-                for name, measurement_results in self._result
+                for i, (name, measurement_results) in enumerate(self._result)
             ],
             'date': date.today(),
         }

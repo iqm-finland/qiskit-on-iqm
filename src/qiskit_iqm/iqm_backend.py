@@ -92,7 +92,9 @@ class IQMBackend(BackendV2):
         uuid = self.client.submit_circuits(
             circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
         )
-        return IQMJob(self, str(uuid), shots=shots)
+        job = IQMJob(self, str(uuid), shots=shots)
+        job.circuit_metadata = [c.metadata for c in circuits]
+        return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""
