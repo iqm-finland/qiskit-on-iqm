@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 6.0
+===========
+
+* Implement transpiler target for ``IQMBackend``. `#32 <https://github.com/iqm-finland/qiskit-on-iqm/pull/32>`_
+
+
 Version 5.0
 ===========
 
