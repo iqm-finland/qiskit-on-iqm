@@ -103,7 +103,7 @@ connectivity:
            |
           QB5
 
-Let's examine its basis gates and the coupling map using through the ``backend`` instance
+Let's examine its basis gates and the coupling map through the ``backend`` instance
 
 .. code-block:: python
 
