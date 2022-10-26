@@ -52,7 +52,7 @@ def iqm_metadata():
 
 
 def test_submit_raises(job):
-    with pytest.raises(NotImplementedError, match='You shall never need to submit jobs by calling this method.'):
+    with pytest.raises(NotImplementedError, match='You should never have to submit jobs by calling this method.'):
         job.submit()
 
 
