@@ -9,15 +9,6 @@ qiskit\_iqm.qiskit\_to\_iqm
 
    
    
-   .. rubric:: Functions
-
-   .. autosummary::
-      :toctree:
-   
-      qubit_mapping_with_names
-      qubit_to_name
-      serialize_circuit
-   
    
 
    

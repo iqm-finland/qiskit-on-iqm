@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>qiskit_iqm.iqm_backend.IQMBackend &#8212; Qiskit on IQM 5.0 documentation</title>
+    <title>qiskit_iqm.iqm_backend.IQMBackend &#8212; Qiskit on IQM 6.0 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -173,21 +173,6 @@
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names.html">
-         qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.qubit_to_name.html">
-         qiskit_iqm.qiskit_to_iqm.qubit_to_name
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.serialize_circuit.html">
-         qiskit_iqm.qiskit_to_iqm.serialize_circuit
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.MeasurementKey.html">
          qiskit_iqm.qiskit_to_iqm.MeasurementKey
@@ -428,6 +413,9 @@ options.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.run" title="qiskit_iqm.iqm_backend.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, **options)</p></td>
 <td><p>Run on the backend.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackend.serialize_circuit" title="qiskit_iqm.iqm_backend.IQMBackend.serialize_circuit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize_circuit</span></code></a>(circuit)</p></td>
+<td><p>Serialize a quantum circuit into the IQM data transfer format.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py property">
@@ -453,10 +441,10 @@ run in a single job.</p>
 <dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.run" title="Permalink to this definition">#</a></dt>
 <dd><p>Run on the backend.</p>
-<p>This method that will return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code> object
-that run circuits. Depending on the backend this may be either an async
-or sync call. It is the discretion of the provider to decide whether
-running should  block until the execution is finished or not. The Job
+<p>This method returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code> object
+that runs circuits. Depending on the backend this may be either an async
+or sync call. It is at the discretion of the provider to decide whether
+running should block until the execution is finished or not: the Job
 class can handle either situation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -499,6 +487,30 @@ object.</p></li>
 <dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.close_client">
 <span class="sig-name descname"><span class="pre">close_client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.close_client" title="Permalink to this definition">#</a></dt>
 <dd><p>Close IQMClient’s session with the authentication server. Discard the client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackend.serialize_circuit">
+<span class="sig-name descname"><span class="pre">serialize_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackend.serialize_circuit" title="Permalink to this definition">#</a></dt>
+<dd><p>Serialize a quantum circuit into the IQM data transfer format.</p>
+<p>Qiskit uses one measurement instruction per qubit (i.e. there is no measurement grouping concept). While
+serializing we do not group any measurements together but rather associate a unique measurement key with each
+measurement instruction, so that the results can later be reconstructed correctly (see <code class="xref py py-class docutils literal notranslate"><span class="pre">MeasurementKey</span></code>
+documentation for more details).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>circuit</strong> (<em>qiskit.circuit.quantumcircuit.QuantumCircuit</em>) – quantum circuit to serialize</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data transfer object representing the circuit</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – circuit contains an unsupported instruction or is not transpiled in general</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>iqm_client.iqm_client.Circuit</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

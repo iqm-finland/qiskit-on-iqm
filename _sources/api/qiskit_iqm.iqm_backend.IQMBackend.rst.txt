@@ -29,5 +29,6 @@ qiskit\_iqm.iqm\_backend.IQMBackend
       ~IQMBackend.close_client
       ~IQMBackend.retrieve_job
       ~IQMBackend.run
+      ~IQMBackend.serialize_circuit
    
    

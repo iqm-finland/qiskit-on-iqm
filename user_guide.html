@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 5.0 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 6.0 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -173,21 +173,6 @@
        </i>
       </label>
       <ul>
-       <li class="toctree-l4">
-        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names.html">
-         qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.qubit_to_name.html">
-         qiskit_iqm.qiskit_to_iqm.qubit_to_name
-        </a>
-       </li>
-       <li class="toctree-l4">
-        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.serialize_circuit.html">
-         qiskit_iqm.qiskit_to_iqm.serialize_circuit
-        </a>
-       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.MeasurementKey.html">
          qiskit_iqm.qiskit_to_iqm.MeasurementKey
@@ -362,6 +347,11 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#more-advanced-examples">
+   More advanced examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#how-to-develop-and-contribute">
    How to develop and contribute
   </a>
@@ -398,6 +388,11 @@ title="Print to PDF"
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#running-a-quantum-circuit-on-an-iqm-quantum-computer">
    Running a quantum circuit on an IQM quantum computer
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#more-advanced-examples">
+   More advanced examples
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -438,85 +433,53 @@ Python Package Index (PyPI):</p>
 </section>
 <section id="running-a-quantum-circuit-on-an-iqm-quantum-computer">
 <h2>Running a quantum circuit on an IQM quantum computer<a class="headerlink" href="#running-a-quantum-circuit-on-an-iqm-quantum-computer" title="Permalink to this headline">#</a></h2>
-<p>In this section we construct a simple quantum circuit and demonstrate how to execute it on an IQM quantum computer.</p>
+<p>In this section we demonstrate the practicalities of using Qiskit on IQM on an example of constructing and executing
+a simple quantum circuit on an IQM quantum computer.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>At the moment IQM does not provide a quantum computing service open to the general public.
 Please contact our <a class="reference external" href="https://www.meetiqm.com/contact/">sales team</a> to set up your access to an IQM quantum computer.</p>
 </div>
-<p>Let’s consider the following quantum circuit which prepares and measures a Bell state:</p>
+<p>Let’s consider the following quantum circuit which prepares and measures a GHZ state:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
-<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">measure</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">qc</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>     ┌───┐     ┌─┐
-q_0: ┤ H ├──■──┤M├───
-     └───┘┌─┴─┐└╥┘┌─┐
-q_1: ─────┤ X ├─╫─┤M├
-          └───┘ ║ └╥┘
-c: 2/═══════════╩══╩═
-                0  1
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        ┌───┐           ░ ┌─┐
+   q_0: ┤ H ├──■────■───░─┤M├──────
+        └───┘┌─┴─┐  │   ░ └╥┘┌─┐
+   q_1: ─────┤ X ├──┼───░──╫─┤M├───
+             └───┘┌─┴─┐ ░  ║ └╥┘┌─┐
+   q_2: ──────────┤ X ├─░──╫──╫─┤M├
+                  └───┘ ░  ║  ║ └╥┘
+meas_0: ═══════════════════╩══╬══╬═
+                              ║  ║
+meas_1: ══════════════════════╩══╬═
+                                 ║
+meas_2: ═════════════════════════╩═
 </pre></div>
 </div>
-<p>First, we need to decompose it into IQM’s native gate family:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.compiler</span> <span class="kn">import</span> <span class="n">transpile</span>
-
-<span class="n">qc_decomposed</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">basis_gates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">])</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global phase: 3π/2
-     ┌────────────┐┌────────┐                 ┌─┐
-q_0: ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────────────┤M├─────────────
-     ├────────────┤├────────┤ │ ┌────────────┐└╥┘┌────────┐┌─┐
-q_1: ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├─╫─┤ R(π,0) ├┤M├
-     └────────────┘└────────┘   └────────────┘ ║ └────────┘└╥┘
-c: 2/══════════════════════════════════════════╩════════════╩═
-                                           0            1
-</pre></div>
-</div>
-<p>Then, to run this circuit on an IQM quantum computer we need to figure out how to map the virtual qubits to physical ones.
-Let’s assume we are working with one of IQM’s 5-qubit Adonis chips which have the following connectivity</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">QB1</span>
-       <span class="o">|</span>
-<span class="n">QB2</span> <span class="o">-</span> <span class="n">QB3</span> <span class="o">-</span> <span class="n">QB4</span>
-       <span class="o">|</span>
-      <span class="n">QB5</span>
-</pre></div>
-</div>
-<p>We can choose any pair of connected physical qubits and map the two virtual qubits in the circuit to them, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">virtual_qubits</span> <span class="o">=</span> <span class="n">qc_decomposed</span><span class="o">.</span><span class="n">qubits</span>
-<span class="n">qubit_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">virtual_qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="s1">&#39;QB1&#39;</span><span class="p">,</span> <span class="n">virtual_qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;QB3&#39;</span><span class="p">}</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Currently, <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code> does not support automatic generation of mapping from virtual qubits to physical ones
-using Qiskit transpilers, so it has to be done manually. In a simple scenario as above it is pretty straightforward
-to do the mapping manually. However in more complicated cases where SWAP gates need to be inserted to accomplish the
-mapping you can still use Qiskit tools to transpile the circuit against a certain coupling map and then extract
-<code class="docutils literal notranslate"><span class="pre">qubit_mapping</span></code> from the result.</p>
-</div>
-<p>Now that we have everything ready, we can run the circuit against the available IQM backend:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<p>To execute this circuit against an IQM quantum computer you need to initialize an appropriate Qiskit backend instance
+that represents the IQM quantum computer under use, and simply use Qiskit’s <code class="docutils literal notranslate"><span class="pre">execute</span></code> function as normal:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span>
 <span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
 <span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">qubit_mapping</span><span class="o">=</span><span class="n">qubit_mapping</span><span class="p">)</span>
+
+<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>Note that the code snippet above assumes that you have set the variable <code class="docutils literal notranslate"><span class="pre">iqm_server_url</span></code>.
-If you want to use a particular calibration set, provide a <code class="docutils literal notranslate"><span class="pre">calibration_set_id</span></code> integer argument.</p>
+<p>Note that the code snippet above assumes that you have set the variable <code class="docutils literal notranslate"><span class="pre">iqm_server_url</span></code>.</p>
 <p>If the IQM server you are connecting to requires authentication, you will also have to use
 <a class="reference external" href="https://github.com/iqm-finland/cortex-cli">Cortex CLI</a> to retrieve and automatically refresh access tokens,
 then set the <code class="docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable to use those tokens.
@@ -524,37 +487,119 @@ See Cortex CLI’s <a class="reference external" href="https://iqm-finland.githu
 Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
 or pass them as arguments to the constructor of <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>, however this approach is less secure
 and considered as deprecated.</p>
-<p>It is also possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
-running the circuits one by one. Currently, the batch running feature is meant to be used with parameterized circuits
-only. A parameterized circuit can be constructed and ran with various values of the parameter(s) as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<p>The <code class="docutils literal notranslate"><span class="pre">backend</span></code> instance we created above provides all the standard backend functionality that one expects from a
+backend in Qiskit. For this example, I am connected to an IQM backend that features a 5-qubit chip with star-like
+connectivity:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">QB1</span>
+       <span class="o">|</span>
+<span class="n">QB2</span> <span class="o">-</span> <span class="n">QB3</span> <span class="o">-</span> <span class="n">QB4</span>
+       <span class="o">|</span>
+      <span class="n">QB5</span>
+</pre></div>
+</div>
+<p>Let’s examine its basis gates and the coupling map through the <code class="docutils literal notranslate"><span class="pre">backend</span></code> instance</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Native operations of the backend: </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">operation_names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Coupling map of the backend: </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">coupling_map</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Native</span> <span class="n">operations</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">,</span> <span class="s1">&#39;measure&#39;</span><span class="p">]</span>
+<span class="n">Coupling</span> <span class="nb">map</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Then we can study how the circuit gets transpiled:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.compiler</span> <span class="kn">import</span> <span class="n">transpile</span>
 
-<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">theta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">)</span>
-<span class="n">theta_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">qc_transpiled</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
-<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">qc</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global phase: π/2
+               ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
+      q_2 -&gt; 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
+               └────────────┘└────────┘         │       └────────────┘└────────┘ ░       └╥┘
+ancilla_0 -&gt; 1 ─────────────────────────────────┼─────────────────────────────────────────╫─
+               ┌────────────┐┌────────┐         │                                ░ ┌─┐    ║
+      q_0 -&gt; 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
+               └────────────┘└────────┘ │                                        ░ └╥┘    ║
+ancilla_1 -&gt; 3 ─────────────────────────┼───────────────────────────────────────────╫─────╫─
+               ┌────────────┐┌────────┐ │ ┌────────────┐  ┌────────┐             ░  ║ ┌─┐ ║
+      q_1 -&gt; 4 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
+               └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
+          c_0: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
+                                                                                    ║  ║  ║
+          c_1: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
+                                                                                    ║  ║  ║
+          c_2: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
+                                                                                    ║  ║  ║
+       meas_0: ═════════════════════════════════════════════════════════════════════╩══╬══╬═
+                                                                                       ║  ║
+       meas_1: ════════════════════════════════════════════════════════════════════════╩══╬═
+                                                                                          ║
+       meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
+</pre></div>
+</div>
+<p>We can also simulate the execution of the transpiled circuit before actually executing it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">Aer</span>
 
-<span class="n">qc_decomposed</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">basis_gates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">])</span>
-
-<span class="n">circuits</span> <span class="o">=</span> <span class="p">[</span><span class="n">qc_decomposed</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="n">n</span><span class="p">})</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">theta_range</span><span class="p">]</span>
-
-<span class="n">qubit_mapping</span><span class="o">=</span><span class="p">{</span><span class="n">qc_decomposed</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="s1">&#39;QB1&#39;</span><span class="p">,</span> <span class="n">qc_decomposed</span><span class="o">.</span><span class="n">qubits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;QB2&#39;</span><span class="p">}</span>
-
-<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc_decomposed</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">qubit_mapping</span><span class="o">=</span><span class="n">qubit_mapping</span><span class="p">)</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc_transpiled</span><span class="p">,</span> <span class="n">simulator</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>Make sure to transpile the parameterized circuit before binding the values to ensure a consistent qubit mapping for
-all circuits.</p>
+</section>
+<section id="more-advanced-examples">
+<h2>More advanced examples<a class="headerlink" href="#more-advanced-examples" title="Permalink to this headline">#</a></h2>
+<p>In this section we demonstrate some less simple examples of using Qiskit on IQM and its interoperability with various
+tools available in Qiskit.</p>
+<p>It is possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
+running the circuits one by one. For batch execution there are some restriction that we shall keep in mind, namely all
+circuits have to measure the same qubits, and all circuits will be executed for the same number of shots. For starters,
+let’s construct two circuits preparing and measuring different Bell states:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">qc_1</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">qc_1</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc_1</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">qc_1</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+
+<span class="n">qc_2</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">qc_2</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc_2</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">qc_2</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">qc_2</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now, we can execute them together in a batch:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">([</span><span class="n">qc_1</span><span class="p">,</span> <span class="n">qc_2</span><span class="p">],</span> <span class="n">backend</span><span class="p">,</span> <span class="n">initial_layout</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The batch execution functionality can be used to run a parameterized circuit for various concrete values of parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
+
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">)</span>
+<span class="n">theta_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+
+
+<span class="n">qc_transpiled</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">circuits</span> <span class="o">=</span> <span class="p">[</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="n">n</span><span class="p">})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">theta_range</span><span class="p">]</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuits</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Note that it is important to transpile the parameterized circuit before binding the values to ensure a consistent qubit
+measurements across circuits in the batch.</p>
 </section>
 <section id="how-to-develop-and-contribute">
 <h2>How to develop and contribute<a class="headerlink" href="#how-to-develop-and-contribute" title="Permalink to this headline">#</a></h2>
