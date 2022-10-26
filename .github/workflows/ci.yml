@@ -28,7 +28,7 @@ jobs:
           python -m pip install -e ".[dev]"
           python -m pip install tox-gh-actions
       - name: Run tests
-        run: tox -vv
+        run: tox
   test_docs:
     runs-on: ubuntu-latest
     steps:
