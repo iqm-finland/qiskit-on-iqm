@@ -29,8 +29,9 @@ from qiskit_iqm import IQMBackend, IQMJob
 
 
 @pytest.fixture()
-def job():
+def job(adonis_architecture):
     client = mock(IQMClient)
+    when(client).get_quantum_architecture().thenReturn(adonis_architecture)
     backend = IQMBackend(client)
     return IQMJob(backend, str(uuid.uuid4()))
 
@@ -51,7 +52,7 @@ def iqm_metadata():
 
 
 def test_submit_raises(job):
-    with pytest.raises(NotImplementedError, match='Instead, use IQMBackend.run to submit jobs.'):
+    with pytest.raises(NotImplementedError, match='You should never have to submit jobs by calling this method.'):
         job.submit()
 
 

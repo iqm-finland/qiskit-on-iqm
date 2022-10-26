@@ -17,13 +17,16 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from iqm_client import IQMClient
+from iqm_client import Circuit, Instruction, IQMClient
+import numpy as np
 from qiskit import QuantumCircuit
+from qiskit.circuit import Parameter
+from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import BackendV2, Options
-from qiskit.transpiler import Target
+from qiskit.transpiler import InstructionProperties, Target
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.qiskit_to_iqm import qubit_mapping_with_names, serialize_circuit
+from qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
 class IQMBackend(BackendV2):
@@ -38,13 +41,35 @@ class IQMBackend(BackendV2):
         super().__init__(**kwargs)
         self.client = client
 
+        arch = client.get_quantum_architecture()
+        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.qubits)}
+
+        target = Target()
+        # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
+        # Such info is automatically deduced once all instruction properties are set. Currently, we do not retrieve
+        # any properties from the server, and we are interested only in letting the target know what is the native gate
+        # set and the connectivity of the device under use. Thus, we populate the target with None properties.
+        target.add_instruction(
+            RGate(Parameter('theta'), Parameter('phi')), {(qb_to_idx[qb],): None for qb in arch.qubits}
+        )
+        target.add_instruction(
+            CZGate(), {(qb_to_idx[qb1], qb_to_idx[qb2]): None for qb1, qb2 in arch.qubit_connectivity}
+        )
+
+        # FIXME: We shall add the measurement instructions with None properties as well, however we can do it only
+        # after the bug https://github.com/Qiskit/qiskit-terra/issues/8969 is fixed.
+        target.add_instruction(Measure(), {(qb_to_idx[qb],): InstructionProperties() for qb in arch.qubits})
+
+        self._target = target
+        self._qb_to_idx = qb_to_idx
+
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, qubit_mapping=None, calibration_set_id=None)
+        return Options(shots=1024, calibration_set_id=None)
 
     @property
     def target(self) -> Target:
-        raise NotImplementedError
+        return self._target
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -59,26 +84,17 @@ class IQMBackend(BackendV2):
         if len(circuits) == 0:
             raise ValueError('Empty list of circuits submitted for execution.')
 
-        qubit_mapping = options.get('qubit_mapping', self.options.qubit_mapping)
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
 
-        if qubit_mapping is not None:
-            # process qubit mapping for each circuit separately
-            mappings = [qubit_mapping_with_names(qubit_mapping, circuit) for circuit in circuits]
-            # Check that all resulted into the same mapping, otherwise raise error
-            if any(mapping != mappings[0] for mapping in mappings):
-                raise ValueError(
-                    """All circuits must use the same qubit mapping. This error might have
-                occurred by providing circuits that were not generated from a parameterized circuit."""
-                )
-            qubit_mapping = mappings[0]
-
-        circuits_serialized = [serialize_circuit(circuit) for circuit in circuits]
+        circuits_serialized = [self.serialize_circuit(circuit) for circuit in circuits]
+        qubit_mapping = {str(idx): qb for qb, idx in self._qb_to_idx.items()}
         uuid = self.client.submit_circuits(
             circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
         )
-        return IQMJob(self, str(uuid), shots=shots)
+        job = IQMJob(self, str(uuid), shots=shots)
+        job.circuit_metadata = [c.metadata for c in circuits]
+        return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""
@@ -89,3 +105,49 @@ class IQMBackend(BackendV2):
         if self.client is not None:
             self.client.close_auth_session()
         self.client = None
+
+    def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
+        """Serialize a quantum circuit into the IQM data transfer format.
+
+        Qiskit uses one measurement instruction per qubit (i.e. there is no measurement grouping concept). While
+        serializing we do not group any measurements together but rather associate a unique measurement key with each
+        measurement instruction, so that the results can later be reconstructed correctly (see :class:`MeasurementKey`
+        documentation for more details).
+
+        Args:
+            circuit: quantum circuit to serialize
+
+        Returns:
+            data transfer object representing the circuit
+
+        Raises:
+            ValueError: circuit contains an unsupported instruction or is not transpiled in general
+        """
+        if len(circuit.qregs) != 1 or len(circuit.qregs[0]) != self.num_qubits:
+            raise ValueError(
+                f"The circuit '{circuit.name}' does not contain a single quantum register of length {self.num_qubits}, "
+                f'which indicates that it has not been transpiled against the current backend.'
+            )
+        instructions = []
+        for instruction, qubits, clbits in circuit.data:
+            qubit_names = [str(circuit.find_bit(qubit).index) for qubit in qubits]
+            if instruction.name == 'r':
+                angle_t = float(instruction.params[0] / (2 * np.pi))
+                phase_t = float(instruction.params[1] / (2 * np.pi))
+                instructions.append(
+                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
+                )
+            elif instruction.name == 'cz':
+                instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))
+            elif instruction.name == 'barrier':
+                instructions.append(Instruction(name='barrier', qubits=qubit_names, args={}))
+            elif instruction.name == 'measure':
+                mk = MeasurementKey.from_clbit(clbits[0], circuit)
+                instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
+            else:
+                raise ValueError(
+                    f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
+                    f'You need to transpile the circuit before execution.'
+                )
+
+        return Circuit(name=circuit.name, instructions=instructions)
