@@ -66,17 +66,9 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     when(client).get_quantum_architecture().thenReturn(adonis_architecture_shuffled_names)
     backend = IQMBackend(client)
 
-    assert backend.qubit_name_to_index('QB1') == 0
-    assert backend.qubit_name_to_index('QB2') == 1
-    assert backend.qubit_name_to_index('QB3') == 2
-    assert backend.qubit_name_to_index('QB4') == 3
-    assert backend.qubit_name_to_index('QB5') == 4
-
-    assert backend.index_to_qubit_name(0) == 'QB1'
-    assert backend.index_to_qubit_name(1) == 'QB2'
-    assert backend.index_to_qubit_name(2) == 'QB3'
-    assert backend.index_to_qubit_name(3) == 'QB4'
-    assert backend.index_to_qubit_name(4) == 'QB5'
+    correct_idx_name_associations = set(enumerate(['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
+    assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
+    assert all(backend.qubit_name_to_index(name) == idx for idx, name in correct_idx_name_associations)
 
 
 def test_serialize_circuit_raises_error_for_non_transpiled_circuit(backend, circuit):
