@@ -34,3 +34,13 @@ def adonis_architecture():
         qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5'],
         qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
     )
+
+
+@pytest.fixture
+def adonis_architecture_shuffled_names():
+    return QuantumArchitectureSpecification(
+        name='Adonis',
+        operations=['phased_rx', 'cz', 'measurement', 'barrier'],
+        qubits=['QB2', 'QB3', 'QB1', 'QB5', 'QB4'],
+        qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
+    )

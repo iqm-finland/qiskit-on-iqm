@@ -18,7 +18,7 @@ from numbers import Number
 import uuid
 
 from iqm_client import IQMClient
-from mockito import mock, when
+from mockito import mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
@@ -59,6 +59,24 @@ def test_retrieve_job(backend):
 
 def test_max_circuits(backend):
     assert backend.max_circuits is None
+
+
+def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
+    client = mock(IQMClient)
+    when(client).get_quantum_architecture().thenReturn(adonis_architecture_shuffled_names)
+    backend = IQMBackend(client)
+
+    assert backend.qubit_name_to_index('QB1') == 0
+    assert backend.qubit_name_to_index('QB2') == 1
+    assert backend.qubit_name_to_index('QB3') == 2
+    assert backend.qubit_name_to_index('QB4') == 3
+    assert backend.qubit_name_to_index('QB5') == 4
+
+    assert backend.index_to_qubit_name(0) == 'QB1'
+    assert backend.index_to_qubit_name(1) == 'QB2'
+    assert backend.index_to_qubit_name(2) == 'QB3'
+    assert backend.index_to_qubit_name(3) == 'QB4'
+    assert backend.index_to_qubit_name(4) == 'QB5'
 
 
 def test_serialize_circuit_raises_error_for_non_transpiled_circuit(backend, circuit):
@@ -182,6 +200,22 @@ def test_run_non_native_circuit_with_the_execute_function(backend, circuit):
     assert job.job_id() == str(some_id)
 
 
+def test_run_gets_options_from_execute_function(backend, circuit):
+    """Test that any additional keyword arguments to the `execute` function are passed to `IQMBackend.run`. This is more
+    of a test for Qiskit's `execute` function itself, but still good to have it here to know that the use case works.
+    """
+
+    def run_mock(qc, **kwargs):
+        assert isinstance(qc, QuantumCircuit)
+        assert 'calibration_set_id' in kwargs
+        assert kwargs['calibration_set_id'] == 17
+        assert 'something_else' in kwargs
+        assert kwargs['something_else'] == [1, 2, 3]
+
+    patch(backend.run, run_mock)
+    execute(circuit, backend, shots=10, calibration_set_id=17, something_else=[1, 2, 3])
+
+
 def test_run_single_circuit(backend, qubit_mapping, circuit):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
@@ -198,6 +232,19 @@ def test_run_single_circuit(backend, qubit_mapping, circuit):
     job = backend.run([circuit], shots=shots)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
+
+
+def test_run_sets_circuit_metadata_to_the_job(backend):
+    circuit_1 = QuantumCircuit(3)
+    circuit_1.metadata = {'key1': 'value1', 'key2': 'value2'}
+    circuit_2 = QuantumCircuit(3)
+    circuit_2.metadata = {'key1': 'value2', 'key2': 'value1'}
+    some_id = uuid.uuid4()
+    backend.client.submit_circuits = lambda *args, **kwargs: some_id
+    job = backend.run([circuit_1, circuit_2], shots=10)
+    assert isinstance(job, IQMJob)
+    assert job.job_id() == str(some_id)
+    assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
 def test_run_with_custom_calibration_set_id(backend, qubit_mapping, circuit):

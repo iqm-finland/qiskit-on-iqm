@@ -15,6 +15,7 @@
 """
 from __future__ import annotations
 
+import re
 from typing import Optional, Union
 
 from iqm_client import Circuit, Instruction, IQMClient
@@ -42,7 +43,12 @@ class IQMBackend(BackendV2):
         self.client = client
 
         arch = client.get_quantum_architecture()
-        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.qubits)}
+
+        def get_num_or_zero(name: str) -> int:
+            match = re.search(r'(\d+)', name)
+            return int(match.group(1)) if match else 0
+
+        qb_to_idx = {qb: idx for idx, qb in enumerate(sorted(arch.qubits, key=get_num_or_zero))}
 
         target = Target()
         # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
@@ -62,6 +68,7 @@ class IQMBackend(BackendV2):
 
         self._target = target
         self._qb_to_idx = qb_to_idx
+        self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
 
     @classmethod
     def _default_options(cls) -> Options:
@@ -88,7 +95,7 @@ class IQMBackend(BackendV2):
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
 
         circuits_serialized = [self.serialize_circuit(circuit) for circuit in circuits]
-        qubit_mapping = {str(idx): qb for qb, idx in self._qb_to_idx.items()}
+        qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items()}
         uuid = self.client.submit_circuits(
             circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
         )
@@ -105,6 +112,14 @@ class IQMBackend(BackendV2):
         if self.client is not None:
             self.client.close_auth_session()
         self.client = None
+
+    def qubit_name_to_index(self, name: str) -> int:
+        """Given an IQM-style qubit name ('QB1', 'QB2', etc.) return the corresponding index in the register."""
+        return self._qb_to_idx[name]
+
+    def index_to_qubit_name(self, index: int) -> str:
+        """Given an index in the backend register return the corresponding IQM-style qubit name ('QB1', 'QB2', etc.)."""
+        return self._idx_to_qb[index]
 
     def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
