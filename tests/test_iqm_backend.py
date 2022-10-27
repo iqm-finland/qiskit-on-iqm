@@ -70,6 +70,9 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
     assert all(backend.qubit_name_to_index(name) == idx for idx, name in correct_idx_name_associations)
 
+    assert backend.index_to_qubit_name(7) is None
+    assert backend.qubit_name_to_index('Alice') is None
+
 
 def test_serialize_circuit_raises_error_for_non_transpiled_circuit(backend, circuit):
     circuit = QuantumCircuit(2, 2)

@@ -113,13 +113,15 @@ class IQMBackend(BackendV2):
             self.client.close_auth_session()
         self.client = None
 
-    def qubit_name_to_index(self, name: str) -> int:
-        """Given an IQM-style qubit name ('QB1', 'QB2', etc.) return the corresponding index in the register."""
-        return self._qb_to_idx[name]
+    def qubit_name_to_index(self, name: str) -> Optional[int]:
+        """Given an IQM-style qubit name ('QB1', 'QB2', etc.) return the corresponding index in the register. Returns
+        None is the given name does not belong to the backend."""
+        return self._qb_to_idx.get(name)
 
-    def index_to_qubit_name(self, index: int) -> str:
-        """Given an index in the backend register return the corresponding IQM-style qubit name ('QB1', 'QB2', etc.)."""
-        return self._idx_to_qb[index]
+    def index_to_qubit_name(self, index: int) -> Optional[str]:
+        """Given an index in the backend register return the corresponding IQM-style qubit name ('QB1', 'QB2', etc.).
+        Returns None if the given index does not correspond to any qubit in the backend."""
+        return self._idx_to_qb.get(index)
 
     def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
