@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 6.0 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 6.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -506,7 +506,11 @@ connectivity:</p>
 <span class="n">Coupling</span> <span class="nb">map</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Then we can study how the circuit gets transpiled:</p>
+<p>At IQM we identify qubits by their names, e.g. ‘QB1’, ‘QB2’, etc. as demonstrated above. In Qiskit, qubits are
+identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
+time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
+<a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackend.html#qiskit_iqm.iqm_backend.IQMBackend.qubit_name_to_index" title="qiskit_iqm.iqm_backend.IQMBackend.qubit_name_to_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.qubit_name_to_index()</span></code></a> and <a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackend.html#qiskit_iqm.iqm_backend.IQMBackend.index_to_qubit_name" title="qiskit_iqm.iqm_backend.IQMBackend.index_to_qubit_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.index_to_qubit_name()</span></code></a> can become handy.</p>
+<p>Now we can study how the circuit gets transpiled:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.compiler</span> <span class="kn">import</span> <span class="n">transpile</span>
 
 <span class="n">qc_transpiled</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>

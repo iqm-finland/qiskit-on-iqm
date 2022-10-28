@@ -27,6 +27,8 @@ qiskit\_iqm.iqm\_backend.IQMBackend
    
       ~IQMBackend._default_options
       ~IQMBackend.close_client
+      ~IQMBackend.index_to_qubit_name
+      ~IQMBackend.qubit_name_to_index
       ~IQMBackend.retrieve_job
       ~IQMBackend.run
       ~IQMBackend.serialize_circuit

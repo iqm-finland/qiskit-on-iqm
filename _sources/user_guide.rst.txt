@@ -115,7 +115,12 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
     Native operations of the backend: ['r', 'cz', 'measure']
     Coupling map of the backend: [[0, 2], [1, 2], [2, 3], [2, 4]]
 
-Then we can study how the circuit gets transpiled:
+At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
+identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
+time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
+:meth:`.IQMBackend.qubit_name_to_index` and :meth:`.IQMBackend.index_to_qubit_name` can become handy.
+
+Now we can study how the circuit gets transpiled:
 
 .. code-block:: python
 
