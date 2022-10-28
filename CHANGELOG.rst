@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 6.1
+===========
+
+* Add ``qubit_name_to_index`` and ``index_to_qubit_name`` methods to ``IQMBackend``. `#33 <https://github.com/iqm-finland/qiskit-on-iqm/pull/33>`_
+* Fix the indexing order of qubits. `#33 <https://github.com/iqm-finland/qiskit-on-iqm/pull/33>`_
+
 Version 6.0
 ===========
 
