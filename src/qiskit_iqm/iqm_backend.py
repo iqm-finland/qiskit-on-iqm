@@ -24,7 +24,7 @@ from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import BackendV2, Options
-from qiskit.transpiler import InstructionProperties, Target
+from qiskit.transpiler import Target
 
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import MeasurementKey
@@ -61,10 +61,7 @@ class IQMBackend(BackendV2):
         target.add_instruction(
             CZGate(), {(qb_to_idx[qb1], qb_to_idx[qb2]): None for qb1, qb2 in arch.qubit_connectivity}
         )
-
-        # FIXME: We shall add the measurement instructions with None properties as well, however we can do it only
-        # after the bug https://github.com/Qiskit/qiskit-terra/issues/8969 is fixed.
-        target.add_instruction(Measure(), {(qb_to_idx[qb],): InstructionProperties() for qb in arch.qubits})
+        target.add_instruction(Measure(), {(qb_to_idx[qb],): None for qb in arch.qubits})
 
         self._target = target
         self._qb_to_idx = qb_to_idx

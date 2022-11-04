@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 6.2
+===========
+
+* Upgrade to ``qiskit ~= 0.39.1`` and remove the life hack of adding measurement gates to the target. `#34 <https://github.com/iqm-finland/qiskit-on-iqm/pull/34>`_
+
 Version 6.1
 ===========
 
