@@ -9,3 +9,7 @@ Contributors
 * Olli Ahonen <olli@meetiqm.com>
 * Matthias Beuerle <matthias.beuerle@meetiqm.com>
 * Rakhim Davletkaliyev <rakhim.davletkaliyev@meetiqm.com>
+* Adrian Auer <adrian.auer@meetiqm.com>
+* Stefan Seegerer <stefan.seegerer@meetiqm.com>
+* Vicente Pina Canelles <vicente.pina@meetiqm.com>
+

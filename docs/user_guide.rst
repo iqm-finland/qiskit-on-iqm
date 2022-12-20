@@ -156,16 +156,58 @@ Now we can study how the circuit gets transpiled:
                                                                                               ║
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
-We can also simulate the execution of the transpiled circuit before actually executing it:
+
+Simulating the execution of a transpiled circuit locally
+--------------------------------------------------------
+We can also simulate the execution of any transpiled circuit locally before actually executing it on real hardware by running it like this:
 
 .. code-block:: python
+    from qiskit import execute, QuantumCircuit
+    from qiskit_iqm import IQMFakeAdonis
+    from qiskit.compiler import transpile
 
-    from qiskit import Aer
+    circuit = QuantumCircuit(2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.measure_all()
 
-    simulator = Aer.get_backend('qasm_simulator')
-    job = execute(qc_transpiled, simulator, shots=1000)
+    backend = IQMFakeAdonis()
+    circuit = transpile(circuit, backend=backend)
+    job = execute(circuit, backend, qubit_mapping=None, shots=1000)
+    job.result().get_counts()
 
-    print(job.result().get_counts())
+
+This script uses an `IQMFakeAdonis` instance to conduct a noisy simulation of a circuit that was transpiled specifically to an IQM device.
+
+To use a noisy simulation you can import a `IQMFakeAdonis`. We have provided a chip sample that is used as a standard when creating an instance of
+`IQMFakeAdonis`. If you want to use your own noise parameters, you can just create your own chip sample by adapting the following template:
+
+.. code-block:: python
+    from qiskit_iqm import IQMChipSample
+    from qiskit_iqm import Adonis, Apollo
+
+    some_chip_sample = IQMChipSample(
+        quantum_architecture=Adonis(), # can be Adonis() (5-qubit architecture) or Apollo() (20-qubit architecture)
+        # T1 times for all qubits, index indicates the qubit number
+        t1s=[50000.0, 50000.0, 50000.0, 50000.0, 50000.0],
+        # T2 times for all qubits, index indicates the qubit number
+        t2s=[50000.0, 50000.0, 50000.0, 50000.0, 50000.0],
+        # Gate fidelities for one and two qubit gates, the key in the dictionary indicates the qubits the gate operates on
+        one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
+        two_qubit_gate_fidelities={"cz": {(0, 2): 0.999, (1, 2): 0.999, (3, 2): 0.999, (4, 2): 0.999}},
+        # Gate fidelities for one and two qubit gates, the key in the dictionary indicates the qubits the gate operates on
+        one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
+        two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.001, (1, 2): 0.001, (3, 2): 0.001, (4, 2): 0.001}},
+        # Gate durations
+        one_qubit_gate_durations={"r": 40.0},
+        two_qubit_gate_durations={"cz": 80.0},
+        id_="sample-chip",
+    )
+
+
+
+ measurement configuration, create you own chip sample by 
+
 
 More advanced examples
 ----------------------

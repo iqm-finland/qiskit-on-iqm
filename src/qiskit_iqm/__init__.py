@@ -18,6 +18,9 @@ from importlib.metadata import PackageNotFoundError, version
 from qiskit_iqm.iqm_backend import IQMBackend
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.iqm_provider import IQMProvider
+from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend, IQMFakeAdonis
+from qiskit_iqm.fake_backends.chip_samples.chip_sample import IQMChipSample
+from qiskit_iqm.fake_backends.quantum_architectures import Adonis, Apollo
 
 try:
     dist_name = "qiskit-iqm"
