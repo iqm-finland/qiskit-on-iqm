@@ -17,7 +17,7 @@
 """
 
 from typing import Union, List, Dict, Tuple
-from ..quantum_architectures import IQMQuantumArchitecture
+from .quantum_architectures import IQMQuantumArchitecture
 
 
 class IQMChipSample:

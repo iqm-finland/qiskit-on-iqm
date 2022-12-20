@@ -15,7 +15,7 @@
 """
     This module shows how to create a chip sample. Copy this file and populate it with your measured values.
 """
-from . import IQMChipSample
+from .. import IQMChipSample
 from ..quantum_architectures import Adonis
 
 adonis_chip_sample = IQMChipSample(

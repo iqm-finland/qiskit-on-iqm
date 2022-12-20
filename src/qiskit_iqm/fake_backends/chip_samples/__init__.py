@@ -14,4 +14,3 @@
 
 """IQM quantum computers chip samples to represent a measured chip sample.
 """
-from .chip_sample import IQMChipSample

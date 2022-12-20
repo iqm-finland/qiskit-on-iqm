@@ -17,3 +17,7 @@ test_report.xml
 /build/
 /dist/
 /docs/api/
+
+# Ignore user-defined chip samples, but allow example chip sample
+src/qiskit_iqm/fake_backends/chip_samples/*
+!src/qiskit_iqm/fake_backends/chip_samples/example_sample.py
