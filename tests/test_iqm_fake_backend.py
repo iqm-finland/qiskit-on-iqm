@@ -18,14 +18,13 @@ import collections
 
 import numpy as np
 import pytest
-
 from qiskit import QuantumCircuit
-from qiskit.providers import JobV1
 from qiskit.circuit import Parameter
-from qiskit.providers.aer import noise
 from qiskit.compiler import transpile
+from qiskit.providers import JobV1
+from qiskit_aer import noise
 
-from qiskit_iqm import IQMFakeBackend, IQMFakeAdonis
+from qiskit_iqm import IQMFakeAdonis, IQMFakeBackend
 from qiskit_iqm.fake_backends.chip_samples.example_sample import IQMChipSample
 from qiskit_iqm.fake_backends.quantum_architectures.adonis import Adonis
 

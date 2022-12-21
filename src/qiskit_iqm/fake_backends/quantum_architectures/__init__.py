@@ -15,6 +15,6 @@
 """IQM quantum computers published architectures.
 """
 
-from .quantum_architecture import IQMQuantumArchitecture
 from .adonis import Adonis
 from .apollo import Apollo
+from .quantum_architecture import IQMQuantumArchitecture

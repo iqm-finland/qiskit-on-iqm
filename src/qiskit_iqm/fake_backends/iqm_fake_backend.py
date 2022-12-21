@@ -21,19 +21,15 @@ from typing import Union
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, Measure, RGate
-from qiskit.transpiler.coupling import CouplingMap
-from qiskit.transpiler import Target
 from qiskit.providers import BackendV2, JobV1
-
+from qiskit.transpiler import Target
+from qiskit.transpiler.coupling import CouplingMap
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
-from qiskit_aer.noise.errors import (
-    depolarizing_error,
-    thermal_relaxation_error,
-)
+from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
-from qiskit_iqm.iqm_backend import IQMBackend
 from qiskit_iqm.fake_backends.chip_samples.example_sample import adonis_chip_sample
+from qiskit_iqm.iqm_backend import IQMBackend
 
 
 class IQMFakeBackend(IQMBackend, BackendV2):

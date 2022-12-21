@@ -16,7 +16,8 @@
 """Abstract representation of an IQM chip sample.
 """
 
-from typing import Union, List, Dict, Tuple
+from typing import Dict, List, Tuple, Union
+
 from .quantum_architectures import IQMQuantumArchitecture
 
 
