@@ -169,7 +169,7 @@ def test_noisy_bell_state(backend):
     circ.measure_all()
 
     transpiled_circuit = transpile(circ, basis_gates=backend.basis_gates)
-    job = backend.run(transpiled_circuit)
+    job = backend.run(transpiled_circuit, shots=10000)
     counts = job.result().get_counts()
 
     assert (counts["01"] + counts["10"]) > 0
