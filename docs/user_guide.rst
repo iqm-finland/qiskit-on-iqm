@@ -162,6 +162,7 @@ Simulating the execution of a transpiled circuit locally
 We can also simulate the execution of any transpiled circuit locally before actually executing it on real hardware by running it like this:
 
 .. code-block:: python
+
     from qiskit import execute, QuantumCircuit
     from qiskit_iqm import IQMFakeAdonis
     from qiskit.compiler import transpile
@@ -183,6 +184,7 @@ To use a noisy simulation you can import a `IQMFakeAdonis`. We have provided a c
 `IQMFakeAdonis`. If you want to use your own noise parameters, you can just create your own chip sample by adapting the following template:
 
 .. code-block:: python
+
     from qiskit_iqm import IQMChipSample
     from qiskit_iqm import Adonis, Apollo
 
@@ -206,7 +208,6 @@ To use a noisy simulation you can import a `IQMFakeAdonis`. We have provided a c
 
 
 
- measurement configuration, create you own chip sample by 
 
 
 More advanced examples
