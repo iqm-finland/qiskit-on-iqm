@@ -13,7 +13,8 @@
 # limitations under the License.
 
 # pylint: disable=no-name-in-module,import-error,super-init-not-called,too-many-instance-attributes
-"""Qiskit fake backend for IQM quantum computers.
+"""
+Qiskit fake backend for IQM quantum computers.
 """
 
 from typing import Union
@@ -33,12 +34,15 @@ from qiskit_iqm.iqm_backend import IQMBackend
 
 
 class IQMFakeBackend(IQMBackend, BackendV2):
-    """A fake backend class for an IQM chip."""
+    """
+    A fake backend class for an IQM chip sample.
+    """
 
     def __init__(self, chip_sample, **kwargs):
-        """IQMFakeBackend constructor.
+        """
+        IQMFakeBackend constructor.
         Args:
-            chip_sample: An instance of a :class:`IQMChipSample`describing the
+            chip_sample: An instance of a :class:`IQMChipSample` describing the
             characteristics of a specific chip sample.
         """
         BackendV2.__init__(self, **kwargs)
@@ -82,7 +86,9 @@ class IQMFakeBackend(IQMBackend, BackendV2):
         self.noise_model = self._create_noise_model()
 
     def _create_noise_model(self):
-        """Compiles a noise model from attributes of this instance of IQMSimulator."""
+        """
+        Compiles a noise model from attributes of this instance of IQMSimulator.
+        """
         noise_model = NoiseModel(basis_gates=self.basis_gates)
 
         # Add single-qubit gate errors to noise model
@@ -115,7 +121,8 @@ class IQMFakeBackend(IQMBackend, BackendV2):
         return noise_model
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
-        """Run `run_input` on the fake backend using a simulator.
+        """
+        Run `run_input` on the fake backend using a simulator.
 
         This method runs circuit jobs (an individual or a list of QuantumCircuit
         ) and returns a :class:`~qiskit.providers.JobV1` object.
@@ -126,7 +133,7 @@ class IQMFakeBackend(IQMBackend, BackendV2):
         Args:
             run_input (QuantumCircuit or list of QuantumCircuit): An
                 individual or a list of
-                :class:`~qiskit.circuits.QuantumCircuit objects to run on the backend.
+                :class:`~qiskit.circuits.QuantumCircuit` objects to run on the backend.
             options: Any kwarg options to pass to the backend.
         Returns:
             JobV1: The job object for the run
@@ -153,7 +160,14 @@ class IQMFakeBackend(IQMBackend, BackendV2):
 
 
 class IQMFakeAdonis(IQMFakeBackend):
-    """A fake backend class for an IQM adonis."""
+    """
+    A fake backend class for an IQM adonis.
+
+    Args:
+        chip_sample: An instance of a :class:`IQMChipSample` describing the
+            characteristics of a specific chip sample.
+        **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
+    """
 
     def __init__(self, chip_sample=None, **kwargs):
         if chip_sample is None:

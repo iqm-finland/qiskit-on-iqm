@@ -13,7 +13,8 @@
 # limitations under the License.
 
 # pylint: disable=no-name-in-module,import-error,too-many-instance-attributes,too-many-arguments,line-too-long
-"""Abstract representation of an IQM chip sample.
+"""
+Abstract representation of an IQM chip sample.
 """
 
 from typing import Dict, List, Tuple, Union
@@ -22,8 +23,8 @@ from .quantum_architectures import IQMQuantumArchitecture
 
 
 class IQMChipSample:
-    """Class implementation to provide a abstract representation of
-    the specifications of a IQM chip sample.
+    """
+    Class implementation to provide an abstract representation of the specifications of an IQM chip sample.
     """
 
     def __init__(
@@ -45,20 +46,16 @@ class IQMChipSample:
             quantum_architecture (IQMQuantumArchitecture): an instance of a Quantum Architecture.
             t1s (List[float]): the list of T1 times, in ascending qubit index order.
             t2s (List[float]): the list of T2 times, in ascending qubit index order.
-            one_qubit_gate_fidelities (Dict[str, Dict[int, float]]): for each one-qubit gate, a fidelity is specified
-                for each qubit.
-            two_qubit_gate_fidelities (Dict[str, Dict[Tuple[int], float]]): for each two-qubit gate, a fidelity is
-                specified for each coupling.
-            one_qubit_gate_depolarization_rates (Dict[str, Dict[int, float]]): for each one-qubit gate, a depolarization
-                rate is specified for each qubit.
-            two_qubit_gate_depolarization_rates (Dict[str, Dict[Tuple[int], float]]): for each two-qubit gate, a
-                depolarization rate is specified for each coupling.
+            one_qubit_gate_fidelities (Dict[str, Dict[int, float]]): for each one-qubit gate, a fidelity is specified for each qubit.
+            two_qubit_gate_fidelities (Dict[str, Dict[Tuple[int], float]]): for each two-qubit gate, a fidelity is specified for each coupling.
+            one_qubit_gate_depolarization_rates (Dict[str, Dict[int, float]]): for each one-qubit gate, a depolarization rate is specified for each qubit.
+            two_qubit_gate_depolarization_rates (Dict[str, Dict[Tuple[int], float]]): for each two-qubit gate, a depolarization rate is specified for each coupling.
             one_qubit_gate_durations (Dict[str, float]): for each one-qubit gate, a duration is specified.
             two_qubit_gate_durations (Dict[str, float]): for each two-qubit gate, a duration is specified.
             id_ (Union[str, None], optional): the identifier of the chip sample. Defaults to None.
 
         Example:
-            IQMChipSample(quantum_architecture=ThreeQubitExample(),
+            >>> IQMChipSample(quantum_architecture=ThreeQubitExample(),
                           t1s=[10000., 12000., 14000.],
                           t2s=[10000., 12000., 13000.],
                           one_qubit_gate_fidelities={"r": {0: 0.999,
