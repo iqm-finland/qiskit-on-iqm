@@ -55,22 +55,24 @@ class IQMChipSample:
             id_ (Union[str, None], optional): the identifier of the chip sample. Defaults to None.
 
         Example:
-            >>> IQMChipSample(quantum_architecture=ThreeQubitExample(),
-                          t1s=[10000., 12000., 14000.],
-                          t2s=[10000., 12000., 13000.],
-                          one_qubit_gate_fidelities={"r": {0: 0.999,
-                                                           1: 0.996,
-                                                           2: 0.998}},
-                          two_qubit_gate_fidelities={"cz": {(0, 1): 0.995,
+            .. code-block::
+
+                IQMChipSample(quantum_architecture=ThreeQubitExample(),
+                            t1s=[10000., 12000., 14000.],
+                            t2s=[10000., 12000., 13000.],
+                            one_qubit_gate_fidelities={"r": {0: 0.999,
+                                                            1: 0.996,
+                                                            2: 0.998}},
+                            two_qubit_gate_fidelities={"cz": {(0, 1): 0.995,
                                                             (1, 2): 0.997}},
-                          one_qubit_gate_depolarization_rates={"r": {0: 0.0005,
-                                                                     1: 0.0004,
-                                                                     2: 0.0010}},
-                          two_qubit_gate_depolarization_rates={"cz": {(0, 1): 0.08,
-                                                                      (1, 2): 0.03}},
-                          one_qubit_gate_durations={"r": 50.},
-                          two_qubit_gate_durations={"cz": 100.},
-                          id_="threequbit-example_sample")
+                            one_qubit_gate_depolarization_rates={"r": {0: 0.0005,
+                                                                        1: 0.0004,
+                                                                        2: 0.0010}},
+                            two_qubit_gate_depolarization_rates={"cz": {(0, 1): 0.08,
+                                                                        (1, 2): 0.03}},
+                            one_qubit_gate_durations={"r": 50.},
+                            two_qubit_gate_durations={"cz": 100.},
+                            id_="threequbit-example_sample")
         """
         self.quantum_architecture = quantum_architecture
         self.no_qubits = len(t1s)
