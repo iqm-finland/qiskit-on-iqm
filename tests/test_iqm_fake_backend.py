@@ -15,6 +15,7 @@
 """Testing IQM backend.
 """
 import collections
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -26,7 +27,7 @@ from qiskit_aer import noise
 
 from qiskit_iqm import IQMFakeAdonis, IQMFakeBackend
 from qiskit_iqm.fake_backends.chip_samples.example_sample import IQMChipSample
-from qiskit_iqm.fake_backends.quantum_architectures.adonis import Adonis
+from qiskit_iqm.fake_backends.quantum_architectures import Adonis, IQMQuantumArchitecture
 
 
 @pytest.fixture
@@ -45,6 +46,23 @@ def backend():
     )
 
     return IQMFakeBackend(sample)
+
+
+@pytest.fixture
+def ThreeQubitExample():
+    class ThreeQubitExample(IQMQuantumArchitecture):
+        """Class implementation for IQMs 5-qubit QPU architecture."""
+
+        def __init__(self):
+            super().__init__(
+                no_qubits=3,
+                topology=[[0, 1], [1, 2]],
+                basis_one_qubit_gates=["r"],
+                basis_two_qubit_gates=[],
+                id_="sample-three-qubit-architecture",
+            )
+
+    return ThreeQubitExample
 
 
 def test_warning_raised_if_no_config_provided():
@@ -73,6 +91,24 @@ def test_chip_sample_with_no_2_qubit_gates_specified():
 def test_iqm_fake_adonis():
     backend = IQMFakeAdonis()
     assert backend.no_qubits == 5
+
+
+def test_iqm_fake_adonis_with_chip_sample():
+    sample = IQMChipSample(
+        quantum_architecture=Adonis(),
+        t1s={0: 42, 1: 42, 2: 42, 3: 42, 4: 42},
+        t2s={0: 42, 1: 42, 2: 42, 3: 42, 4: 42},
+        one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
+        two_qubit_gate_fidelities={"cz": {(0, 2): 0.999, (1, 2): 0.999, (3, 2): 0.999, (4, 2): 0.999}},
+        one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
+        two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.001, (1, 2): 0.001, (3, 2): 0.001, (4, 2): 0.001}},
+        one_qubit_gate_durations={"r": 40.0},
+        two_qubit_gate_durations={"cz": 80.0},
+        id_="sample-chip",
+    )
+
+    backend = IQMFakeAdonis(chip_sample=sample)
+    assert backend.t1s[0] == 42
 
 
 def test_run_single_circuit(backend):
@@ -172,4 +208,148 @@ def test_noisy_bell_state(backend):
     job = backend.run(transpiled_circuit, shots=10000)
     counts = job.result().get_counts()
 
-    assert (counts["01"] + counts["10"]) > 0
+    wrong_results = 0
+    if "01" in counts:
+        wrong_results += counts["01"]
+    if "10" in counts:
+        wrong_results += counts["10"]
+    assert wrong_results > 0
+
+
+def test_chip_sample_check_if_parameters_are_validated(ThreeQubitExample):
+    with patch.object(IQMChipSample, "_validate_parameters", return_value=True) as mock_method:
+        IQMChipSample(
+            quantum_architecture=ThreeQubitExample(),
+            t1s={0: 10000.0, 1: 12000.0},
+            t2s={0: 10000.0, 1: 12000.0, 2: 13000.0},
+            one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.996, 2: 0.998}},
+            two_qubit_gate_fidelities={},
+            one_qubit_gate_depolarization_rates={"r": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+            two_qubit_gate_depolarization_rates={},
+            one_qubit_gate_durations={"r": 50.0},
+            two_qubit_gate_durations={},
+        )
+
+    mock_method.assert_called_once()
+
+
+def test_chip_sample_validation_to_few_t1_times_provided(ThreeQubitExample):
+    with pytest.raises(ValueError):
+
+        IQMChipSample(
+            quantum_architecture=ThreeQubitExample(),
+            t1s={0: 10000.0, 1: 12000.0},
+            t2s={0: 10000.0, 1: 12000.0, 2: 13000.0},
+            one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.996, 2: 0.998}},
+            two_qubit_gate_fidelities={},
+            one_qubit_gate_depolarization_rates={"r": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+            two_qubit_gate_depolarization_rates={},
+            one_qubit_gate_durations={"r": 50.0},
+            two_qubit_gate_durations={},
+        )
+
+
+def test_chip_sample_validation_to_few_t2_times_provided(ThreeQubitExample):
+    with pytest.raises(ValueError):
+
+        IQMChipSample(
+            quantum_architecture=ThreeQubitExample(),
+            t1s={0: 10000.0, 1: 12000.0, 2: 1337},
+            t2s={0: 10000.0, 1: 12000.0},
+            one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.996, 2: 0.998}},
+            two_qubit_gate_fidelities={},
+            one_qubit_gate_depolarization_rates={"r": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+            two_qubit_gate_depolarization_rates={},
+            one_qubit_gate_durations={"r": 50.0},
+            two_qubit_gate_durations={},
+        )
+
+
+def test_chip_sample_validation_1qubit_fidelities_dict_entries_match_qubits(ThreeQubitExample):
+
+    IQMChipSample(
+        quantum_architecture=ThreeQubitExample(),
+        t1s={0: 10000.0, 1: 12000.0, 2: 1337},
+        t2s={0: 10000.0, 1: 12000.0, 2: 1337},
+        one_qubit_gate_fidelities={"r": {0: 0.999, 1: 12000.0, 2: 1337}},
+        two_qubit_gate_fidelities={},
+        one_qubit_gate_depolarization_rates={"r": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+        two_qubit_gate_depolarization_rates={},
+        one_qubit_gate_durations={"r": 50.0},
+        two_qubit_gate_durations={},
+    )
+
+    with pytest.raises(ValueError):
+
+        IQMChipSample(
+            quantum_architecture=ThreeQubitExample(),
+            t1s={0: 10000.0, 1: 12000.0, 2: 1337},
+            t2s={0: 10000.0, 1: 12000.0, 2: 1337},
+            one_qubit_gate_fidelities={"r": {5: 0.999, 1: 12000.0, 2: 1337}},
+            two_qubit_gate_fidelities={},
+            one_qubit_gate_depolarization_rates={"r": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+            two_qubit_gate_depolarization_rates={},
+            one_qubit_gate_durations={"r": 50.0},
+            two_qubit_gate_durations={},
+        )
+
+
+def test_chip_sample_validation_2qubit_gate_not_supported_by_architecture(ThreeQubitExample):
+
+    IQMChipSample(
+        quantum_architecture=ThreeQubitExample(),
+        t1s={0: 10000.0, 1: 12000.0, 2: 14000.0},
+        t2s={0: 10000.0, 1: 12000.0, 2: 13000.0},
+        one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.996, 2: 0.998}},
+        two_qubit_gate_fidelities={},
+        one_qubit_gate_depolarization_rates={"r": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+        two_qubit_gate_depolarization_rates={},
+        one_qubit_gate_durations={"r": 50.0},
+        two_qubit_gate_durations={},
+        id_="threequbit-example_sample",
+    )
+
+    with pytest.raises(ValueError):
+
+        IQMChipSample(
+            quantum_architecture=ThreeQubitExample(),
+            t1s={0: 10000.0, 1: 12000.0, 2: 14000.0},
+            t2s={0: 10000.0, 1: 12000.0, 2: 13000.0},
+            one_qubit_gate_fidelities={"x": {0: 0.999, 1: 0.996, 2: 0.998}},
+            two_qubit_gate_fidelities={},
+            one_qubit_gate_depolarization_rates={"x": {0: 0.0005, 1: 0.0004, 2: 0.0010}},
+            two_qubit_gate_depolarization_rates={},
+            one_qubit_gate_durations={"x": 50.0},
+            two_qubit_gate_durations={},
+            id_="threequbit-example_sample",
+        )
+
+
+def test_chip_sample_validation_2qubit_gate_has_wrong_connections():
+    IQMChipSample(
+        quantum_architecture=Adonis(),
+        t1s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
+        t2s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
+        one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
+        two_qubit_gate_fidelities={"cz": {(0, 2): 0.999, (1, 2): 0.999, (3, 2): 0.999, (4, 2): 0.999}},
+        one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
+        two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.001, (1, 2): 0.001, (3, 2): 0.001, (4, 2): 0.001}},
+        one_qubit_gate_durations={"r": 40.0},
+        two_qubit_gate_durations={"cz": 80.0},
+        id_="sample-chip",
+    )
+
+    with pytest.raises(ValueError):
+
+        IQMChipSample(
+            quantum_architecture=Adonis(),
+            t1s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
+            t2s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
+            one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
+            two_qubit_gate_fidelities={"cz": {(0, 2): 0.999, (1, 2): 0.999, (3, 2): 0.999, (4, 2): 0.999}},
+            one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
+            two_qubit_gate_depolarization_rates={"cz": {(42, 2): 0.001, (1, 2): 0.001, (3, 2): 0.001, (4, 2): 0.001}},
+            one_qubit_gate_durations={"r": 40.0},
+            two_qubit_gate_durations={"cz": 80.0},
+            id_="sample-chip",
+        )
