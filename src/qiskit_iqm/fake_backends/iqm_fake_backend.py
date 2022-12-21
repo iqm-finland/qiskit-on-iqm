@@ -127,8 +127,7 @@ class IQMFakeBackend(IQMBackend, BackendV2):
         This method runs circuit jobs (an individual or a list of QuantumCircuit
         ) and returns a :class:`~qiskit.providers.JobV1` object.
 
-        This requires the iqm-backend-simulator package to be installed. Then it will run
-        the simulation with a noise model of the fake backend (e.g. adonis).
+        It will run the simulation with a noise model of the fake backend (e.g. Adonis).
 
         Args:
             run_input (QuantumCircuit or list of QuantumCircuit): An

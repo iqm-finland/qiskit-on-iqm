@@ -17,7 +17,7 @@
 Abstract representation of an IQM chip sample.
 """
 
-from typing import Dict, List, Tuple, Union
+from typing import Union
 
 from .quantum_architectures import IQMQuantumArchitecture
 
@@ -30,36 +30,36 @@ class IQMChipSample:
     def __init__(
         self,
         quantum_architecture: IQMQuantumArchitecture,
-        t1s: List[float],
-        t2s: List[float],
-        one_qubit_gate_fidelities: Dict[str, Dict[int, float]],
-        two_qubit_gate_fidelities: Dict[str, Dict[Tuple[int, int], float]],
-        one_qubit_gate_depolarization_rates: Dict[str, Dict[int, float]],
-        two_qubit_gate_depolarization_rates: Dict[str, Dict[Tuple[int, int], float]],
-        one_qubit_gate_durations: Dict[str, float],
-        two_qubit_gate_durations: Dict[str, float],
+        t1s: dict[int, float],
+        t2s: dict[int, float],
+        one_qubit_gate_fidelities: dict[str, dict[int, float]],
+        two_qubit_gate_fidelities: dict[str, dict[tuple[int, int], float]],
+        one_qubit_gate_depolarization_rates: dict[str, dict[int, float]],
+        two_qubit_gate_depolarization_rates: dict[str, dict[tuple[int, int], float]],
+        one_qubit_gate_durations: dict[str, float],
+        two_qubit_gate_durations: dict[str, float],
         id_: Union[str, None] = None,
     ):
         """Provides the specifications of a quantum chip sample.
 
         Args:
             quantum_architecture (IQMQuantumArchitecture): an instance of a Quantum Architecture.
-            t1s (List[float]): the list of T1 times, in ascending qubit index order.
-            t2s (List[float]): the list of T2 times, in ascending qubit index order.
-            one_qubit_gate_fidelities (Dict[str, Dict[int, float]]): for each one-qubit gate, a fidelity is specified for each qubit.
-            two_qubit_gate_fidelities (Dict[str, Dict[Tuple[int], float]]): for each two-qubit gate, a fidelity is specified for each coupling.
-            one_qubit_gate_depolarization_rates (Dict[str, Dict[int, float]]): for each one-qubit gate, a depolarization rate is specified for each qubit.
-            two_qubit_gate_depolarization_rates (Dict[str, Dict[Tuple[int], float]]): for each two-qubit gate, a depolarization rate is specified for each coupling.
-            one_qubit_gate_durations (Dict[str, float]): for each one-qubit gate, a duration is specified.
-            two_qubit_gate_durations (Dict[str, float]): for each two-qubit gate, a duration is specified.
+            t1s (dict[int, float]): T1 times for the qubit with the corresponding key.
+            t2s (dict[int, float]): T2 times for the qubit with the corresponding key.
+            one_qubit_gate_fidelities (dict[str, dict[int, float]]): for each one-qubit gate, a fidelity is specified for each qubit.
+            two_qubit_gate_fidelities (dict[str, dict[tuple[int, int], float]]): for each two-qubit gate, a fidelity is specified for each coupling.
+            one_qubit_gate_depolarization_rates (dict[str, dict[int, float]]): for each one-qubit gate, a depolarization rate is specified for each qubit.
+            two_qubit_gate_depolarization_rates (dict[str, dict[tuple[int, int], float]]): for each two-qubit gate, a depolarization rate is specified for each coupling.
+            one_qubit_gate_durations (dict[str, float]): for each one-qubit gate, a duration is specified.
+            two_qubit_gate_durations (dict[str, float]): for each two-qubit gate, a duration is specified.
             id_ (Union[str, None], optional): the identifier of the chip sample. Defaults to None.
 
         Example:
             .. code-block::
 
                 IQMChipSample(quantum_architecture=ThreeQubitExample(),
-                            t1s=[10000., 12000., 14000.],
-                            t2s=[10000., 12000., 13000.],
+                            t1s={0: 10000.0, 1: 12000.0, 2: 14000.0},
+                            t2s={0: 10000.0, 1: 12000.0, 3: 13000.0},
                             one_qubit_gate_fidelities={"r": {0: 0.999,
                                                             1: 0.996,
                                                             2: 0.998}},
