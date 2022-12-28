@@ -49,12 +49,12 @@ class IQMJob(JobV1):
         if iqm_result.measurements is None:
             raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
 
-        shots = self.metadata.get('shots', iqm_result.metadata.shots)
+        shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         shape = (shots, 1)  # only one qubit is measured per measurement op
 
         return [
             (circuit.name, self._format_measurement_results(measurements, shape))
-            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
+            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.request.circuits)
         ]
 
     @staticmethod
@@ -97,6 +97,11 @@ class IQMJob(JobV1):
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
             self._calibration_set_id = results.metadata.calibration_set_id
             self._result = self._format_iqm_results(results)
+            # IQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current session;
+            # In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
+            if self.circuit_metadata is None:
+                self.circuit_metadata = []
+                self.circuit_metadata = [c.metadata for c in results.metadata.request.circuits]
 
         result_dict = {
             'backend_name': None,

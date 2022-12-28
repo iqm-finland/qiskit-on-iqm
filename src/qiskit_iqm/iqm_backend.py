@@ -91,7 +91,7 @@ class IQMBackend(BackendV2):
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
 
-        circuits_serialized = [self.serialize_circuit(circuit) for circuit in circuits]
+        circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items()}
         uuid = self.client.submit_circuits(
             circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
@@ -164,4 +164,4 @@ class IQMBackend(BackendV2):
                     f'You need to transpile the circuit before execution.'
                 )
 
-        return Circuit(name=circuit.name, instructions=instructions)
+        return Circuit(name=circuit.name, instructions=instructions, metadata=circuit.metadata)

@@ -48,7 +48,14 @@ def iqm_result_two_registers():
 
 @pytest.fixture()
 def iqm_metadata():
-    return {'shots': 4, 'circuits': [{'name': 'circuit_1', 'instructions': []}], 'calibration_set_id': 123}
+    return {
+        'calibration_set_id': 123,
+        'request': {
+            'shots': 4,
+            'circuits': [{'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 'b'}}],
+            'calibration_set_id': 123,
+        },
+    }
 
 
 def test_submit_raises(job):
@@ -101,6 +108,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert result.get_counts() == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     for r in result.results:
         assert r.calibration_set_id == 123
+        assert r.data.metadata == {'a': 'b'}
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
@@ -112,9 +120,15 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
     iqm_metadata_multiple_circuits = {
-        'shots': 4,
-        'circuits': [{'name': 'circuit_1', 'instructions': []}, {'name': 'circuit_2', 'instructions': []}],
         'calibration_set_id': 234,
+        'request': {
+            'shots': 4,
+            'circuits': [
+                {'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 0}},
+                {'name': 'circuit_2', 'instructions': [], 'metadata': {'a': 1}},
+            ],
+            'calibration_set_id': 234,
+        },
     }
     client_result = RunResult(
         status=Status.READY,
@@ -131,5 +145,6 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
         assert result.get_counts(circuit_idx) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     assert result.get_counts(QuantumCircuit(name='circuit_1')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     assert result.get_counts(QuantumCircuit(name='circuit_2')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
-    for r in result.results:
+    for i, r in enumerate(result.results):
         assert r.calibration_set_id == 234
+        assert r.data.metadata == {'a': i}
