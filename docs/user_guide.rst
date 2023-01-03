@@ -178,7 +178,7 @@ We can also simulate the execution of any transpiled circuit locally before actu
     job.result().get_counts()
 
 
-This script uses an `IQMFakeAdonis` instance to conduct a noisy simulation of a circuit that was transpiled specifically to an IQM device.
+This script uses an :class:`.IQMFakeAdonis` instance to conduct a noisy simulation of a circuit that was transpiled specifically to an IQM device.
 
 To use a noisy simulation you can import a `IQMFakeAdonis`. We have provided a chip sample that is used as a standard when creating an instance of
 `IQMFakeAdonis`. If you want to use your own noise parameters, you can just create your own chip sample by adapting the following template:
