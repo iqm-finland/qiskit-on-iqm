@@ -93,7 +93,7 @@ class IQMChipSample:
 
         self._validate_parameters()
 
-    def _validate_parameters(self):
+    def _validate_parameters(self) -> None:
         """Verifies that the parameters of the chip sample match the constraints of its IQMQuantumArchitecture.
 
         Raises:
