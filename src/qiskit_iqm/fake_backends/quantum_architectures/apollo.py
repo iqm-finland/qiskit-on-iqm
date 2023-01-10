@@ -19,7 +19,27 @@ from .quantum_architecture import IQMQuantumArchitecture
 
 
 class Apollo(IQMQuantumArchitecture):
-    """Class implementation for IQMs 20-qubit QPU architecture."""
+    """IQM's twenty-qubit transmon device.
+    The qubits are connected thus::
+            QB20  QB17
+            /  \  /  \
+         QB19  QB16  QB12
+         /  \  /  \  /  \
+      QB18  QB15  QB11  QB7
+         \  /  \  /  \  /
+         QB14  QB10  QB6
+         /  \  /  \  /
+      QB13  QB9   QB5
+         \  /  \  /  \
+         QB8   QB4   QB2
+            \  /  \  /
+            QB3   QB1
+    where the lines denote which qubit pairs can be subject to two-qubit gates.
+    Each qubit can be rotated about any axis in the xy plane by an arbitrary angle.
+    Apollo thus has native PhasedXPowGate, XPowGate, and YPowGate gates. The two-qubit gate CZ is
+    native, as well. The qubits can be measured simultaneously or separately once, at the end of
+    the circuit.
+    """
 
     def __init__(self):
         super().__init__(
