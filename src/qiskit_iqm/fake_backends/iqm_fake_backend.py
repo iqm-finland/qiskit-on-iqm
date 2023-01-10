@@ -50,39 +50,28 @@ class IQMFakeBackend(IQMBackend):
         if chip_sample is None:
             raise ValueError("No chip_sample provided.")
 
-        self.number_of_qubits = chip_sample.number_of_qubits
-        self.quantum_architecture = chip_sample.quantum_architecture
-        self.basis_1_qubit_gates = list(chip_sample.one_qubit_gate_fidelities.keys())
-        self.basis_2_qubit_gates = list(chip_sample.two_qubit_gate_fidelities.keys())
+        self.chip_sample = chip_sample
+
+        self.basis_1_qubit_gates = list(self.chip_sample.one_qubit_gate_fidelities.keys())
+        self.basis_2_qubit_gates = list(self.chip_sample.two_qubit_gate_fidelities.keys())
         self.basis_gates = self.basis_1_qubit_gates + self.basis_2_qubit_gates
-
-        # T1 and T2 times (in ns)
-        self.t1s = chip_sample.t1s
-        self.t2s = chip_sample.t2s
-
-        # Instruction times (in ns)
-        self.one_qubit_gate_durations = chip_sample.one_qubit_gate_durations
-        self.two_qubit_gate_durations = chip_sample.two_qubit_gate_durations
-
-        # Depolarization rates to match measured gate fidelities
-        self.one_qubit_gate_depolarization_rates = chip_sample.one_qubit_gate_depolarization_rates
-        self.two_qubit_gate_depolarization_rates = chip_sample.two_qubit_gate_depolarization_rates
 
         # qubit_connectivity map, used for CouplingMap
         self.qubit_connectivity = []
         if len(self.basis_2_qubit_gates) > 0:
             gate_name = self.basis_2_qubit_gates[0]
-            connections = self.two_qubit_gate_depolarization_rates[gate_name]
+            connections = self.chip_sample.two_qubit_gate_depolarization_rates[gate_name]
             # pylint: disable=unnecessary-lambda
             self.qubit_connectivity = list(map(lambda x: list(x), list(connections.keys())))
             # pylint: enable=unnecessary-lambda
 
         target = Target()
         target.add_instruction(
-            RGate(Parameter("theta"), Parameter("phi")), {(qb,): None for qb in range(self.number_of_qubits)}
+            RGate(Parameter("theta"), Parameter("phi")),
+            {(qb,): None for qb in range(self.chip_sample.number_of_qubits)},
         )
         target.add_instruction(CZGate(), {(qb1, qb2): None for qb1, qb2 in self.qubit_connectivity})
-        target.add_instruction(Measure(), {(qb,): None for qb in range(self.number_of_qubits)})
+        target.add_instruction(Measure(), {(qb,): None for qb in range(self.chip_sample.number_of_qubits)})
         self._target = target
 
         self.noise_model = self._create_noise_model()
@@ -95,28 +84,36 @@ class IQMFakeBackend(IQMBackend):
 
         # Add single-qubit gate errors to noise model
         for gate in self.basis_1_qubit_gates:
-            for i in range(self.number_of_qubits):
+            for i in range(self.chip_sample.number_of_qubits):
                 thermal_relaxation_channel = thermal_relaxation_error(
-                    self.t1s[i], self.t2s[i], self.one_qubit_gate_durations[gate]
+                    self.chip_sample.t1s[i], self.chip_sample.t2s[i], self.chip_sample.one_qubit_gate_durations[gate]
                 )
-                depolarizing_channel = depolarizing_error(self.one_qubit_gate_depolarization_rates[gate][i], 1)
+                depolarizing_channel = depolarizing_error(
+                    self.chip_sample.one_qubit_gate_depolarization_rates[gate][i], 1
+                )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                 noise_model.add_quantum_error(full_error_channel, gate, [i])
 
         # Add two-qubit gate errors to noise model
         for gate in self.basis_2_qubit_gates:
-            for connection in list(self.two_qubit_gate_depolarization_rates[gate].keys()):
+            for connection in list(self.chip_sample.two_qubit_gate_depolarization_rates[gate].keys()):
                 first_qubit = connection[0]
                 second_qubit = connection[1]
 
                 thermal_relaxation_channel = thermal_relaxation_error(
-                    self.t1s[first_qubit], self.t2s[first_qubit], self.two_qubit_gate_durations[gate]
+                    self.chip_sample.t1s[first_qubit],
+                    self.chip_sample.t2s[first_qubit],
+                    self.chip_sample.two_qubit_gate_durations[gate],
                 ).tensor(
                     thermal_relaxation_error(
-                        self.t1s[second_qubit], self.t2s[second_qubit], self.two_qubit_gate_durations[gate]
+                        self.chip_sample.t1s[second_qubit],
+                        self.chip_sample.t2s[second_qubit],
+                        self.chip_sample.two_qubit_gate_durations[gate],
                     )
                 )
-                depolarizing_channel = depolarizing_error(self.two_qubit_gate_depolarization_rates[gate][connection], 2)
+                depolarizing_channel = depolarizing_error(
+                    self.chip_sample.two_qubit_gate_depolarization_rates[gate][connection], 2
+                )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                 noise_model.add_quantum_error(full_error_channel, gate, [first_qubit, second_qubit])
 

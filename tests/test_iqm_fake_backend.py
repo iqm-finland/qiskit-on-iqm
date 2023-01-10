@@ -90,7 +90,7 @@ def test_chip_sample_with_no_2_qubit_gates_specified():
 
 def test_iqm_fake_adonis():
     backend = IQMFakeAdonis()
-    assert backend.number_of_qubits == 5
+    assert backend.chip_sample.number_of_qubits == 5
 
 
 def test_iqm_fake_adonis_with_chip_sample():
@@ -108,7 +108,7 @@ def test_iqm_fake_adonis_with_chip_sample():
     )
 
     backend = IQMFakeAdonis(chip_sample=sample)
-    assert backend.t1s[0] == 42
+    assert backend.chip_sample.t1s[0] == 42
 
 
 def test_run_single_circuit(backend):
@@ -179,7 +179,7 @@ def test_noise_on_all_qubits(backend):
     """
     noise_model = backend.noise_model
 
-    simulator_qubit_indices = list(range(backend.number_of_qubits))
+    simulator_qubit_indices = list(range(backend.chip_sample.number_of_qubits))
     noisy_qubits = noise_model.noise_qubits
 
     assert simulator_qubit_indices == noisy_qubits
