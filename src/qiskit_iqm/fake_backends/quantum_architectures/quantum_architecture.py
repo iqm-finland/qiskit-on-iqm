@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=no-name-in-module,import-error,too-many-arguments,unnecessary-lambda
-"""Abstract representation of an IQM QPU architecture.
+"""Abstract representation of an IQM quantum architecture
 """
 
 from typing import List, Union
