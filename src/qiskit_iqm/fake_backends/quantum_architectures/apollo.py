@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""File to represent IQMs 20-qubit architecture
+"""Apollo is IQM's 20-qubit architecture with a square-grid topology
 """
 
 from .quantum_architecture import IQMQuantumArchitecture
