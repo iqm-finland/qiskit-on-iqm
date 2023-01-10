@@ -16,7 +16,7 @@
 """
 Abstract representation of an IQM chip sample.
 """
-
+from dataclasses import dataclass
 from typing import Union
 
 from .quantum_architectures import IQMQuantumArchitecture
@@ -151,5 +151,3 @@ class IQMChipSample:
                     raise ValueError(
                         f"Gate `{gate}` in `gate_{property_name}` is not supported by quantum architecture `{self.quantum_architecture.id_}`. Valid gates: {self.quantum_architecture.basis_gates}"
                     )
-
-        return True

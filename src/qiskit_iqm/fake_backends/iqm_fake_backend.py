@@ -22,30 +22,30 @@ from typing import Union
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, Measure, RGate
-from qiskit.providers import BackendV2, JobV1
+from qiskit.providers import JobV1
 from qiskit.transpiler import Target
 from qiskit.transpiler.coupling import CouplingMap
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
-from qiskit_iqm.fake_backends.chip_samples.example_sample import adonis_chip_sample
+from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
 from qiskit_iqm.iqm_backend import IQMBackend
 
+from .quantum_architectures import Adonis
 
-class IQMFakeBackend(IQMBackend, BackendV2):
+
+class IQMFakeBackend(IQMBackend):
     """
     A fake backend class for an IQM chip sample.
+
+    Args:
+        chip_sample: An instance of a :class:`IQMChipSample` describing the
+        characteristics of a specific chip sample.
     """
 
-    def __init__(self, chip_sample, **kwargs):
-        """
-        IQMFakeBackend constructor.
-        Args:
-            chip_sample: An instance of a :class:`IQMChipSample` describing the
-            characteristics of a specific chip sample.
-        """
-        BackendV2.__init__(self, **kwargs)
+    def __init__(self, chip_sample: IQMChipSample, **kwargs):
+        super(IQMBackend, self).__init__(self, **kwargs)
 
         if chip_sample is None:
             raise ValueError("No chip_sample provided.")
@@ -73,7 +73,9 @@ class IQMFakeBackend(IQMBackend, BackendV2):
         if len(self.basis_2_qubit_gates) > 0:
             gate_name = self.basis_2_qubit_gates[0]
             connections = self.two_qubit_gate_depolarization_rates[gate_name]
-            self.qubit_connectivity = list(map(list, list(connections.keys())))
+            # pylint: disable=unnecessary-lambda
+            self.qubit_connectivity = list(map(lambda x: list(x), list(connections.keys())))
+            # pylint: enable=unnecessary-lambda
 
         target = Target()
         target.add_instruction(
@@ -85,7 +87,7 @@ class IQMFakeBackend(IQMBackend, BackendV2):
 
         self.noise_model = self._create_noise_model()
 
-    def _create_noise_model(self):
+    def _create_noise_model(self) -> NoiseModel:
         """
         Compiles a noise model from attributes of this instance of IQMSimulator.
         """
@@ -172,3 +174,17 @@ class IQMFakeAdonis(IQMFakeBackend):
         if chip_sample is None:
             chip_sample = adonis_chip_sample
         super().__init__(chip_sample, **kwargs)
+
+
+adonis_chip_sample = IQMChipSample(
+    quantum_architecture=Adonis(), 
+    t1s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
+    t2s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
+    one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
+    two_qubit_gate_fidelities={"cz": {(0, 2): 0.999, (1, 2): 0.999, (3, 2): 0.999, (4, 2): 0.999}},
+    one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
+    two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.001, (1, 2): 0.001, (3, 2): 0.001, (4, 2): 0.001}},
+    one_qubit_gate_durations={"r": 40.0},
+    two_qubit_gate_durations={"cz": 80.0},
+    id_="sample-chip",
+)

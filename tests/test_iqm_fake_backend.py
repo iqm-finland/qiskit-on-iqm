@@ -26,7 +26,7 @@ from qiskit.providers import JobV1
 from qiskit_aer import noise
 
 from qiskit_iqm import IQMFakeAdonis, IQMFakeBackend
-from qiskit_iqm.fake_backends.chip_samples.example_sample import IQMChipSample
+from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
 from qiskit_iqm.fake_backends.quantum_architectures import Adonis, IQMQuantumArchitecture
 
 
