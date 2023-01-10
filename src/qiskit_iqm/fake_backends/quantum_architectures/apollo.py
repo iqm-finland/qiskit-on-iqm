@@ -19,7 +19,7 @@ from .quantum_architecture import IQMQuantumArchitecture
 
 
 class Apollo(IQMQuantumArchitecture):
-    """IQM's twenty-qubit transmon device.
+    r"""IQM's twenty-qubit transmon device.
     The qubits are connected thus::
             QB20  QB17
             /  \  /  \
@@ -43,7 +43,7 @@ class Apollo(IQMQuantumArchitecture):
 
     def __init__(self):
         super().__init__(
-            no_qubits=20,
+            number_of_qubits=20,
             topology=[
                 [0, 1],
                 [0, 3],

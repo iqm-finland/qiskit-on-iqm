@@ -26,7 +26,7 @@ class IQMQuantumArchitecture:
 
     def __init__(
         self,
-        no_qubits: int,
+        number_of_qubits: int,
         topology: List[List[int]],
         basis_one_qubit_gates: List[str],
         basis_two_qubit_gates: List[str],
@@ -35,21 +35,21 @@ class IQMQuantumArchitecture:
         """Provides the specifications of a quantum architecture, i.e., a chip family.
 
         Args:
-            no_qubits (int): number of qubits of the quantum architecture.
+            number_of_qubits (int): number of qubits of the quantum architecture.
             topology (List[List[int]]): list of pairs of qubits that allow the implementation of two-qubit gates.
             basis_one_qubit_gates (List[str]): one-qubit gates supported by the quantum architecture.
             basis_two_qubit_gates (List[str]): two-qubit gates supported by the quantum architecture.
             id_ (str, optional): the identifier of the quantum architecture. Defaults to None.
 
         Example:
-            IQMQuantumArchitecture(no_qubits=3,
+            IQMQuantumArchitecture(number_of_qubits=3,
                                    topology=[[0, 1], [1, 2]],
                                    basis_one_qubit_gates=['r'],
                                    basis_two_qubit_gates=['cz'],
                                    id_='example-architecture')
         """
-        self.no_qubits = no_qubits
-        self.qubits = tuple(range(no_qubits))
+        self.number_of_qubits = number_of_qubits
+        self.qubits = tuple(range(number_of_qubits))
         self.topology = tuple(map(lambda x: tuple(x), topology))
         self.basis_gates = basis_one_qubit_gates + basis_two_qubit_gates
         self.id_ = id_

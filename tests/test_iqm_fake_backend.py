@@ -55,7 +55,7 @@ def ThreeQubitExample():
 
         def __init__(self):
             super().__init__(
-                no_qubits=3,
+                number_of_qubits=3,
                 topology=[[0, 1], [1, 2]],
                 basis_one_qubit_gates=["r"],
                 basis_two_qubit_gates=[],
@@ -90,7 +90,7 @@ def test_chip_sample_with_no_2_qubit_gates_specified():
 
 def test_iqm_fake_adonis():
     backend = IQMFakeAdonis()
-    assert backend.no_qubits == 5
+    assert backend.number_of_qubits == 5
 
 
 def test_iqm_fake_adonis_with_chip_sample():
@@ -179,7 +179,7 @@ def test_noise_on_all_qubits(backend):
     """
     noise_model = backend.noise_model
 
-    simulator_qubit_indices = list(range(backend.no_qubits))
+    simulator_qubit_indices = list(range(backend.number_of_qubits))
     noisy_qubits = noise_model.noise_qubits
 
     assert simulator_qubit_indices == noisy_qubits

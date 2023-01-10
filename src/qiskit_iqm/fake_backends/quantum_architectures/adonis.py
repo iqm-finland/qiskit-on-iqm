@@ -38,7 +38,7 @@ class Adonis(IQMQuantumArchitecture):
 
     def __init__(self):
         super().__init__(
-            no_qubits=5,
+            number_of_qubits=5,
             topology=[[0, 2], [1, 2], [3, 2], [4, 2]],
             basis_one_qubit_gates=["r"],
             basis_two_qubit_gates=["cz"],

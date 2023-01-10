@@ -50,7 +50,7 @@ class IQMFakeBackend(IQMBackend):
         if chip_sample is None:
             raise ValueError("No chip_sample provided.")
 
-        self.no_qubits = chip_sample.no_qubits
+        self.number_of_qubits = chip_sample.number_of_qubits
         self.quantum_architecture = chip_sample.quantum_architecture
         self.basis_1_qubit_gates = list(chip_sample.one_qubit_gate_fidelities.keys())
         self.basis_2_qubit_gates = list(chip_sample.two_qubit_gate_fidelities.keys())
@@ -79,10 +79,10 @@ class IQMFakeBackend(IQMBackend):
 
         target = Target()
         target.add_instruction(
-            RGate(Parameter("theta"), Parameter("phi")), {(qb,): None for qb in range(self.no_qubits)}
+            RGate(Parameter("theta"), Parameter("phi")), {(qb,): None for qb in range(self.number_of_qubits)}
         )
         target.add_instruction(CZGate(), {(qb1, qb2): None for qb1, qb2 in self.qubit_connectivity})
-        target.add_instruction(Measure(), {(qb,): None for qb in range(self.no_qubits)})
+        target.add_instruction(Measure(), {(qb,): None for qb in range(self.number_of_qubits)})
         self._target = target
 
         self.noise_model = self._create_noise_model()
@@ -95,7 +95,7 @@ class IQMFakeBackend(IQMBackend):
 
         # Add single-qubit gate errors to noise model
         for gate in self.basis_1_qubit_gates:
-            for i in range(self.no_qubits):
+            for i in range(self.number_of_qubits):
                 thermal_relaxation_channel = thermal_relaxation_error(
                     self.t1s[i], self.t2s[i], self.one_qubit_gate_durations[gate]
                 )
@@ -177,7 +177,7 @@ class IQMFakeAdonis(IQMFakeBackend):
 
 
 adonis_chip_sample = IQMChipSample(
-    quantum_architecture=Adonis(), 
+    quantum_architecture=Adonis(),
     t1s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
     t2s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
     one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
