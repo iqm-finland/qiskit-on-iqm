@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""File to represent IQMs 5-qubit architecture
+"""Adonis is IQM's 5-qubit architecture with star topology: the central qubit is connected to the other four
 """
 
 from .quantum_architecture import IQMQuantumArchitecture
