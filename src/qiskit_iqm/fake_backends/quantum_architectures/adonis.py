@@ -31,7 +31,7 @@ class Adonis(IQMQuantumArchitecture):
     where the lines denote which qubit pairs can be subject to two-qubit gates.
 
     Each qubit can be rotated about any axis in the xy plane by an arbitrary angle.
-    Adonis thus has the native RGate. The two-qubit gate CZ is native, as well. 
+    Adonis thus has the native RGate. The two-qubit gate CZ is native, as well.
     The qubits can be measured simultaneously or separately once, at the end of
     the circuit.
     """

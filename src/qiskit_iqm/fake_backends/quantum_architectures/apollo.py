@@ -36,7 +36,7 @@ class Apollo(IQMQuantumArchitecture):
             QB3   QB1
     where the lines denote which qubit pairs can be subject to two-qubit gates.
     Each qubit can be rotated about any axis in the xy plane by an arbitrary angle.
-    Apollo thus has the native RGate gate. The two-qubit gate CZ is native, as well. 
+    Apollo thus has the native RGate gate. The two-qubit gate CZ is native, as well.
     The qubits can be measured simultaneously or separately once, at the end of
     the circuit.
     """
