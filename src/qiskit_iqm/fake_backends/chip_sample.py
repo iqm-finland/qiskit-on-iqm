@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-name-in-module,import-error,too-many-instance-attributes,too-many-arguments,line-too-long
+# pylint: disable=no-name-in-module,import-error,too-many-instance-attributes
 """
 Abstract representation of an IQM chip sample.
 """
 from dataclasses import dataclass
-from typing import Union
+from typing import Any, Union
 
 from .quantum_architectures import IQMQuantumArchitecture
 
@@ -31,10 +31,14 @@ class IQMChipSample:
         quantum_architecture (IQMQuantumArchitecture): an instance of a Quantum Architecture.
         t1s (dict[int, float]): T1 times for the qubit with the corresponding key.
         t2s (dict[int, float]): T2 times for the qubit with the corresponding key.
-        one_qubit_gate_fidelities (dict[str, dict[int, float]]): for each one-qubit gate, a fidelity is specified for each qubit.
-        two_qubit_gate_fidelities (dict[str, dict[tuple[int, int], float]]): for each two-qubit gate, a fidelity is specified for each coupling.
-        one_qubit_gate_depolarization_rates (dict[str, dict[int, float]]): for each one-qubit gate, a depolarization rate is specified for each qubit.
-        two_qubit_gate_depolarization_rates (dict[str, dict[tuple[int, int], float]]): for each two-qubit gate, a depolarization rate is specified for each coupling.
+        one_qubit_gate_fidelities (dict[str, dict[int, float]]): for each one-qubit gate,
+        a fidelity is specified for each qubit.
+        two_qubit_gate_fidelities (dict[str, dict[tuple[int, int], float]]): for each two-qubit gate,
+        a fidelity is specified for each coupling.
+        one_qubit_gate_depolarization_rates (dict[str, dict[int, float]]): for each one-qubit gate,
+        a depolarization rate is specified for each qubit.
+        two_qubit_gate_depolarization_rates (dict[str, dict[tuple[int, int], float]]): for each two-qubit gate,
+        a depolarization rate is specified for each coupling.
         one_qubit_gate_durations (dict[str, float]): for each one-qubit gate, a duration is specified.
         two_qubit_gate_durations (dict[str, float]): for each two-qubit gate, a duration is specified.
         id_ (Union[str, None], optional): the identifier of the chip sample. Defaults to None.
@@ -100,47 +104,69 @@ class IQMChipSample:
         # Check that T1 list has one element for each qubit
         if len(self.t1s) != self.quantum_architecture.number_of_qubits:
             raise ValueError(
-                f"Length of `t1s` ({len(self.t1s)}) and number of qubits ({self.quantum_architecture.number_of_qubits}) should match."
+                (
+                    f"Length of `t1s` ({len(self.t1s)}) and number "
+                    f"of qubits ({self.quantum_architecture.number_of_qubits}) should match."
+                )
             )
 
         # Check that T2 list has one element for each qubit
         if len(self.t2s) != self.quantum_architecture.number_of_qubits:
             raise ValueError(
-                f"Length of `t2s` ({len(self.t2s)}) and number of qubits ({self.quantum_architecture.number_of_qubits}) should match."
+                (
+                    f"Length of `t2s` ({len(self.t2s)}) and "
+                    f"number of qubits ({self.quantum_architecture.number_of_qubits}) should match."
+                )
             )
 
+        property_dict: dict[str, dict[Any, float]]
         # Check that one-qubit gate parameter qubits match those of the architecture
         for property_name, property_dict in [
             ("fidelities", self.one_qubit_gate_fidelities),
             ("depolarization rates", self.one_qubit_gate_depolarization_rates),
         ]:
+            gate_dict: dict[Any, float]
             for gate, gate_dict in property_dict.items():
                 if set(gate_dict.keys()) != set(range(self.quantum_architecture.number_of_qubits)):
                     raise ValueError(
-                        f"The qubits specified for one-qubit gate {property_name} ({set(gate_dict.keys())}) don't match the qubits of the quantum architecture `{self.quantum_architecture.id_}` ({set(range(self.quantum_architecture.number_of_qubits))})."
+                        (
+                            f"The qubits specified for one-qubit gate {property_name} ({set(gate_dict.keys())}) "
+                            f"don't match the qubits of the quantum architecture "
+                            f"`{self.quantum_architecture.id_}` "
+                            f"({set(range(self.quantum_architecture.number_of_qubits))})."
+                        )
                     )
 
         # Check that two-qubit gate parameter couplings match those of the architecture
-        for property_name, property_dict in [
+        for property_name, property_dict in [  #            property_name: str, property_dict:
             ("fidelities", self.two_qubit_gate_fidelities),
             ("depolarization rates", self.two_qubit_gate_depolarization_rates),
         ]:
             for gate, gate_dict in property_dict.items():
                 if set(gate_dict.keys()) != set(self.quantum_architecture.topology):
                     raise ValueError(
-                        f"The couplings specified for two-qubit gate {property_name} ({set(gate_dict.keys())}) don't match the couplings of the quantum architecture `{self.quantum_architecture.id_}` ({set(self.quantum_architecture.topology)})."
+                        (
+                            f"The couplings specified for two-qubit gate {property_name} ({set(gate_dict.keys())}) "
+                            f"don't match the couplings of the quantum architecture "
+                            f"`{self.quantum_architecture.id_}` ({set(self.quantum_architecture.topology)})."
+                        )
                     )
 
         # Check that the basis gates of the chip sample match the quantum architecture's
-        for property_name, property_dict in [
-            ("one qubit fidelities", self.one_qubit_gate_fidelities),
-            ("two qubit fidelities", self.two_qubit_gate_fidelities),
-            ("one qubit gate depolarization_rates", self.one_qubit_gate_depolarization_rates),
-            ("two qubit gate depolarization_rates", self.two_qubit_gate_depolarization_rates),
-            ("durations", self.gate_durations),
+
+        for property_name, specified_gates in [
+            ("one qubit fidelities", self.one_qubit_gate_fidelities.keys()),
+            ("two qubit fidelities", self.two_qubit_gate_fidelities.keys()),
+            ("one qubit gate depolarization_rates", self.one_qubit_gate_depolarization_rates.keys()),
+            ("two qubit gate depolarization_rates", self.two_qubit_gate_depolarization_rates.keys()),
+            ("durations", self.gate_durations.keys()),
         ]:
-            for gate in property_dict.keys():
+            for gate in specified_gates:
                 if gate not in self.quantum_architecture.basis_gates:
                     raise ValueError(
-                        f"Gate `{gate}` in `gate_{property_name}` is not supported by quantum architecture `{self.quantum_architecture.id_}`. Valid gates: {self.quantum_architecture.basis_gates}"
+                        (
+                            f"Gate `{gate}` in `gate_{property_name}` "
+                            "is not supported by quantum architecture `{self.quantum_architecture.id_}`. "
+                            f"Valid gates: {self.quantum_architecture.basis_gates}"
+                        )
                     )
