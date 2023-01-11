@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-name-in-module,import-error,too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 """
 Abstract representation of an IQM chip sample.
 """
