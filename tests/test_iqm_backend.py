@@ -203,12 +203,12 @@ def test_run_gets_options_from_execute_function(backend, circuit):
     def run_mock(qc, **kwargs):
         assert isinstance(qc, QuantumCircuit)
         assert 'calibration_set_id' in kwargs
-        assert kwargs['calibration_set_id'] == 17
+        assert kwargs['calibration_set_id'] == '92d8dd9a-2678-467e-a20b-ef9c1a594d1f'
         assert 'something_else' in kwargs
         assert kwargs['something_else'] == [1, 2, 3]
 
     patch(backend.run, run_mock)
-    execute(circuit, backend, shots=10, calibration_set_id=17, something_else=[1, 2, 3])
+    execute(circuit, backend, shots=10, calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f', something_else=[1, 2, 3])
 
 
 def test_run_single_circuit(backend, qubit_mapping, circuit):
@@ -247,7 +247,7 @@ def test_run_with_custom_calibration_set_id(backend, qubit_mapping, circuit):
     circuit_ser = backend.serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
-    calibration_set_id = 24
+    calibration_set_id = '67e77465-d90e-4839-986e-9270f952b743'
     when(backend.client).submit_circuits(
         [circuit_ser], qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
     ).thenReturn(some_id)
