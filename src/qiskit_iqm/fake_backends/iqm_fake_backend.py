@@ -52,8 +52,8 @@ class IQMFakeBackend(IQMBackend):
 
         self.chip_sample = chip_sample
 
-        self.basis_1_qubit_gates = list(self.chip_sample.one_qubit_gate_fidelities.keys())
-        self.basis_2_qubit_gates = list(self.chip_sample.two_qubit_gate_fidelities.keys())
+        self.basis_1_qubit_gates = list(self.chip_sample.one_qubit_gate_depolarization_rates.keys())
+        self.basis_2_qubit_gates = list(self.chip_sample.two_qubit_gate_depolarization_rates.keys())
         self.basis_gates = self.basis_1_qubit_gates + self.basis_2_qubit_gates
 
         # qubit_connectivity map, used for CouplingMap
@@ -175,12 +175,10 @@ class IQMFakeAdonis(IQMFakeBackend):
 
 adonis_chip_sample = IQMChipSample(
     quantum_architecture=Adonis(),
-    t1s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
-    t2s={0: 50000.0, 1: 50000.0, 2: 50000.0, 3: 50000.0, 4: 50000.0},
-    one_qubit_gate_fidelities={"r": {0: 0.999, 1: 0.999, 2: 0.999, 3: 0.999, 4: 0.999}},
-    two_qubit_gate_fidelities={"cz": {(0, 2): 0.999, (1, 2): 0.999, (3, 2): 0.999, (4, 2): 0.999}},
-    one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
-    two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.001, (1, 2): 0.001, (3, 2): 0.001, (4, 2): 0.001}},
+    t1s={0: 27000.0, 1: 33000.0, 2: 25000.0, 3: 40000.0, 4: 25000.0},
+    t2s={0: 20000.0, 1: 26000.0, 2: 23000.0, 3: 26000.0, 4: 7000.0},
+    one_qubit_gate_depolarization_rates={"r": {0: 0.0006, 1: 0.0054, 2: 0.0001, 3: 0.0, 4: 0.0005}},
+    two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.0335, (1, 2): 0.0344, (3, 2): 0.0192, (4, 2): 0.0373}},
     one_qubit_gate_durations={"r": 40.0},
     two_qubit_gate_durations={"cz": 80.0},
     id_="sample-chip",
