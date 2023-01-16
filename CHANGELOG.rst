@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.0
+===========
+
+* Use new opaque UUID for ``calibration_set_id``. `#37 <https://github.com/iqm-finland/qiskit-on-iqm/pull/37>`_
+
 Version 6.3
 ===========
 
