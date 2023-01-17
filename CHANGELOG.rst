@@ -2,11 +2,15 @@
 Changelog
 =========
 
-Version 6.3
+Version 6.4
 ===========
 
 * Adding noisy simulation by introducing ``IQMFakeAdonis`` and ``IQMFakeBackend`` `#35 <https://github.com/iqm-finland/qiskit-on-iqm/pull/35>`_
 
+Version 6.3
+===========
+
+* Construct ``IQMJob.circuit_metadata`` from data retrieved from the server, if needed. `#36 <https://github.com/iqm-finland/qiskit-on-iqm/pull/36>`_
 
 Version 6.2
 ===========
