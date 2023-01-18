@@ -20,9 +20,9 @@ from .quantum_architecture import IQMQuantumArchitecture
 
 class Apollo(IQMQuantumArchitecture):
     r"""IQM's twenty-qubit transmon device.
-    
+
     The qubits are connected thus::
-    
+
             QB20  QB17
             /  \  /  \
          QB19  QB16  QB12
