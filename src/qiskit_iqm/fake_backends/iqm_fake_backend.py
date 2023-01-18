@@ -78,7 +78,7 @@ class IQMFakeBackend(IQMBackend):
 
     def _create_noise_model(self) -> NoiseModel:
         """
-        Compiles a noise model from attributes of this instance of IQMSimulator.
+        Builds a noise model from the attributes.
         """
         noise_model = NoiseModel(basis_gates=self.basis_gates)
 
