@@ -167,8 +167,7 @@ We can also simulate the execution of the transpiled circuit before actually exe
 
     print(job.result().get_counts())
 
-In addition to circuits defined with Qiskit it is also possible to execute circuits defined
-in an OpenQASM 2.0 file:
+If case you want to execute a circuit defined as an OpenQASM 2.0 file, you can load it into a Qiskit representation and then execute as normal:
 
 .. code-block:: python
 
