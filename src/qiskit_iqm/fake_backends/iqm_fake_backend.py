@@ -14,7 +14,7 @@
 
 # pylint: disable=no-name-in-module,import-error,super-init-not-called,too-many-instance-attributes
 """
-Qiskit fake backend for IQM quantum computers.
+Fake backend for simulating IQM quantum computers.
 """
 
 from typing import Union
@@ -37,11 +37,10 @@ from .quantum_architectures import Adonis
 
 class IQMFakeBackend(IQMBackend):
     """
-    A fake backend class for an IQM chip sample.
+    Fake backend for simulating an IQM QPU.
 
     Args:
-        chip_sample: An instance of a :class:`IQMChipSample` describing the
-        characteristics of a specific chip sample.
+        chip_sample: Describes the characteristics of a specific chip sample.
     """
 
     def __init__(self, chip_sample: IQMChipSample, **kwargs):
@@ -97,8 +96,7 @@ class IQMFakeBackend(IQMBackend):
         # Add two-qubit gate errors to noise model
         for gate in self.basis_2_qubit_gates:
             for connection in list(self.chip_sample.two_qubit_gate_depolarization_rates[gate].keys()):
-                first_qubit = connection[0]
-                second_qubit = connection[1]
+                first_qubit, second_qubit = connection
 
                 thermal_relaxation_channel = thermal_relaxation_error(
                     self.chip_sample.t1s[first_qubit],
@@ -134,7 +132,7 @@ class IQMFakeBackend(IQMBackend):
                 :class:`~qiskit.circuits.QuantumCircuit` objects to run on the backend.
             options: Any kwarg options to pass to the backend.
         Returns:
-            JobV1: The job object for the run
+            The job object representing the run.
         Raises:
             ValueError: If empty list of circuits is provided.
         """
@@ -159,17 +157,14 @@ class IQMFakeBackend(IQMBackend):
 
 class IQMFakeAdonis(IQMFakeBackend):
     """
-    A fake backend class for an IQM adonis.
+    Fake backend for simulating an IQM Adonis QPU.
 
     Args:
-        chip_sample: An instance of a :class:`IQMChipSample` describing the
-            characteristics of a specific chip sample.
+        chip_sample: Describes the characteristics of a specific chip sample.
         **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
     """
 
-    def __init__(self, chip_sample=None, **kwargs):
-        if chip_sample is None:
-            chip_sample = adonis_chip_sample
+    def __init__(self, chip_sample=adonis_chip_sample, **kwargs):
         super().__init__(chip_sample, **kwargs)
 
 

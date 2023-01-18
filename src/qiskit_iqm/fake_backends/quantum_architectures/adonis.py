@@ -22,6 +22,7 @@ class Adonis(IQMQuantumArchitecture):
     """IQM's five-qubit transmon device.
 
     The qubits are connected thus::
+
             QB1
              |
       QB2 - QB3 - QB4

@@ -20,7 +20,9 @@ from .quantum_architecture import IQMQuantumArchitecture
 
 class Apollo(IQMQuantumArchitecture):
     r"""IQM's twenty-qubit transmon device.
+    
     The qubits are connected thus::
+    
             QB20  QB17
             /  \  /  \
          QB19  QB16  QB12
@@ -34,6 +36,7 @@ class Apollo(IQMQuantumArchitecture):
          QB8   QB4   QB2
             \  /  \  /
             QB3   QB1
+
     where the lines denote which qubit pairs can be subject to two-qubit gates.
     Each qubit can be rotated about any axis in the xy plane by an arbitrary angle.
     Apollo thus has the native RGate gate. The two-qubit gate CZ is native, as well.

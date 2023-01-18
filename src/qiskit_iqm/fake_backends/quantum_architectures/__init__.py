@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""IQM's published quantum architectures
+"""IQM's quantum architectures.
 """
 
 from .adonis import Adonis
