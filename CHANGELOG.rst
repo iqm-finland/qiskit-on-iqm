@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 6.4
+===========
+
+* Add an example to user guide for OpenQASM circuit execution. `#38 <https://github.com/iqm-finland/qiskit-on-iqm/pull/38>`_
+
 Version 6.3
 ===========
 

@@ -167,6 +167,31 @@ We can also simulate the execution of the transpiled circuit before actually exe
 
     print(job.result().get_counts())
 
+In addition to circuits defined with Qiskit it is also possible to execute circuits defined
+in an OpenQASM 2.0 file:
+
+.. code-block:: python
+
+    qasm_qc = QuantumCircuit.from_qasm_file('circuit.qasm')
+    job = execute(qasm_qc, backend, shots=1000)
+
+    print(job.result().get_counts())
+
+A simple example for an OpenQASM circuit would be the following:
+
+::
+
+   OPENQASM 2.0;
+   include "qelib1.inc";
+
+   qreg q[2];
+   creg m[2];
+
+   x q[0];
+   h q[1];
+   cx q[0], q[1];
+   measure q -> m;
+
 More advanced examples
 ----------------------
 
