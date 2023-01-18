@@ -46,9 +46,6 @@ class IQMFakeBackend(IQMBackend):
     def __init__(self, chip_sample: IQMChipSample, **kwargs):
         super(IQMBackend, self).__init__(self, **kwargs)
 
-        if chip_sample is None:
-            raise ValueError("No chip_sample provided.")
-
         self.chip_sample = chip_sample
 
         self.basis_1_qubit_gates = list(self.chip_sample.one_qubit_gate_depolarization_rates.keys())
