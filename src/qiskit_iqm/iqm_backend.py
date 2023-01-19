@@ -1,4 +1,4 @@
-# Copyright 2022 Qiskit on IQM developers
+# Copyright 2022-2023 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class IQMBackend(BackendV2):
     """Qiskit backend enabling the execution of quantum circuits on IQM quantum computers.
 
     Args:
-        client: IQM Cortex client used for submitting circuits for execution on an IQM server
+        client: IQM client instance for submitting circuits for execution on an IQM server
         **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
     """
 
