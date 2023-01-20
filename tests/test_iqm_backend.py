@@ -208,7 +208,9 @@ def test_run_gets_options_from_execute_function(backend, circuit):
         assert kwargs['something_else'] == [1, 2, 3]
 
     patch(backend.run, run_mock)
-    execute(circuit, backend, shots=10, calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f', something_else=[1, 2, 3])
+    execute(
+        circuit, backend, shots=10, calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f', something_else=[1, 2, 3]
+    )
 
 
 def test_run_single_circuit(backend, qubit_mapping, circuit):
