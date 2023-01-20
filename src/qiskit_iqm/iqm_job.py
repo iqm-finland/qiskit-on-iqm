@@ -40,7 +40,7 @@ class IQMJob(JobV1):
     def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, **kwargs):  # type: ignore
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
-        self._calibration_set_id: Optional[int] = None
+        self._calibration_set_id: Optional[uuid.UUID] = None
         self._client: IQMClient = backend.client
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 

@@ -49,11 +49,11 @@ def iqm_result_two_registers():
 @pytest.fixture()
 def iqm_metadata():
     return {
-        'calibration_set_id': 123,
+        'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
         'request': {
             'shots': 4,
             'circuits': [{'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 'b'}}],
-            'calibration_set_id': 123,
+            'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
         },
     }
 
@@ -107,7 +107,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert result.get_memory() == ['0100 11', '0100 10', '0100 01', '0100 10']
     assert result.get_counts() == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     for r in result.results:
-        assert r.calibration_set_id == 123
+        assert r.calibration_set_id == uuid.UUID('df124054-f6d8-41f9-b880-8487f90018f9')
         assert r.data.metadata == {'a': 'b'}
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
@@ -120,14 +120,14 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
     iqm_metadata_multiple_circuits = {
-        'calibration_set_id': 234,
+        'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
         'request': {
             'shots': 4,
             'circuits': [
                 {'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 0}},
                 {'name': 'circuit_2', 'instructions': [], 'metadata': {'a': 1}},
             ],
-            'calibration_set_id': 234,
+            'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
         },
     }
     client_result = RunResult(
@@ -146,5 +146,5 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
     assert result.get_counts(QuantumCircuit(name='circuit_1')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     assert result.get_counts(QuantumCircuit(name='circuit_2')) == Counts({'0100 11': 1, '0100 10': 2, '0100 01': 1})
     for i, r in enumerate(result.results):
-        assert r.calibration_set_id == 234
+        assert r.calibration_set_id == uuid.UUID('9d75904b-0c93-461f-b1dc-bd200cfad1f1')
         assert r.data.metadata == {'a': i}
