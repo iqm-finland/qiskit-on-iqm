@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 6.3 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 7.0 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -423,7 +423,7 @@ code snippets and check the output yourself.</p>
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
 <p>The recommended way is to install the distribution package <code class="docutils literal notranslate"><span class="pre">qiskit-iqm</span></code> directly from the
 Python Package Index (PyPI):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install qiskit-iqm
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>qiskit-iqm
 </pre></div>
 </div>
 <p>After installation Qiskit on IQM can be imported in your Python code as follows:</p>
@@ -613,19 +613,19 @@ or by opening a pull request to submit your own improvements to the codebase.</p
 <p>To start developing the project, clone the
 <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm">GitHub repository</a>
 and install it in editable mode with all the extras:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone git@github.com:iqm-finland/qiskit-on-iqm.git
-$ <span class="nb">cd</span> qiskit-on-iqm
-$ pip install -e <span class="s2">&quot;.[dev,docs,testing]&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:iqm-finland/qiskit-on-iqm.git
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>qiskit-on-iqm
+$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev,docs,testing]&quot;</span>
 </pre></div>
 </div>
 <p>To be able to build the docs <a class="reference external" href="https://graphviz.org/">graphviz</a> has to be installed.
 Then to build and view the docs run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tox -e docs
-$ firefox build/sphinx/html/index.html
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>docs
+$<span class="w"> </span>firefox<span class="w"> </span>build/sphinx/html/index.html
 </pre></div>
 </div>
 <p>Run the tests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ tox
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tox
 </pre></div>
 </div>
 </section>
