@@ -7,7 +7,16 @@ build-backend = "setuptools.build_meta"
 name = "qiskit-iqm"
 dynamic = ["version"]
 description = "Qiskit adapter for IQM's quantum architectures"
-authors = [{name="IQM Finland Oy", email="developers@meetiqm.com"}]
+authors = [
+    {name = "IQM Finland Oy", email = "developers@meetiqm.com"},
+    {name = "Hayk Sargsyan", email = "hayk@meetiqm.com"},
+    {name = "Leon Wubben", email = "leon@meetiqm.com"},
+    {name = "Olli Tyrkkö", email = "otyrkko@meetiqm.com"},
+    {name = "Ville Bergholm", email = "ville@meetiqm.com"},
+    {name = "Olli Ahonen", email = "olli@meetiqm.com"},
+    {name = "Matthias Beuerle", email = "matthias.beuerle@meetiqm.com"},
+    {name = "Rakhim Davletkaliyev", email = "rakhim.davletkaliyev@meetiqm.com"}
+]
 readme = "README.rst"
 license = {file = "LICENSE"}
 classifiers = [
