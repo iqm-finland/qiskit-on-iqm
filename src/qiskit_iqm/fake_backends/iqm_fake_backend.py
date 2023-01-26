@@ -32,8 +32,6 @@ from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
 from qiskit_iqm.iqm_backend import IQMBackend
 
-from .quantum_architectures import Adonis
-
 
 class IQMFakeBackend(IQMBackend):
     """
@@ -150,28 +148,3 @@ class IQMFakeBackend(IQMBackend):
         job = sim_noise.run(circuits, shots=shots)
 
         return job
-
-
-adonis_chip_sample = IQMChipSample(
-    quantum_architecture=Adonis(),
-    t1s={0: 27000.0, 1: 33000.0, 2: 25000.0, 3: 40000.0, 4: 25000.0},
-    t2s={0: 20000.0, 1: 26000.0, 2: 23000.0, 3: 26000.0, 4: 7000.0},
-    one_qubit_gate_depolarization_rates={"r": {0: 0.0006, 1: 0.0054, 2: 0.0001, 3: 0.0, 4: 0.0005}},
-    two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.0335, (1, 2): 0.0344, (3, 2): 0.0192, (4, 2): 0.0373}},
-    one_qubit_gate_durations={"r": 40.0},
-    two_qubit_gate_durations={"cz": 80.0},
-    id_="sample-chip",
-)
-
-
-class IQMFakeAdonis(IQMFakeBackend):
-    """
-    Fake backend for simulating an IQM Adonis QPU.
-
-    Args:
-        chip_sample: Describes the characteristics of a specific chip sample.
-        **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
-    """
-
-    def __init__(self, chip_sample=adonis_chip_sample, **kwargs):
-        super().__init__(chip_sample, **kwargs)
