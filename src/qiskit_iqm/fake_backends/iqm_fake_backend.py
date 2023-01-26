@@ -1,4 +1,4 @@
-# Copyright 2022 Qiskit on IQM developers
+# Copyright 2022-2023 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
 from qiskit_iqm.iqm_backend import IQMBackend
 
-from .quantum_architectures import Adonis
-
 
 class IQMFakeBackend(IQMBackend):
     """
@@ -44,7 +42,7 @@ class IQMFakeBackend(IQMBackend):
     """
 
     def __init__(self, chip_sample: IQMChipSample, **kwargs):
-        super(IQMBackend, self).__init__(self, **kwargs)
+        super().__init__(chip_sample.quantum_architecture, **kwargs)
 
         self.chip_sample = chip_sample
 
@@ -60,15 +58,6 @@ class IQMFakeBackend(IQMBackend):
             # pylint: disable=unnecessary-lambda
             self.qubit_connectivity = list(map(lambda x: list(x), list(connections.keys())))
             # pylint: enable=unnecessary-lambda
-
-        target = Target()
-        target.add_instruction(
-            RGate(Parameter("theta"), Parameter("phi")),
-            {(qb,): None for qb in range(self.chip_sample.number_of_qubits)},
-        )
-        target.add_instruction(CZGate(), {(qb1, qb2): None for qb1, qb2 in self.qubit_connectivity})
-        target.add_instruction(Measure(), {(qb,): None for qb in range(self.chip_sample.number_of_qubits)})
-        self._target = target
 
         self.noise_model = self._create_noise_model()
 
@@ -150,28 +139,3 @@ class IQMFakeBackend(IQMBackend):
         job = sim_noise.run(circuits, shots=shots)
 
         return job
-
-
-adonis_chip_sample = IQMChipSample(
-    quantum_architecture=Adonis(),
-    t1s={0: 27000.0, 1: 33000.0, 2: 25000.0, 3: 40000.0, 4: 25000.0},
-    t2s={0: 20000.0, 1: 26000.0, 2: 23000.0, 3: 26000.0, 4: 7000.0},
-    one_qubit_gate_depolarization_rates={"r": {0: 0.0006, 1: 0.0054, 2: 0.0001, 3: 0.0, 4: 0.0005}},
-    two_qubit_gate_depolarization_rates={"cz": {(0, 2): 0.0335, (1, 2): 0.0344, (3, 2): 0.0192, (4, 2): 0.0373}},
-    one_qubit_gate_durations={"r": 40.0},
-    two_qubit_gate_durations={"cz": 80.0},
-    id_="sample-chip",
-)
-
-
-class IQMFakeAdonis(IQMFakeBackend):
-    """
-    Fake backend for simulating an IQM Adonis QPU.
-
-    Args:
-        chip_sample: Describes the characteristics of a specific chip sample.
-        **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
-    """
-
-    def __init__(self, chip_sample=adonis_chip_sample, **kwargs):
-        super().__init__(chip_sample, **kwargs)

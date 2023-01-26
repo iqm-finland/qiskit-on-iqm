@@ -15,3 +15,5 @@
 """
 
 from .chip_sample import IQMChipSample
+from .iqm_fake_backend import IQMFakeBackend
+from .fake_adonis import IQMFakeAdonis
