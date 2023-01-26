@@ -20,10 +20,7 @@ Fake backend for simulating IQM quantum computers.
 from typing import Union
 
 from qiskit import QuantumCircuit
-from qiskit.circuit import Parameter
-from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import JobV1
-from qiskit.transpiler import Target
 from qiskit.transpiler.coupling import CouplingMap
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
