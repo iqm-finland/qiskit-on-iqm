@@ -2,10 +2,15 @@
 Changelog
 =========
 
-Version 6.4
+Version 7.1
 ===========
 
 * Adding noisy simulation by introducing ``IQMFakeAdonis`` and ``IQMFakeBackend`` `#35 <https://github.com/iqm-finland/qiskit-on-iqm/pull/35>`_
+
+Version 7.0
+===========
+
+* Use new opaque UUID for ``calibration_set_id``. `#37 <https://github.com/iqm-finland/qiskit-on-iqm/pull/37>`_
 
 Version 6.3
 ===========
