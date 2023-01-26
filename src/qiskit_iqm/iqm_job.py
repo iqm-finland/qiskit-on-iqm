@@ -37,7 +37,7 @@ class IQMJob(JobV1):
         **kwargs: arguments to be passed to the initializer of the parent class
     """
 
-    def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, **kwargs):  # type: ignore
+    def __init__(self, backend: 'qiskit_iqm.RemoteIQMBackend', job_id: str, **kwargs):  # type: ignore
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None
@@ -84,9 +84,9 @@ class IQMJob(JobV1):
 
     def submit(self):
         raise NotImplementedError(
-            'You should never have to submit jobs by calling this method. When running circuits through IQMBackend, '
-            'the submission will happen under the hood. The job instance that you get is only for checking '
-            'the progress and retrieving the results of the submitted job.'
+            'You should never have to submit jobs by calling this method. When running circuits through '
+            'RemoteIQMBackend, the submission will happen under the hood. The job instance that you get is only for '
+            'checking the progress and retrieving the results of the submitted job.'
         )
 
     def cancel(self):
@@ -97,8 +97,8 @@ class IQMJob(JobV1):
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
             self._calibration_set_id = results.metadata.calibration_set_id
             self._result = self._format_iqm_results(results)
-            # IQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current session;
-            # In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
+            # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
+            # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
             if self.circuit_metadata is None:
                 self.circuit_metadata = []
                 self.circuit_metadata = [c.metadata for c in results.metadata.request.circuits]

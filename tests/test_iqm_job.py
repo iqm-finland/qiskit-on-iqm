@@ -25,14 +25,14 @@ from qiskit.providers import JobStatus
 from qiskit.result import Counts
 from qiskit.result import Result as QiskitResult
 
-from qiskit_iqm import IQMBackend, IQMJob
+from qiskit_iqm import RemoteIQMBackend, IQMJob
 
 
 @pytest.fixture()
 def job(adonis_architecture):
     client = mock(IQMClient)
     when(client).get_quantum_architecture().thenReturn(adonis_architecture)
-    backend = IQMBackend(client)
+    backend = RemoteIQMBackend(client)
     return IQMJob(backend, str(uuid.uuid4()))
 
 
