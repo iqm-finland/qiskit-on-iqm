@@ -6,6 +6,28 @@ User guide
 This guide illustrates the main features of Qiskit on IQM. You are encouraged to run the demonstrated
 code snippets and check the output yourself.
 
+.. note::
+
+   At the moment IQM does not provide a quantum computing service open to the general public.
+   Please contact our `sales team <https://www.meetiqm.com/contact/>`_ to set up your access to an IQM quantum
+   computer.
+
+
+Hello, world!
+-------------
+
+Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and to check that
+things are set up correctly:
+1. Download the
+   `bell_measure.py example file <https://github.com/iqm-finland/qiskit-on-iqm/tree/main/examples/bell_measure.py>`
+2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
+3. Install Cortex CLI and log in as instructed here:
+   https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli
+4. Set the environment variable as instructed by Cortex CLI after logging in
+5. Run ``$ python bell_measure.py --server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the
+   correct one
+6. The output should show almost half of the measurements resulting in '00' and almost half in '11'
+
 
 Installation
 ------------
@@ -30,12 +52,6 @@ Running a quantum circuit on an IQM quantum computer
 
 In this section we demonstrate the practicalities of using Qiskit on IQM on an example of constructing and executing
 a simple quantum circuit on an IQM quantum computer.
-
-.. note::
-
-   At the moment IQM does not provide a quantum computing service open to the general public.
-   Please contact our `sales team <https://www.meetiqm.com/contact/>`_ to set up your access to an IQM quantum computer.
-
 
 Let's consider the following quantum circuit which prepares and measures a GHZ state:
 

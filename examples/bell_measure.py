@@ -12,15 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """This file is an example of using Qiskit on IQM to execute a simple but non-trivial quantum circuit on an IQM quantum
-computer.
-1. Download this file
-2. Install Qiskit on IQM as instructed in the user guide:
-  https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html#installation
-3. Install Cortex CLI and log in as instructed here:
-  https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli
-4. Set the environment variable as instructed by Cortex CLI after logging in
-5. Run `python bell_measure.py --server_url https://demo.qc.iqm.fi/cocos` – replace the example URL with the correct URL
-6. The output should show that almost half of the measurements resulted in '00' and almost half in '11'
+computer. See the Qiskit on IQM user guide for instructions:
+https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 """
 
 import argparse
