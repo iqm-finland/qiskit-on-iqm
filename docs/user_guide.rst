@@ -16,7 +16,7 @@ code snippets and check the output yourself.
 Hello, world!
 -------------
 
-Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and to check that
+Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
 1. Download the `bell_measure.py example file <https://github.com/iqm-finland/qiskit-on-iqm/tree/main/examples/bell_measure.py>`_
