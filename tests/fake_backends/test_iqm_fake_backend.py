@@ -13,8 +13,6 @@
 # limitations under the License.
 """Testing IQM fake backend.
 """
-import collections
-
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit

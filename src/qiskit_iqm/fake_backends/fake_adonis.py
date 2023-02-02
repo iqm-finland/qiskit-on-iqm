@@ -23,7 +23,6 @@ class IQMFakeAdonis(IQMFakeBackend):
     Fake backend for simulating an IQM Adonis QPU.
 
     Args:
-        chip_sample: Describes the characteristics of a specific chip sample.
         **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
     """
 
@@ -37,7 +36,9 @@ class IQMFakeAdonis(IQMFakeBackend):
             ),
             t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},
             t2s={"QB1": 20000.0, "QB2": 26000.0, "QB3": 23000.0, "QB4": 26000.0, "QB5": 7000.0},
-            one_qubit_gate_depolarization_rates={"phased_rx": {"QB1": 0.0006, "QB2": 0.0054, "QB3": 0.0001, "QB4": 0.0, "QB5": 0.0005}},
+            one_qubit_gate_depolarization_rates={
+                "phased_rx": {"QB1": 0.0006, "QB2": 0.0054, "QB3": 0.0001, "QB4": 0.0, "QB5": 0.0005}
+            },
             two_qubit_gate_depolarization_rates={
                 "cz": {("QB1", "QB3"): 0.0335, ("QB2", "QB3"): 0.0344, ("QB3", "QB4"): 0.0192, ("QB3", "QB5"): 0.0373}
             },

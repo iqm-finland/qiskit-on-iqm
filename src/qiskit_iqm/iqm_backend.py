@@ -25,7 +25,6 @@ from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
 
-
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
 
 

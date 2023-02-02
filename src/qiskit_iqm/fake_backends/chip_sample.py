@@ -29,8 +29,8 @@ class IQMChipSample:
 
     Args:
         quantum_architecture: quantum architecture of the chip
-        t1s (dict[int, float]): T1 times for the qubit with the corresponding key.
-        t2s (dict[int, float]): T2 times for the qubit with the corresponding key.
+        t1s (dict[str, float]): T1 times for the qubit with the corresponding key.
+        t2s (dict[str, float]): T2 times for the qubit with the corresponding key.
         one_qubit_gate_depolarization_rates: For each one-qubit gate,
             a depolarization rate is specified for each qubit to match measured gate fidelity.
         two_qubit_gate_depolarization_rates: For each two-qubit gate,
@@ -43,13 +43,13 @@ class IQMChipSample:
         .. code-block::
 
             IQMChipSample(quantum_architecture=ThreeQubitExample(),
-                        t1s={0: 10000.0, 1: 12000.0, 2: 14000.0},
-                        t2s={0: 10000.0, 1: 12000.0, 3: 13000.0},
-                        one_qubit_gate_depolarization_rates={"r": {0: 0.0005,
-                                                                    1: 0.0004,
-                                                                    2: 0.0010}},
-                        two_qubit_gate_depolarization_rates={"cz": {(0, 1): 0.08,
-                                                                    (1, 2): 0.03}},
+                        t1s={"QB1": 10000.0, "QB2": 12000.0, "QB3": 14000.0},
+                        t2s={"QB1": 10000.0, "QB2": 12000.0, "QB3": 13000.0},
+                        one_qubit_gate_depolarization_rates={"r": {"QB1": 0.0005,
+                                                                    "QB2": 0.0004,
+                                                                    "QB3": 0.0010}},
+                        two_qubit_gate_depolarization_rates={"cz": {("QB1", "QB2"): 0.08,
+                                                                    ("QB2", "QB3"): 0.03}},
                         one_qubit_gate_durations={"r": 50.},
                         two_qubit_gate_durations={"cz": 100.},
                         id_="threequbit-example_sample")
@@ -90,21 +90,11 @@ class IQMChipSample:
         num_qubits = len(self.quantum_architecture.qubits)
         # Check that T1 list has one element for each qubit
         if len(self.t1s) != num_qubits:
-            raise ValueError(
-                (
-                    f"Length of t1s ({len(self.t1s)}) and number "
-                    f"of qubits ({num_qubits}) should match."
-                )
-            )
+            raise ValueError((f"Length of t1s ({len(self.t1s)}) and number " f"of qubits ({num_qubits}) should match."))
 
         # Check that T2 list has one element for each qubit
         if len(self.t2s) != num_qubits:
-            raise ValueError(
-                (
-                    f"Length of t2s ({len(self.t2s)}) and "
-                    f"number of qubits ({num_qubits}) should match."
-                )
-            )
+            raise ValueError((f"Length of t2s ({len(self.t2s)}) and " f"number of qubits ({num_qubits}) should match."))
 
         property_dict: dict[str, dict[Any, float]]
         # Check that one-qubit gate parameter qubits match those of the architecture

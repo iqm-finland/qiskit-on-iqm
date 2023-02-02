@@ -20,7 +20,7 @@ import pytest
 def test_chip_sample_with_incomplete_t1s(create_chip_sample):
     """Test that ChipSample construction fails if T1 times are not provided for all qubits"""
     with pytest.raises(ValueError, match="Length of t1s"):
-        create_chip_sample(t1s={'QB1': 2000, 'QB3': 2000})
+        create_chip_sample(t1s={"QB1": 2000, "QB3": 2000})
 
 
 # TODO: test all other validations as well

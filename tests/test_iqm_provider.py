@@ -26,7 +26,7 @@ from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
-from qiskit_iqm import IQMJob, IQMBackend, IQMProvider
+from qiskit_iqm import IQMBackend, IQMJob, IQMProvider
 
 
 @pytest.fixture
