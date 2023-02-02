@@ -26,10 +26,10 @@ from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
 from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
-from qiskit_iqm.iqm_backend import IQMBackend, IQM_TO_QISKIT_GATE_NAME
+from qiskit_iqm.iqm_backend import IQMBackendBase, IQM_TO_QISKIT_GATE_NAME
 
 
-class IQMFakeBackend(IQMBackend):
+class IQMFakeBackend(IQMBackendBase):
     """
     Fake backend for simulating an IQM QPU.
 

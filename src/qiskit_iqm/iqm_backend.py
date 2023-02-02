@@ -29,7 +29,7 @@ from qiskit.transpiler import Target
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
 
 
-class IQMBackend(BackendV2, ABC):
+class IQMBackendBase(BackendV2, ABC):
     """Abstract backend intended to be the parent of various IQM specific backend implementations.
 
     Args:

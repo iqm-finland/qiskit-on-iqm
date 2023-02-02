@@ -37,7 +37,7 @@ class IQMJob(JobV1):
         **kwargs: arguments to be passed to the initializer of the parent class
     """
 
-    def __init__(self, backend: 'qiskit_iqm.RemoteIQMBackend', job_id: str, **kwargs):  # type: ignore
+    def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, **kwargs):  # type: ignore
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None

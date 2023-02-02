@@ -26,14 +26,14 @@ from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
-from qiskit_iqm import IQMJob, RemoteIQMBackend, IQMProvider
+from qiskit_iqm import IQMJob, IQMBackend, IQMProvider
 
 
 @pytest.fixture
 def backend(linear_architecture_3q):
     client = mock(IQMClient)
     when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
-    return RemoteIQMBackend(client)
+    return IQMBackend(client)
 
 
 @pytest.fixture
@@ -64,7 +64,7 @@ def test_max_circuits(backend):
 def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     client = mock(IQMClient)
     when(client).get_quantum_architecture().thenReturn(adonis_architecture_shuffled_names)
-    backend = RemoteIQMBackend(client)
+    backend = IQMBackend(client)
 
     correct_idx_name_associations = set(enumerate(['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
     assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
@@ -296,7 +296,7 @@ def test_get_backend(linear_architecture_3q):
     provider = IQMProvider(url)
     backend = provider.get_backend()
 
-    assert isinstance(backend, RemoteIQMBackend)
+    assert isinstance(backend, IQMBackend)
     assert backend.client._base_url == url
     assert backend.num_qubits == 3
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2)}

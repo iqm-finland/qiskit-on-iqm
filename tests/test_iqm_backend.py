@@ -21,10 +21,10 @@ from qiskit import QuantumCircuit
 from qiskit.compiler import transpile
 from qiskit.providers import Options
 
-from qiskit_iqm.iqm_backend import IQMBackend
+from qiskit_iqm.iqm_backend import IQMBackendBase
 
 
-class TestIQMBackend(IQMBackend):
+class TestIQMBackend(IQMBackendBase):
     """Dummy implementation for abstract methods of IQMBacked, so that instances can be created
     and the rest of functionality tested."""
 

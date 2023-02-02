@@ -21,11 +21,11 @@ from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.iqm_backend import IQMBackend
+from qiskit_iqm.iqm_backend import IQMBackendBase
 from qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
-class RemoteIQMBackend(IQMBackend):
+class IQMBackend(IQMBackendBase):
     """Qiskit backend enabling the execution of quantum circuits on IQM quantum computers.
 
     Args:
@@ -142,7 +142,7 @@ class IQMProvider:
         self.url = url
         self.user_auth_args = user_auth_args
 
-    def get_backend(self) -> RemoteIQMBackend:
+    def get_backend(self) -> IQMBackend:
         """An IQMBackend instance associated with this provider."""
         client = IQMClient(self.url, **self.user_auth_args)
-        return RemoteIQMBackend(client)
+        return IQMBackend(client)
