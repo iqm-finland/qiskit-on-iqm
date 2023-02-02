@@ -35,13 +35,13 @@ class IQMFakeAdonis(IQMFakeBackend):
                 qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
                 qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
             ),
-            t1s={0: 27000.0, 1: 33000.0, 2: 25000.0, 3: 40000.0, 4: 25000.0},
-            t2s={0: 20000.0, 1: 26000.0, 2: 23000.0, 3: 26000.0, 4: 7000.0},
-            one_qubit_gate_depolarization_rates={"r": {0: 0.0006, 1: 0.0054, 2: 0.0001, 3: 0.0, 4: 0.0005}},
+            t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},
+            t2s={"QB1": 20000.0, "QB2": 26000.0, "QB3": 23000.0, "QB4": 26000.0, "QB5": 7000.0},
+            one_qubit_gate_depolarization_rates={"phased_rx": {"QB1": 0.0006, "QB2": 0.0054, "QB3": 0.0001, "QB4": 0.0, "QB5": 0.0005}},
             two_qubit_gate_depolarization_rates={
-                "cz": {(0, 2): 0.0335, (1, 2): 0.0344, (3, 2): 0.0192, (4, 2): 0.0373}
+                "cz": {("QB1", "QB3"): 0.0335, ("QB2", "QB3"): 0.0344, ("QB3", "QB4"): 0.0192, ("QB3", "QB5"): 0.0373}
             },
-            one_qubit_gate_durations={"r": 40.0},
+            one_qubit_gate_durations={"phased_rx": 40.0},
             two_qubit_gate_durations={"cz": 80.0},
             id_="sample-chip",
         )

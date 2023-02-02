@@ -20,7 +20,7 @@ import pytest
 def linear_architecture_3q():
     return QuantumArchitectureSpecification(
         name='3q_line',
-        operations=['cz'],
+        operations=['phased_rx', 'cz'],
         qubits=['QB1', 'QB2', 'QB3'],
         qubit_connectivity=[['QB1', 'QB2'], ['QB2', 'QB3']],
     )

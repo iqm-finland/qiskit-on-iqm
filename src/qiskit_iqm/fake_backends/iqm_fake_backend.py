@@ -17,17 +17,16 @@
 Fake backend for simulating IQM quantum computers.
 """
 
-from typing import Union
+from typing import Optional, Union
 
 from qiskit import QuantumCircuit
-from qiskit.providers import JobV1
-from qiskit.transpiler.coupling import CouplingMap
+from qiskit.providers import JobV1, Options
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
 from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
-from qiskit_iqm.iqm_backend import IQMBackend
+from qiskit_iqm.iqm_backend import IQMBackend, IQM_TO_QISKIT_GATE_NAME
 
 
 class IQMFakeBackend(IQMBackend):
@@ -40,65 +39,57 @@ class IQMFakeBackend(IQMBackend):
 
     def __init__(self, chip_sample: IQMChipSample, **kwargs):
         super().__init__(chip_sample.quantum_architecture, **kwargs)
+        self.noise_model = self._create_noise_model(chip_sample)
 
-        self.chip_sample = chip_sample
-
-        self.basis_1_qubit_gates = list(self.chip_sample.one_qubit_gate_depolarization_rates.keys())
-        self.basis_2_qubit_gates = list(self.chip_sample.two_qubit_gate_depolarization_rates.keys())
-        self.basis_gates = self.basis_1_qubit_gates + self.basis_2_qubit_gates
-
-        # qubit_connectivity map, used for CouplingMap
-        self.qubit_connectivity = []
-        if len(self.basis_2_qubit_gates) > 0:
-            gate_name = self.basis_2_qubit_gates[0]
-            connections = self.chip_sample.two_qubit_gate_depolarization_rates[gate_name]
-            # pylint: disable=unnecessary-lambda
-            self.qubit_connectivity = list(map(lambda x: list(x), list(connections.keys())))
-            # pylint: enable=unnecessary-lambda
-
-        self.noise_model = self._create_noise_model()
-
-    def _create_noise_model(self) -> NoiseModel:
+    def _create_noise_model(self, chip_sample: IQMChipSample) -> NoiseModel:
         """
         Builds a noise model from the attributes.
         """
-        noise_model = NoiseModel(basis_gates=self.basis_gates)
+        noise_model = NoiseModel(basis_gates=['r', 'cz'])
 
         # Add single-qubit gate errors to noise model
-        for gate in self.basis_1_qubit_gates:
-            for i in range(self.chip_sample.number_of_qubits):
+        for gate in chip_sample.one_qubit_gate_depolarization_rates.keys():
+            for qb in chip_sample.quantum_architecture.qubits:
                 thermal_relaxation_channel = thermal_relaxation_error(
-                    self.chip_sample.t1s[i], self.chip_sample.t2s[i], self.chip_sample.one_qubit_gate_durations[gate]
+                    chip_sample.t1s[qb], chip_sample.t2s[qb], chip_sample.one_qubit_gate_durations[gate]
                 )
                 depolarizing_channel = depolarizing_error(
-                    self.chip_sample.one_qubit_gate_depolarization_rates[gate][i], 1
+                    chip_sample.one_qubit_gate_depolarization_rates[gate][qb], 1
                 )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
-                noise_model.add_quantum_error(full_error_channel, gate, [i])
+                noise_model.add_quantum_error(full_error_channel, IQM_TO_QISKIT_GATE_NAME[gate], [self.qubit_name_to_index(qb)])
 
         # Add two-qubit gate errors to noise model
-        for gate in self.basis_2_qubit_gates:
-            for connection in list(self.chip_sample.two_qubit_gate_depolarization_rates[gate].keys()):
+        for gate in chip_sample.two_qubit_gate_depolarization_rates.keys():
+            for connection in list(chip_sample.two_qubit_gate_depolarization_rates[gate].keys()):
                 first_qubit, second_qubit = connection
 
                 thermal_relaxation_channel = thermal_relaxation_error(
-                    self.chip_sample.t1s[first_qubit],
-                    self.chip_sample.t2s[first_qubit],
-                    self.chip_sample.two_qubit_gate_durations[gate],
+                    chip_sample.t1s[first_qubit],
+                    chip_sample.t2s[first_qubit],
+                    chip_sample.two_qubit_gate_durations[gate],
                 ).tensor(
                     thermal_relaxation_error(
-                        self.chip_sample.t1s[second_qubit],
-                        self.chip_sample.t2s[second_qubit],
-                        self.chip_sample.two_qubit_gate_durations[gate],
+                        chip_sample.t1s[second_qubit],
+                        chip_sample.t2s[second_qubit],
+                        chip_sample.two_qubit_gate_durations[gate],
                     )
                 )
                 depolarizing_channel = depolarizing_error(
-                    self.chip_sample.two_qubit_gate_depolarization_rates[gate][connection], 2
+                    chip_sample.two_qubit_gate_depolarization_rates[gate][connection], 2
                 )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
-                noise_model.add_quantum_error(full_error_channel, gate, [first_qubit, second_qubit])
+                noise_model.add_quantum_error(full_error_channel, IQM_TO_QISKIT_GATE_NAME[gate], [self.qubit_name_to_index(first_qubit), self.qubit_name_to_index(second_qubit)])
 
         return noise_model
+
+    @classmethod
+    def _default_options(cls) -> Options:
+        return Options(shots=1024, calibration_set_id=None)
+
+    @property
+    def max_circuits(self) -> Optional[int]:
+        return None
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
         """
@@ -126,13 +117,8 @@ class IQMFakeBackend(IQMBackend):
 
         shots = options.get("shots", self.options.shots)
 
-        # COUPLING MAP
-        coupling_map = CouplingMap(self.qubit_connectivity)
-        # otherwise it would throw an error in the transpiler that Flipping gate direction is not supported for CPhase
-        coupling_map.make_symmetric()
-
         # Create noisy simulator backend and run circuits
-        sim_noise = AerSimulator(noise_model=self.noise_model, coupling_map=coupling_map, basis_gates=self.basis_gates)
+        sim_noise = AerSimulator(noise_model=self.noise_model)
         job = sim_noise.run(circuits, shots=shots)
 
         return job

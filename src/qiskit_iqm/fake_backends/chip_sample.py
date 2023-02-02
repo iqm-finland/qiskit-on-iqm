@@ -56,26 +56,26 @@ class IQMChipSample:
     """
 
     quantum_architecture: QuantumArchitectureSpecification
-    t1s: dict[int, float]
-    t2s: dict[int, float]
-    one_qubit_gate_depolarization_rates: dict[str, dict[int, float]]
-    two_qubit_gate_depolarization_rates: dict[str, dict[tuple[int, int], float]]
+    t1s: dict[str, float]
+    t2s: dict[str, float]
+    one_qubit_gate_depolarization_rates: dict[str, dict[str, float]]
+    two_qubit_gate_depolarization_rates: dict[str, dict[tuple[str, str], float]]
     one_qubit_gate_durations: dict[str, float]
     two_qubit_gate_durations: dict[str, float]
     id_: Union[str, None] = None
 
+    def __post_init__(self):
+        self._validate_parameters()
+
     @property
     def number_of_qubits(self) -> int:
         "Get the number of qubits"
-        return len(self.t1s)
+        return len(self.quantum_architecture.qubits)
 
     @property
     def gate_durations(self) -> dict[str, float]:
         "get all gate durations"
         return self.one_qubit_gate_durations | self.two_qubit_gate_durations
-
-    def __post_init__(self):
-        self._validate_parameters()
 
     def _validate_parameters(self) -> None:
         """Verifies that the parameters of the chip sample match the constraints of its IQMQuantumArchitecture.
@@ -86,16 +86,13 @@ class IQMChipSample:
             ValueError: Length of `one_qubit_gate` parameter lists and number of qubits should match.
             ValueError: Length of `two_qubit_gate` parameter lists and number of couplings should match.
             ValueError: Gates in gate parameter lists must be supported by the quantum architecture.
-
-        Returns:
-            bool: True if parameters are correctly verified.
         """
         num_qubits = len(self.quantum_architecture.qubits)
         # Check that T1 list has one element for each qubit
         if len(self.t1s) != num_qubits:
             raise ValueError(
                 (
-                    f"Length of `t1s` ({len(self.t1s)}) and number "
+                    f"Length of t1s ({len(self.t1s)}) and number "
                     f"of qubits ({num_qubits}) should match."
                 )
             )
@@ -104,7 +101,7 @@ class IQMChipSample:
         if len(self.t2s) != num_qubits:
             raise ValueError(
                 (
-                    f"Length of `t2s` ({len(self.t2s)}) and "
+                    f"Length of t2s ({len(self.t2s)}) and "
                     f"number of qubits ({num_qubits}) should match."
                 )
             )
@@ -116,13 +113,13 @@ class IQMChipSample:
         ]:
             gate_dict: dict[Any, float]
             for gate, gate_dict in property_dict.items():
-                if set(gate_dict.keys()) != set(range(num_qubits)):
+                if set(gate_dict.keys()) != set(self.quantum_architecture.qubits):
                     raise ValueError(
                         (
                             f"The qubits specified for one-qubit gate {property_name} ({set(gate_dict.keys())}) "
                             f"don't match the qubits of the quantum architecture "
                             f"`{self.quantum_architecture.name}` "
-                            f"({set(range(num_qubits))})."
+                            f"({self.quantum_architecture.qubits})."
                         )
                     )
 
@@ -131,12 +128,12 @@ class IQMChipSample:
             ("depolarization rates", self.two_qubit_gate_depolarization_rates),
         ]:
             for gate, gate_dict in property_dict.items():
-                if set(gate_dict.keys()) != set(self.quantum_architecture.topology):
+                if set(gate_dict.keys()) != set(tuple(item) for item in self.quantum_architecture.qubit_connectivity):
                     raise ValueError(
                         (
                             f"The couplings specified for two-qubit gate {property_name} ({set(gate_dict.keys())}) "
                             f"don't match the couplings of the quantum architecture "
-                            f"`{self.quantum_architecture.name}` ({set(self.quantum_architecture.topology)})."
+                            f"`{self.quantum_architecture.name}` ({set(self.quantum_architecture.qubit_connectivity)})."
                         )
                     )
 
@@ -148,11 +145,11 @@ class IQMChipSample:
             ("durations", self.gate_durations.keys()),
         ]:
             for gate in specified_gates:
-                if gate not in self.quantum_architecture.basis_gates:
+                if gate not in self.quantum_architecture.operations:
                     raise ValueError(
                         (
                             f"Gate `{gate}` in `gate_{property_name}` "
                             "is not supported by quantum architecture `{self.quantum_architecture.id_}`. "
-                            f"Valid gates: {self.quantum_architecture.basis_gates}"
+                            f"Valid gates: {self.quantum_architecture.operations}"
                         )
                     )

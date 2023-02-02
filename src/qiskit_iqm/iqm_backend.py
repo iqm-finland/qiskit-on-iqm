@@ -17,13 +17,16 @@ from __future__ import annotations
 
 from abc import ABC
 import re
-from typing import Optional
+from typing import Final, Optional
 
 from iqm_client import QuantumArchitectureSpecification
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
+
+
+IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
 
 
 class IQMBackend(BackendV2, ABC):

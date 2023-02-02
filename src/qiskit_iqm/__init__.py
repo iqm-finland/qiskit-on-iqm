@@ -16,9 +16,8 @@
 from importlib.metadata import PackageNotFoundError, version
 
 from qiskit_iqm.fake_backends import IQMChipSample
-from qiskit_iqm.fake_backends.iqm_fake_adonis import IQMFakeAdonis
+from qiskit_iqm.fake_backends import IQMFakeAdonis
 from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
-from qiskit_iqm.fake_backends.quantum_architectures import Adonis, Apollo
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.iqm_provider import RemoteIQMBackend, IQMProvider
 
