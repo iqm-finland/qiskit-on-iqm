@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.1
+===========
+
+* Add a simple example for getting started. `#41 <https://github.com/iqm-finland/qiskit-on-iqm/pull/41>`_
+
 Version 7.0
 ===========
 
