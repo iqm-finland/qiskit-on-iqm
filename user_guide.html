@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>User guide &#8212; Qiskit on IQM 7.0 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 7.1 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -337,6 +337,11 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#hello-world">
+   Hello, world!
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#installation">
    Installation
   </a>
@@ -381,6 +386,11 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#hello-world">
+   Hello, world!
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#installation">
    Installation
   </a>
@@ -419,6 +429,25 @@ title="Print to PDF"
 <span id="id1"></span><h1>User guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">#</a></h1>
 <p>This guide illustrates the main features of Qiskit on IQM. You are encouraged to run the demonstrated
 code snippets and check the output yourself.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the moment IQM does not provide a quantum computing service open to the general public.
+Please contact our <a class="reference external" href="https://www.meetiqm.com/contact/">sales team</a> to set up your access to an IQM quantum
+computer.</p>
+</div>
+<section id="hello-world">
+<h2>Hello, world!<a class="headerlink" href="#hello-world" title="Permalink to this headline">#</a></h2>
+<p>Here’s the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
+things are set up correctly:</p>
+<ol class="arabic simple">
+<li><p>Download the <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/tree/main/examples/bell_measure.py">bell_measure.py example file</a></p></li>
+<li><p>Install Qiskit on IQM as instructed below (feel free to skip the import statement)</p></li>
+<li><p>Install Cortex CLI and log in as instructed in the <a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli">documentation</a></p></li>
+<li><p>Set the environment variable as instructed by Cortex CLI after logging in</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">python</span> <span class="pre">bell_measure.py</span> <span class="pre">--server_url</span> <span class="pre">https://demo.qc.iqm.fi/cocos</span></code> – replace the example URL with the correct one</p></li>
+<li><p>If you’re connecting to a real quantum computer, the output should show almost half of the measurements resulting in ‘00’ and almost half in ‘11’ – if this is the case, things are set up correctly!</p></li>
+</ol>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
 <p>The recommended way is to install the distribution package <code class="docutils literal notranslate"><span class="pre">qiskit-iqm</span></code> directly from the
@@ -435,11 +464,6 @@ Python Package Index (PyPI):</p>
 <h2>Running a quantum circuit on an IQM quantum computer<a class="headerlink" href="#running-a-quantum-circuit-on-an-iqm-quantum-computer" title="Permalink to this headline">#</a></h2>
 <p>In this section we demonstrate the practicalities of using Qiskit on IQM on an example of constructing and executing
 a simple quantum circuit on an IQM quantum computer.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>At the moment IQM does not provide a quantum computing service open to the general public.
-Please contact our <a class="reference external" href="https://www.meetiqm.com/contact/">sales team</a> to set up your access to an IQM quantum computer.</p>
-</div>
 <p>Let’s consider the following quantum circuit which prepares and measures a GHZ state:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
