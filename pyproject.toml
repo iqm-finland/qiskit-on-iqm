@@ -27,7 +27,7 @@ dependencies = [
 
 [project.urls]
 homepage = "https://github.com/iqm-finland/qiskit-on-iqm"
-doumentation = "https://iqm-finland.github.io/qiskit-on-iqm"
+documentation = "https://iqm-finland.github.io/qiskit-on-iqm"
 repository = "https://github.com/iqm-finland/qiskit-on-iqm.git"
 changelog = "https://github.com/iqm-finland/qiskit-on-iqm/blob/main/CHANGELOG.rst"
 
