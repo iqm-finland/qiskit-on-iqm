@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.3
+===========
+
+* Build and publish docs for older versions. `#43 <https://github.com/iqm-finland/qiskit-on-iqm/pull/43>`_
+
 Version 7.2
 ===========
 
