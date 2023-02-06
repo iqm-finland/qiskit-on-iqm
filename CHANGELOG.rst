@@ -2,6 +2,13 @@
 Changelog
 =========
 
+Version 7.1
+===========
+
+* "Pin down" supported Python versions to 3.9 and 3.10
+* Configure Tox to skip missing versions of Python interpreters when running tests
+* Move project metadata and configuration to pyproject.toml
+
 Version 7.0
 ===========
 
