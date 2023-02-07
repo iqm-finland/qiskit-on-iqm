@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 name = "qiskit-iqm"
 dynamic = ["version"]
 description = "Qiskit adapter for IQM's quantum architectures"
-authors = [{name="IQM Finland Oy", email="developers@meetiqm.com"}]
+authors = [{name = "IQM Finland Oy", email = "developers@meetiqm.com"}]
 readme = "README.rst"
 license = {file = "LICENSE"}
 classifiers = [
@@ -62,7 +62,7 @@ cicd = [
 platforms = ["any"]
 zip-safe = false
 include-package-data = true
-package-dir = { "" = "src" }
+package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
