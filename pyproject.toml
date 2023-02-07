@@ -58,6 +58,15 @@ cicd = [
     "wheel >= 0.37.1, < 1.0"
 ]
 
+[tool.setuptools]
+platforms = ["any"]
+zip-safe = false
+include_package_data = true
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
