@@ -61,7 +61,7 @@ cicd = [
 [tool.setuptools]
 platforms = ["any"]
 zip-safe = false
-include_package_data = true
+include-package-data = true
 package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
