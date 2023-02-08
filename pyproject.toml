@@ -140,19 +140,14 @@ group_by_package = true
 
 
 [tool.mypy]
-ignore_missing_imports = true
 namespace_packages = true
 
 [[tool.mypy.overrides]]
-module = ["mockito"]
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["qiskit"]
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["requests"]
+module = [
+    "mockito",
+    "qiskit",
+    "requests"
+]
 ignore_missing_imports = true
 
 
