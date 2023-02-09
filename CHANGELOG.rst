@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.2
+===========
+
+* Make the Hello world example even easier to follow. `#44 <https://github.com/iqm-finland/qiskit-on-iqm/pull/44>`_
+
 Version 7.1
 ===========
 
