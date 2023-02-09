@@ -1,0 +1,32 @@
+{% if versions %}
+<style type="text/css">
+  ul.version_list { padding-left: 0; }
+  ul.version_list li.version_item { display: inline; }
+  li.version_item a {
+    color: white;
+    background-color: #097aba;
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.35rem;
+  }
+  li.version_item a:hover {
+    background-color: #064061;
+    text-decoration: none;
+  }
+  li.version_item.current_version {
+    color: white;
+    background-color: #064061;
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.35rem;
+  }
+</style>
+<h3>{{ _('Versions') }}</h3>
+<ul class="version_list">
+  {%- for item in versions|reverse %}
+    {% if item.name != current_version.name %}
+      <li class="version_item"><a href="{{ item.url }}">{{ item.name }}</a></li>
+    {% else %}
+      <li class="version_item current_version">{{ item.name }}</li>
+    {% endif %}
+  {%- endfor %}
+</ul>
+{% endif %}
