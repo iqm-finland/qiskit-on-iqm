@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>qiskit_iqm.qiskit_to_iqm.MeasurementKey &#8212; Qiskit on IQM 4.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError" href="qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError.html" />
+    <link rel="prev" title="qiskit_iqm.qiskit_to_iqm.serialize_circuit" href="qiskit_iqm.qiskit_to_iqm.serialize_circuit.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../_static/logo.png" class="logo" alt="logo">
+      
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../user_guide.html">
+   User guide
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../API.html">
+   API Reference
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="qiskit_iqm.html">
+     qiskit_iqm
+    </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="current">
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="qiskit_iqm.iqm_backend.html">
+       qiskit_iqm.iqm_backend
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.iqm_backend.IQMBackend.html">
+         qiskit_iqm.iqm_backend.IQMBackend
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="qiskit_iqm.iqm_job.html">
+       qiskit_iqm.iqm_job
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.iqm_job.IQMJob.html">
+         qiskit_iqm.iqm_job.IQMJob
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="qiskit_iqm.iqm_provider.html">
+       qiskit_iqm.iqm_provider
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.iqm_provider.IQMProvider.html">
+         qiskit_iqm.iqm_provider.IQMProvider
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 current active has-children">
+      <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.html">
+       qiskit_iqm.qiskit_to_iqm
+      </a>
+      <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul class="current">
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names.html">
+         qiskit_iqm.qiskit_to_iqm.qubit_mapping_with_names
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.qubit_to_name.html">
+         qiskit_iqm.qiskit_to_iqm.qubit_to_name
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.serialize_circuit.html">
+         qiskit_iqm.qiskit_to_iqm.serialize_circuit
+        </a>
+       </li>
+       <li class="toctree-l4 current active">
+        <a class="current reference internal" href="#">
+         qiskit_iqm.qiskit_to_iqm.MeasurementKey
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError.html">
+         qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../license.html">
+   License
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../authors.html">
+   Contributors
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../changelog.html">
+   Changelog
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav>
+<style type="text/css">
+  ul.version_list { padding-left: 0; }
+  ul.version_list li.version_item { display: inline; }
+  li.version_item a {
+    color: white;
+    background-color: #097aba;
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.35rem;
+  }
+  li.version_item a:hover {
+    background-color: #064061;
+    text-decoration: none;
+  }
+  li.version_item.current_version {
+    color: white;
+    background-color: #064061;
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.35rem;
+  }
+</style>
+<h3>Versions</h3>
+<ul class="version_list">
+    
+      <li class="version_item"><a href="../../../index.html">dev</a></li>
+    
+    
+      <li class="version_item"><a href="../../7.3/index.html">7.3</a></li>
+    
+    
+      <li class="version_item"><a href="../../7.2/index.html">7.2</a></li>
+    
+    
+      <li class="version_item"><a href="../../7.1/index.html">7.1</a></li>
+    
+    
+      <li class="version_item"><a href="../../7.0/index.html">7.0</a></li>
+    
+    
+      <li class="version_item"><a href="../../6.3/index.html">6.3</a></li>
+    
+    
+      <li class="version_item"><a href="../../6.2/index.html">6.2</a></li>
+    
+    
+      <li class="version_item"><a href="../../6.1/index.html">6.1</a></li>
+    
+    
+      <li class="version_item"><a href="../../6.0/index.html">6.0</a></li>
+    
+    
+      <li class="version_item"><a href="../../5.0/index.html">5.0</a></li>
+    
+    
+      <li class="version_item"><a href="../../4.6/index.html">4.6</a></li>
+    
+    
+      <li class="version_item"><a href="../../4.5/index.html">4.5</a></li>
+    
+    
+      <li class="version_item"><a href="../../4.4/index.html">4.4</a></li>
+    
+    
+      <li class="version_item"><a href="../../4.3/index.html">4.3</a></li>
+    
+    
+      <li class="version_item"><a href="../../4.2/index.html">4.2</a></li>
+    
+    
+      <li class="version_item current_version">4.1</li>
+    
+    
+      <li class="version_item"><a href="../../4.0/index.html">4.0</a></li>
+    
+    
+      <li class="version_item"><a href="../../3.1/index.html">3.1</a></li>
+    
+    
+      <li class="version_item"><a href="../../3.0/index.html">3.0</a></li>
+    
+    
+      <li class="version_item"><a href="../../2.3/index.html">2.3</a></li>
+    
+    
+      <li class="version_item"><a href="../../2.2/index.html">2.2</a></li>
+    
+    
+      <li class="version_item"><a href="../../2.1/index.html">2.1</a></li>
+    
+    
+      <li class="version_item"><a href="../../2.0/index.html">2.0</a></li>
+    
+    
+      <li class="version_item"><a href="../../1.1/index.html">1.1</a></li>
+    
+    
+      <li class="version_item"><a href="../../1.0/index.html">1.0</a></li>
+    
+</ul>
+</div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/api/qiskit_iqm.qiskit_to_iqm.MeasurementKey.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>qiskit_iqm.qiskit_to_iqm.MeasurementKey</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+
+<style type="text/css">
+  .version_notice {
+    background-color: #ffc107;
+    padding: 0.5em 0.75em;
+    margin-bottom: 1em;
+  }
+</style>
+<div class="version_notice">
+  <strong>
+    
+    You're reading an old version of this documentation.
+    If you want up-to-date information, please have a look at <a href="../../7.3/index.html">7.3</a>.
+    
+  </strong>
+</div>
+
+
+  <section id="qiskit-iqm-qiskit-to-iqm-measurementkey">
+<h1>qiskit_iqm.qiskit_to_iqm.MeasurementKey<a class="headerlink" href="#qiskit-iqm-qiskit-to-iqm-measurementkey" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="qiskit_iqm.qiskit_to_iqm.MeasurementKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.qiskit_to_iqm.</span></span><span class="sig-name descname"><span class="pre">MeasurementKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">creg_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creg_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creg_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clbit_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Unique key associated with a measurement instruction.</p>
+<p>Qiskit stores the results of quantum measurements in classical registers consisting of bits.
+The circuit execution results are presented as bitstrings of a certain structure so that the classical
+register and the index within that register for each bit is implied from its position in the bitstring.</p>
+<p>For example, if you have two classical registers in the circuit with lengths 3 and 2, then the
+measurement results will look like ‘01 101’ if the classical register of length 3 was added to
+the circuit first, and ‘101 01’ otherwise. If a bit in a classical register is not used in any
+measurement operation it will still show up in the results with the default value of ‘0’.</p>
+<p>To be able to handle measurement results in a Qiskit-friendly way, we need to keep around some
+information about how the circuit was constructed. This can, for example, be achieved by keeping
+around the original Qiskit quantum circuit and using it when constructing the results in
+<a class="reference internal" href="qiskit_iqm.iqm_job.IQMJob.html#qiskit_iqm.iqm_job.IQMJob" title="qiskit_iqm.iqm_job.IQMJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMJob</span></code></a>. This should be done so that the circuit is saved on the server side and not in
+<code class="docutils literal notranslate"><span class="pre">IQMJob</span></code>, since otherwise users will not be able to retrieve results from a detached Python
+environment solely based on the job id. Another option is to use measurement key strings to
+store the required info. Qiskit does not use measurement keys, so we are free to use them
+internally in the communication with the IQM server, and can encode the necessary information in
+them.</p>
+<p>This class encapsulates the necessary info, and provides methods to transform between this
+representation and the measurement key string representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>creg_name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of the classical register</p></li>
+<li><p><strong>creg_len</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of bits in the classical register</p></li>
+<li><p><strong>creg_idx</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Index of the classical register in the circuit. Determines the order in which this register was added
+to the circuit relative to the others.</p></li>
+<li><p><strong>clbit_idx</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – index of the classical bit within the classical register</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">creg_name</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">creg_len</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">creg_idx</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clbit_idx</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__delattr__</span></code>(name)</p></td>
+<td><p>Implement delattr(self, name).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code>(other)</p></td>
+<td><p>Return self==value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code>()</p></td>
+<td><p>Return hash(self).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code>()</p></td>
+<td><p>Return repr(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setattr__</span></code>(name, value)</p></td>
+<td><p>Implement setattr(self, name, value).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Return str(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_clbit" title="qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_clbit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_clbit</span></code></a>(clbit, circuit)</p></td>
+<td><p>Create a MeasurementKey for a classical bit in a quantum circuit.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_string" title="qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_string</span></code></a>(string)</p></td>
+<td><p>Create a MeasurementKey from its string representation.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_string">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_string" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a MeasurementKey from its string representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey" title="qiskit_iqm.qiskit_to_iqm.MeasurementKey">qiskit_iqm.qiskit_to_iqm.MeasurementKey</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_clbit">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_clbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clbit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey.from_clbit" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a MeasurementKey for a classical bit in a quantum circuit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clbit</strong> (<em>qiskit.circuit.classicalregister.Clbit</em>) – </p></li>
+<li><p><strong>circuit</strong> (<em>qiskit.circuit.quantumcircuit.QuantumCircuit</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#qiskit_iqm.qiskit_to_iqm.MeasurementKey" title="qiskit_iqm.qiskit_to_iqm.MeasurementKey">qiskit_iqm.qiskit_to_iqm.MeasurementKey</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="qiskit_iqm.qiskit_to_iqm.serialize_circuit.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">qiskit_iqm.qiskit_to_iqm.serialize_circuit</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Qiskit on IQM developers<br/>
+  
+      &copy; Copyright 2022, Qiskit on IQM developers.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

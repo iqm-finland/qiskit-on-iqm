@@ -1,0 +1,708 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Changelog &#8212; Qiskit on IQM 3.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Contributors" href="authors.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/logo.png" class="logo" alt="logo">
+      
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="user_guide.html">
+   User guide
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="API.html">
+   API Reference
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="api/qiskit_iqm.html">
+     qiskit_iqm
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="api/qiskit_iqm.iqm_backend.html">
+       qiskit_iqm.iqm_backend
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackend.html">
+         qiskit_iqm.iqm_backend.IQMBackend
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="api/qiskit_iqm.iqm_job.html">
+       qiskit_iqm.iqm_job
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.iqm_job.IQMJob.html">
+         qiskit_iqm.iqm_job.IQMJob
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="api/qiskit_iqm.iqm_provider.html">
+       qiskit_iqm.iqm_provider
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html">
+         qiskit_iqm.iqm_provider.IQMProvider
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.html">
+       qiskit_iqm.qiskit_to_iqm
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.qubit_to_name.html">
+         qiskit_iqm.qiskit_to_iqm.qubit_to_name
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.serialize_circuit.html">
+         qiskit_iqm.qiskit_to_iqm.serialize_circuit
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.serialize_qubit_mapping.html">
+         qiskit_iqm.qiskit_to_iqm.serialize_qubit_mapping
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.MeasurementKey.html">
+         qiskit_iqm.qiskit_to_iqm.MeasurementKey
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError.html">
+         qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="license.html">
+   License
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="authors.html">
+   Contributors
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Changelog
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav>
+<style type="text/css">
+  ul.version_list { padding-left: 0; }
+  ul.version_list li.version_item { display: inline; }
+  li.version_item a {
+    color: white;
+    background-color: #097aba;
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.35rem;
+  }
+  li.version_item a:hover {
+    background-color: #064061;
+    text-decoration: none;
+  }
+  li.version_item.current_version {
+    color: white;
+    background-color: #064061;
+    padding: 0.12rem 0.45rem;
+    border-radius: 0.35rem;
+  }
+</style>
+<h3>Versions</h3>
+<ul class="version_list">
+    
+      <li class="version_item"><a href="../../changelog.html">dev</a></li>
+    
+    
+      <li class="version_item"><a href="../7.3/changelog.html">7.3</a></li>
+    
+    
+      <li class="version_item"><a href="../7.2/changelog.html">7.2</a></li>
+    
+    
+      <li class="version_item"><a href="../7.1/changelog.html">7.1</a></li>
+    
+    
+      <li class="version_item"><a href="../7.0/changelog.html">7.0</a></li>
+    
+    
+      <li class="version_item"><a href="../6.3/changelog.html">6.3</a></li>
+    
+    
+      <li class="version_item"><a href="../6.2/changelog.html">6.2</a></li>
+    
+    
+      <li class="version_item"><a href="../6.1/changelog.html">6.1</a></li>
+    
+    
+      <li class="version_item"><a href="../6.0/changelog.html">6.0</a></li>
+    
+    
+      <li class="version_item"><a href="../5.0/changelog.html">5.0</a></li>
+    
+    
+      <li class="version_item"><a href="../4.6/changelog.html">4.6</a></li>
+    
+    
+      <li class="version_item"><a href="../4.5/changelog.html">4.5</a></li>
+    
+    
+      <li class="version_item"><a href="../4.4/changelog.html">4.4</a></li>
+    
+    
+      <li class="version_item"><a href="../4.3/changelog.html">4.3</a></li>
+    
+    
+      <li class="version_item"><a href="../4.2/changelog.html">4.2</a></li>
+    
+    
+      <li class="version_item"><a href="../4.1/changelog.html">4.1</a></li>
+    
+    
+      <li class="version_item"><a href="../4.0/changelog.html">4.0</a></li>
+    
+    
+      <li class="version_item current_version">3.1</li>
+    
+    
+      <li class="version_item"><a href="../3.0/changelog.html">3.0</a></li>
+    
+    
+      <li class="version_item"><a href="../2.3/changelog.html">2.3</a></li>
+    
+    
+      <li class="version_item"><a href="../2.2/changelog.html">2.2</a></li>
+    
+    
+      <li class="version_item"><a href="../2.1/changelog.html">2.1</a></li>
+    
+    
+      <li class="version_item"><a href="../2.0/changelog.html">2.0</a></li>
+    
+    
+      <li class="version_item"><a href="../1.1/changelog.html">1.1</a></li>
+    
+    
+      <li class="version_item"><a href="../1.0/changelog.html">1.0</a></li>
+    
+</ul>
+</div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/changelog.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-3-1">
+   Version 3.1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-3-0">
+   Version 3.0
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-3">
+   Version 2.3
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-2">
+   Version 2.2
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-1">
+   Version 2.1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-0">
+   Version 2.0
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-1-1">
+   Version 1.1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-1-0">
+   Version 1.0
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-0-2">
+   Version 0.2
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-0-1">
+   Version 0.1
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Changelog</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-3-1">
+   Version 3.1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-3-0">
+   Version 3.0
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-3">
+   Version 2.3
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-2">
+   Version 2.2
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-1">
+   Version 2.1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-2-0">
+   Version 2.0
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-1-1">
+   Version 1.1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-1-0">
+   Version 1.0
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-0-2">
+   Version 0.2
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-0-1">
+   Version 0.1
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+
+<style type="text/css">
+  .version_notice {
+    background-color: #ffc107;
+    padding: 0.5em 0.75em;
+    margin-bottom: 1em;
+  }
+</style>
+<div class="version_notice">
+  <strong>
+    
+    You're reading an old version of this documentation.
+    If you want up-to-date information, please have a look at <a href="../7.3/changelog.html">7.3</a>.
+    
+  </strong>
+</div>
+
+
+  <section id="changelog">
+<span id="changes"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">#</a></h1>
+<section id="version-3-1">
+<h2>Version 3.1<a class="headerlink" href="#version-3-1" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Use metadata returned from iqm-client for minor improvements. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/19">#19</a></p></li>
+</ul>
+</section>
+<section id="version-3-0">
+<h2>Version 3.0<a class="headerlink" href="#version-3-0" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Experimental enabling of batch circuit exection. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/18">#18</a></p></li>
+</ul>
+</section>
+<section id="version-2-3">
+<h2>Version 2.3<a class="headerlink" href="#version-2-3" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Make <code class="docutils literal notranslate"><span class="pre">settings_path</span></code> optional parameter for <code class="docutils literal notranslate"><span class="pre">IQMProvider</span></code>. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/14">#14</a></p></li>
+<li><p>Requires iqm-client 3.3 if <code class="docutils literal notranslate"><span class="pre">settings_path</span></code> is not specified.</p></li>
+</ul>
+</section>
+<section id="version-2-2">
+<h2>Version 2.2<a class="headerlink" href="#version-2-2" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Use IQM Client’s <code class="docutils literal notranslate"><span class="pre">get_run_status</span></code> instead of <code class="docutils literal notranslate"><span class="pre">get_run</span></code> to retrieve status. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/13">#13</a></p></li>
+<li><p>Requires iqm-client 3.2</p></li>
+</ul>
+</section>
+<section id="version-2-1">
+<h2>Version 2.1<a class="headerlink" href="#version-2-1" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Allow serialization of <code class="docutils literal notranslate"><span class="pre">barrier</span></code> operations. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/12">#12</a></p></li>
+</ul>
+</section>
+<section id="version-2-0">
+<h2>Version 2.0<a class="headerlink" href="#version-2-0" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Update user authentication to use access token. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/11">#11</a></p></li>
+<li><p>Upgrade IQMClient to version &gt;= 2.0 <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/11">#11</a></p></li>
+</ul>
+</section>
+<section id="version-1-1">
+<h2>Version 1.1<a class="headerlink" href="#version-1-1" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Fix code examples in <a class="reference external" href="https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html">user guide</a>, add missing dependency in <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/blob/main/CONTRIBUTING.rst">developer guide</a>. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/8">#8</a></p></li>
+</ul>
+</section>
+<section id="version-1-0">
+<h2>Version 1.0<a class="headerlink" href="#version-1-0" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Updated documentation layout to use sphinx-book-theme. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/6">#6</a></p></li>
+</ul>
+</section>
+<section id="version-0-2">
+<h2>Version 0.2<a class="headerlink" href="#version-0-2" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Publish <code class="docutils literal notranslate"><span class="pre">qiskit_iqm</span></code>. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/4">#4</a></p></li>
+<li><p>Implement functionality to serialize compatible circuits, send for execution and parse returned results. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/3">#3</a></p></li>
+</ul>
+</section>
+<section id="version-0-1">
+<h2>Version 0.1<a class="headerlink" href="#version-0-1" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Project skeleton created.</p></li>
+</ul>
+</section>
+</section>
+
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="authors.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Contributors</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Qiskit on IQM developers<br/>
+  
+      &copy; Copyright 2022, Qiskit on IQM developers.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
