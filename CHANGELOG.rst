@@ -2,12 +2,22 @@
 Changelog
 =========
 
-Version 7.2
+Version 7.4
 ===========
 
 * "Pin down" supported Python versions to 3.9 and 3.10. `#40 <https://github.com/iqm-finland/qiskit-on-iqm/pull/40>`_
 * Configure Tox to skip missing versions of Python interpreters when running tests. `#40 <https://github.com/iqm-finland/qiskit-on-iqm/pull/40>`_
 * Move project metadata and configuration to pyproject.toml. `#40 <https://github.com/iqm-finland/qiskit-on-iqm/pull/40>`_
+
+Version 7.3
+===========
+
+* Build and publish docs for older versions. `#43 <https://github.com/iqm-finland/qiskit-on-iqm/pull/43>`_
+
+Version 7.2
+===========
+
+* Make the Hello world example even easier to follow. `#44 <https://github.com/iqm-finland/qiskit-on-iqm/pull/44>`_
 
 Version 7.1
 ===========
