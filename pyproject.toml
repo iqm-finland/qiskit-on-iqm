@@ -60,17 +60,6 @@ cicd = [
 ]
 
 
-[tool.setuptools]
-platforms = ["any"]
-zip-safe = false
-include-package-data = true
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-exclude = ["tests"]
-
-
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 write_to = "version.txt"
