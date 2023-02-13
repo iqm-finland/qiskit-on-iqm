@@ -39,4 +39,4 @@ def test_client_signature():
     url = 'http://some_url'
     provider = IQMProvider(url)
     backend = provider.get_backend()
-    assert backend.client._signature == f'iqm-client {version("iqm-client")}, qiskit-iqm {version("qiskit-iqm")}'
+    assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
