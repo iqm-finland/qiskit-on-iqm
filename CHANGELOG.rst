@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.4
+===========
+
+* Provide version information to IQMClient. `#45 <https://github.com/iqm-finland/qiskit-on-iqm/pull/45>`_
+
 Version 7.3
 ===========
 

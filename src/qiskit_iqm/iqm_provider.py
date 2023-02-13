@@ -13,6 +13,8 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
+from importlib.metadata import version
+
 from iqm_client import IQMClient
 
 from qiskit_iqm.iqm_backend import IQMBackend
@@ -39,5 +41,5 @@ class IQMProvider:
 
     def get_backend(self) -> IQMBackend:
         """An IQMBackend instance associated with this provider."""
-        client = IQMClient(self.url, **self.user_auth_args)
+        client = IQMClient(self.url, client_signature=f'qiskit-iqm {version("qiskit-iqm")}', **self.user_auth_args)
         return IQMBackend(client)
