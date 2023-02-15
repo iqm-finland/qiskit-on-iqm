@@ -123,7 +123,7 @@ class IQMChipSample:
                         (
                             f"The couplings specified for two-qubit gate {property_name} ({set(gate_dict.keys())}) "
                             f"don't match the couplings of the quantum architecture "
-                            f"`{self.quantum_architecture.name}` ({set(self.quantum_architecture.qubit_connectivity)})."
+                            f"`{self.quantum_architecture.name}` ({self.quantum_architecture.qubit_connectivity})."
                         )
                     )
 
