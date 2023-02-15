@@ -29,15 +29,15 @@ class IQMChipSample:
 
     Args:
         quantum_architecture: quantum architecture of the chip
-        t1s (dict[str, float]): T1 times for the qubit with the corresponding key.
-        t2s (dict[str, float]): T2 times for the qubit with the corresponding key.
+        t1s: T1 times for the qubit with the corresponding key.
+        t2s: T2 times for the qubit with the corresponding key.
         one_qubit_gate_depolarization_rates: For each one-qubit gate,
             a depolarization rate is specified for each qubit to match measured gate fidelity.
         two_qubit_gate_depolarization_rates: For each two-qubit gate,
             a depolarization rate is specified for each coupling to match measured gate fidelity.
-        one_qubit_gate_durations (dict[str, float]): for each one-qubit gate, a duration is specified.
-        two_qubit_gate_durations (dict[str, float]): for each two-qubit gate, a duration is specified.
-        id_ (Union[str, None], optional): the identifier of the chip sample. Defaults to None.
+        one_qubit_gate_durations: for each one-qubit gate, a duration is specified.
+        two_qubit_gate_durations: for each two-qubit gate, a duration is specified.
+        id: the identifier of the chip sample. Defaults to None.
 
     Example:
         .. code-block::
