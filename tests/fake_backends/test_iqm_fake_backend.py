@@ -20,6 +20,7 @@ from qiskit.circuit import Parameter
 from qiskit.compiler import transpile
 from qiskit.providers import JobV1
 from qiskit_aer import noise
+from qiskit_aer.noise.noise_model import NoiseModel
 
 from qiskit_iqm import IQMFakeBackend
 
@@ -123,3 +124,11 @@ def test_noisy_bell_state(backend):
     if "10" in counts:
         wrong_results += counts["10"]
     assert wrong_results > 0
+
+
+def test_iqm_fake_adonis_noise_model_instantiated(backend):
+    assert isinstance(backend.noise_model, NoiseModel)
+
+
+def test_iqm_fake_backend_noise_model_basis_gates(backend):
+    assert all(gates in backend.operation_names for gates in backend.noise_model.basis_gates)
