@@ -30,8 +30,12 @@ from qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 
 
 class IQMFakeBackend(IQMBackendBase):
-    """
-    Fake backend for simulating an IQM QPU.
+    """Fake backend that mimics the behaviour of IQM quantum computers can be used to perform noisy gate-level
+    simulations of quantum circuit execution on IQM hardware.
+
+    A fake backend contains information about a specific IQM system, such as the quantum architecture (number of qubits,
+    connectivity), the native gate set, and a noise model based on system parameters such as relaxation (:math:`T_1`)
+    and decoherence (:math:`T_2`) times and gate infidelities.
 
     Args:
         chip_sample: Describes the characteristics of a specific chip sample.
