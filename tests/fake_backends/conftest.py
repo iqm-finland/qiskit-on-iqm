@@ -28,9 +28,9 @@ def create_chip_sample(linear_architecture_3q):
             "quantum_architecture": linear_architecture_3q,
             "t1s": {"QB1": 2000, "QB2": 2000, "QB3": 2000},
             "t2s": {"QB1": 1000, "QB2": 1000, "QB3": 1000},
-            "one_qubit_gate_depolarization_rates": {"phased_rx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
-            "two_qubit_gate_depolarization_rates": {"cz": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}},
-            "one_qubit_gate_durations": {"phased_rx": 1.0},
+            "single_qubit_gate_depolarizing_error_parameters": {"phased_rx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
+            "two_qubit_gate_depolarizing_error_parameters": {"cz": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}},
+            "single_qubit_gate_durations": {"phased_rx": 1.0},
             "two_qubit_gate_durations": {"cz": 1.5},
             "id_": "adonis-example_sample",
         }

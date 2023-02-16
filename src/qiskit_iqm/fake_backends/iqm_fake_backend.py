@@ -48,20 +48,22 @@ class IQMFakeBackend(IQMBackendBase):
         noise_model = NoiseModel(basis_gates=["r", "cz"])
 
         # Add single-qubit gate errors to noise model
-        for gate in chip_sample.one_qubit_gate_depolarization_rates.keys():
+        for gate in chip_sample.single_qubit_gate_depolarizing_error_parameters.keys():
             for qb in chip_sample.quantum_architecture.qubits:
                 thermal_relaxation_channel = thermal_relaxation_error(
-                    chip_sample.t1s[qb], chip_sample.t2s[qb], chip_sample.one_qubit_gate_durations[gate]
+                    chip_sample.t1s[qb], chip_sample.t2s[qb], chip_sample.single_qubit_gate_durations[gate]
                 )
-                depolarizing_channel = depolarizing_error(chip_sample.one_qubit_gate_depolarization_rates[gate][qb], 1)
+                depolarizing_channel = depolarizing_error(
+                    chip_sample.single_qubit_gate_depolarizing_error_parameters[gate][qb], 1
+                )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                 noise_model.add_quantum_error(
                     full_error_channel, IQM_TO_QISKIT_GATE_NAME[gate], [self.qubit_name_to_index(qb)]
                 )
 
         # Add two-qubit gate errors to noise model
-        for gate in chip_sample.two_qubit_gate_depolarization_rates.keys():
-            for connection in list(chip_sample.two_qubit_gate_depolarization_rates[gate].keys()):
+        for gate in chip_sample.two_qubit_gate_depolarizing_error_parameters.keys():
+            for connection in list(chip_sample.two_qubit_gate_depolarizing_error_parameters[gate].keys()):
                 first_qubit, second_qubit = connection
 
                 thermal_relaxation_channel = thermal_relaxation_error(
@@ -76,7 +78,7 @@ class IQMFakeBackend(IQMBackendBase):
                     )
                 )
                 depolarizing_channel = depolarizing_error(
-                    chip_sample.two_qubit_gate_depolarization_rates[gate][connection], 2
+                    chip_sample.two_qubit_gate_depolarizing_error_parameters[gate][connection], 2
                 )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                 noise_model.add_quantum_error(

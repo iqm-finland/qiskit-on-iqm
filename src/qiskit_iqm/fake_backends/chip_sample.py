@@ -13,8 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=too-many-instance-attributes
-"""
-Abstract representation of an IQM chip sample.
+"""Abstract representation of an IQM chip sample.
 """
 from dataclasses import dataclass
 from typing import Any, Union
@@ -28,16 +27,18 @@ class IQMChipSample:
     Provides the specifications of a quantum chip sample.
 
     Args:
-        quantum_architecture: quantum architecture of the chip
-        t1s: T1 times for the qubit with the corresponding key.
-        t2s: T2 times for the qubit with the corresponding key.
-        one_qubit_gate_depolarization_rates: For each one-qubit gate,
-            a depolarization rate is specified for each qubit to match measured gate fidelity.
-        two_qubit_gate_depolarization_rates: For each two-qubit gate,
-            a depolarization rate is specified for each coupling to match measured gate fidelity.
-        one_qubit_gate_durations: for each one-qubit gate, a duration is specified.
-        two_qubit_gate_durations: for each two-qubit gate, a duration is specified.
-        id: the identifier of the chip sample. Defaults to None.
+        quantum_architecture: Quantum architecture specification of the chip.
+        t1s: :math:`T_1` times (in ns) for each qubit of the chip, corresponding key is the physical qubit name.
+        t2s: :math:`T_2` times (in ns) for each qubit of the chip, corresponding key is the physical qubit name.
+        single_qubit_gate_depolarizing_error_parameters: Depolarizing error parameters for single-qubit gates of each
+            qubit. Using the values in the depolarizing channel, concatenated with a thermal relaxation channel,
+            lead to average gate fidelities that would be determined by benchmarking.
+        two_qubit_gate_depolarizing_error_parameters: Depolarizing error parameters for two-qubit gates of each
+            connection. Using the values in the depolarizing channel, concatenated with a thermal relaxation channel,
+            lead to average gate fidelities that would be determined by benchmarking.
+        single_qubit_gate_durations: Gate duration (in ns) for each single-qubit gate
+        two_qubit_gate_durations: Gate duration (in ns) for each two-qubit gate.
+        id_: Identifier of the chip sample. Defaults to None.
 
     Example:
         .. code-block::
@@ -45,10 +46,10 @@ class IQMChipSample:
             IQMChipSample(quantum_architecture=ThreeQubitExample(),
                         t1s={"QB1": 10000.0, "QB2": 12000.0, "QB3": 14000.0},
                         t2s={"QB1": 10000.0, "QB2": 12000.0, "QB3": 13000.0},
-                        one_qubit_gate_depolarization_rates={"r": {"QB1": 0.0005,
+                        single_qubit_gate_depolarizing_error_parameters={"r": {"QB1": 0.0005,
                                                                     "QB2": 0.0004,
                                                                     "QB3": 0.0010}},
-                        two_qubit_gate_depolarization_rates={"cz": {("QB1", "QB2"): 0.08,
+                        two_qubit_gate_depolarizing_error_parameters={"cz": {("QB1", "QB2"): 0.08,
                                                                     ("QB2", "QB3"): 0.03}},
                         one_qubit_gate_durations={"r": 50.},
                         two_qubit_gate_durations={"cz": 100.},
@@ -58,9 +59,9 @@ class IQMChipSample:
     quantum_architecture: QuantumArchitectureSpecification
     t1s: dict[str, float]
     t2s: dict[str, float]
-    one_qubit_gate_depolarization_rates: dict[str, dict[str, float]]
-    two_qubit_gate_depolarization_rates: dict[str, dict[tuple[str, str], float]]
-    one_qubit_gate_durations: dict[str, float]
+    single_qubit_gate_depolarizing_error_parameters: dict[str, dict[str, float]]
+    two_qubit_gate_depolarizing_error_parameters: dict[str, dict[tuple[str, str], float]]
+    single_qubit_gate_durations: dict[str, float]
     two_qubit_gate_durations: dict[str, float]
     id_: Union[str, None] = None
 
@@ -75,7 +76,7 @@ class IQMChipSample:
     @property
     def gate_durations(self) -> dict[str, float]:
         "get all gate durations"
-        return self.one_qubit_gate_durations | self.two_qubit_gate_durations
+        return self.single_qubit_gate_durations | self.two_qubit_gate_durations
 
     def _validate_parameters(self) -> None:
         """Verifies that the parameters of the chip sample match the constraints of its IQMQuantumArchitecture.
@@ -99,7 +100,7 @@ class IQMChipSample:
         property_dict: dict[str, dict[Any, float]]
         # Check that one-qubit gate parameter qubits match those of the architecture
         for property_name, property_dict in [
-            ("depolarization rates", self.one_qubit_gate_depolarization_rates),
+            ("depolarization rates", self.single_qubit_gate_depolarizing_error_parameters),
         ]:
             gate_dict: dict[Any, float]
             for gate, gate_dict in property_dict.items():
@@ -115,7 +116,7 @@ class IQMChipSample:
 
         # Check that two-qubit gate parameter couplings match those of the architecture
         for property_name, property_dict in [  # property_name: str, property_dict:
-            ("depolarization rates", self.two_qubit_gate_depolarization_rates),
+            ("depolarization rates", self.two_qubit_gate_depolarizing_error_parameters),
         ]:
             for gate, gate_dict in property_dict.items():
                 if set(gate_dict.keys()) != set(tuple(item) for item in self.quantum_architecture.qubit_connectivity):
@@ -130,8 +131,8 @@ class IQMChipSample:
         # Check that the basis gates of the chip sample match the quantum architecture's
 
         for property_name, specified_gates in [
-            ("one qubit gate depolarization_rates", self.one_qubit_gate_depolarization_rates.keys()),
-            ("two qubit gate depolarization_rates", self.two_qubit_gate_depolarization_rates.keys()),
+            ("one qubit gate depolarization_rates", self.single_qubit_gate_depolarizing_error_parameters.keys()),
+            ("two qubit gate depolarization_rates", self.two_qubit_gate_depolarizing_error_parameters.keys()),
             ("durations", self.gate_durations.keys()),
         ]:
             for gate in specified_gates:

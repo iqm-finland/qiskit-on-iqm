@@ -33,7 +33,7 @@ def test_chip_sample_with_one_qubit_depolarization_rates_qubits_not_matching_qua
     """Test that ChipSample construction fails if depolarization rates are not provided for all qubits"""
     with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
         create_chip_sample(
-            one_qubit_gate_depolarization_rates={"phased_rx": {"QB1": 0.0001, "QB2": 0.0001}},
+            single_qubit_gate_depolarizing_error_parameters={"phased_rx": {"QB1": 0.0001, "QB2": 0.0001}},
         )
 
 
@@ -42,7 +42,7 @@ def test_chip_sample_with_one_qubit_depolarization_rates_more_qubits_than_in_qua
     other qubits than specified in the quantum architecture"""
     with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
         create_chip_sample(
-            one_qubit_gate_depolarization_rates={
+            single_qubit_gate_depolarizing_error_parameters={
                 "phased_rx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0.0001, "QB4": 0.0001}
             },
         )
@@ -55,7 +55,7 @@ def test_chip_sample_with_two_qubits_depolarization_rates_couplings_not_matching
     not provided for all couplings of the quantum architecture (QB1 -- QB2 -- QB3 here)"""
     with pytest.raises(ValueError, match="The couplings specified for two-qubit gate"):
         create_chip_sample(
-            two_qubit_gate_depolarization_rates={"cz": {("QB1", "QB2"): 0.001}},
+            two_qubit_gate_depolarizing_error_parameters={"cz": {("QB1", "QB2"): 0.001}},
         )
 
 
@@ -66,7 +66,7 @@ def test_chip_sample_with_two_qubits_depolarization_rates_more_couplings_than_in
     other couplings than specified in the quantum architecture"""
     with pytest.raises(ValueError, match="The couplings specified for two-qubit gate"):
         create_chip_sample(
-            two_qubit_gate_depolarization_rates={
+            two_qubit_gate_depolarizing_error_parameters={
                 "cz": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001, ("QB1", "QB3"): 0.001}
             },
         )
@@ -81,7 +81,7 @@ def test_chip_sample_with_one_qubit_depolarization_rates_gate_name_not_matching_
         ValueError, match="Gate `rxnotexistent` in `gate_one qubit gate depolarization_rates` is not supported"
     ):
         create_chip_sample(
-            one_qubit_gate_depolarization_rates={"rxnotexistent": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
+            single_qubit_gate_depolarizing_error_parameters={"rxnotexistent": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
         )
 
 
@@ -94,5 +94,7 @@ def test_chip_sample_with_two_qubits_depolarization_rates_gate_name_not_matching
         ValueError, match="Gate `cnotexistent` in `gate_two qubit gate depolarization_rates` is not supported"
     ):
         create_chip_sample(
-            two_qubit_gate_depolarization_rates={"cnotexistent": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}},
+            two_qubit_gate_depolarizing_error_parameters={
+                "cnotexistent": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}
+            },
         )
