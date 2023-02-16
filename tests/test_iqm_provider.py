@@ -14,6 +14,7 @@
 
 """Testing IQM provider.
 """
+from importlib.metadata import version
 from numbers import Number
 import uuid
 
@@ -300,3 +301,10 @@ def test_get_backend(linear_architecture_3q):
     assert backend.client._base_url == url
     assert backend.num_qubits == 3
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2)}
+
+
+def test_client_signature():
+    url = 'http://some_url'
+    provider = IQMProvider(url)
+    backend = provider.get_backend()
+    assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature

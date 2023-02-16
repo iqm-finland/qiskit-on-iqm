@@ -2,10 +2,30 @@
 Changelog
 =========
 
-Version 7.1
+Version 7.5
 ===========
 
 * Adding noisy simulation by introducing ``IQMFakeAdonis`` and ``IQMFakeBackend`` `#35 <https://github.com/iqm-finland/qiskit-on-iqm/pull/35>`_
+
+Version 7.4
+===========
+
+* Provide version information to IQMClient. `#45 <https://github.com/iqm-finland/qiskit-on-iqm/pull/45>`_
+
+Version 7.3
+===========
+
+* Build and publish docs for older versions. `#43 <https://github.com/iqm-finland/qiskit-on-iqm/pull/43>`_
+
+Version 7.2
+===========
+
+* Make the Hello world example even easier to follow. `#44 <https://github.com/iqm-finland/qiskit-on-iqm/pull/44>`_
+
+Version 7.1
+===========
+
+* Add a simple example for getting started. `#41 <https://github.com/iqm-finland/qiskit-on-iqm/pull/41>`_
 
 Version 7.0
 ===========

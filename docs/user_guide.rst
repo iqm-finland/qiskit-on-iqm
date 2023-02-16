@@ -19,7 +19,7 @@ Hello, world!
 Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
-1. Download the `bell_measure.py example file <https://github.com/iqm-finland/qiskit-on-iqm/tree/main/examples/bell_measure.py>`_
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/examples/bell_measure.py>`_ (Save Page As...)
 2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
 3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
 4. Set the environment variable as instructed by Cortex CLI after logging in
