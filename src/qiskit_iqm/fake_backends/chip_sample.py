@@ -100,7 +100,7 @@ class IQMChipSample:
         property_dict: dict[str, dict[Any, float]]
         # Check that one-qubit gate parameter qubits match those of the architecture
         for property_name, property_dict in [
-            ("depolarization rates", self.single_qubit_gate_depolarizing_error_parameters),
+            ("depolarizing rates", self.single_qubit_gate_depolarizing_error_parameters),
         ]:
             gate_dict: dict[Any, float]
             for gate, gate_dict in property_dict.items():
@@ -116,7 +116,7 @@ class IQMChipSample:
 
         # Check that two-qubit gate parameter couplings match those of the architecture
         for property_name, property_dict in [  # property_name: str, property_dict:
-            ("depolarization rates", self.two_qubit_gate_depolarizing_error_parameters),
+            ("depolarizing error parameters", self.two_qubit_gate_depolarizing_error_parameters),
         ]:
             for gate, gate_dict in property_dict.items():
                 if set(gate_dict.keys()) != set(tuple(item) for item in self.quantum_architecture.qubit_connectivity):
@@ -131,8 +131,11 @@ class IQMChipSample:
         # Check that the basis gates of the chip sample match the quantum architecture's
 
         for property_name, specified_gates in [
-            ("one qubit gate depolarization_rates", self.single_qubit_gate_depolarizing_error_parameters.keys()),
-            ("two qubit gate depolarization_rates", self.two_qubit_gate_depolarizing_error_parameters.keys()),
+            (
+                "single qubit gate depolarizing_error_parameters",
+                self.single_qubit_gate_depolarizing_error_parameters.keys(),
+            ),
+            ("two qubit gate depolarizing_error_parameters", self.two_qubit_gate_depolarizing_error_parameters.keys()),
             ("durations", self.gate_durations.keys()),
         ]:
             for gate in specified_gates:

@@ -29,16 +29,20 @@ def test_chip_sample_with_incomplete_t2s(create_chip_sample):
         create_chip_sample(t2s={"QB1": 2000, "QB3": 2000})
 
 
-def test_chip_sample_with_one_qubit_depolarization_rates_qubits_not_matching_quantum_architecture(create_chip_sample):
-    """Test that ChipSample construction fails if depolarization rates are not provided for all qubits"""
+def test_chip_sample_with_single_qubit_gate_depolarizing_errors_qubits_not_matching_quantum_architecture(
+    create_chip_sample,
+):
+    """Test that ChipSample construction fails if depolarizing rates are not provided for all qubits"""
     with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
         create_chip_sample(
             single_qubit_gate_depolarizing_error_parameters={"phased_rx": {"QB1": 0.0001, "QB2": 0.0001}},
         )
 
 
-def test_chip_sample_with_one_qubit_depolarization_rates_more_qubits_than_in_quantum_architecture(create_chip_sample):
-    """Test that ChipSample construction fails if depolarization rates are provided for
+def test_chip_sample_with_single_qubit_gate_depolarizing_errors_more_qubits_than_in_quantum_architecture(
+    create_chip_sample,
+):
+    """Test that ChipSample construction fails if depolarizing rates are provided for
     other qubits than specified in the quantum architecture"""
     with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
         create_chip_sample(
@@ -48,10 +52,10 @@ def test_chip_sample_with_one_qubit_depolarization_rates_more_qubits_than_in_qua
         )
 
 
-def test_chip_sample_with_two_qubits_depolarization_rates_couplings_not_matching_quantum_architecture(
+def test_chip_sample_with_two_qubit_gate_depolarizing_errors_couplings_not_matching_quantum_architecture(
     create_chip_sample,
 ):
-    """Test that ChipSample construction fails if depolarization rates are
+    """Test that ChipSample construction fails if depolarizing rates are
     not provided for all couplings of the quantum architecture (QB1 -- QB2 -- QB3 here)"""
     with pytest.raises(ValueError, match="The couplings specified for two-qubit gate"):
         create_chip_sample(
@@ -59,10 +63,10 @@ def test_chip_sample_with_two_qubits_depolarization_rates_couplings_not_matching
         )
 
 
-def test_chip_sample_with_two_qubits_depolarization_rates_more_couplings_than_in_quantum_architecture(
+def test_chip_sample_with_two_qubit_gate_depolarizing_errors_more_couplings_than_in_quantum_architecture(
     create_chip_sample,
 ):
-    """Test that ChipSample construction fails if depolarization rates are provided for
+    """Test that ChipSample construction fails if depolarizing rates are provided for
     other couplings than specified in the quantum architecture"""
     with pytest.raises(ValueError, match="The couplings specified for two-qubit gate"):
         create_chip_sample(
@@ -72,26 +76,27 @@ def test_chip_sample_with_two_qubits_depolarization_rates_more_couplings_than_in
         )
 
 
-def test_chip_sample_with_one_qubit_depolarization_rates_gate_name_not_matching_quantum_architecture(
+def test_chip_sample_with_single_qubit_gate_depolarizing_errors_gate_name_not_matching_quantum_architecture(
     create_chip_sample,
 ):
-    """Test that ChipSample construction fails if one qubit depolarization rates are
+    """Test that ChipSample construction fails if one qubit depolarizing rates are
     refering to a gate not available in quantum architecture"""
     with pytest.raises(
-        ValueError, match="Gate `rxnotexistent` in `gate_one qubit gate depolarization_rates` is not supported"
+        ValueError,
+        match="Gate `rxnotexistent` in `gate_single qubit gate depolarizing_error_parameters` is not supported",
     ):
         create_chip_sample(
             single_qubit_gate_depolarizing_error_parameters={"rxnotexistent": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
         )
 
 
-def test_chip_sample_with_two_qubits_depolarization_rates_gate_name_not_matching_quantum_architecture(
+def test_chip_sample_with_two_qubit_gate_depolarizing_errors_gate_name_not_matching_quantum_architecture(
     create_chip_sample,
 ):
-    """Test that ChipSample construction fails if two qubit depolarization rates are
+    """Test that ChipSample construction fails if two qubit depolarizing rates are
     refering to a gate not available in quantum architecture"""
     with pytest.raises(
-        ValueError, match="Gate `cnotexistent` in `gate_two qubit gate depolarization_rates` is not supported"
+        ValueError, match="Gate `cnotexistent` in `gate_two qubit gate depolarizing_error_parameters` is not supported"
     ):
         create_chip_sample(
             two_qubit_gate_depolarizing_error_parameters={
