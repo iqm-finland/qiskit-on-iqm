@@ -29,7 +29,7 @@ IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
 
 
 class IQMBackendBase(BackendV2, ABC):
-    """Abstract backend intended to be the parent of various IQM specific backend implementations.
+    """Abstract base class for various IQM-specific backends.
 
     Args:
         architecture: Description of the quantum architecture associated with the backend instance.
