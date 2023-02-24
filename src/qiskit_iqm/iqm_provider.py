@@ -27,11 +27,11 @@ from qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
 class IQMBackend(IQMBackendBase):
-    """Qiskit backend enabling the execution of quantum circuits on IQM quantum computers.
+    """Backend for executing quantum circuits on IQM quantum computers.
 
     Args:
-        client: IQM client instance for communicating with IQM server
-        **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
+        client: client instance for communicating with an IQM server
+        **kwargs: optional arguments to be passed to the parent Backend initializer
     """
 
     def __init__(self, client: IQMClient, **kwargs):
