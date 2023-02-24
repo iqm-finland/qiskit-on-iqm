@@ -24,7 +24,7 @@ from iqm_client import QuantumArchitectureSpecification
 @dataclass
 class IQMChipSample:
     """
-    Provides the specifications of a quantum chip sample.
+    Physical properties of a quantum chip sample.
 
     Args:
         quantum_architecture: Quantum architecture specification of the chip.
