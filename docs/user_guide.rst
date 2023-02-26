@@ -174,8 +174,7 @@ Now we can study how the circuit gets transpiled:
 Simulating the execution of a transpiled circuit locally
 --------------------------------------------------------
 
-The execution of any transpiled circuit can be simulated locally, before actually executing it on
-real hardware, by executing it on an :class:`.IQMFakeBackend` instance: 
+The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible. To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a certain QPU, or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with pre-populated properties and noise model. 
 
 .. code-block:: python
 
@@ -197,9 +196,6 @@ real hardware, by executing it on an :class:`.IQMFakeBackend` instance:
 Above we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit``
 after transpiling it for that specific backend.
 
-:class:`IQMFakeBackend` can be initialized using an :class:`IQMChipSample` instance, which describes the
-physical properties of the QPU specimen to be simulated. If not provided, by default each
-:class:`IQMFakeBackend` subclass uses representative values for that QPU type.
 
 If you want to use your own noise parameters, you can create your own chip sample as follows:
 

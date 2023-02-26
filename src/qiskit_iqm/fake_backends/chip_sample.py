@@ -82,11 +82,11 @@ class IQMChipSample:
         """Verifies that the parameters of the chip sample match the constraints of its IQMQuantumArchitecture.
 
         Raises:
-            ValueError: Length of `t1s` and number of qubits should match.
-            ValueError: Length of `t2s` and number of qubits should match.
-            ValueError: Length of `one_qubit_gate` parameter lists and number of qubits should match.
-            ValueError: Length of `two_qubit_gate` parameter lists and number of couplings should match.
-            ValueError: Gates in gate parameter lists must be supported by the quantum architecture.
+            ValueError: when length of `t1s` and number of qubits do not match.
+            ValueError: when length of `t2s` and number of qubits do not match.
+            ValueError: when length of `one_qubit_gate` parameter lists and number of qubits do not match.
+            ValueError: when length of `two_qubit_gate` parameter lists and number of couplings do not match.
+            ValueError: when gates in gate parameter lists are not supported by the quantum architecture.
         """
         num_qubits = len(self.quantum_architecture.qubits)
         # Check that T1 list has one element for each qubit
@@ -129,7 +129,6 @@ class IQMChipSample:
                     )
 
         # Check that the basis gates of the chip sample match the quantum architecture's
-
         for property_name, specified_gates in [
             (
                 "single qubit gate depolarizing_error_parameters",

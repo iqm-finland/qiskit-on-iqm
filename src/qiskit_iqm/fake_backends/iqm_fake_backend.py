@@ -111,9 +111,7 @@ class IQMFakeBackend(IQMBackendBase):
         It will run the simulation with a noise model of the fake backend (e.g. Adonis).
 
         Args:
-            run_input (QuantumCircuit or list of QuantumCircuit): An
-                individual or a list of
-                :class:`~qiskit.circuits.QuantumCircuit` objects to run on the backend.
+            run_input: One or more quantum circuits to simulate on the backend.
             options: Any kwarg options to pass to the backend.
         Returns:
             The job object representing the run.
