@@ -180,7 +180,6 @@ The execution of circuits can be simulated locally, with a noise model to mimic 
 
     from qiskit import execute, QuantumCircuit
     from qiskit_iqm import IQMFakeAdonis
-    from qiskit.compiler import transpile
 
     circuit = QuantumCircuit(2)
     circuit.h(0)
@@ -188,46 +187,19 @@ The execution of circuits can be simulated locally, with a noise model to mimic 
     circuit.measure_all()
 
     backend = IQMFakeAdonis()
-    circuit = transpile(circuit, backend=backend)
     job = execute(circuit, backend, qubit_mapping=None, shots=1000)
     job.result().get_counts()
 
 
-Above we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit``
-after transpiling it for that specific backend.
+Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
 
 
-If you want to use your own noise parameters, you can create your own chip sample as follows:
+To customize the noise parameters, you can generate a personalized chip sample by creating an instance of the :class:`.IQMChipSample`` class. For an example, refer to the implementation of :class:`.IQMFakeAdonis`.
 
+Once you have created a `some_chip_sample` object, which is an instance of :class:`.IQMChipSample`, you can create your backend using the following code:
 .. code-block:: python
 
-    from qiskit_iqm import IQMChipSample
-    from iqm_client import QuantumArchitectureSpecification
     from qiskit_iqm import IQMFakeBackend
-
-    some_chip_sample = IQMChipSample(
-        quantum_architecture=QuantumArchitectureSpecification(
-            name="Adonis",
-            operations=["phased_rx", "cz", "measurement", "barrier"],
-            qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
-            qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
-        ),
-        # T1 times in ns for all qubits, index indicates the qubit number
-        t1s={"QB1": 50000.0, "QB2": 50000.0, "QB3": 50000.0, "QB4": 50000.0, "QB5": 50000.0},
-        # T2 times in ns for all qubits, index indicates the qubit number
-        t2s={"QB1": 50000.0, "QB2": 50000.0, "QB3": 50000.0, "QB4": 50000.0, "QB5": 50000.0},
-        # Gate fidelities for one and two qubit gates, the key in the dictionary indicates the qubits the gate operates on
-        one_qubit_gate_fidelities={"r": {"QB1": 0.999, "QB2": 0.999, "QB3": 0.999, "QB4": 0.999, "QB5": 0.999}},
-        two_qubit_gate_fidelities={"cz": {("QB1", "QB3"): 0.999, ("QB2", "QB3"): 0.999, ("QB4", "QB3"): 0.999, ("QB5", "QB3"): 0.999}},
-        # Gate depolarization rates for one and two qubit gates, the key in the dictionary indicates the qubits the gate operates on
-        one_qubit_gate_depolarization_rates={"r": {0: 0.0001, 1: 0.0001, 2: 0.0001, 3: 0.0001, 4: 0.0001}},
-        two_qubit_gate_depolarization_rates={"cz": {("QB1", "QB3"): 0.001, ("QB2", "QB3"): 0.001, ("QB4", "QB3"): 0.001, ("QB5", "QB3"): 0.001}},
-        # Gate durations in ns
-        one_qubit_gate_durations={"r": 40.0},
-        two_qubit_gate_durations={"cz": 80.0},
-        id_="sample-chip",
-    )
-
     IQMFakeBackend(some_chip_sample)
 
 

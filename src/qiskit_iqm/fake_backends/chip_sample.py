@@ -43,7 +43,14 @@ class IQMChipSample:
     Example:
         .. code-block::
 
-            IQMChipSample(quantum_architecture=ThreeQubitExample(),
+            linear_architecture_3q=QuantumArchitectureSpecification(
+                name="Example",
+                operations=["phased_rx", "cz", "measurement", "barrier"],
+                qubits=["QB1", "QB2", "QB3"],
+                qubit_connectivity=[["QB1", "QB2"], ["QB2", "QB3"]],
+            ),
+
+            IQMChipSample(quantum_architecture=linear_architecture_3q,
                         t1s={"QB1": 10000.0, "QB2": 12000.0, "QB3": 14000.0},
                         t2s={"QB1": 10000.0, "QB2": 12000.0, "QB3": 13000.0},
                         single_qubit_gate_depolarizing_error_parameters={"r": {"QB1": 0.0005,
@@ -70,12 +77,12 @@ class IQMChipSample:
 
     @property
     def number_of_qubits(self) -> int:
-        "Get the number of qubits"
+        """Get the number of qubits"""
         return len(self.quantum_architecture.qubits)
 
     @property
     def gate_durations(self) -> dict[str, float]:
-        "get all gate durations"
+        """get all gate durations"""
         return self.single_qubit_gate_durations | self.two_qubit_gate_durations
 
     def _validate_parameters(self) -> None:
