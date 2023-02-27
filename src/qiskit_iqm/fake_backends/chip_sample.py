@@ -23,8 +23,7 @@ from iqm_client import QuantumArchitectureSpecification
 
 @dataclass
 class IQMChipSample:
-    """
-    Physical properties of a quantum chip sample.
+    """Physical properties of a quantum chip sample.
 
     Args:
         quantum_architecture: Quantum architecture specification of the chip.
@@ -62,7 +61,6 @@ class IQMChipSample:
                         two_qubit_gate_durations={"cz": 100.},
                         id_="threequbit-example_sample")
     """
-
     quantum_architecture: QuantumArchitectureSpecification
     t1s: dict[str, float]
     t2s: dict[str, float]
@@ -98,11 +96,11 @@ class IQMChipSample:
         num_qubits = len(self.quantum_architecture.qubits)
         # Check that T1 list has one element for each qubit
         if len(self.t1s) != num_qubits:
-            raise ValueError((f"Length of t1s ({len(self.t1s)}) and number " f"of qubits ({num_qubits}) should match."))
+            raise ValueError(f"Length of t1s ({len(self.t1s)}) and number of qubits ({num_qubits}) should match.")
 
         # Check that T2 list has one element for each qubit
         if len(self.t2s) != num_qubits:
-            raise ValueError((f"Length of t2s ({len(self.t2s)}) and " f"number of qubits ({num_qubits}) should match."))
+            raise ValueError(f"Length of t2s ({len(self.t2s)}) and number of qubits ({num_qubits}) should match.")
 
         property_dict: dict[str, dict[Any, float]]
         # Check that one-qubit gate parameter qubits match those of the architecture
@@ -122,7 +120,7 @@ class IQMChipSample:
                     )
 
         # Check that two-qubit gate parameter couplings match those of the architecture
-        for property_name, property_dict in [  # property_name: str, property_dict:
+        for property_name, property_dict in [
             ("depolarizing error parameters", self.two_qubit_gate_depolarizing_error_parameters),
         ]:
             for gate, gate_dict in property_dict.items():

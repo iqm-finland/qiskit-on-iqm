@@ -174,7 +174,9 @@ Now we can study how the circuit gets transpiled:
 Simulating the execution of a transpiled circuit locally
 --------------------------------------------------------
 
-The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible. To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a certain QPU, or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with pre-populated properties and noise model. 
+The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
+To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a certain QPU,
+or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with pre-populated properties and noise model.
 
 .. code-block:: python
 
@@ -193,17 +195,13 @@ The execution of circuits can be simulated locally, with a noise model to mimic 
 
 Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
 
+To customize the noise parameters, you can generate a personalized chip sample by creating an instance of the :class:`.IQMChipSample` class.
+Once you have created a ``some_chip_sample`` object, you can create your backend using the following code:
 
-To customize the noise parameters, you can generate a personalized chip sample by creating an instance of the :class:`.IQMChipSample`` class. For an example, refer to the implementation of :class:`.IQMFakeAdonis`.
-
-Once you have created a `some_chip_sample` object, which is an instance of :class:`.IQMChipSample`, you can create your backend using the following code:
 .. code-block:: python
 
     from qiskit_iqm import IQMFakeBackend
     IQMFakeBackend(some_chip_sample)
-
-
-
 
 
 More advanced examples

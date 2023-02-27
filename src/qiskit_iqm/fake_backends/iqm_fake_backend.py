@@ -30,7 +30,7 @@ from qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 
 
 class IQMFakeBackend(IQMBackendBase):
-    """Fake backend that mimics the behaviour of IQM quantum computers can be used to perform noisy gate-level
+    """Fake backend that mimics the behaviour of IQM quantum computers. Can be used to perform noisy gate-level
     simulations of quantum circuit execution on IQM hardware.
 
     A fake backend contains information about a specific IQM system, such as the quantum architecture (number of qubits,
@@ -66,29 +66,25 @@ class IQMFakeBackend(IQMBackendBase):
                 )
 
         # Add two-qubit gate errors to noise model
-        for gate in chip_sample.two_qubit_gate_depolarizing_error_parameters.keys():
-            for connection in list(chip_sample.two_qubit_gate_depolarizing_error_parameters[gate].keys()):
-                first_qubit, second_qubit = connection
-
+        for gate, rates in chip_sample.two_qubit_gate_depolarizing_error_parameters.items():
+            for (qb1, qb2), rate in rates.items():
                 thermal_relaxation_channel = thermal_relaxation_error(
-                    chip_sample.t1s[first_qubit],
-                    chip_sample.t2s[first_qubit],
+                    chip_sample.t1s[qb1],
+                    chip_sample.t2s[qb1],
                     chip_sample.two_qubit_gate_durations[gate],
                 ).tensor(
                     thermal_relaxation_error(
-                        chip_sample.t1s[second_qubit],
-                        chip_sample.t2s[second_qubit],
+                        chip_sample.t1s[qb2],
+                        chip_sample.t2s[qb2],
                         chip_sample.two_qubit_gate_durations[gate],
                     )
                 )
-                depolarizing_channel = depolarizing_error(
-                    chip_sample.two_qubit_gate_depolarizing_error_parameters[gate][connection], 2
-                )
+                depolarizing_channel = depolarizing_error(rate, 2)
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                 noise_model.add_quantum_error(
                     full_error_channel,
                     IQM_TO_QISKIT_GATE_NAME[gate],
-                    [self.qubit_name_to_index(first_qubit), self.qubit_name_to_index(second_qubit)],
+                    [self.qubit_name_to_index(qb1), self.qubit_name_to_index(qb2)],
                 )
 
         return noise_model
