@@ -61,6 +61,7 @@ class IQMChipSample:
                         two_qubit_gate_durations={"cz": 100.},
                         id_="threequbit-example_sample")
     """
+
     quantum_architecture: QuantumArchitectureSpecification
     t1s: dict[str, float]
     t2s: dict[str, float]
