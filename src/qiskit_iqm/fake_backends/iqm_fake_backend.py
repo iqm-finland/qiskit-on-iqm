@@ -14,7 +14,9 @@
 """
 Fake backend for simulating IQM quantum computers.
 """
+from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Optional, Union
 
@@ -83,8 +85,29 @@ class IQMFakeBackend(IQMBackendBase):
 
     def __init__(self, architecture: QuantumArchitectureSpecification, error_profile: IQMErrorProfile, **kwargs):
         super().__init__(architecture, **kwargs)
+
         self._validate_architecture_and_error_profile(architecture, error_profile)
+        self.__architecture, self.__error_profile = architecture, error_profile
+
         self.noise_model = self._create_noise_model(architecture, error_profile)
+
+    @property
+    def error_profile(self) -> IQMErrorProfile:
+        """Error profile of this instance of IQM fake backend"""
+        return deepcopy(self.__error_profile)
+
+    @error_profile.setter
+    def error_profile(self, value: IQMErrorProfile) -> None:
+        """"""
+        raise NotImplementedError(
+            "Setting error profile of existing fake backend is not allowed. "
+            "You may consider using the method .copy_with_error_profile."
+        )
+
+    def copy_with_error_profile(self, new_error_profile: IQMErrorProfile) -> IQMFakeBackend:
+        """Return another instance of IQMFakeBackend, which has the same quantum architecture but a different error
+        profile."""
+        return self.__class__(self.__architecture, new_error_profile)
 
     @staticmethod
     def _validate_architecture_and_error_profile(

@@ -18,33 +18,26 @@ from iqm_client import QuantumArchitectureSpecification
 from qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
 
 
-class IQMFakeAdonis(IQMFakeBackend):
-    """
-    Fake backend for simulating an IQM Adonis QPU.
+def IQMFakeAdonis() -> IQMFakeBackend:
+    """Return IQMFakeBackend instance representing IQM's Adonis architecture."""
+    architecture = QuantumArchitectureSpecification(
+        name="Adonis",
+        operations=["phased_rx", "cz", "measurement", "barrier"],
+        qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
+        qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
+    )
+    error_profile = IQMErrorProfile(
+        t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},
+        t2s={"QB1": 20000.0, "QB2": 26000.0, "QB3": 23000.0, "QB4": 26000.0, "QB5": 7000.0},
+        single_qubit_gate_depolarizing_error_parameters={
+            "phased_rx": {"QB1": 0.0006, "QB2": 0.0054, "QB3": 0.0001, "QB4": 0.0, "QB5": 0.0005}
+        },
+        two_qubit_gate_depolarizing_error_parameters={
+            "cz": {("QB1", "QB3"): 0.0335, ("QB2", "QB3"): 0.0344, ("QB3", "QB4"): 0.0192, ("QB3", "QB5"): 0.0373}
+        },
+        single_qubit_gate_durations={"phased_rx": 40.0},
+        two_qubit_gate_durations={"cz": 80.0},
+        id_="sample-chip",
+    )
 
-    Args:
-        **kwargs: optional arguments to be passed to the parent Qiskit Backend initializer
-    """
-
-    def __init__(self, **kwargs):
-        architecture = QuantumArchitectureSpecification(
-            name="Adonis",
-            operations=["phased_rx", "cz", "measurement", "barrier"],
-            qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
-            qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
-        )
-        error_profile = IQMErrorProfile(
-            t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},
-            t2s={"QB1": 20000.0, "QB2": 26000.0, "QB3": 23000.0, "QB4": 26000.0, "QB5": 7000.0},
-            single_qubit_gate_depolarizing_error_parameters={
-                "phased_rx": {"QB1": 0.0006, "QB2": 0.0054, "QB3": 0.0001, "QB4": 0.0, "QB5": 0.0005}
-            },
-            two_qubit_gate_depolarizing_error_parameters={
-                "cz": {("QB1", "QB3"): 0.0335, ("QB2", "QB3"): 0.0344, ("QB3", "QB4"): 0.0192, ("QB3", "QB5"): 0.0373}
-            },
-            single_qubit_gate_durations={"phased_rx": 40.0},
-            two_qubit_gate_durations={"cz": 80.0},
-            id_="sample-chip",
-        )
-
-        super().__init__(architecture, error_profile, **kwargs)
+    return IQMFakeBackend(architecture, error_profile)

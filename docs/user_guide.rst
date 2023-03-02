@@ -194,14 +194,14 @@ or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quant
 
 
 Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
-
-To customize the noise parameters, you can generate a personalized chip sample by creating an instance of the :class:`.IQMChipSample` class.
-Once you have created a ``some_chip_sample`` object, you can create your backend using the following code:
+If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you can create
+a copy of the fake Adonis instance with updated error profile:
 
 .. code-block:: python
 
-    from qiskit_iqm import IQMFakeBackend
-    IQMFakeBackend(some_chip_sample)
+    error_profile = backend.error_profile
+    error_profile.t1s['QB2'] = 30000.0  # Change T1 time of QB2 as example
+    custom_fake_backend = backend.copy_with_error_profile(error_profile)
 
 
 More advanced examples
