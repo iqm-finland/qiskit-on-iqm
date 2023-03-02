@@ -22,8 +22,110 @@ from qiskit_iqm import IQMFakeBackend
 
 
 @pytest.fixture
-def backend(create_chip_sample):
-    return IQMFakeBackend(create_chip_sample())
+def backend(linear_architecture_3q, create_3q_error_profile):
+    return IQMFakeBackend(linear_architecture_3q, create_3q_error_profile())
+
+
+def test_fake_backend_with_incomplete_t1s(linear_architecture_3q, create_3q_error_profile):
+    """Test that ChipSample construction fails if T1 times are not provided for all qubits"""
+    with pytest.raises(ValueError, match="Length of t1s"):
+        error_profile = create_3q_error_profile(t1s={"QB1": 2000, "QB3": 2000})
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_incomplete_t2s(linear_architecture_3q, create_3q_error_profile):
+    """Test that ChipSample construction fails if T2 times are not provided for all qubits"""
+    with pytest.raises(ValueError, match="Length of t2s"):
+        error_profile = create_3q_error_profile(t2s={"QB1": 2000, "QB3": 2000})
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_single_qubit_gate_depolarizing_errors_qubits_not_matching_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if depolarizing rates are not provided for all qubits"""
+    with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
+        error_profile = create_3q_error_profile(
+            single_qubit_gate_depolarizing_error_parameters={"phased_rx": {"QB1": 0.0001, "QB2": 0.0001}},
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_single_qubit_gate_depolarizing_errors_more_qubits_than_in_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if depolarizing rates are provided for
+    other qubits than specified in the quantum architecture"""
+    with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
+        error_profile = create_3q_error_profile(
+            single_qubit_gate_depolarizing_error_parameters={
+                "phased_rx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0.0001, "QB4": 0.0001}
+            },
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_two_qubit_gate_depolarizing_errors_couplings_not_matching_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if depolarizing rates are
+    not provided for all couplings of the quantum architecture (QB1 -- QB2 -- QB3 here)"""
+    with pytest.raises(ValueError, match="The couplings specified for two-qubit gate"):
+        error_profile = create_3q_error_profile(
+            two_qubit_gate_depolarizing_error_parameters={"cz": {("QB1", "QB2"): 0.001}},
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_two_qubit_gate_depolarizing_errors_more_couplings_than_in_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if depolarizing rates are provided for
+    other couplings than specified in the quantum architecture"""
+    with pytest.raises(ValueError, match="The couplings specified for two-qubit gate"):
+        error_profile = create_3q_error_profile(
+            two_qubit_gate_depolarizing_error_parameters={
+                "cz": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001, ("QB1", "QB3"): 0.001}
+            },
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_single_qubit_gate_depolarizing_errors_gate_name_not_matching_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if one qubit depolarizing rates are
+    refering to a gate not available in quantum architecture"""
+    with pytest.raises(
+        ValueError,
+        match="Gate `rxnotexistent` in `gate_single qubit gate depolarizing_error_parameters` is not supported",
+    ):
+        error_profile = create_3q_error_profile(
+            single_qubit_gate_depolarizing_error_parameters={"rxnotexistent": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_fake_backend_with_two_qubit_gate_depolarizing_errors_gate_name_not_matching_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if two qubit depolarizing rates are
+    refering to a gate not available in quantum architecture"""
+    with pytest.raises(
+        ValueError, match="Gate `cnotexistent` in `gate_two qubit gate depolarizing_error_parameters` is not supported"
+    ):
+        error_profile = create_3q_error_profile(
+            two_qubit_gate_depolarizing_error_parameters={
+                "cnotexistent": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}
+            },
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)
 
 
 def test_iqm_fake_backend_noise_model_instantiated(backend):

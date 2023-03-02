@@ -14,6 +14,5 @@
 """IQM fake backend module
 """
 
-from .chip_sample import IQMChipSample
 from .fake_adonis import IQMFakeAdonis
-from .iqm_fake_backend import IQMFakeBackend
+from .iqm_fake_backend import IQMErrorProfile, IQMFakeBackend

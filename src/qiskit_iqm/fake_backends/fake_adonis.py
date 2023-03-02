@@ -15,8 +15,7 @@
 """
 from iqm_client import QuantumArchitectureSpecification
 
-from qiskit_iqm.fake_backends.chip_sample import IQMChipSample
-from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
+from qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
 
 
 class IQMFakeAdonis(IQMFakeBackend):
@@ -28,13 +27,13 @@ class IQMFakeAdonis(IQMFakeBackend):
     """
 
     def __init__(self, **kwargs):
-        adonis_chip_sample = IQMChipSample(
-            quantum_architecture=QuantumArchitectureSpecification(
-                name="Adonis",
-                operations=["phased_rx", "cz", "measurement", "barrier"],
-                qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
-                qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
-            ),
+        architecture = QuantumArchitectureSpecification(
+            name="Adonis",
+            operations=["phased_rx", "cz", "measurement", "barrier"],
+            qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
+            qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
+        )
+        error_profile = IQMErrorProfile(
             t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},
             t2s={"QB1": 20000.0, "QB2": 26000.0, "QB3": 23000.0, "QB4": 26000.0, "QB5": 7000.0},
             single_qubit_gate_depolarizing_error_parameters={
@@ -48,4 +47,4 @@ class IQMFakeAdonis(IQMFakeBackend):
             id_="sample-chip",
         )
 
-        super().__init__(adonis_chip_sample, **kwargs)
+        super().__init__(architecture, error_profile, **kwargs)

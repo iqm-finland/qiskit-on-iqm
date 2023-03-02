@@ -16,16 +16,15 @@
 
 import pytest
 
-from qiskit_iqm.fake_backends import IQMChipSample
+from qiskit_iqm.fake_backends import IQMErrorProfile
 
 
 @pytest.fixture
-def create_chip_sample(linear_architecture_3q):
+def create_3q_error_profile():
     """Create a ChipSample instance with some default properties, unless overriden by kwargs"""
 
-    def chip_sample(**kwargs):
-        chip_sample_contents = {
-            "quantum_architecture": linear_architecture_3q,
+    def error_profile(**kwargs):
+        error_profile_contents = {
             "t1s": {"QB1": 2000, "QB2": 2000, "QB3": 2000},
             "t2s": {"QB1": 1000, "QB2": 1000, "QB3": 1000},
             "single_qubit_gate_depolarizing_error_parameters": {"phased_rx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
@@ -34,7 +33,7 @@ def create_chip_sample(linear_architecture_3q):
             "two_qubit_gate_durations": {"cz": 1.5},
             "id_": "adonis-example_sample",
         }
-        chip_sample_contents.update(kwargs)
-        return IQMChipSample(**chip_sample_contents)
+        error_profile_contents.update(kwargs)
+        return IQMErrorProfile(**error_profile_contents)
 
-    return chip_sample
+    return error_profile
