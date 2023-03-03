@@ -1,7 +1,7 @@
-qiskit\_iqm.iqm\_backend.IQMBackend
-===================================
+qiskit\_iqm.iqm\_provider.IQMBackend
+====================================
 
-.. currentmodule:: qiskit_iqm.iqm_backend
+.. currentmodule:: qiskit_iqm.iqm_provider
 
 .. autoclass:: IQMBackend
    :members:
@@ -14,7 +14,6 @@ qiskit\_iqm.iqm\_backend.IQMBackend
    .. autosummary::
    
       ~IQMBackend.max_circuits
-      ~IQMBackend.target
    
    
 
@@ -27,8 +26,6 @@ qiskit\_iqm.iqm\_backend.IQMBackend
    
       ~IQMBackend._default_options
       ~IQMBackend.close_client
-      ~IQMBackend.index_to_qubit_name
-      ~IQMBackend.qubit_name_to_index
       ~IQMBackend.retrieve_job
       ~IQMBackend.run
       ~IQMBackend.serialize_circuit

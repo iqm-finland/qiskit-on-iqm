@@ -1,0 +1,8 @@
+<map id="inheritancec4a413b0c6" name="inheritancec4a413b0c6">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="21,104,93,129"/>
+<area shape="rect" id="node3" title="Abstract class for Backends" alt="" coords="156,55,251,80"/>
+<area shape="rect" id="node5" href="qiskit_iqm.iqm_backend.IQMBackendBase.html#qiskit_iqm.iqm_backend.IQMBackendBase" target="_top" title="Abstract base class for various IQM&#45;specific backends." alt="" coords="299,80,433,105"/>
+<area shape="rect" id="node2" title="Base common type for all versioned Backend abstract classes." alt="" coords="18,55,95,80"/>
+<area shape="rect" id="node4" href="qiskit_iqm.iqm_provider.IQMBackend.html#qiskit_iqm.iqm_provider.IQMBackend" target="_top" title="Backend for executing quantum circuits on IQM quantum computers." alt="" coords="481,80,584,105"/>
+<area shape="rect" id="node6" href="qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" target="_top" title="Provider for IQM backends." alt="" coords="5,5,108,31"/>
+</map>

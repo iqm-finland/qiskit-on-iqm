@@ -113,8 +113,8 @@
     </label>
     <ul>
      <li class="toctree-l3 has-children">
-      <a class="reference internal" href="api/qiskit_iqm.iqm_backend.html">
-       qiskit_iqm.iqm_backend
+      <a class="reference internal" href="api/qiskit_iqm.fake_backends.html">
+       qiskit_iqm.fake_backends
       </a>
       <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
       <label for="toctree-checkbox-3">
@@ -123,8 +123,30 @@
       </label>
       <ul>
        <li class="toctree-l4">
-        <a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackend.html">
-         qiskit_iqm.iqm_backend.IQMBackend
+        <a class="reference internal" href="api/qiskit_iqm.fake_backends.fake_adonis.html">
+         qiskit_iqm.fake_backends.fake_adonis
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.fake_backends.iqm_fake_backend.html">
+         qiskit_iqm.fake_backends.iqm_fake_backend
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="api/qiskit_iqm.iqm_backend.html">
+       qiskit_iqm.iqm_backend
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackendBase.html">
+         qiskit_iqm.iqm_backend.IQMBackendBase
         </a>
        </li>
       </ul>
@@ -133,8 +155,8 @@
       <a class="reference internal" href="api/qiskit_iqm.iqm_job.html">
        qiskit_iqm.iqm_job
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-      <label for="toctree-checkbox-4">
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -150,12 +172,17 @@
       <a class="reference internal" href="api/qiskit_iqm.iqm_provider.html">
        qiskit_iqm.iqm_provider
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-      <label for="toctree-checkbox-5">
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
        <i class="fas fa-chevron-down">
        </i>
       </label>
       <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMBackend.html">
+         qiskit_iqm.iqm_provider.IQMBackend
+        </a>
+       </li>
        <li class="toctree-l4">
         <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html">
          qiskit_iqm.iqm_provider.IQMProvider
@@ -167,8 +194,8 @@
       <a class="reference internal" href="api/qiskit_iqm.qiskit_to_iqm.html">
        qiskit_iqm.qiskit_to_iqm
       </a>
-      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-      <label for="toctree-checkbox-6">
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
        <i class="fas fa-chevron-down">
        </i>
       </label>
@@ -232,6 +259,9 @@
 <ul class="version_list">
     
       <li class="version_item current_version">dev</li>
+    
+    
+      <li class="version_item"><a href="versions/7.5/user_guide.html">7.5</a></li>
     
     
       <li class="version_item"><a href="versions/7.4/user_guide.html">7.4</a></li>
@@ -454,6 +484,11 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulating-the-execution-of-a-transpiled-circuit-locally">
+   Simulating the execution of a transpiled circuit locally
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#more-advanced-examples">
    More advanced examples
   </a>
@@ -503,6 +538,11 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulating-the-execution-of-a-transpiled-circuit-locally">
+   Simulating the execution of a transpiled circuit locally
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#more-advanced-examples">
    More advanced examples
   </a>
@@ -539,7 +579,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/7.4/user_guide.html">7.4</a>.
+    For the latest released version, please have a look at <a href="versions/7.5/user_guide.html">7.5</a>.
     
   </strong>
 </div>
@@ -653,7 +693,7 @@ connectivity:</p>
 <p>At IQM we identify qubits by their names, e.g. ‘QB1’, ‘QB2’, etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
-<a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackend.html#qiskit_iqm.iqm_backend.IQMBackend.qubit_name_to_index" title="qiskit_iqm.iqm_backend.IQMBackend.qubit_name_to_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.qubit_name_to_index()</span></code></a> and <a class="reference internal" href="api/qiskit_iqm.iqm_backend.IQMBackend.html#qiskit_iqm.iqm_backend.IQMBackend.index_to_qubit_name" title="qiskit_iqm.iqm_backend.IQMBackend.index_to_qubit_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.index_to_qubit_name()</span></code></a> can become handy.</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.qubit_name_to_index()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.index_to_qubit_name()</span></code> can become handy.</p>
 <p>Now we can study how the circuit gets transpiled:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.compiler</span> <span class="kn">import</span> <span class="n">transpile</span>
 
@@ -687,13 +727,31 @@ ancilla_1 -&gt; 3 ────────────────────�
        meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 </pre></div>
 </div>
-<p>We can also simulate the execution of the transpiled circuit before actually executing it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">Aer</span>
+</section>
+<section id="simulating-the-execution-of-a-transpiled-circuit-locally">
+<h2>Simulating the execution of a transpiled circuit locally<a class="headerlink" href="#simulating-the-execution-of-a-transpiled-circuit-locally" title="Permalink to this headline">#</a></h2>
+<p>The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
+To this end, Qiskit on IQM provides the class  <a class="reference internal" href="api/qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeBackend</span></code></a> that can be instantiated with properties of a certain QPU,
+or subclasses of it such as <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> that represent certain quantum architectures with pre-populated properties and noise model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMFakeAdonis</span>
 
-<span class="n">simulator</span> <span class="o">=</span> <span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;qasm_simulator&#39;</span><span class="p">)</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc_transpiled</span><span class="p">,</span> <span class="n">simulator</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">IQMFakeAdonis</span><span class="p">()</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Above, we use an <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> instance to run a noisy simulation of <code class="docutils literal notranslate"><span class="pre">circuit</span></code> on a simulated 5-qubit Adonis chip.
+If you want to customize the noise model instead of using the default one provided by <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code>, you can create
+a copy of the fake Adonis instance with updated error profile:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">error_profile</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">error_profile</span>
+<span class="n">error_profile</span><span class="o">.</span><span class="n">t1s</span><span class="p">[</span><span class="s1">&#39;QB2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">30000.0</span>  <span class="c1"># Change T1 time of QB2 as example</span>
+<span class="n">custom_fake_backend</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">copy_with_error_profile</span><span class="p">(</span><span class="n">error_profile</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
