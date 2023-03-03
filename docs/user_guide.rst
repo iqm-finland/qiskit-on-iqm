@@ -170,16 +170,39 @@ Now we can study how the circuit gets transpiled:
                                                                                               ║
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
-We can also simulate the execution of the transpiled circuit before actually executing it:
+
+Simulating the execution of a transpiled circuit locally
+--------------------------------------------------------
+
+The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
+To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a certain QPU,
+or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with pre-populated properties and noise model.
 
 .. code-block:: python
 
-    from qiskit import Aer
+    from qiskit import execute, QuantumCircuit
+    from qiskit_iqm import IQMFakeAdonis
 
-    simulator = Aer.get_backend('qasm_simulator')
-    job = execute(qc_transpiled, simulator, shots=1000)
+    circuit = QuantumCircuit(2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.measure_all()
 
-    print(job.result().get_counts())
+    backend = IQMFakeAdonis()
+    job = execute(circuit, backend, shots=1000)
+    job.result().get_counts()
+
+
+Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
+If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you can create
+a copy of the fake Adonis instance with updated error profile:
+
+.. code-block:: python
+
+    error_profile = backend.error_profile
+    error_profile.t1s['QB2'] = 30000.0  # Change T1 time of QB2 as example
+    custom_fake_backend = backend.copy_with_error_profile(error_profile)
+
 
 More advanced examples
 ----------------------

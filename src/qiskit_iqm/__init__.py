@@ -15,9 +15,10 @@
 """
 from importlib.metadata import PackageNotFoundError, version
 
-from qiskit_iqm.iqm_backend import IQMBackend
+from qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis
+from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.iqm_provider import IQMProvider
+from qiskit_iqm.iqm_provider import IQMBackend, IQMProvider
 
 try:
     dist_name = "qiskit-iqm"

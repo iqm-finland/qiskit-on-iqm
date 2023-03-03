@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.5
+===========
+
+* Adding noisy simulation by introducing ``IQMFakeAdonis`` and ``IQMFakeBackend`` `#35 <https://github.com/iqm-finland/qiskit-on-iqm/pull/35>`_
+
 Version 7.4
 ===========
 

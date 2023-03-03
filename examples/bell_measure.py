@@ -17,7 +17,9 @@ https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 """
 
 import argparse
-from qiskit import execute, QuantumCircuit
+
+from qiskit import QuantumCircuit, execute
+
 from qiskit_iqm import IQMProvider
 
 argparser = argparse.ArgumentParser()
