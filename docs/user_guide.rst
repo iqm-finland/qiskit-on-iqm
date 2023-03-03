@@ -189,7 +189,7 @@ or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quant
     circuit.measure_all()
 
     backend = IQMFakeAdonis()
-    job = execute(circuit, backend, qubit_mapping=None, shots=1000)
+    job = execute(circuit, backend, shots=1000)
     job.result().get_counts()
 
 

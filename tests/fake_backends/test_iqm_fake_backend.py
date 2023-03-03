@@ -128,6 +128,33 @@ def test_fake_backend_with_two_qubit_gate_depolarizing_errors_gate_name_not_matc
         IQMFakeBackend(linear_architecture_3q, error_profile)
 
 
+def test_error_profile(linear_architecture_3q, create_3q_error_profile):
+    err_profile = create_3q_error_profile()
+    backend = IQMFakeBackend(linear_architecture_3q, err_profile)
+
+    assert backend.error_profile == err_profile
+
+    # Assert that error profile cannot be modified
+    backend.error_profile.t1s["QB1"] = backend.error_profile.t1s["QB1"] + 127
+    assert backend.error_profile == err_profile
+
+
+def test_set_error_profile(backend, create_3q_error_profile):
+    with pytest.raises(NotImplementedError, match="Setting error profile of existing fake backend is not allowed."):
+        backend.error_profile = create_3q_error_profile()
+
+
+def test_copy_with_error_profile(linear_architecture_3q, create_3q_error_profile):
+    err_profile = create_3q_error_profile()
+    backend = IQMFakeBackend(linear_architecture_3q, err_profile)
+
+    new_t1s = err_profile.t1s
+    new_t1s["QB1"] = new_t1s["QB1"] + 128
+    new_err_profile = create_3q_error_profile(t1s=new_t1s)
+    new_backend = backend.copy_with_error_profile(new_err_profile)
+    assert new_backend.error_profile == new_err_profile
+
+
 def test_iqm_fake_backend_noise_model_instantiated(backend):
     """Test that creating a Fake Backend instantiates a Qiskit noise model"""
     assert isinstance(backend.noise_model, NoiseModel)
