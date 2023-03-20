@@ -17,6 +17,7 @@ from importlib.metadata import version
 from typing import Optional, Union
 
 from iqm_client import Circuit, Instruction, IQMClient
+from iqm_client.util import to_json_dict
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
@@ -121,7 +122,7 @@ class IQMBackend(IQMBackendBase):
                     f'You need to transpile the circuit before execution.'
                 )
 
-        return Circuit(name=circuit.name, instructions=instructions, metadata=circuit.metadata)
+        return Circuit(name=circuit.name, instructions=instructions, metadata=to_json_dict(circuit.metadata))
 
 
 class IQMProvider:
