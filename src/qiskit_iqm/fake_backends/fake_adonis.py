@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Fake (i.e. simulated) backend for IQM Adonis QPU.
+"""Fake backend specific for IQM's 5-qubit Adonis QPU.
 """
 from iqm_client import QuantumArchitectureSpecification
 
