@@ -5,7 +5,7 @@ Changelog
 Version 7.6
 ===========
 
-* Check that circuit metadata is JSON serializable `#46 <https://github.com/iqm-finland/qiskit-on-iqm/pull/46>`_
+* Check that circuit metadata is JSON serializable `#48 <https://github.com/iqm-finland/qiskit-on-iqm/pull/48>`_
 
 Version 7.5
 ===========
