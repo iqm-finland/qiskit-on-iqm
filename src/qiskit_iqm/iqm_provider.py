@@ -15,6 +15,7 @@
 """
 from importlib.metadata import version
 from typing import Optional, Union
+import warnings
 
 from iqm_client import Circuit, Instruction, IQMClient
 from iqm_client.util import to_json_dict
@@ -122,7 +123,15 @@ class IQMBackend(IQMBackendBase):
                     f'You need to transpile the circuit before execution.'
                 )
 
-        return Circuit(name=circuit.name, instructions=instructions, metadata=to_json_dict(circuit.metadata))
+        try:
+            metadata = to_json_dict(circuit.metadata)
+        except ValueError:
+            warnings.warn(
+                f'Metadata of circuit {circuit.name} was dropped because it could not be serialised to JSON.',
+            )
+            metadata = None
+
+        return Circuit(name=circuit.name, instructions=instructions, metadata=metadata)
 
 
 class IQMProvider:
