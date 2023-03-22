@@ -1,24 +1,161 @@
 [build-system]
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5", "wheel"]
+requires = ["setuptools>=65.4.1", "setuptools_scm[toml]>=7"]
 build-backend = "setuptools.build_meta"
 
+
+[project]
+name = "qiskit-iqm"
+dynamic = ["version"]
+description = "Qiskit adapter for IQM's quantum architectures"
+authors = [{name = "IQM Finland Oy", email = "developers@meetiqm.com"}]
+readme = "README.rst"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License"
+]
+requires-python = ">=3.9, <3.11"
+dependencies = [
+    "numpy",
+    "qiskit ~= 0.39.1",
+    "iqm-client >= 11.7, < 12.0"
+
+]
+
+[project.urls]
+homepage = "https://github.com/iqm-finland/qiskit-on-iqm"
+documentation = "https://iqm-finland.github.io/qiskit-on-iqm"
+repository = "https://github.com/iqm-finland/qiskit-on-iqm.git"
+changelog = "https://github.com/iqm-finland/qiskit-on-iqm/blob/main/CHANGELOG.rst"
+
+[project.optional-dependencies]
+# Add here additional requirements for extra features, to install with:
+# `pip install qiskit-iqm[dev,docs,testing,cicd]
+dev = [
+    "tox == 3.26.0"
+]
+docs = [
+    "sphinx == 4.5.0",
+    "sphinx-book-theme == 0.3.3",
+    "sphinx-multiversion-contrib == 0.2.12"
+]
+testing = [
+    "black == 22.10.0",
+    "isort == 5.10.1",
+    "mockito == 1.3.0",
+    "mypy == 0.982",
+    "pytest == 7.0.1",
+    "pytest-cov == 3.0.0",
+    "pytest-isort == 3.0.0",
+    "pytest-mypy == 0.9.1",
+    "pytest-pylint == 0.18.0",
+    "types-Jinja2 == 2.11.9"
+]
+cicd = [
+    "twine >= 3.8.0, < 4.0"
+]
+
+
 [tool.setuptools_scm]
-# For smarter version schemes and other configuration options,
-# check out https://github.com/pypa/setuptools_scm
 version_scheme = "no-guess-dev"
+
+
+[tool.pytest.ini_options]
+norecursedirs = [
+    ".github",
+    ".mypy_cache",
+    ".tox",
+    "build",
+    "docs",
+    "venv"
+]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning:xarray",
+    "ignore::DeprecationWarning:distutils",
+    "ignore::FutureWarning:numpy"
+]
+
 
 [tool.black]
 line-length = 120
 skip-string-normalization = true
-target-version = ['py311']
-extend-exclude = '_pb2.py$'
+target-version = ["py311"]
+
+
+[tool.coverage.run]
+branch = true
+source = ["qiskit_iqm"]
+
+[tool.coverage.paths]
+source = [
+    "src/",
+    "*/site-packages/",
+]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    'if self\.debug',
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+]
 
 
 [tool.isort]
 # make isort and black compatible
-profile = 'black'
+profile = "black"
 line_length = 120
 balanced_wrapping = true
 force_sort_within_sections = true
 reverse_relative = true
 group_by_package = true
+
+
+[tool.mypy]
+namespace_packages = true
+
+[[tool.mypy.overrides]]
+module = [
+    "mockito",
+    "qiskit.*",
+    "qiskit_aer.*",
+    "requests"
+]
+ignore_missing_imports = true
+
+
+[tool.pylint.main]
+disable = [
+    "abstract-method",
+    "duplicate-code",
+    "fixme",
+    "invalid-name",
+    "protected-access",
+    "too-few-public-methods",
+    "too-many-locals"
+]
+extension-pkg-whitelist = ["pydantic"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.similarities]
+ignore-imports = true
+
+[tool.pylint.string]
+check-quote-consistency = true

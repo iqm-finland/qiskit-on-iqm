@@ -2,6 +2,14 @@
 Changelog
 =========
 
+
+Version 7.7
+===========
+
+* "Pin down" supported Python versions to 3.9 and 3.10. `#40 <https://github.com/iqm-finland/qiskit-on-iqm/pull/40>`_
+* Configure Tox to skip missing versions of Python interpreters when running tests. `#40 <https://github.com/iqm-finland/qiskit-on-iqm/pull/40>`_
+* Move project metadata and configuration to ``pyproject.toml``. `#40 <https://github.com/iqm-finland/qiskit-on-iqm/pull/40>`_
+
 Version 7.6
 ===========
 
