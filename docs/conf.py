@@ -110,16 +110,12 @@ html_theme_options = {
     'logo_only': True,
 }
 
-html_sidebars = {
-    '**': [
-        'sidebar-logo.html', 'search-field.html', 'sbt-sidebar-nav.html', 'versioning.html'
-    ]
-}
+html_sidebars = {'**': ['sidebar-logo.html', 'search-field.html', 'sbt-sidebar-nav.html', 'versioning.html']}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+# html_static_path = ['_static']
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -168,14 +164,14 @@ extlinks = {
 # -- Options for sphinxcontrib.bibtex -------------------------------------------------
 
 # List of all bibliography files used.
-#bibtex_bibfiles = ['references.bib']
+# bibtex_bibfiles = ['references.bib']
 
 # -- Options for sphinx_multiversion --------------------------------------------------
 # Only include certain tags (i.e. all tags except for ones listed below)
 # (technically a whitelist, but we treat it as blacklist by using negative lookahead regex `?!`)
 smv_tag_whitelist = r'^(?!(0\.[0-9]*)).*$'  # ignore all the versions before 4.0
 
-smv_branch_whitelist = "None"   # Do not include local branches in versions list
-smv_remote_whitelist = "None"   # Do not include remote branches in versions list
+smv_branch_whitelist = "None"  # Do not include local branches in versions list
+smv_remote_whitelist = "None"  # Do not include remote branches in versions list
 smv_released_pattern = r'^refs/tags/.*$'  # Tags recognized as releases
 smv_outputdir_format = 'versions/{ref.name}'  # Store versioned docs in a subdirectory
