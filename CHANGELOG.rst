@@ -6,7 +6,7 @@ Version 7.7
 ===========
 
 * Drop circuit metadata if it is not JSON serializable `#49 <https://github.com/iqm-finland/qiskit-on-iqm/pull/49>`_
-* Produce UserWarning is metadata is dropped `#49 <https://github.com/iqm-finland/qiskit-on-iqm/pull/49>`_
+* Produce ``UserWarning`` if metadata is dropped `#49 <https://github.com/iqm-finland/qiskit-on-iqm/pull/49>`_
 
 Version 7.6
 ===========
