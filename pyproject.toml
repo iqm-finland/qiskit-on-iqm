@@ -21,7 +21,7 @@ requires-python = ">=3.9, <3.11"
 dependencies = [
     "numpy",
     "qiskit ~= 0.39.1",
-    "iqm-client >= 11.0, < 12.0"
+    "iqm-client >= 11.7, < 12.0"
 
 ]
 
@@ -55,14 +55,12 @@ testing = [
     "types-Jinja2 == 2.11.9"
 ]
 cicd = [
-    "twine >= 3.8.0, < 4.0",
-    "wheel >= 0.37.1, < 1.0"
+    "twine >= 3.8.0, < 4.0"
 ]
 
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
-write_to = "version.txt"
 
 
 [tool.pytest.ini_options]
@@ -86,7 +84,6 @@ filterwarnings = [
 line-length = 120
 skip-string-normalization = true
 target-version = ["py311"]
-extend-exclude = "_pb2.py$"
 
 
 [tool.coverage.run]
