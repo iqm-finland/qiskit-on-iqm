@@ -133,6 +133,7 @@ namespace_packages = true
 module = [
     "mockito",
     "qiskit.*",
+    "qiskit_aer.*",
     "requests"
 ]
 ignore_missing_imports = true
