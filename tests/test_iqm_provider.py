@@ -90,8 +90,9 @@ def test_serialize_circuit_raises_error_for_unsupported_instruction(backend, cir
 def test_serialize_circuit_raises_error_for_unsupported_metadata(backend, circuit):
     circuit.append(RGate(theta=np.pi, phi=0), [0])
     circuit.metadata = {'some-key': complex(1.0, 2.0)}
-    with pytest.raises(ValueError):
-        backend.serialize_circuit(circuit)
+    with pytest.warns(UserWarning):
+        serialized_circuit = backend.serialize_circuit(circuit)
+    assert serialized_circuit.metadata is None
 
 
 @pytest.mark.parametrize(
