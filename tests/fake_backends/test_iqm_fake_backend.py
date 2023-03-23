@@ -207,3 +207,20 @@ def test_noise_model_has_noise_terms(backend):
     noise_model = backend.noise_model
 
     assert not noise_model.is_ideal()
+
+
+def test_fake_backend_with_readout_errors_more_qubits_than_in_quantum_architecture(
+    linear_architecture_3q,
+    create_3q_error_profile,
+):
+    """Test that ChipSample construction fails if readout errors are provided for
+    other qubits than specified in the quantum architecture"""
+    with pytest.raises(ValueError, match="The qubits specified in readout errors"):
+        error_profile = create_3q_error_profile(
+            readout_errors={
+                "QB1": {"0": 0.02, "1": 0.03},
+                "QB2": {"0": 0.02, "1": 0.03},
+                "QB4": {"0": 0.02, "1": 0.03},
+            },
+        )
+        IQMFakeBackend(linear_architecture_3q, error_profile)

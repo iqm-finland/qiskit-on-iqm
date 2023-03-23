@@ -37,6 +37,13 @@ def IQMFakeAdonis() -> IQMFakeBackend:
         },
         single_qubit_gate_durations={"phased_rx": 40.0},
         two_qubit_gate_durations={"cz": 80.0},
+        readout_errors={
+            "QB1": {"0": 0.013, "1": 0.028},
+            "QB2": {"0": 0.035, "1": 0.087},
+            "QB3": {"0": 0.042, "1": 0.084},
+            "QB4": {"0": 0.022, "1": 0.053},
+            "QB5": {"0": 0.065, "1": 0.110},
+        },
         id_="sample-chip",
     )
 
