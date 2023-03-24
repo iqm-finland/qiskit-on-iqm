@@ -41,6 +41,7 @@ class IQMJob(JobV1):
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None
+        self._qubit_mapping: Optional[dict] = None
         self._client: IQMClient = backend.client
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
@@ -96,6 +97,7 @@ class IQMJob(JobV1):
         if not self._result:
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
             self._calibration_set_id = results.metadata.calibration_set_id
+            self._qubit_mapping = {qm.logical_name: qm.physical_name for qm in results.metadata.request.qubit_mapping}
             self._result = self._format_iqm_results(results)
             # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
             # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
@@ -124,6 +126,7 @@ class IQMJob(JobV1):
                 for i, (name, measurement_results) in enumerate(self._result)
             ],
             'date': date.today(),
+            'qubit_mapping': self._qubit_mapping,
         }
         return Result.from_dict(result_dict)
 
