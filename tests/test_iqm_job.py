@@ -16,7 +16,7 @@
 """
 import uuid
 
-from iqm_client import IQMClient, RunResult, RunStatus, Status
+from iqm_client import IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
 import mockito
 from mockito import mock, when
 import pytest
@@ -54,6 +54,10 @@ def iqm_metadata():
             'shots': 4,
             'circuits': [{'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 'b'}}],
             'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
+            'qubit_mapping': [
+                SingleQubitMapping(logical_name='x', physical_name='QB1'),
+                SingleQubitMapping(logical_name='y', physical_name='QB2'),
+            ],
         },
     }
 
@@ -109,6 +113,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     for r in result.results:
         assert r.calibration_set_id == uuid.UUID('df124054-f6d8-41f9-b880-8487f90018f9')
         assert r.data.metadata == {'a': 'b'}
+    assert result.qubit_mapping == {'x': 'QB1', 'y': 'QB2'}
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
@@ -128,6 +133,11 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
                 {'name': 'circuit_2', 'instructions': [], 'metadata': {'a': 1}},
             ],
             'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
+            'qubit_mapping': [
+                SingleQubitMapping(logical_name='x', physical_name='QB1'),
+                SingleQubitMapping(logical_name='y', physical_name='QB2'),
+                SingleQubitMapping(logical_name='z', physical_name='QB3'),
+            ],
         },
     }
     client_result = RunResult(
@@ -148,3 +158,4 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
     for i, r in enumerate(result.results):
         assert r.calibration_set_id == uuid.UUID('9d75904b-0c93-461f-b1dc-bd200cfad1f1')
         assert r.data.metadata == {'a': i}
+    assert result.qubit_mapping == {'x': 'QB1', 'y': 'QB2', 'z': 'QB3'}
