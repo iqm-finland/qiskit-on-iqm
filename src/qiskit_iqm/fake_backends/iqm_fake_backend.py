@@ -85,7 +85,7 @@ class IQMFakeBackend(IQMBackendBase):
 
     A fake backend contains information about a specific IQM system, such as the quantum architecture (number of qubits,
     connectivity), the native gate set, and a noise model based on system parameters such as relaxation (:math:`T_1`)
-    and decoherence (:math:`T_2`) times and gate infidelities.
+    and decoherence (:math:`T_2`) times, gate infidelities and readout errors.
 
     Args:
         architecture: Description of the quantum architecture associated with the backend instance.
