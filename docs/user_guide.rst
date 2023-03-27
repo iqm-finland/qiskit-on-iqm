@@ -149,8 +149,6 @@ qubit mapping that was used in execution. You can check this mapping once execut
       SingleQubitMapping(logical_name='2', physical_name='QB3')
     ]
 
-::
-
 Now we can study how the circuit gets transpiled:
 
 
