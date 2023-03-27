@@ -13,8 +13,8 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
-from functools import reduce
 from importlib.metadata import version
+from functools import reduce
 from typing import Optional, Union
 import warnings
 
@@ -63,9 +63,7 @@ class IQMBackend(IQMBackendBase):
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         used_indices: set[int] = reduce(
-            lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())),
-            circuits_serialized,
-            set()
+            lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
         uuid = self.client.submit_circuits(

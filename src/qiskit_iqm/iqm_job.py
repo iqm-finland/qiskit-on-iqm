@@ -20,7 +20,7 @@ from datetime import date
 from typing import Optional, Union
 import uuid
 
-from iqm_client import CircuitMeasurementResults, IQMClient, RunResult, Status
+from iqm_client import CircuitMeasurementResults, IQMClient, RunRequest, RunResult, Status
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
@@ -41,7 +41,7 @@ class IQMJob(JobV1):
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None
-        self._request = None
+        self._request: Optional[RunRequest] = None
         self._client: IQMClient = backend.client
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
