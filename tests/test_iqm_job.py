@@ -113,7 +113,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     for r in result.results:
         assert r.calibration_set_id == uuid.UUID('df124054-f6d8-41f9-b880-8487f90018f9')
         assert r.data.metadata == {'a': 'b'}
-    assert result.qubit_mapping == {'0': 'QB1', '1': 'QB2'}
+    assert result.request.qubit_mapping == iqm_metadata['request']['qubit_mapping']
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
@@ -158,4 +158,4 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
     for i, r in enumerate(result.results):
         assert r.calibration_set_id == uuid.UUID('9d75904b-0c93-461f-b1dc-bd200cfad1f1')
         assert r.data.metadata == {'a': i}
-    assert result.qubit_mapping == {'0': 'QB1', '1': 'QB2', '2': 'QB3'}
+    assert result.request.qubit_mapping == iqm_metadata_multiple_circuits['request']['qubit_mapping']
