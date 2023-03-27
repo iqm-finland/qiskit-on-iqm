@@ -134,7 +134,25 @@ identified by their indices in the quantum register, as you can see from the pri
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
 :meth:`.IQMBackend.qubit_name_to_index` and :meth:`.IQMBackend.index_to_qubit_name` can become handy.
 
+The results of a job, that was executed with IQM quantum computer, contain the original request with the
+qubit mapping that was used in execution. You can check this mapping once execution has finished.
+
+.. code-block:: python
+
+    print(job.result().request.qubit_mapping)
+
+::
+
+    [
+      SingleQubitMapping(logical_name='0', physical_name='QB1'),
+      SingleQubitMapping(logical_name='1', physical_name='QB2'),
+      SingleQubitMapping(logical_name='2', physical_name='QB3')
+    ]
+
+::
+
 Now we can study how the circuit gets transpiled:
+
 
 .. code-block:: python
 
