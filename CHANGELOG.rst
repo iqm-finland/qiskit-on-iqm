@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.9
+===========
+
+* Add request into result metadata `#51 <https://github.com/iqm-finland/qiskit-on-iqm/pull/51>`_
+
 Version 7.8
 ===========
 

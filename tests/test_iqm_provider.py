@@ -38,11 +38,6 @@ def backend(linear_architecture_3q):
 
 
 @pytest.fixture
-def qubit_mapping():
-    return {'0': 'QB1', '1': 'QB2', '2': 'QB3'}
-
-
-@pytest.fixture
 def circuit():
     return QuantumCircuit(3, 3)
 
@@ -222,13 +217,13 @@ def test_run_gets_options_from_execute_function(backend, circuit):
     )
 
 
-def test_run_single_circuit(backend, qubit_mapping, circuit):
+def test_run_single_circuit(backend, circuit):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
     when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping=qubit_mapping, calibration_set_id=None, shots=shots
+        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=None, shots=shots
     ).thenReturn(some_id)
     job = backend.run(circuit, shots=shots)
     assert isinstance(job, IQMJob)
@@ -253,20 +248,20 @@ def test_run_sets_circuit_metadata_to_the_job(backend):
     assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
-def test_run_with_custom_calibration_set_id(backend, qubit_mapping, circuit):
+def test_run_with_custom_calibration_set_id(backend, circuit):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
     calibration_set_id = '67e77465-d90e-4839-986e-9270f952b743'
     when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
+        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=calibration_set_id, shots=shots
     ).thenReturn(some_id)
 
     backend.run([circuit], calibration_set_id=calibration_set_id, shots=shots)
 
 
-def test_run_batch_of_circuits(backend, qubit_mapping, circuit):
+def test_run_batch_of_circuits(backend, circuit):
     theta = Parameter('theta')
     theta_range = np.linspace(0, 2 * np.pi, 3)
     shots = 10
@@ -277,7 +272,7 @@ def test_run_batch_of_circuits(backend, qubit_mapping, circuit):
     circuits = [circuit.bind_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [backend.serialize_circuit(circuit) for circuit in circuits]
     when(backend.client).submit_circuits(
-        circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=None, shots=shots
+        circuits_serialized, qubit_mapping={'0': 'QB1', '1': 'QB2'}, calibration_set_id=None, shots=shots
     ).thenReturn(some_id)
 
     job = backend.run(circuits, shots=shots)
