@@ -261,6 +261,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/7.9/user_guide.html">7.9</a></li>
+    
+    
       <li class="version_item"><a href="versions/7.8/user_guide.html">7.8</a></li>
     
     
@@ -588,7 +591,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/7.8/user_guide.html">7.8</a>.
+    For the latest released version, please have a look at <a href="versions/7.9/user_guide.html">7.9</a>.
     
   </strong>
 </div>
@@ -680,6 +683,18 @@ See Cortex CLI’s <a class="reference external" href="https://iqm-finland.githu
 Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
 or pass them as arguments to the constructor of <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>, however this approach is less secure
 and considered as deprecated.</p>
+<p>The results of a job, that was executed with IQM quantum computer, contain the original request with the
+qubit mapping that was used in execution. You can check this mapping once execution has finished.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">qubit_mapping</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="n">SingleQubitMapping</span><span class="p">(</span><span class="n">logical_name</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">physical_name</span><span class="o">=</span><span class="s1">&#39;QB1&#39;</span><span class="p">),</span>
+  <span class="n">SingleQubitMapping</span><span class="p">(</span><span class="n">logical_name</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">physical_name</span><span class="o">=</span><span class="s1">&#39;QB2&#39;</span><span class="p">),</span>
+  <span class="n">SingleQubitMapping</span><span class="p">(</span><span class="n">logical_name</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">physical_name</span><span class="o">=</span><span class="s1">&#39;QB3&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
 <p>The <code class="docutils literal notranslate"><span class="pre">backend</span></code> instance we created above provides all the standard backend functionality that one expects from a
 backend in Qiskit. For this example, I am connected to an IQM backend that features a 5-qubit chip with star-like
 connectivity:</p>
