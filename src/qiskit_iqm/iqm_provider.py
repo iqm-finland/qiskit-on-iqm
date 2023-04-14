@@ -24,7 +24,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from qiskit_iqm import IQMFakeAdonis
+from qiskit_iqm.fake_backends import IQMFakeAdonis
 from qiskit_iqm.iqm_backend import IQMBackendBase
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import MeasurementKey
