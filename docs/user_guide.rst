@@ -228,12 +228,12 @@ Running a quantum circuit on a facade backend
 Circuits can be executed against a "simulated" environment: an IQM server that has no real quantum computer hardware.
 Results from such executions are random bits. This may be useful when developing and testing software integrations.
 
-Since Qiskit on IQM contains :class:`.IQMFakeAdonis`, it is possible to combine the "simulated" remote execution with
-proper local simulation. This way you can get realistic results while not using a real quantum computer.
+Qiskit on IQM contains :class:`.IQMFacadeBackend`, which allows to combine the "simulated" remote execution with proper
+local simulation. This way you can get realistic results while not using a real quantum computer.
 
 To run a circuit this way, use the `facade_adonis` backend retrieved from the provider. Note that the provider must be
-initialized with the URL of a quantum computer of the equivalent architecture (i.e. names of qubits, their connectivity
-and supported supported gates should match the 5-qubit Adonis architecture).
+initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
+connectivity and supported supported gates should match the 5-qubit Adonis architecture).
 
 .. code-block:: python
 
