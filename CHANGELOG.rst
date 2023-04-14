@@ -2,10 +2,15 @@
 Changelog
 =========
 
+Version 7.10
+============
+
+* Add facade backend for Adonis by introducing ``facade_adonis`` backend type `#53 <https://github.com/iqm-finland/qiskit-on-iqm/pull/53>`_
+
 Version 7.9
 ===========
 
-* Add facade backend for Adonis by introducing ``facade_adonis`` backend type `#53 <https://github.com/iqm-finland/qiskit-on-iqm/pull/53>`_
+* Add request into result metadata `#51 <https://github.com/iqm-finland/qiskit-on-iqm/pull/51>`_
 
 Version 7.8
 ===========

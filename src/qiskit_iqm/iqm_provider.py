@@ -14,6 +14,7 @@
 """Qiskit Backend Provider for IQM backends.
 """
 from importlib.metadata import version
+from functools import reduce
 from typing import Optional, Union
 import warnings
 
@@ -62,7 +63,10 @@ class IQMBackend(IQMBackendBase):
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
-        qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items()}
+        used_indices: set[int] = reduce(
+            lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
+        )
+        qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
         uuid = self.client.submit_circuits(
             circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
         )
