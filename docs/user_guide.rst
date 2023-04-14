@@ -25,6 +25,7 @@ things are set up correctly:
 4. Set the environment variable as instructed by Cortex CLI after logging in
 5. Run ``$ python bell_measure.py --server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
 6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00' and almost half in '11' – if this is the case, things are set up correctly!
+7. Alternatively, add flag ``--backend facade_adonis`` to submit the circuit to an IQM quantum computer for validation, but compute the results in a local Adonis simulator; the output should be similar to the output from a real quantum computer
 
 
 Installation
@@ -175,8 +176,9 @@ Simulating the execution of a transpiled circuit locally
 --------------------------------------------------------
 
 The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
-To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a certain QPU,
-or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with pre-populated properties and noise model.
+To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a
+certain QPU, or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with
+pre-populated properties and noise model.
 
 .. code-block:: python
 
@@ -193,9 +195,9 @@ or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quant
     job.result().get_counts()
 
 
-Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
-If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you can create
-a copy of the fake Adonis instance with updated error profile:
+Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis
+chip. If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you
+can create a copy of the fake Adonis instance with updated error profile:
 
 .. code-block:: python
 
@@ -203,6 +205,33 @@ a copy of the fake Adonis instance with updated error profile:
     error_profile.t1s['QB2'] = 30000.0  # Change T1 time of QB2 as example
     custom_fake_backend = backend.copy_with_error_profile(error_profile)
 
+Running a quantum circuit on a facade backend
+---------------------------------------------
+
+Circuits can be executed against a "simulated" environment: an IQM server that has no real quantum computer hardware.
+Results from such executions are random bits. This may be useful when developing and testing software integrations.
+
+Since Qiskit on IQM contains :class:`.IQMFakeAdonis`, it is possible to combine the "simulated" remote execution with
+proper local simulation. This way you can get realistic results while not using a real quantum computer.
+
+To run a circuit this way, use the `facade_adonis` backend retrieved from the provider. Note that the provider must be
+initialized with the URL of a quantum computer of the equivalent architecture (i.e. names of qubits, their connectivity
+and supported supported gates should match the 5-qubit Adonis architecture).
+
+.. code-block:: python
+
+    from qiskit import execute, QuantumCircuit
+    from qiskit_iqm import IQMProvider
+
+    circuit = QuantumCircuit(2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.measure_all()
+
+    provider = IQMProvider("https://demo.qc.iqm.fi/cocos/")
+    backend = provider.get_backend('facade_adonis')
+    job = execute(circuit, backend, shots=1000)
+    job.result().get_counts()
 
 More advanced examples
 ----------------------

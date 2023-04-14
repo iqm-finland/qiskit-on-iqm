@@ -21,8 +21,9 @@ from iqm_client import Circuit, Instruction, IQMClient
 from iqm_client.util import to_json_dict
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.providers import Options
+from qiskit.providers import JobStatus, JobV1, Options
 
+from qiskit_iqm import IQMFakeAdonis
 from qiskit_iqm.iqm_backend import IQMBackendBase
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import MeasurementKey
@@ -134,6 +135,50 @@ class IQMBackend(IQMBackendBase):
         return Circuit(name=circuit.name, instructions=instructions, metadata=metadata)
 
 
+class IQMFacadeBackend(IQMBackend):
+    """Facade backend for mimicking the execution of quantum circuits on IQM quantum computers. Allows to submit a
+     circuit to the IQM server, and if the execution was successful, performs a simulation with a respective IQM noise
+     model locally, then returns the simulated results.
+
+    Args:
+        client: client instance for communicating with an IQM server
+        **kwargs: optional arguments to be passed to the parent Backend initializer
+    """
+
+    def __init__(self, client: IQMClient, **kwargs):
+        self.fake_adonis = IQMFakeAdonis()
+        target_architecture = client.get_quantum_architecture()
+
+        if not self.fake_adonis.validate_compatible_architecture(target_architecture):
+            raise ValueError('Quantum architecture of the remote quantum computer does not match Adonis.')
+
+        super().__init__(client, **kwargs)
+        self.client = client
+
+    def _validate_no_empty_cregs(self, circuit):
+        """Returns True if given circuit has no empty (unused) classical registers, False otherwise."""
+        cregs_utilization = dict.fromkeys(circuit.cregs, 0)
+        used_cregs = [circuit.find_bit(i.clbits[0]).registers[0][0] for i in circuit.data if len(i.clbits) > 0]
+        for creg in used_cregs:
+            cregs_utilization[creg] += 1
+
+        if 0 in cregs_utilization.values():
+            return False
+        return True
+
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
+        circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
+        circuits_validated_cregs: list[bool] = [self._validate_no_empty_cregs(circuit) for circuit in circuits]
+        if not all(circuits_validated_cregs):
+            raise ValueError('One or more circuits contain unused classical registers.')
+
+        iqm_backend_job = super().run(run_input, **options)
+        iqm_backend_job.result()  # get and discard results
+        if iqm_backend_job.status() == JobStatus.ERROR:
+            raise RuntimeError('Remote execution did not succeed.')
+        return self.fake_adonis.run(run_input, **options)
+
+
 class IQMProvider:
     """Provider for IQM backends.
 
@@ -153,7 +198,13 @@ class IQMProvider:
         self.url = url
         self.user_auth_args = user_auth_args
 
-    def get_backend(self) -> IQMBackend:
-        """An IQMBackend instance associated with this provider."""
+    def get_backend(self, name=None) -> Union[IQMBackend, IQMFacadeBackend]:
+        """An IQMBackend instance associated with this provider.
+
+        Args:
+            name: optional name of a custom facade backend
+        """
         client = IQMClient(self.url, client_signature=f'qiskit-iqm {version("qiskit-iqm")}', **self.user_auth_args)
+        if name == 'facade_adonis':
+            return IQMFacadeBackend(client)
         return IQMBackend(client)

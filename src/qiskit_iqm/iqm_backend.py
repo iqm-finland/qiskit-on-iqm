@@ -60,6 +60,8 @@ class IQMBackendBase(BackendV2, ABC):
         self._target = target
         self._qb_to_idx = qb_to_idx
         self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
+        # Copy of the original quantum architecture that was used to construct the target. Used for validation only.
+        self._quantum_architecture = architecture
 
     @property
     def target(self) -> Target:
@@ -74,3 +76,15 @@ class IQMBackendBase(BackendV2, ABC):
         """Given an index in the backend register return the corresponding IQM-style qubit name ('QB1', 'QB2', etc.).
         Returns None if the given index does not correspond to any qubit in the backend."""
         return self._idx_to_qb.get(index)
+
+    def validate_compatible_architecture(self, architecture: QuantumArchitectureSpecification) -> bool:
+        """Given a quantum architecture specification returns true if its number of qubits, names of qubits and qubit
+        connectivity matches the architecture of this backend."""
+        qubits_match = set(architecture.qubits) == set(self._quantum_architecture.qubits)
+        ops_match = set(architecture.operations) == set(self._quantum_architecture.operations)
+
+        self_connectivity = set(map(frozenset, self._quantum_architecture.qubit_connectivity))  # type: ignore
+        target_connectivity = set(map(frozenset, architecture.qubit_connectivity))  # type: ignore
+        connectivity_match = self_connectivity == target_connectivity
+
+        return qubits_match and ops_match and connectivity_match
