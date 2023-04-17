@@ -184,6 +184,11 @@
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="qiskit_iqm.iqm_provider.IQMFacadeBackend.html">
+         qiskit_iqm.iqm_provider.IQMFacadeBackend
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="qiskit_iqm.iqm_provider.IQMProvider.html">
          qiskit_iqm.iqm_provider.IQMProvider
         </a>
@@ -283,6 +288,9 @@
     
     
       <li class="version_item"><a href="../versions/7.2/index.html">7.2</a></li>
+    
+    
+      <li class="version_item"><a href="../versions/7.10/index.html">7.10</a></li>
     
     
       <li class="version_item"><a href="../versions/7.1/index.html">7.1</a></li>
@@ -563,6 +571,9 @@ options.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackendBase.qubit_name_to_index" title="qiskit_iqm.iqm_backend.IQMBackendBase.qubit_name_to_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qubit_name_to_index</span></code></a>(name)</p></td>
 <td><p>Given an IQM-style qubit name ('QB1', 'QB2', etc.) return the corresponding index in the register.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_backend.IQMBackendBase.validate_compatible_architecture" title="qiskit_iqm.iqm_backend.IQMBackendBase.validate_compatible_architecture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_compatible_architecture</span></code></a>(architecture)</p></td>
+<td><p>Given a quantum architecture specification returns true if its number of qubits, names of qubits and qubit connectivity matches the architecture of this backend.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py property">
@@ -602,6 +613,21 @@ Returns None if the given index does not correspond to any qubit in the backend.
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><em>Optional</em></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_backend.IQMBackendBase.validate_compatible_architecture">
+<span class="sig-name descname"><span class="pre">validate_compatible_architecture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">architecture</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_backend.IQMBackendBase.validate_compatible_architecture" title="Permalink to this definition">#</a></dt>
+<dd><p>Given a quantum architecture specification returns true if its number of qubits, names of qubits and qubit
+connectivity matches the architecture of this backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>architecture</strong> (<em>iqm_client.iqm_client.QuantumArchitectureSpecification</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>

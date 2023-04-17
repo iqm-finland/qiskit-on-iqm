@@ -184,6 +184,11 @@
         </a>
        </li>
        <li class="toctree-l4">
+        <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMFacadeBackend.html">
+         qiskit_iqm.iqm_provider.IQMFacadeBackend
+        </a>
+       </li>
+       <li class="toctree-l4">
         <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html">
          qiskit_iqm.iqm_provider.IQMProvider
         </a>
@@ -283,6 +288,9 @@
     
     
       <li class="version_item"><a href="versions/7.2/user_guide.html">7.2</a></li>
+    
+    
+      <li class="version_item"><a href="versions/7.10/user_guide.html">7.10</a></li>
     
     
       <li class="version_item"><a href="versions/7.1/user_guide.html">7.1</a></li>
@@ -501,6 +509,11 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#running-a-quantum-circuit-on-a-facade-backend">
+   Running a quantum circuit on a facade backend
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#more-advanced-examples">
    More advanced examples
   </a>
@@ -552,6 +565,11 @@ title="Print to PDF"
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#simulating-the-execution-of-a-transpiled-circuit-locally">
    Simulating the execution of a transpiled circuit locally
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#running-a-quantum-circuit-on-a-facade-backend">
+   Running a quantum circuit on a facade backend
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -618,6 +636,7 @@ things are set up correctly:</p>
 <li><p>Set the environment variable as instructed by Cortex CLI after logging in</p></li>
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">python</span> <span class="pre">bell_measure.py</span> <span class="pre">--server_url</span> <span class="pre">https://demo.qc.iqm.fi/cocos</span></code> – replace the example URL with the correct one</p></li>
 <li><p>If you’re connecting to a real quantum computer, the output should show almost half of the measurements resulting in ‘00’ and almost half in ‘11’ – if this is the case, things are set up correctly!</p></li>
+<li><p>Alternatively, add flag <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">facade_adonis</span></code> to submit the circuit to an IQM quantum computer for validation, but compute the results in a local Adonis simulator; the output should be similar to the output from a real quantum computer</p></li>
 </ol>
 </section>
 <section id="installation">
@@ -755,8 +774,9 @@ ancilla_1 -&gt; 3 ────────────────────�
 <section id="simulating-the-execution-of-a-transpiled-circuit-locally">
 <h2>Simulating the execution of a transpiled circuit locally<a class="headerlink" href="#simulating-the-execution-of-a-transpiled-circuit-locally" title="Permalink to this headline">#</a></h2>
 <p>The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
-To this end, Qiskit on IQM provides the class  <a class="reference internal" href="api/qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeBackend</span></code></a> that can be instantiated with properties of a certain QPU,
-or subclasses of it such as <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> that represent certain quantum architectures with pre-populated properties and noise model.</p>
+To this end, Qiskit on IQM provides the class  <a class="reference internal" href="api/qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeBackend</span></code></a> that can be instantiated with properties of a
+certain QPU, or subclasses of it such as <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> that represent certain quantum architectures with
+pre-populated properties and noise model.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
 <span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMFakeAdonis</span>
 
@@ -770,13 +790,45 @@ or subclasses of it such as <code class="xref py py-class docutils literal notra
 <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Above, we use an <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> instance to run a noisy simulation of <code class="docutils literal notranslate"><span class="pre">circuit</span></code> on a simulated 5-qubit Adonis chip.
-If you want to customize the noise model instead of using the default one provided by <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code>, you can create
-a copy of the fake Adonis instance with updated error profile:</p>
+<p>Above, we use an <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> instance to run a noisy simulation of <code class="docutils literal notranslate"><span class="pre">circuit</span></code> on a simulated 5-qubit Adonis
+chip. If you want to customize the noise model instead of using the default one provided by <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code>, you
+can create a copy of the fake Adonis instance with updated error profile:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">error_profile</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">error_profile</span>
 <span class="n">error_profile</span><span class="o">.</span><span class="n">t1s</span><span class="p">[</span><span class="s1">&#39;QB2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">30000.0</span>  <span class="c1"># Change T1 time of QB2 as example</span>
 <span class="n">custom_fake_backend</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">copy_with_error_profile</span><span class="p">(</span><span class="n">error_profile</span><span class="p">)</span>
 </pre></div>
+</div>
+</section>
+<section id="running-a-quantum-circuit-on-a-facade-backend">
+<h2>Running a quantum circuit on a facade backend<a class="headerlink" href="#running-a-quantum-circuit-on-a-facade-backend" title="Permalink to this headline">#</a></h2>
+<p>Circuits can be executed against a “simulated” environment: an IQM server that has no real quantum computer hardware.
+Results from such executions are random bits. This may be useful when developing and testing software integrations.</p>
+<p>Qiskit on IQM contains <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMFacadeBackend.html#qiskit_iqm.iqm_provider.IQMFacadeBackend" title="qiskit_iqm.iqm_provider.IQMFacadeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFacadeBackend</span></code></a>, which allows to combine the “simulated” remote execution with a local
+noisy quantum circuit simulation. This way you can both validate your integration as well as get an idea of the expected circuit execution results.</p>
+<p>To run a circuit this way, use the <cite>facade_adonis</cite> backend retrieved from the provider. Note that the provider must be
+initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
+connectivity and supported gates should match the 5-qubit Adonis architecture).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
+
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;facade_adonis&#39;</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When a classical register is added to the circuit, Qiskit fills it with classical bits of value 0 by default. If the
+register is not used later, and the circuit is submitted to the IQM server, the results will not contain those
+0-filled bits. To make sure the facade backend returns results in the same format as a real IQM server,
+<a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMFacadeBackend.html#qiskit_iqm.iqm_provider.IQMFacadeBackend.run" title="qiskit_iqm.iqm_provider.IQMFacadeBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMFacadeBackend.run()</span></code></a> checks for the presence of unused classical registers, and fails with an error if there
+are any.</p>
 </div>
 </section>
 <section id="more-advanced-examples">
