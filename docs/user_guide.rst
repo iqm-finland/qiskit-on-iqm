@@ -233,7 +233,7 @@ noisy quantum circuit simulation. This way you can both validate your integratio
 
 To run a circuit this way, use the `facade_adonis` backend retrieved from the provider. Note that the provider must be
 initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
-connectivity and supported supported gates should match the 5-qubit Adonis architecture).
+connectivity and supported gates should match the 5-qubit Adonis architecture).
 
 .. code-block:: python
 
