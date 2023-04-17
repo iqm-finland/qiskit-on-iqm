@@ -258,8 +258,6 @@ connectivity and supported gates should match the 5-qubit Adonis architecture).
    :meth:`.IQMFacadeBackend.run` checks for the presence of unused classical registers, and fails with an error if there
    are any.
 
-One or more circuits contain unused classical registers
-
 More advanced examples
 ----------------------
 
