@@ -174,7 +174,9 @@ class IQMFacadeBackend(IQMBackend):
         circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
         circuits_validated_cregs: list[bool] = [self._validate_no_empty_cregs(circuit) for circuit in circuits]
         if not all(circuits_validated_cregs):
-            raise ValueError('One or more circuits contain unused classical registers.')
+            raise ValueError(
+                'One or more circuits contain unused classical registers, which leads to 0-filled registers in results'
+            )
 
         iqm_backend_job = super().run(run_input, **options)
         iqm_backend_job.result()  # get and discard results
