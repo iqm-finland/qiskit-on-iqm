@@ -250,6 +250,16 @@ connectivity and supported supported gates should match the 5-qubit Adonis archi
     job = execute(circuit, backend, shots=1000)
     job.result().get_counts()
 
+.. note::
+
+   When a classical register is added to the circuit, Qiskit fills it with classical bits of value 0 by default. If the
+   register is not used later, and the circuit is submitted to the IQM server, the results will not contain those
+   0-filled bits. To make sure the facade backend returns results in the same format as a real IQM server,
+   :meth:`.IQMFacadeBackend.run` checks for the presence of unused classical registers, and fails with an error if there
+   are any.
+
+One or more circuits contain unused classical registers
+
 More advanced examples
 ----------------------
 

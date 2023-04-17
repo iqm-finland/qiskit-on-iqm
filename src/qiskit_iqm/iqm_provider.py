@@ -175,7 +175,8 @@ class IQMFacadeBackend(IQMBackend):
         circuits_validated_cregs: list[bool] = [self._validate_no_empty_cregs(circuit) for circuit in circuits]
         if not all(circuits_validated_cregs):
             raise ValueError(
-                'One or more circuits contain unused classical registers, which leads to 0-filled registers in results'
+                'One or more circuits contain unused classical registers. This is not allowed for Facade simulation, '
+                'see user guide.'
             )
 
         iqm_backend_job = super().run(run_input, **options)
