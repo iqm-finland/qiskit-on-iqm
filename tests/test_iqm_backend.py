@@ -71,3 +71,12 @@ def test_transpile(backend):
             idx1 = circuit_transpiled.find_bit(qubits[0]).index
             idx2 = circuit_transpiled.find_bit(qubits[1]).index
             assert ((idx1, idx2) in cmap) or ((idx2, idx1) in cmap)
+
+
+def test_validate_compatible_architecture(
+    adonis_architecture, adonis_architecture_shuffled_names, linear_architecture_3q
+):
+    backend = TestIQMBackend(adonis_architecture)
+    assert backend.validate_compatible_architecture(adonis_architecture) is True
+    assert backend.validate_compatible_architecture(adonis_architecture_shuffled_names) is True
+    assert backend.validate_compatible_architecture(linear_architecture_3q) is False

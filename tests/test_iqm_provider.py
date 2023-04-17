@@ -18,8 +18,8 @@ from importlib.metadata import version
 from numbers import Number
 import uuid
 
-from iqm_client import IQMClient
-from mockito import mock, patch, when
+from iqm_client import IQMClient, RunResult, RunStatus
+from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
@@ -28,6 +28,7 @@ from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
 from qiskit_iqm import IQMBackend, IQMJob, IQMProvider
+from qiskit_iqm.iqm_provider import IQMFacadeBackend
 
 
 @pytest.fixture
@@ -40,6 +41,11 @@ def backend(linear_architecture_3q):
 @pytest.fixture
 def circuit():
     return QuantumCircuit(3, 3)
+
+
+@pytest.fixture
+def circuit_2() -> QuantumCircuit:
+    return QuantumCircuit(5)
 
 
 def test_default_options(backend):
@@ -311,3 +317,43 @@ def test_client_signature():
     provider = IQMProvider(url)
     backend = provider.get_backend()
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
+
+
+def test_get_facade_backend(adonis_architecture):
+    url = 'http://some_url'
+    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+
+    provider = IQMProvider(url)
+    backend = provider.get_backend('facade_adonis')
+
+    assert isinstance(backend, IQMFacadeBackend)
+    assert backend.client._base_url == url
+    assert backend.num_qubits == 5
+    assert set(backend.coupling_map.get_edges()) == {(0, 2), (1, 2), (3, 2), (4, 2)}
+
+
+def test_get_facade_backend_raises_error_non_matching_architecture(linear_architecture_3q):
+    url = 'http://some_url'
+
+    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+
+    provider = IQMProvider(url)
+    with pytest.raises(ValueError, match='Quantum architecture of the remote quantum computer does not match Adonis.'):
+        provider.get_backend('facade_adonis')
+
+
+def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architecture, circuit_2):
+    url = 'http://some_url'
+    result = {'status': 'failed', 'measurements': [], 'metadata': {'request': {'circuits': [], 'shots': 1024}}}
+    result_status = {'status': 'failed'}
+
+    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(IQMClient).submit_circuits(ANY, qubit_mapping=ANY, calibration_set_id=ANY, shots=ANY).thenReturn(uuid.uuid4())
+    when(IQMClient).get_run(ANY).thenReturn(RunResult.from_dict(result))
+    when(IQMClient).get_run_status(ANY).thenReturn(RunStatus.from_dict(result_status))
+
+    provider = IQMProvider(url)
+    backend = provider.get_backend('facade_adonis')
+
+    with pytest.raises(RuntimeError):
+        backend.run(circuit_2)
