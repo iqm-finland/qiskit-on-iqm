@@ -20,7 +20,7 @@ classifiers = [
 requires-python = ">=3.9, <3.11"
 dependencies = [
     "numpy",
-    "qiskit ~= 0.39.1",
+    "qiskit ~= 0.42.1",
     "iqm-client >= 11.7, < 12.0"
 
 ]
