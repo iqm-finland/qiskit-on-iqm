@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.11
+============
+
+* Bump Qiskit dependency to `~= 0.42.1` `#54 <https://github.com/iqm-finland/qiskit-on-iqm/pull/54>`_
+
 Version 7.10
 ============
 
