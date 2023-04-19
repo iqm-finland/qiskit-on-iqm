@@ -87,8 +87,9 @@ def test_status_done(job, iqm_metadata):
     assert job._result is None
 
 
-def test_status_running(job):
-    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.PENDING))
+@pytest.mark.parametrize('run_status', [Status.PENDING_COMPILATION, Status.PENDING_EXECUTION])
+def test_status_running(job, run_status):
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=run_status))
     assert job.status() == JobStatus.RUNNING
 
 
