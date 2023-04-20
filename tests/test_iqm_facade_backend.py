@@ -14,7 +14,7 @@
 
 """Testing IQM backend.
 """
-from iqm_client import IQMClient
+from iqm_client.iqm_client import IQMClient
 from mockito import mock, when
 import pytest
 from qiskit import QuantumCircuit, transpile

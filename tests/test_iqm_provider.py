@@ -18,7 +18,8 @@ from importlib.metadata import version
 from numbers import Number
 import uuid
 
-from iqm_client import IQMClient, RunResult, RunStatus
+from iqm_client.iqm_client import IQMClient
+from iqm_client.models import RunResult, RunStatus
 from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
@@ -45,7 +46,9 @@ def circuit():
 
 @pytest.fixture
 def circuit_2() -> QuantumCircuit:
-    return QuantumCircuit(5)
+    circuit = QuantumCircuit(5)
+    circuit.cz(0, 1)
+    return circuit
 
 
 def test_default_options(backend):
@@ -243,8 +246,10 @@ def test_run_single_circuit(backend, circuit):
 
 def test_run_sets_circuit_metadata_to_the_job(backend):
     circuit_1 = QuantumCircuit(3)
+    circuit_1.cz(0, 1)
     circuit_1.metadata = {'key1': 'value1', 'key2': 'value2'}
     circuit_2 = QuantumCircuit(3)
+    circuit_2.cz(0, 1)
     circuit_2.metadata = {'key1': 'value2', 'key2': 'value1'}
     some_id = uuid.uuid4()
     backend.client.submit_circuits = lambda *args, **kwargs: some_id
@@ -344,7 +349,21 @@ def test_get_facade_backend_raises_error_non_matching_architecture(linear_archit
 
 def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architecture, circuit_2):
     url = 'http://some_url'
-    result = {'status': 'failed', 'measurements': [], 'metadata': {'request': {'circuits': [], 'shots': 1024}}}
+    result = {
+        'status': 'failed',
+        'measurements': [],
+        'metadata': {
+            'request': {
+                'shots': 1024,
+                'circuits': [
+                    {
+                        'name': 'circuit_2',
+                        'instructions': [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}],
+                    }
+                ],
+            }
+        },
+    }
     result_status = {'status': 'failed'}
 
     when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
