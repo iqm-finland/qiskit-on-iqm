@@ -16,7 +16,7 @@
 """
 import uuid
 
-from iqm_client import IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
+from iqm_client import Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
 import mockito
 from mockito import mock, when
 import pytest
@@ -48,11 +48,12 @@ def iqm_result_two_registers():
 
 @pytest.fixture()
 def iqm_metadata():
+    measurement = Instruction(name='measurement', implementation=None, qubits=('0',), args={'key': 'm1'})
     return {
         'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
         'request': {
             'shots': 4,
-            'circuits': [{'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 'b'}}],
+            'circuits': [{'name': 'circuit_1', 'instructions': (measurement,), 'metadata': {'a': 'b'}}],
             'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
             'qubit_mapping': [
                 SingleQubitMapping(logical_name='0', physical_name='QB1'),
@@ -125,13 +126,14 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
 
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
+    instruction_meta = [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}]
     iqm_metadata_multiple_circuits = {
         'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
         'request': {
             'shots': 4,
             'circuits': [
-                {'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 0}},
-                {'name': 'circuit_2', 'instructions': [], 'metadata': {'a': 1}},
+                {'name': 'circuit_1', 'instructions': instruction_meta, 'metadata': {'a': 0}},
+                {'name': 'circuit_2', 'instructions': instruction_meta, 'metadata': {'a': 1}},
             ],
             'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
             'qubit_mapping': [
