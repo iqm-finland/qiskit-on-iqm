@@ -20,7 +20,7 @@ from datetime import date
 from typing import Optional, Union
 import uuid
 
-from iqm_client.iqm_client import CircuitMeasurementResults, IQMClient, RunRequest, RunResult, Status
+from iqm_client import CircuitMeasurementResults, IQMClient, RunRequest, RunResult, Status
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result

@@ -18,7 +18,7 @@ from functools import reduce
 from typing import Optional, Union
 import warnings
 
-from iqm_client.iqm_client import Circuit, Instruction, IQMClient
+from iqm_client import Circuit, Instruction, IQMClient
 from iqm_client.util import to_json_dict
 import numpy as np
 from qiskit import QuantumCircuit
