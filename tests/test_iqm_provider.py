@@ -18,8 +18,7 @@ from importlib.metadata import version
 from numbers import Number
 import uuid
 
-from iqm_client.iqm_client import IQMClient
-from iqm_client.models import RunResult, RunStatus
+from iqm_client.iqm_client import IQMClient, RunResult, RunStatus
 from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest

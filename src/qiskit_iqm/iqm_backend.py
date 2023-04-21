@@ -19,7 +19,7 @@ from abc import ABC
 import re
 from typing import Final, Optional
 
-from iqm_client.models import QuantumArchitectureSpecification
+from iqm_client.iqm_client import QuantumArchitectureSpecification
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, Measure, RGate
 from qiskit.providers import BackendV2

@@ -16,8 +16,7 @@
 """
 import uuid
 
-from iqm_client.iqm_client import IQMClient
-from iqm_client.models import Instruction, RunResult, RunStatus, SingleQubitMapping, Status
+from iqm_client.iqm_client import Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
 import mockito
 from mockito import mock, when
 import pytest
