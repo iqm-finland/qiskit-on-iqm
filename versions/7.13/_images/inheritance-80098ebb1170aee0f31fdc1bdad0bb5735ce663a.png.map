@@ -1,0 +1,6 @@
+<map id="inheritance8fe73f386f" name="inheritance8fe73f386f">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="8,55,80,80"/>
+<area shape="rect" id="node3" title="Abstract class for Backends" alt="" coords="131,5,225,31"/>
+<area shape="rect" id="node4" href="qiskit_iqm.iqm_backend.IQMBackendBase.html#qiskit_iqm.iqm_backend.IQMBackendBase" target="_top" title="Abstract base class for various IQM&#45;specific backends." alt="" coords="273,31,408,56"/>
+<area shape="rect" id="node2" title="Base common type for all versioned Backend abstract classes." alt="" coords="5,5,83,31"/>
+</map>
