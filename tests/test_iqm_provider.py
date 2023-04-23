@@ -18,8 +18,8 @@ from importlib.metadata import version
 from numbers import Number
 import uuid
 
-from iqm_client import IQMClient
-from mockito import mock, patch, when
+from iqm_client import IQMClient, RunResult, RunStatus
+from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
@@ -28,6 +28,7 @@ from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
 from qiskit_iqm import IQMBackend, IQMJob, IQMProvider
+from qiskit_iqm.iqm_provider import IQMFacadeBackend
 
 
 @pytest.fixture
@@ -38,13 +39,15 @@ def backend(linear_architecture_3q):
 
 
 @pytest.fixture
-def qubit_mapping():
-    return {'0': 'QB1', '1': 'QB2', '2': 'QB3'}
+def circuit():
+    return QuantumCircuit(3, 3)
 
 
 @pytest.fixture
-def circuit():
-    return QuantumCircuit(3, 3)
+def circuit_2() -> QuantumCircuit:
+    circuit = QuantumCircuit(5)
+    circuit.cz(0, 1)
+    return circuit
 
 
 def test_default_options(backend):
@@ -85,6 +88,14 @@ def test_serialize_circuit_raises_error_for_unsupported_instruction(backend, cir
     circuit.sx(0)
     with pytest.raises(ValueError, match=f"Instruction 'sx' in the circuit '{circuit.name}' is not natively supported"):
         backend.serialize_circuit(circuit)
+
+
+def test_serialize_circuit_raises_error_for_unsupported_metadata(backend, circuit):
+    circuit.append(RGate(theta=np.pi, phi=0), [0])
+    circuit.metadata = {'some-key': complex(1.0, 2.0)}
+    with pytest.warns(UserWarning):
+        serialized_circuit = backend.serialize_circuit(circuit)
+    assert serialized_circuit.metadata is None
 
 
 @pytest.mark.parametrize(
@@ -214,13 +225,13 @@ def test_run_gets_options_from_execute_function(backend, circuit):
     )
 
 
-def test_run_single_circuit(backend, qubit_mapping, circuit):
+def test_run_single_circuit(backend, circuit):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
     when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping=qubit_mapping, calibration_set_id=None, shots=shots
+        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=None, shots=shots
     ).thenReturn(some_id)
     job = backend.run(circuit, shots=shots)
     assert isinstance(job, IQMJob)
@@ -234,8 +245,10 @@ def test_run_single_circuit(backend, qubit_mapping, circuit):
 
 def test_run_sets_circuit_metadata_to_the_job(backend):
     circuit_1 = QuantumCircuit(3)
+    circuit_1.cz(0, 1)
     circuit_1.metadata = {'key1': 'value1', 'key2': 'value2'}
     circuit_2 = QuantumCircuit(3)
+    circuit_2.cz(0, 1)
     circuit_2.metadata = {'key1': 'value2', 'key2': 'value1'}
     some_id = uuid.uuid4()
     backend.client.submit_circuits = lambda *args, **kwargs: some_id
@@ -245,20 +258,20 @@ def test_run_sets_circuit_metadata_to_the_job(backend):
     assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
-def test_run_with_custom_calibration_set_id(backend, qubit_mapping, circuit):
+def test_run_with_custom_calibration_set_id(backend, circuit):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
     some_id = uuid.uuid4()
     shots = 10
     calibration_set_id = '67e77465-d90e-4839-986e-9270f952b743'
     when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
+        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=calibration_set_id, shots=shots
     ).thenReturn(some_id)
 
     backend.run([circuit], calibration_set_id=calibration_set_id, shots=shots)
 
 
-def test_run_batch_of_circuits(backend, qubit_mapping, circuit):
+def test_run_batch_of_circuits(backend, circuit):
     theta = Parameter('theta')
     theta_range = np.linspace(0, 2 * np.pi, 3)
     shots = 10
@@ -269,7 +282,7 @@ def test_run_batch_of_circuits(backend, qubit_mapping, circuit):
     circuits = [circuit.bind_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [backend.serialize_circuit(circuit) for circuit in circuits]
     when(backend.client).submit_circuits(
-        circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=None, shots=shots
+        circuits_serialized, qubit_mapping={'0': 'QB1', '1': 'QB2'}, calibration_set_id=None, shots=shots
     ).thenReturn(some_id)
 
     job = backend.run(circuits, shots=shots)
@@ -308,3 +321,57 @@ def test_client_signature():
     provider = IQMProvider(url)
     backend = provider.get_backend()
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
+
+
+def test_get_facade_backend(adonis_architecture):
+    url = 'http://some_url'
+    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+
+    provider = IQMProvider(url)
+    backend = provider.get_backend('facade_adonis')
+
+    assert isinstance(backend, IQMFacadeBackend)
+    assert backend.client._base_url == url
+    assert backend.num_qubits == 5
+    assert set(backend.coupling_map.get_edges()) == {(0, 2), (1, 2), (3, 2), (4, 2)}
+
+
+def test_get_facade_backend_raises_error_non_matching_architecture(linear_architecture_3q):
+    url = 'http://some_url'
+
+    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+
+    provider = IQMProvider(url)
+    with pytest.raises(ValueError, match='Quantum architecture of the remote quantum computer does not match Adonis.'):
+        provider.get_backend('facade_adonis')
+
+
+def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architecture, circuit_2):
+    url = 'http://some_url'
+    result = {
+        'status': 'failed',
+        'measurements': [],
+        'metadata': {
+            'request': {
+                'shots': 1024,
+                'circuits': [
+                    {
+                        'name': 'circuit_2',
+                        'instructions': [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}],
+                    }
+                ],
+            }
+        },
+    }
+    result_status = {'status': 'failed'}
+
+    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(IQMClient).submit_circuits(ANY, qubit_mapping=ANY, calibration_set_id=ANY, shots=ANY).thenReturn(uuid.uuid4())
+    when(IQMClient).get_run(ANY).thenReturn(RunResult.from_dict(result))
+    when(IQMClient).get_run_status(ANY).thenReturn(RunStatus.from_dict(result_status))
+
+    provider = IQMProvider(url)
+    backend = provider.get_backend('facade_adonis')
+
+    with pytest.raises(RuntimeError):
+        backend.run(circuit_2)

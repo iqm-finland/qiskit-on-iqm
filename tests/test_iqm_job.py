@@ -16,7 +16,7 @@
 """
 import uuid
 
-from iqm_client import IQMClient, RunResult, RunStatus, Status
+from iqm_client import Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
 import mockito
 from mockito import mock, when
 import pytest
@@ -48,12 +48,17 @@ def iqm_result_two_registers():
 
 @pytest.fixture()
 def iqm_metadata():
+    measurement = Instruction(name='measurement', implementation=None, qubits=('0',), args={'key': 'm1'})
     return {
         'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
         'request': {
             'shots': 4,
-            'circuits': [{'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 'b'}}],
+            'circuits': [{'name': 'circuit_1', 'instructions': (measurement,), 'metadata': {'a': 'b'}}],
             'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
+            'qubit_mapping': [
+                SingleQubitMapping(logical_name='0', physical_name='QB1'),
+                SingleQubitMapping(logical_name='1', physical_name='QB2'),
+            ],
         },
     }
 
@@ -83,8 +88,9 @@ def test_status_done(job, iqm_metadata):
     assert job._result is None
 
 
-def test_status_running(job):
-    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.PENDING))
+@pytest.mark.parametrize('run_status', [Status.PENDING_COMPILATION, Status.PENDING_EXECUTION])
+def test_status_running(job, run_status):
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=run_status))
     assert job.status() == JobStatus.RUNNING
 
 
@@ -109,6 +115,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     for r in result.results:
         assert r.calibration_set_id == uuid.UUID('df124054-f6d8-41f9-b880-8487f90018f9')
         assert r.data.metadata == {'a': 'b'}
+    assert result.request.qubit_mapping == iqm_metadata['request']['qubit_mapping']
 
     # Assert that repeated call does not query the client (i.e. works without calling the mocked wait_for_results)
     # and call to status() does not call any functions from client.
@@ -119,15 +126,21 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
 
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
+    instruction_meta = [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}]
     iqm_metadata_multiple_circuits = {
         'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
         'request': {
             'shots': 4,
             'circuits': [
-                {'name': 'circuit_1', 'instructions': [], 'metadata': {'a': 0}},
-                {'name': 'circuit_2', 'instructions': [], 'metadata': {'a': 1}},
+                {'name': 'circuit_1', 'instructions': instruction_meta, 'metadata': {'a': 0}},
+                {'name': 'circuit_2', 'instructions': instruction_meta, 'metadata': {'a': 1}},
             ],
             'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
+            'qubit_mapping': [
+                SingleQubitMapping(logical_name='0', physical_name='QB1'),
+                SingleQubitMapping(logical_name='1', physical_name='QB2'),
+                SingleQubitMapping(logical_name='2', physical_name='QB3'),
+            ],
         },
     }
     client_result = RunResult(
@@ -148,3 +161,4 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
     for i, r in enumerate(result.results):
         assert r.calibration_set_id == uuid.UUID('9d75904b-0c93-461f-b1dc-bd200cfad1f1')
         assert r.data.metadata == {'a': i}
+    assert result.request.qubit_mapping == iqm_metadata_multiple_circuits['request']['qubit_mapping']
