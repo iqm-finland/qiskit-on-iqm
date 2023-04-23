@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Fake backend for simulating IQM quantum computers.
+Backend for simulating IQM quantum computers.
 """
 from __future__ import annotations
 
@@ -75,8 +75,9 @@ class IQMErrorProfile:
 
 
 class IQMFakeBackend(IQMBackendBase):
-    """Fake backend that mimics the behaviour of IQM quantum computers. Can be used to perform noisy gate-level
-    simulations of quantum circuit execution on IQM hardware.
+    """Simulated backend that mimics the behaviour of IQM quantum computers.
+
+    Can be used to perform noisy gate-level simulations of quantum circuit execution on IQM hardware.
 
     A fake backend contains information about a specific IQM system, such as the quantum architecture (number of qubits,
     connectivity), the native gate set, and a noise model based on system parameters such as relaxation (:math:`T_1`)

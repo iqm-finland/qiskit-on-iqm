@@ -135,8 +135,10 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
+        if result.status == Status.PENDING_COMPILATION:
+            return JobStatus.QUEUED
+        if result.status == Status.PENDING_EXECUTION:
+            return JobStatus.RUNNING
         if result.status == Status.READY:
             return JobStatus.DONE
-        if result.status == Status.FAILED:
-            return JobStatus.ERROR
-        return JobStatus.RUNNING
+        return JobStatus.ERROR

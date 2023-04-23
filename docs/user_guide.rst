@@ -81,8 +81,9 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
                                      ║
     meas_2: ═════════════════════════╩═
 
-To execute this circuit against an IQM quantum computer you need to initialize an appropriate Qiskit backend instance
-that represents the IQM quantum computer under use, and simply use Qiskit's ``execute`` function as normal:
+To execute this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider` instance
+with the IQM server URL, use it to retrieve an :class:`.IQMBackend` instance representing the
+quantum computer, and use Qiskit's ``execute`` function as usual:
 
 .. code-block:: python
 
@@ -100,11 +101,11 @@ Note that the code snippet above assumes that you have set the variable ``iqm_se
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
-then set the ``IQM_TOKENS_FILE`` environment variable to use those tokens.
+then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
 See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`__ for details.
-Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
-or pass them as arguments to the constructor of :class:`.IQMProvider`, however this approach is less secure
-and considered as deprecated.
+Alternatively, you may authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
+:envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
+arguments to :meth:`.IQMProvider.__init__`, however this approach is less secure and considered deprecated.
 
 The results of a job, that was executed with IQM quantum computer, contain the original request with the
 qubit mapping that was used in execution. You can check this mapping once execution has finished.
@@ -264,9 +265,9 @@ More advanced examples
 In this section we demonstrate some less simple examples of using Qiskit on IQM and its interoperability with various
 tools available in Qiskit.
 
-It is possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
-running the circuits one by one. For batch execution there are some restriction that we shall keep in mind, namely all
-circuits have to measure the same qubits, and all circuits will be executed for the same number of shots. For starters,
+It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
+time efficient than running the circuits one by one. Batch execution has some restrictions: all the
+circuits must measure the same qubits, and be executed for the same number of shots. For starters,
 let's construct two circuits preparing and measuring different Bell states:
 
 .. code-block:: python

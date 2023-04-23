@@ -13,7 +13,6 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
-from importlib.metadata import version
 from functools import reduce
 from typing import Optional, Union
 import warnings
@@ -24,6 +23,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
+from qiskit_iqm import __version__
 from qiskit_iqm.fake_backends import IQMFakeAdonis
 from qiskit_iqm.iqm_backend import IQMBackendBase
 from qiskit_iqm.iqm_job import IQMJob
@@ -211,7 +211,7 @@ class IQMProvider:
         Args:
             name: optional name of a custom facade backend
         """
-        client = IQMClient(self.url, client_signature=f'qiskit-iqm {version("qiskit-iqm")}', **self.user_auth_args)
+        client = IQMClient(self.url, client_signature=f'qiskit-iqm {__version__}', **self.user_auth_args)
         if name == 'facade_adonis':
             return IQMFacadeBackend(client)
         return IQMBackend(client)
