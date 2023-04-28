@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.14
+============
+
+* Generate license information for dependencies on every release `#57 <https://github.com/iqm-finland/qiskit-on-iqm/pull/57>`_
+
 Version 7.13
 ============
 
