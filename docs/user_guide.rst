@@ -258,6 +258,17 @@ connectivity and supported gates should match the 5-qubit Adonis architecture).
    :meth:`.IQMFacadeBackend.run` checks for the presence of unused classical registers, and fails with an error if there
    are any.
 
+Custom calibration set
+----------------------
+
+Calibration set is a set of instrument and QPU settings which ensures the accuracy of computation. An IQM server uses
+the best available (at the time of execution) calibration set automatically. If you know an ID (UUID4) of a specific
+calibration set, you can provide it to Qiskit's ``execute`` method (which passes the value down to
+:meth:`.IQMBackend.run`):
+
+.. code-block:: python
+    job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+
 More advanced examples
 ----------------------
 
