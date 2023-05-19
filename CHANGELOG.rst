@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 7.15
+============
+
+* Add info about custom calibration set to user guide `#59 <https://github.com/iqm-finland/qiskit-on-iqm/pull/59>`_
+
 Version 7.14
 ============
 
