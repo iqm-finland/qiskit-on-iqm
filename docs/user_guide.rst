@@ -267,6 +267,7 @@ calibration set, you can provide it to Qiskit's ``execute`` method (which passes
 :meth:`.IQMBackend.run`):
 
 .. code-block:: python
+
     job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
 More advanced examples
