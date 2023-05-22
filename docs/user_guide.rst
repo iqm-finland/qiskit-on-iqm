@@ -98,6 +98,15 @@ that represents the IQM quantum computer under use, and simply use Qiskit's ``ex
 
 Note that the code snippet above assumes that you have set the variable ``iqm_server_url``.
 
+You can optionally set IQM backend specific settings as additional keyword arguments to the ``execute`` method (which
+passes the values down to :meth:`.IQMBackend.run`). For example, an IQM server uses the best available calibration set
+automatically; however, if you know an ID (UUID4) of a specific calibration set that you want to use, you can provide it
+as follows:
+
+.. code-block:: python
+
+    job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the ``IQM_TOKENS_FILE`` environment variable to use those tokens.
