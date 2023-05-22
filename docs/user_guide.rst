@@ -108,7 +108,7 @@ as follows:
     job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
 Another example is disabling the server-side circuit duration check. If any circuit in a job would take too long to
-execute compared to the coherence time of the QPU, the server will disqualify the job, not execute any circuits.
+execute compared to the coherence time of the QPU, the server will disqualify the job and not execute any circuits.
 In some special cases, you may want to disable this as follows:
 
 .. code-block:: python
