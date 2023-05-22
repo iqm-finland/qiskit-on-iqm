@@ -44,7 +44,7 @@ class IQMBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, calibration_set_id=None)
+        return Options(shots=1024, calibration_set_id=None, circuit_duration_check=True)
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -61,6 +61,7 @@ class IQMBackend(IQMBackendBase):
 
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
+        circuit_duration_check = options.get('circuit_duration_check', self.options.circuit_duration_check)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         used_indices: set[int] = reduce(
@@ -68,7 +69,8 @@ class IQMBackend(IQMBackendBase):
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
         uuid = self.client.submit_circuits(
-            circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots
+            circuits_serialized, qubit_mapping=qubit_mapping, calibration_set_id=calibration_set_id, shots=shots,
+            circuit_duration_check=circuit_duration_check
         )
         job = IQMJob(self, str(uuid), shots=shots)
         job.circuit_metadata = [c.metadata for c in circuits]
