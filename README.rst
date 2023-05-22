@@ -8,14 +8,16 @@
 Qiskit on IQM
 #############
 
-`Qiskit <https://qiskit.org/>`_ adapter for `IQM's <https://www.meetiqm.com>`_ quantum architectures.
+`Qiskit <https://qiskit.org/>`_ adapter for `IQM's <https://www.meetiqm.com>`_ quantum computers.
 
 
 What is it good for?
 ====================
 
-Currently Qiskit on IQM can run a compatible Qiskit quantum circuit on an IQM quantum computer.
-
+With Qiskit on IQM, you can for example:
+* Transpile arbitrary quantum circuits for IQM quantum architectures
+* Simulate execution with an IQM-specific noise model
+* Execute quantum circuits on an IQM quantum computer
 
 Installation
 ============
@@ -43,4 +45,4 @@ Copyright
 
 Qiskit on IQM is free software, released under the Apache License, version 2.0.
 
-Copyright 2022 Qiskit on IQM developers.
+Copyright 2022-2023 Qiskit on IQM developers.
