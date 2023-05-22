@@ -107,6 +107,17 @@ as follows:
 
     job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
+Another example is disabling the server-side circuit duration check. If any circuit in a job would take too long to
+execute compared to the coherence time of the QPU, the server will disqualify the job, not execute any circuits.
+In some special cases, you may want to disable this as follows:
+
+.. code-block:: python
+
+    job = execute(circuit, backend, shots=1000, circuit_duration_check=False)
+
+Disabling the circuit duration check may be limited to certain users or groups, depending on the server settings.
+In normal use, the circuit duration check should always remain enabled.
+
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the ``IQM_TOKENS_FILE`` environment variable to use those tokens.
