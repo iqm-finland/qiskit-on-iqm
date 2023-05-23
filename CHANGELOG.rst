@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 7.15
+Version 7.16
 ============
 
 * Upgrade to IQMClient version 12.4 `#61 <https://github.com/iqm-finland/qiskit-on-iqm/pull/61>`_
