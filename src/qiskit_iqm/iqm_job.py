@@ -20,7 +20,7 @@ from datetime import date
 from typing import Optional, Union
 import uuid
 
-from iqm_client import CircuitMeasurementResults, IQMClient, RunRequest, RunResult, Status
+from iqm_client import CircuitMeasurementResults, HeraldingMode, IQMClient, RunRequest, RunResult, Status
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
@@ -50,27 +50,32 @@ class IQMJob(JobV1):
         if iqm_result.measurements is None:
             raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
 
-        shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
-        shape = (shots, 1)  # only one qubit is measured per measurement op
+        requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
+        # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
+        expect_exact_shots = iqm_result.metadata.request.heralding == HeraldingMode.NONE
 
         return [
-            (circuit.name, self._format_measurement_results(measurements, shape))
+            (circuit.name, self._format_measurement_results(measurements, requested_shots, expect_exact_shots))
             for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.request.circuits)
         ]
 
     @staticmethod
     def _format_measurement_results(
-        measurement_results: CircuitMeasurementResults, shape: tuple[int, int]
+        measurement_results: CircuitMeasurementResults, requested_shots: int, expect_exact_shots: bool = True
     ) -> list[str]:
         formatted_results: dict[int, np.ndarray] = {}
-        shots = shape[0]
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
-
-            if res.shape != shape:
-                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected {shape}')
+            # in Qiskit each measurement is a separate single-qubit instruction. qiskit-iqm assigns unique measurement
+            # key to each such instruction, so only one column is expected per measurement key.
+            if res.shape[1] != 1:
+                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected (*, 1)')
             res = res[:, 0]
+
+            shots = len(res)
+            if expect_exact_shots and shots != requested_shots:
+                raise ValueError(f'Expected {requested_shots} shots but got {shots} for measurement result {mk}')
 
             # group the measurements into cregs, fill in zeros for unused bits
             creg = formatted_results.setdefault(mk.creg_idx, np.zeros((shots, mk.creg_len), dtype=int))
@@ -80,7 +85,7 @@ class IQMJob(JobV1):
         # 2. Within each register the highest index is the most significant, so it goes to the leftmost position.
         return [
             ' '.join(''.join(map(str, res[s, ::-1])) for _, res in sorted(formatted_results.items(), reverse=True))
-            for s in range(shots)
+            for s in range(len(res))
         ]
 
     def submit(self):

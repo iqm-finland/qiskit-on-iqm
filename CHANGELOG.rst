@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 8.2
+============
+
+* Add ``heralding`` option to ``IQMBackend``. `#63 <https://github.com/iqm-finland/qiskit-on-iqm/pull/63>`_
+* Upgrade to ``IQMClient`` version 12.5. `#63 <https://github.com/iqm-finland/qiskit-on-iqm/pull/63>`_
+
 Version 8.1
 ===========
 
