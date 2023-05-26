@@ -16,6 +16,7 @@
 from importlib.metadata import version
 from functools import reduce
 from typing import Optional, Union
+from uuid import UUID
 import warnings
 
 from iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
@@ -69,15 +70,15 @@ class IQMBackend(IQMBackendBase):
             lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
-        uuid = self.client.submit_circuits(
+        job_id = self.client.submit_circuits(
             circuits_serialized,
             qubit_mapping=qubit_mapping,
-            calibration_set_id=calibration_set_id,
+            calibration_set_id=UUID(calibration_set_id) if calibration_set_id else None,
             shots=shots,
             circuit_duration_check=circuit_duration_check,
             heralding=heralding,
         )
-        job = IQMJob(self, str(uuid), shots=shots)
+        job = IQMJob(self, str(job_id), shots=shots)
         job.circuit_metadata = [c.metadata for c in circuits]
         return job
 
