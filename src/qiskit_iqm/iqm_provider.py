@@ -18,7 +18,7 @@ from functools import reduce
 from typing import Optional, Union
 import warnings
 
-from iqm_client import Circuit, Instruction, IQMClient
+from iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
 from iqm_client.util import to_json_dict
 import numpy as np
 from qiskit import QuantumCircuit
@@ -44,7 +44,7 @@ class IQMBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, calibration_set_id=None, circuit_duration_check=True)
+        return Options(shots=1024, calibration_set_id=None, circuit_duration_check=True, heralding=HeraldingMode.NONE)
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -62,6 +62,7 @@ class IQMBackend(IQMBackendBase):
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
         circuit_duration_check = options.get('circuit_duration_check', self.options.circuit_duration_check)
+        heralding = options.get('heralding', self.options.heralding)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         used_indices: set[int] = reduce(
@@ -74,6 +75,7 @@ class IQMBackend(IQMBackendBase):
             calibration_set_id=calibration_set_id,
             shots=shots,
             circuit_duration_check=circuit_duration_check,
+            heralding=heralding,
         )
         job = IQMJob(self, str(uuid), shots=shots)
         job.circuit_metadata = [c.metadata for c in circuits]
