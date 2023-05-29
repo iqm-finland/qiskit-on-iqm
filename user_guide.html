@@ -266,6 +266,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/8.0/user_guide.html">8.0</a></li>
+    
+    
       <li class="version_item"><a href="versions/7.9/user_guide.html">7.9</a></li>
     
     
@@ -624,7 +627,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/7.9/user_guide.html">7.9</a>.
+    For the latest released version, please have a look at <a href="versions/8.0/user_guide.html">8.0</a>.
     
   </strong>
 </div>
@@ -645,13 +648,12 @@ computer.</p>
 <p>Here’s the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:</p>
 <ol class="arabic simple">
-<li><p>Download the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/examples/bell_measure.py">bell_measure.py example file</a> (Save Page As…)</p></li>
+<li><p>Download the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/28b614461cfe952fe3ce63bee222e4b48037012c/examples/bell_measure.py">bell_measure.py example file</a> (Save Page As…)</p></li>
 <li><p>Install Qiskit on IQM as instructed below (feel free to skip the import statement)</p></li>
 <li><p>Install Cortex CLI and log in as instructed in the <a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli">documentation</a></p></li>
 <li><p>Set the environment variable as instructed by Cortex CLI after logging in</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">python</span> <span class="pre">bell_measure.py</span> <span class="pre">--server_url</span> <span class="pre">https://demo.qc.iqm.fi/cocos</span></code> – replace the example URL with the correct one</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">python</span> <span class="pre">bell_measure.py</span> <span class="pre">--cortex_server_url</span> <span class="pre">https://demo.qc.iqm.fi/cocos</span></code> – replace the example URL with the correct one</p></li>
 <li><p>If you’re connecting to a real quantum computer, the output should show almost half of the measurements resulting in ‘00’ and almost half in ‘11’ – if this is the case, things are set up correctly!</p></li>
-<li><p>Alternatively, add flag <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">facade_adonis</span></code> to submit the circuit to an IQM quantum computer for validation, but compute the results in a local Adonis simulator; the output should be similar to the output from a real quantum computer</p></li>
 </ol>
 </section>
 <section id="installation">
@@ -823,13 +825,13 @@ can create a copy of the fake Adonis instance with updated error profile:</p>
 </section>
 <section id="running-a-quantum-circuit-on-a-facade-backend">
 <h2>Running a quantum circuit on a facade backend<a class="headerlink" href="#running-a-quantum-circuit-on-a-facade-backend" title="Permalink to this headline">#</a></h2>
-<p>Circuits can be executed against a “simulated” environment: an IQM server that has no real quantum computer hardware.
+<p>Circuits can be executed against a mock environment: an IQM server that has no real quantum computer hardware.
 Results from such executions are random bits. This may be useful when developing and testing software integrations.</p>
-<p>Qiskit on IQM contains <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMFacadeBackend.html#qiskit_iqm.iqm_provider.IQMFacadeBackend" title="qiskit_iqm.iqm_provider.IQMFacadeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFacadeBackend</span></code></a>, which allows to combine the “simulated” remote execution with a local
+<p>Qiskit on IQM contains <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMFacadeBackend.html#qiskit_iqm.iqm_provider.IQMFacadeBackend" title="qiskit_iqm.iqm_provider.IQMFacadeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFacadeBackend</span></code></a>, which allows to combine the mock remote execution with a local
 noisy quantum circuit simulation. This way you can both validate your integration as well as get an idea of the expected circuit execution results.</p>
 <p>To run a circuit this way, use the <cite>facade_adonis</cite> backend retrieved from the provider. Note that the provider must be
 initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
-connectivity and supported gates should match the 5-qubit Adonis architecture).</p>
+connectivity, and the native gateset should match the 5-qubit Adonis architecture).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
 <span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
