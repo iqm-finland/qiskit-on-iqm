@@ -266,6 +266,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/8.1/user_guide.html">8.1</a></li>
+    
+    
       <li class="version_item"><a href="versions/8.0/user_guide.html">8.0</a></li>
     
     
@@ -627,7 +630,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/8.0/user_guide.html">8.0</a>.
+    For the latest released version, please have a look at <a href="versions/8.1/user_guide.html">8.1</a>.
     
   </strong>
 </div>
@@ -719,6 +722,14 @@ as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">calibration_set_id</span><span class="o">=</span><span class="s2">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Another example is disabling the server-side circuit duration check. If any circuit in a job would take too long to
+execute compared to the coherence time of the QPU, the server will disqualify the job and not execute any circuits.
+In some special cases, you may want to disable this as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">circuit_duration_check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Disabling the circuit duration check may be limited to certain users or groups, depending on the server settings.
+In normal use, the circuit duration check should always remain enabled.</p>
 <p>If the IQM server you are connecting to requires authentication, you will also have to use
 <a class="reference external" href="https://github.com/iqm-finland/cortex-cli">Cortex CLI</a> to retrieve and automatically refresh access tokens,
 then set the <code class="docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable to use those tokens.
