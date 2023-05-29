@@ -231,7 +231,7 @@ def test_run_single_circuit(backend, circuit):
     some_id = uuid.uuid4()
     shots = 10
     when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=None, shots=shots
+        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=None, shots=shots, circuit_duration_check=True
     ).thenReturn(some_id)
     job = backend.run(circuit, shots=shots)
     assert isinstance(job, IQMJob)
@@ -265,10 +265,26 @@ def test_run_with_custom_calibration_set_id(backend, circuit):
     shots = 10
     calibration_set_id = '67e77465-d90e-4839-986e-9270f952b743'
     when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=calibration_set_id, shots=shots
+        [circuit_ser],
+        qubit_mapping={'0': 'QB1'},
+        calibration_set_id=calibration_set_id,
+        shots=shots,
+        circuit_duration_check=True,
     ).thenReturn(some_id)
 
     backend.run([circuit], calibration_set_id=calibration_set_id, shots=shots)
+
+
+def test_run_with_duration_check_disabled(backend, circuit):
+    circuit.measure(0, 0)
+    circuit_ser = backend.serialize_circuit(circuit)
+    some_id = uuid.uuid4()
+    shots = 10
+    when(backend.client).submit_circuits(
+        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=None, shots=shots, circuit_duration_check=False
+    ).thenReturn(some_id)
+
+    backend.run([circuit], shots=shots, circuit_duration_check=False)
 
 
 def test_run_batch_of_circuits(backend, circuit):
@@ -282,7 +298,11 @@ def test_run_batch_of_circuits(backend, circuit):
     circuits = [circuit.bind_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [backend.serialize_circuit(circuit) for circuit in circuits]
     when(backend.client).submit_circuits(
-        circuits_serialized, qubit_mapping={'0': 'QB1', '1': 'QB2'}, calibration_set_id=None, shots=shots
+        circuits_serialized,
+        qubit_mapping={'0': 'QB1', '1': 'QB2'},
+        calibration_set_id=None,
+        shots=shots,
+        circuit_duration_check=True,
     ).thenReturn(some_id)
 
     job = backend.run(circuits, shots=shots)
@@ -366,7 +386,9 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     result_status = {'status': 'failed'}
 
     when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
-    when(IQMClient).submit_circuits(ANY, qubit_mapping=ANY, calibration_set_id=ANY, shots=ANY).thenReturn(uuid.uuid4())
+    when(IQMClient).submit_circuits(
+        ANY, qubit_mapping=ANY, calibration_set_id=ANY, shots=ANY, circuit_duration_check=ANY
+    ).thenReturn(uuid.uuid4())
     when(IQMClient).get_run(ANY).thenReturn(RunResult.from_dict(result))
     when(IQMClient).get_run_status(ANY).thenReturn(RunStatus.from_dict(result_status))
 

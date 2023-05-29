@@ -21,7 +21,7 @@ requires-python = ">=3.9, <3.11"
 dependencies = [
     "numpy",
     "qiskit ~= 0.42.1",
-    "iqm-client >= 12.2, < 13.0"
+    "iqm-client >= 12.4, < 13.0"
 ]
 
 [project.urls]

@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 8.1
+===========
+
+* Upgrade to IQMClient version 12.4 `#61 <https://github.com/iqm-finland/qiskit-on-iqm/pull/61>`_
+* Add parameter ``circuit_duration_check`` allowing to control server-side maximum circuit duration check `#61 <https://github.com/iqm-finland/qiskit-on-iqm/pull/61>`_
 
 Version 8.0
 ===========
