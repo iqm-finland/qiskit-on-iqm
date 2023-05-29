@@ -2,6 +2,13 @@
 Changelog
 =========
 
+
+Version 8.0
+===========
+
+* Update the README `#58 <https://github.com/iqm-finland/qiskit-on-iqm/pull/58>`_ and `#60 <https://github.com/iqm-finland/qiskit-on-iqm/pull/60>`_
+* Clarify the example script `#62 <https://github.com/iqm-finland/qiskit-on-iqm/pull/62>`_
+
 Version 7.15
 ============
 
