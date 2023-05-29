@@ -19,13 +19,12 @@ Hello, world!
 Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
-1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/examples/bell_measure.py>`_ (Save Page As...)
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/28b614461cfe952fe3ce63bee222e4b48037012c/examples/bell_measure.py>`_ (Save Page As...)
 2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
 3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
 4. Set the environment variable as instructed by Cortex CLI after logging in
-5. Run ``$ python bell_measure.py --server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
+5. Run ``$ python bell_measure.py --cortex_server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
 6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00' and almost half in '11' – if this is the case, things are set up correctly!
-7. Alternatively, add flag ``--backend facade_adonis`` to submit the circuit to an IQM quantum computer for validation, but compute the results in a local Adonis simulator; the output should be similar to the output from a real quantum computer
 
 
 Installation
@@ -245,15 +244,15 @@ can create a copy of the fake Adonis instance with updated error profile:
 Running a quantum circuit on a facade backend
 ---------------------------------------------
 
-Circuits can be executed against a "simulated" environment: an IQM server that has no real quantum computer hardware.
+Circuits can be executed against a mock environment: an IQM server that has no real quantum computer hardware.
 Results from such executions are random bits. This may be useful when developing and testing software integrations.
 
-Qiskit on IQM contains :class:`.IQMFacadeBackend`, which allows to combine the "simulated" remote execution with a local
+Qiskit on IQM contains :class:`.IQMFacadeBackend`, which allows to combine the mock remote execution with a local
 noisy quantum circuit simulation. This way you can both validate your integration as well as get an idea of the expected circuit execution results.
 
 To run a circuit this way, use the `facade_adonis` backend retrieved from the provider. Note that the provider must be
 initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
-connectivity and supported gates should match the 5-qubit Adonis architecture).
+connectivity, and the native gateset should match the 5-qubit Adonis architecture).
 
 .. code-block:: python
 
