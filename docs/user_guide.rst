@@ -97,25 +97,47 @@ that represents the IQM quantum computer under use, and simply use Qiskit's ``ex
 
 Note that the code snippet above assumes that you have set the variable ``iqm_server_url``.
 
-You can optionally set IQM backend specific settings as additional keyword arguments to the ``execute`` method (which
-passes the values down to :meth:`.IQMBackend.run`). For example, an IQM server uses the best available calibration set
-automatically; however, if you know an ID (UUID4) of a specific calibration set that you want to use, you can provide it
-as follows:
+You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
+passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
+you want to use, you can provide it as follows:
 
 .. code-block:: python
 
     job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
-Another example is disabling the server-side circuit duration check. If any circuit in a job would take too long to
-execute compared to the coherence time of the QPU, the server will disqualify the job and not execute any circuits.
-In some special cases, you may want to disable this as follows:
 
-.. code-block:: python
+Alternatively, you can update the values of the options directly on the backend instance using the :meth:`.IQMBackend.set_options`
+and then call execution methods without specifying additional keyword arguments. You can view all available options and
+their current values using `backend.options`. Below table summarizes currently available options:
 
-    job = execute(circuit, backend, shots=1000, circuit_duration_check=False)
+.. list-table::
+   :widths: 25 20 25 100
+   :header-rows: 1
 
-Disabling the circuit duration check may be limited to certain users or groups, depending on the server settings.
-In normal use, the circuit duration check should always remain enabled.
+   * - Name
+     - Type
+     - Example value
+     - Description
+   * - shots
+     - int
+     - 1207
+     - Number of shots.
+   * - calibration_set_id
+     - str
+     - "f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"
+     - Indicates the calibration set to use. By default it is `None`, which means an IQM server will use the best
+       available calibration set automatically. The value is string representation of a UUID.
+   * - circuit_duration_check
+     - bool
+     - False
+     - Enable/Disable server-side circuit duration check. The default value is `True`, which means if any job is
+       estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
+       the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
+       limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.
+   * - heralding
+     - :py:class:`~iqm_client.iqm_client.HeraldingMode`
+     - "zeros"
+     - Heralding mode to use during execution. The default value is "none".
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
