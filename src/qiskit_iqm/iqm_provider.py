@@ -45,7 +45,9 @@ class IQMBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, calibration_set_id=None, circuit_duration_check=True, heralding=HeraldingMode.NONE)
+        return Options(
+            shots=1024, calibration_set_id=None, circuit_duration_check=True, heralding_mode=HeraldingMode.NONE
+        )
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -63,7 +65,7 @@ class IQMBackend(IQMBackendBase):
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
         circuit_duration_check = options.get('circuit_duration_check', self.options.circuit_duration_check)
-        heralding = options.get('heralding', self.options.heralding)
+        heralding_mode = options.get('heralding_mode', self.options.heralding_mode)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         used_indices: set[int] = reduce(
@@ -76,7 +78,7 @@ class IQMBackend(IQMBackendBase):
             calibration_set_id=UUID(calibration_set_id) if calibration_set_id else None,
             shots=shots,
             circuit_duration_check=circuit_duration_check,
-            heralding=heralding,
+            heralding_mode=heralding_mode,
         )
         job = IQMJob(self, str(job_id), shots=shots)
         job.circuit_metadata = [c.metadata for c in circuits]

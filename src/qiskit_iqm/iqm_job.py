@@ -52,7 +52,7 @@ class IQMJob(JobV1):
 
         requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
-        expect_exact_shots = iqm_result.metadata.request.heralding == HeraldingMode.NONE
+        expect_exact_shots = iqm_result.metadata.request.heralding_mode == HeraldingMode.NONE
 
         return [
             (circuit.name, self._format_measurement_results(measurements, requested_shots, expect_exact_shots))

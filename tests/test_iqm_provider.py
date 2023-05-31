@@ -57,7 +57,7 @@ def submit_circuits_default_kwargs() -> dict:
         'calibration_set_id': None,
         'shots': 1024,
         'circuit_duration_check': True,
-        'heralding': HeraldingMode.NONE,
+        'heralding_mode': HeraldingMode.NONE,
     }
 
 
@@ -304,9 +304,9 @@ def test_run_uses_heralding_mode_none_by_default(backend, circuit, submit_circui
 def test_run_with_heralding_mode_zeros(backend, circuit, submit_circuits_default_kwargs, job_id):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    kwargs = submit_circuits_default_kwargs | {'heralding': HeraldingMode.ZEROS, 'qubit_mapping': {'0': 'QB1'}}
+    kwargs = submit_circuits_default_kwargs | {'heralding_mode': HeraldingMode.ZEROS, 'qubit_mapping': {'0': 'QB1'}}
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
-    backend.run([circuit], heralding='zeros')
+    backend.run([circuit], heralding_mode='zeros')
 
 
 def test_run_batch_of_circuits(backend, circuit, submit_circuits_default_kwargs, job_id):
