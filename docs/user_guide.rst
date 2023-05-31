@@ -134,7 +134,7 @@ their current values using `backend.options`. Below table summarizes currently a
        estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
        the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
        limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.
-   * - heralding
+   * - heralding_mode
      - :py:class:`~iqm_client.iqm_client.HeraldingMode`
      - "zeros"
      - Heralding mode to use during execution. The default value is "none".
