@@ -64,6 +64,8 @@ class IQMBackend(IQMBackendBase):
 
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
+        if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
+            calibration_set_id = UUID(calibration_set_id)
         circuit_duration_check = options.get('circuit_duration_check', self.options.circuit_duration_check)
         heralding_mode = options.get('heralding_mode', self.options.heralding_mode)
 
@@ -75,7 +77,7 @@ class IQMBackend(IQMBackendBase):
         job_id = self.client.submit_circuits(
             circuits_serialized,
             qubit_mapping=qubit_mapping,
-            calibration_set_id=UUID(calibration_set_id) if calibration_set_id else None,
+            calibration_set_id=calibration_set_id if calibration_set_id else None,
             shots=shots,
             circuit_duration_check=circuit_duration_check,
             heralding_mode=heralding_mode,

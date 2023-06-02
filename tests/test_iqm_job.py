@@ -16,7 +16,7 @@
 """
 import uuid
 
-from iqm_client import Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
+from iqm_client import HeraldingMode, Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
 import mockito
 from mockito import mock, when
 import pytest
@@ -37,8 +37,8 @@ def job(adonis_architecture):
 
 
 @pytest.fixture()
-def iqm_result_single_register():
-    return {'c_2_0_0': [[0], [1], [0], [1]], 'c_2_0_1': [[1], [1], [1], [0]]}
+def iqm_result_no_shots():
+    return {'c_2_0_0': [], 'c_2_0_1': []}
 
 
 @pytest.fixture()
@@ -123,6 +123,22 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert isinstance(result, QiskitResult)
     assert job.status() == JobStatus.DONE
     mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))
+
+
+def test_result_no_shots(job, iqm_result_no_shots, iqm_metadata):
+    iqm_metadata['request']['heralding_mode'] = HeraldingMode.ZEROS
+    client_result = RunResult(
+        status=Status.READY,
+        measurements=[iqm_result_no_shots],
+        metadata=iqm_metadata,
+    )
+    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+
+    result = job.result()
+
+    assert isinstance(result, QiskitResult)
+    assert result.get_memory() == []
+    assert result.get_counts() == Counts({})
 
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
