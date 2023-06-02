@@ -271,12 +271,16 @@ def test_run_sets_circuit_metadata_to_the_job(backend):
     assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
-def test_run_with_custom_calibration_set_id(backend, circuit, submit_circuits_default_kwargs, job_id):
+@pytest.mark.parametrize(
+    'calibration_set_id', ['67e77465-d90e-4839-986e-9270f952b743', uuid.UUID('67e77465-d90e-4839-986e-9270f952b743')]
+)
+def test_run_with_custom_calibration_set_id(
+    backend, circuit, submit_circuits_default_kwargs, job_id, calibration_set_id
+):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    calibration_set_id = '67e77465-d90e-4839-986e-9270f952b743'
     kwargs = submit_circuits_default_kwargs | {
-        'calibration_set_id': uuid.UUID(calibration_set_id),
+        'calibration_set_id': uuid.UUID('67e77465-d90e-4839-986e-9270f952b743'),
         'qubit_mapping': {'0': 'QB1'},
     }
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)

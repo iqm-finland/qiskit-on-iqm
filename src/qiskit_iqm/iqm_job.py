@@ -19,6 +19,7 @@ from collections import Counter
 from datetime import date
 from typing import Optional, Union
 import uuid
+import warnings
 
 from iqm_client import CircuitMeasurementResults, HeraldingMode, IQMClient, RunRequest, RunResult, Status
 import numpy as np
@@ -67,11 +68,15 @@ class IQMJob(JobV1):
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
-            # in Qiskit each measurement is a separate single-qubit instruction. qiskit-iqm assigns unique measurement
-            # key to each such instruction, so only one column is expected per measurement key.
-            if res.shape[1] != 1:
-                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected (*, 1)')
-            res = res[:, 0]
+            if len(v) == 0 and not expect_exact_shots:
+                warnings.warn('Received measurement results with zero results')
+                res = np.array([])
+            else:
+                # in Qiskit each measurement is a separate single-qubit instruction. qiskit-iqm assigns unique
+                # measurement key to each such instruction, so only one column is expected per measurement key.
+                if res.shape[1] != 1:
+                    raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected (*, 1)')
+                res = res[:, 0]
 
             shots = len(res)
             if expect_exact_shots and shots != requested_shots:
