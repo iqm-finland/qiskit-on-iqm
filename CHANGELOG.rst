@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 8.3
+============
+
+* Bugfixes for ``heralding`` run with zero shots returned. `#65 <https://github.com/iqm-finland/qiskit-on-iqm/pull/65>`_
+* Allow specifying ``calibration_set_id`` both as string and as ``UUID``. `#65 <https://github.com/iqm-finland/qiskit-on-iqm/pull/65>`_
+
 Version 8.2
 ============
 
