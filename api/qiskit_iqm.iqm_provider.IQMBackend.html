@@ -266,6 +266,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="../versions/8.2/index.html">8.2</a></li>
+    
+    
       <li class="version_item"><a href="../versions/8.1/index.html">8.1</a></li>
     
     
@@ -523,7 +526,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/8.1/index.html">8.1</a>.
+    For the latest released version, please have a look at <a href="../versions/8.2/index.html">8.2</a>.
     
   </strong>
 </div>
@@ -539,7 +542,7 @@ title="Print to PDF"
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>client</strong> (<em>iqm_client.iqm_client.IQMClient</em>) – client instance for communicating with an IQM server</p></li>
+<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.IQMClient.html#iqm_client.iqm_client.IQMClient" title="(in IQM client vdev)"><em>iqm_client.iqm_client.IQMClient</em></a>) – client instance for communicating with an IQM server</p></li>
 <li><p><strong>**kwargs</strong> – optional arguments to be passed to the parent Backend initializer</p></li>
 </ul>
 </dd>
@@ -549,20 +552,20 @@ title="Print to PDF"
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>provider</strong> – An optional backwards reference to the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code> object that the backend
+<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.Provider.html#qiskit.providers.Provider" title="(in Qiskit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code></a> object that the backend
 is from</p></li>
 <li><p><strong>name</strong> – An optional name for the backend</p></li>
 <li><p><strong>description</strong> – An optional description of the backend</p></li>
 <li><p><strong>online_date</strong> – An optional datetime the backend was brought online</p></li>
 <li><p><strong>backend_version</strong> – An optional backend version string. This differs
-from the <code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code> attribute
-as <code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code> is for the
+from the <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> attribute
+as <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> is for the
 abstract <code class="xref py py-attr docutils literal notranslate"><span class="pre">Backend</span></code> abstract interface
 version of the object while <code class="docutils literal notranslate"><span class="pre">backend_version</span></code> is for
 versioning the backend itself.</p></li>
 <li><p><strong>fields</strong> – kwargs for the values to use to override the default
 options.</p></li>
-<li><p><strong>client</strong> (<em>iqm_client.iqm_client.IQMClient</em>) – </p></li>
+<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.IQMClient.html#iqm_client.iqm_client.IQMClient" title="(in IQM client vdev)"><em>iqm_client.iqm_client.IQMClient</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -618,7 +621,7 @@ run in a single job.</p>
 <dt class="sig sig-object py" id="qiskit_iqm.iqm_provider.IQMBackend.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_provider.IQMBackend.run" title="Permalink to this definition">#</a></dt>
 <dd><p>Run on the backend.</p>
-<p>This method returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code> object
+<p>This method returns a <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.Job.html#qiskit.providers.Job" title="(in Qiskit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code></a> object
 that runs circuits. Depending on the backend this may be either an async
 or sync call. It is at the discretion of the provider to decide whether
 running should block until the execution is finished or not: the Job
@@ -629,7 +632,7 @@ class can handle either situation.</p>
 <li><p><strong>run_input</strong> (<em>QuantumCircuit</em><em> or </em><em>Schedule</em><em> or </em><em>ScheduleBlock</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – An
 individual or a list of
 <code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduleBlock</span></code>, or
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Schedule</span></code> objects to run on the backend.</p></li>
+<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.pulse.Schedule.html#qiskit.pulse.Schedule" title="(in Qiskit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Schedule</span></code></a> objects to run on the backend.</p></li>
 <li><p><strong>options</strong> – Any kwarg options to pass to the backend for running the
 config. If a key is also present in the options
 attribute/object then the expectation is that the value
@@ -676,7 +679,7 @@ measurement instruction, so that the results can later be reconstructed correctl
 documentation for more details).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>circuit</strong> (<em>qiskit.circuit.quantumcircuit.QuantumCircuit</em>) – quantum circuit to serialize</p>
+<dd class="field-odd"><p><strong>circuit</strong> (<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.html#qiskit.circuit.QuantumCircuit" title="(in Qiskit)"><em>qiskit.circuit.quantumcircuit.QuantumCircuit</em></a>) – quantum circuit to serialize</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>data transfer object representing the circuit</p>
@@ -685,7 +688,7 @@ documentation for more details).</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – circuit contains an unsupported instruction or is not transpiled in general</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>iqm_client.iqm_client.Circuit</p>
+<dd class="field-even"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.Circuit.html#iqm_client.iqm_client.Circuit" title="(in IQM client vdev)">iqm_client.iqm_client.Circuit</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -726,7 +729,7 @@ documentation for more details).</p>
   
     By Qiskit on IQM developers<br/>
   
-      &copy; Copyright 2022, Qiskit on IQM developers.<br/>
+      &copy; Copyright 2022-2023, Qiskit on IQM developers.<br/>
 </p>
         </footer>
     </div>

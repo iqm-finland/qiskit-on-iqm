@@ -266,6 +266,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/8.2/user_guide.html">8.2</a></li>
+    
+    
       <li class="version_item"><a href="versions/8.1/user_guide.html">8.1</a></li>
     
     
@@ -630,7 +633,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/8.1/user_guide.html">8.1</a>.
+    For the latest released version, please have a look at <a href="versions/8.2/user_guide.html">8.2</a>.
     
   </strong>
 </div>
@@ -715,21 +718,56 @@ that represents the IQM quantum computer under use, and simply use Qiskit’s <c
 </pre></div>
 </div>
 <p>Note that the code snippet above assumes that you have set the variable <code class="docutils literal notranslate"><span class="pre">iqm_server_url</span></code>.</p>
-<p>You can optionally set IQM backend specific settings as additional keyword arguments to the <code class="docutils literal notranslate"><span class="pre">execute</span></code> method (which
-passes the values down to <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMBackend.html#qiskit_iqm.iqm_provider.IQMBackend.run" title="qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>). For example, an IQM server uses the best available calibration set
-automatically; however, if you know an ID (UUID4) of a specific calibration set that you want to use, you can provide it
-as follows:</p>
+<p>You can optionally set IQM backend specific options as additional keyword arguments to the <code class="docutils literal notranslate"><span class="pre">execute</span></code> method (which
+passes the values down to <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMBackend.html#qiskit_iqm.iqm_provider.IQMBackend.run" title="qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>). For example, if you know an ID of a specific calibration set that
+you want to use, you can provide it as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">calibration_set_id</span><span class="o">=</span><span class="s2">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Another example is disabling the server-side circuit duration check. If any circuit in a job would take too long to
-execute compared to the coherence time of the QPU, the server will disqualify the job and not execute any circuits.
-In some special cases, you may want to disable this as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">circuit_duration_check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Disabling the circuit duration check may be limited to certain users or groups, depending on the server settings.
-In normal use, the circuit duration check should always remain enabled.</p>
+<p>Alternatively, you can update the values of the options directly on the backend instance using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.set_options()</span></code>
+and then call execution methods without specifying additional keyword arguments. You can view all available options and
+their current values using <cite>backend.options</cite>. Below table summarizes currently available options:</p>
+<table class="colwidths-given table">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 12%" />
+<col style="width: 15%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Example value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>shots</cite></p></td>
+<td><p>int</p></td>
+<td><p>1207</p></td>
+<td><p>Number of shots.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>calibration_set_id</cite></p></td>
+<td><p>str</p></td>
+<td><p>“f7d9642e-b0ca-4f2d-af2a-30195bd7a76d”</p></td>
+<td><p>Indicates the calibration set to use. By default it is <cite>None</cite>, which means an IQM server will use the best
+available calibration set automatically. The value is string representation of a UUID.</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>circuit_duration_check</cite></p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p>Enable/Disable server-side circuit duration check. The default value is <cite>True</cite>, which means if any job is
+estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
+the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
+limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>heralding_mode</cite></p></td>
+<td><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.HeraldingMode.html#iqm_client.iqm_client.HeraldingMode" title="(in IQM client vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeraldingMode</span></code></a></p></td>
+<td><p>“zeros”</p></td>
+<td><p>Heralding mode to use during execution. The default value is “none”.</p></td>
+</tr>
+</tbody>
+</table>
 <p>If the IQM server you are connecting to requires authentication, you will also have to use
 <a class="reference external" href="https://github.com/iqm-finland/cortex-cli">Cortex CLI</a> to retrieve and automatically refresh access tokens,
 then set the <code class="docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable to use those tokens.
@@ -992,7 +1030,7 @@ be created automatically based on the latest version definition in the CHANGELOG
   
     By Qiskit on IQM developers<br/>
   
-      &copy; Copyright 2022, Qiskit on IQM developers.<br/>
+      &copy; Copyright 2022-2023, Qiskit on IQM developers.<br/>
 </p>
         </footer>
     </div>
