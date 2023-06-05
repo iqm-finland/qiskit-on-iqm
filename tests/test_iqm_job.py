@@ -134,7 +134,8 @@ def test_result_no_shots(job, iqm_result_no_shots, iqm_metadata):
     )
     when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
 
-    result = job.result()
+    with pytest.warns(UserWarning, match='Received measurement results containing zero shots.'):
+        result = job.result()
 
     assert isinstance(result, QiskitResult)
     assert result.get_memory() == []
