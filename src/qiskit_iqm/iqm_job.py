@@ -69,7 +69,10 @@ class IQMJob(JobV1):
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
             if len(v) == 0 and not expect_exact_shots:
-                warnings.warn('Received measurement results with zero results')
+                warnings.warn(
+                    'Received measurement results containing zero shots. '
+                    'In case you are using non-default heralding mode, this could be because of bad calibration.'
+                )
                 res = np.array([])
             else:
                 # in Qiskit each measurement is a separate single-qubit instruction. qiskit-iqm assigns unique
