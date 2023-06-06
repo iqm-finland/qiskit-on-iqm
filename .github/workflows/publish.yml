@@ -16,11 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install dependencies
@@ -40,11 +40,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install dependencies
@@ -64,3 +64,29 @@ jobs:
         with:
           branch: gh-pages
           folder: build/sphinx/html
+
+  gen_licenses_info:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install pip-licenses
+      - name: Generate license information for dependencies
+        run: |
+          pip-licenses --format=confluence --with-urls > licenses.txt
+          cat -n licenses.txt | sort -uk2 | sort -n | cut -f2- > tmp && mv tmp licenses.txt  # remove duplicate lines
+      - name: Upload license information artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependencies-licenses
+          path: licenses.txt

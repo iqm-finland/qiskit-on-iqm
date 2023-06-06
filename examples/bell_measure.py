@@ -23,7 +23,11 @@ from qiskit import QuantumCircuit, execute
 from qiskit_iqm import IQMProvider
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument('--server_url', help='URL of the IQM server', default='https://demo.qc.iqm.fi/cocos')
+argparser.add_argument(
+    '--cortex_server_url',
+    help='URL of the IQM Cortex server',
+    default='https://demo.qc.iqm.fi/cocos',
+)
 server_url = argparser.parse_args().server_url
 
 circuit = QuantumCircuit(2)

@@ -19,11 +19,11 @@ Hello, world!
 Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
-1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/examples/bell_measure.py>`_ (Save Page As...)
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/28b614461cfe952fe3ce63bee222e4b48037012c/examples/bell_measure.py>`_ (Save Page As...)
 2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
 3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
 4. Set the environment variable as instructed by Cortex CLI after logging in
-5. Run ``$ python bell_measure.py --server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
+5. Run ``$ python bell_measure.py --cortex_server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
 6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00' and almost half in '11' – if this is the case, things are set up correctly!
 
 
@@ -97,6 +97,48 @@ that represents the IQM quantum computer under use, and simply use Qiskit's ``ex
 
 Note that the code snippet above assumes that you have set the variable ``iqm_server_url``.
 
+You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
+passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
+you want to use, you can provide it as follows:
+
+.. code-block:: python
+
+    job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+
+
+Alternatively, you can update the values of the options directly on the backend instance using the :meth:`.IQMBackend.set_options`
+and then call execution methods without specifying additional keyword arguments. You can view all available options and
+their current values using `backend.options`. Below table summarizes currently available options:
+
+.. list-table::
+   :widths: 25 20 25 100
+   :header-rows: 1
+
+   * - Name
+     - Type
+     - Example value
+     - Description
+   * - `shots`
+     - int
+     - 1207
+     - Number of shots.
+   * - `calibration_set_id`
+     - str
+     - "f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"
+     - Indicates the calibration set to use. By default it is `None`, which means an IQM server will use the best
+       available calibration set automatically. The value is string representation of a UUID.
+   * - `circuit_duration_check`
+     - bool
+     - False
+     - Enable/Disable server-side circuit duration check. The default value is `True`, which means if any job is
+       estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
+       the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
+       limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.
+   * - `heralding_mode`
+     - :py:class:`~iqm_client.iqm_client.HeraldingMode`
+     - "zeros"
+     - Heralding mode to use during execution. The default value is "none".
+
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the ``IQM_TOKENS_FILE`` environment variable to use those tokens.
@@ -104,6 +146,22 @@ See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme
 Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
 or pass them as arguments to the constructor of :class:`.IQMProvider`, however this approach is less secure
 and considered as deprecated.
+
+The results of a job, that was executed with IQM quantum computer, contain the original request with the
+qubit mapping that was used in execution. You can check this mapping once execution has finished.
+
+.. code-block:: python
+
+    print(job.result().request.qubit_mapping)
+
+::
+
+    [
+      SingleQubitMapping(logical_name='0', physical_name='QB1'),
+      SingleQubitMapping(logical_name='1', physical_name='QB2'),
+      SingleQubitMapping(logical_name='2', physical_name='QB3')
+    ]
+
 
 The ``backend`` instance we created above provides all the standard backend functionality that one expects from a
 backend in Qiskit. For this example, I am connected to an IQM backend that features a 5-qubit chip with star-like
@@ -135,6 +193,7 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 :meth:`.IQMBackend.qubit_name_to_index` and :meth:`.IQMBackend.index_to_qubit_name` can become handy.
 
 Now we can study how the circuit gets transpiled:
+
 
 .. code-block:: python
 
@@ -174,9 +233,10 @@ Now we can study how the circuit gets transpiled:
 Noisy simulation of quantum circuit execution
 ---------------------------------------------
 
-The execution of circuits can be simulated locally, with a noise model to mimic the real hardware.
-To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a certain QPU,
-or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with pre-populated properties and noise model.
+The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
+To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a
+certain QPU, or subclasses of it such as :class:`.IQMFakeAdonis` that represent certain quantum architectures with
+pre-populated properties and noise model.
 
 .. code-block:: python
 
@@ -204,6 +264,41 @@ a copy of the fake Adonis instance with updated error profile:
     error_profile.t1s['QB2'] = 30000.0  # Change T1 time of QB2 as example
     custom_fake_backend = backend.copy_with_error_profile(error_profile)
 
+Running a quantum circuit on a facade backend
+---------------------------------------------
+
+Circuits can be executed against a mock environment: an IQM server that has no real quantum computer hardware.
+Results from such executions are random bits. This may be useful when developing and testing software integrations.
+
+Qiskit on IQM contains :class:`.IQMFacadeBackend`, which allows to combine the mock remote execution with a local
+noisy quantum circuit simulation. This way you can both validate your integration as well as get an idea of the expected circuit execution results.
+
+To run a circuit this way, use the `facade_adonis` backend retrieved from the provider. Note that the provider must be
+initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
+connectivity, and the native gateset should match the 5-qubit Adonis architecture).
+
+.. code-block:: python
+
+    from qiskit import execute, QuantumCircuit
+    from qiskit_iqm import IQMProvider
+
+    circuit = QuantumCircuit(2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.measure_all()
+
+    provider = IQMProvider("https://demo.qc.iqm.fi/cocos/")
+    backend = provider.get_backend('facade_adonis')
+    job = execute(circuit, backend, shots=1000)
+    job.result().get_counts()
+
+.. note::
+
+   When a classical register is added to the circuit, Qiskit fills it with classical bits of value 0 by default. If the
+   register is not used later, and the circuit is submitted to the IQM server, the results will not contain those
+   0-filled bits. To make sure the facade backend returns results in the same format as a real IQM server,
+   :meth:`.IQMFacadeBackend.run` checks for the presence of unused classical registers, and fails with an error if there
+   are any.
 
 More advanced examples
 ----------------------

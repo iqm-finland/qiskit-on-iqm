@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.abspath(py_path))
 # -- Project information -----------------------------------------------------
 
 project = 'Qiskit on IQM'
-copyright = '2022, Qiskit on IQM developers'
+copyright = '2022-2023, Qiskit on IQM developers'
 author = 'Qiskit on IQM developers'
 
 # The short X.Y version.
@@ -153,6 +153,8 @@ intersphinx_mapping = {
     'matplotlib': ('https://matplotlib.org/stable', None),
     'numpy': ('https://numpy.org/doc/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+    'qiskit': ('https://qiskit.org/documentation', None),
+    'iqm_client': ('https://iqm-finland.github.io/iqm-client', None),
 }
 
 extlinks = {

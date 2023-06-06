@@ -19,8 +19,9 @@ from collections import Counter
 from datetime import date
 from typing import Optional, Union
 import uuid
+import warnings
 
-from iqm_client import CircuitMeasurementResults, IQMClient, RunResult, Status
+from iqm_client import CircuitMeasurementResults, HeraldingMode, IQMClient, RunRequest, RunResult, Status
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
@@ -41,6 +42,7 @@ class IQMJob(JobV1):
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None
+        self._request: Optional[RunRequest] = None
         self._client: IQMClient = backend.client
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
@@ -49,27 +51,39 @@ class IQMJob(JobV1):
         if iqm_result.measurements is None:
             raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
 
-        shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
-        shape = (shots, 1)  # only one qubit is measured per measurement op
+        requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
+        # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
+        expect_exact_shots = iqm_result.metadata.request.heralding_mode == HeraldingMode.NONE
 
         return [
-            (circuit.name, self._format_measurement_results(measurements, shape))
+            (circuit.name, self._format_measurement_results(measurements, requested_shots, expect_exact_shots))
             for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.request.circuits)
         ]
 
     @staticmethod
     def _format_measurement_results(
-        measurement_results: CircuitMeasurementResults, shape: tuple[int, int]
+        measurement_results: CircuitMeasurementResults, requested_shots: int, expect_exact_shots: bool = True
     ) -> list[str]:
         formatted_results: dict[int, np.ndarray] = {}
-        shots = shape[0]
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
+            if len(v) == 0 and not expect_exact_shots:
+                warnings.warn(
+                    'Received measurement results containing zero shots. '
+                    'In case you are using non-default heralding mode, this could be because of bad calibration.'
+                )
+                res = np.array([])
+            else:
+                # in Qiskit each measurement is a separate single-qubit instruction. qiskit-iqm assigns unique
+                # measurement key to each such instruction, so only one column is expected per measurement key.
+                if res.shape[1] != 1:
+                    raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected (*, 1)')
+                res = res[:, 0]
 
-            if res.shape != shape:
-                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected {shape}')
-            res = res[:, 0]
+            shots = len(res)
+            if expect_exact_shots and shots != requested_shots:
+                raise ValueError(f'Expected {requested_shots} shots but got {shots} for measurement result {mk}')
 
             # group the measurements into cregs, fill in zeros for unused bits
             creg = formatted_results.setdefault(mk.creg_idx, np.zeros((shots, mk.creg_len), dtype=int))
@@ -79,7 +93,7 @@ class IQMJob(JobV1):
         # 2. Within each register the highest index is the most significant, so it goes to the leftmost position.
         return [
             ' '.join(''.join(map(str, res[s, ::-1])) for _, res in sorted(formatted_results.items(), reverse=True))
-            for s in range(shots)
+            for s in range(len(res))
         ]
 
     def submit(self):
@@ -96,6 +110,7 @@ class IQMJob(JobV1):
         if not self._result:
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
             self._calibration_set_id = results.metadata.calibration_set_id
+            self._request = results.metadata.request
             self._result = self._format_iqm_results(results)
             # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
             # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
@@ -124,6 +139,7 @@ class IQMJob(JobV1):
                 for i, (name, measurement_results) in enumerate(self._result)
             ],
             'date': date.today(),
+            'request': self._request,
         }
         return Result.from_dict(result_dict)
 

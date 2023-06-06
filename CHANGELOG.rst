@@ -2,6 +2,65 @@
 Changelog
 =========
 
+Version 8.3
+============
+
+* Bugfixes for ``heralding`` run with zero shots returned. `#65 <https://github.com/iqm-finland/qiskit-on-iqm/pull/65>`_
+* Allow specifying ``calibration_set_id`` both as string and as ``UUID``. `#65 <https://github.com/iqm-finland/qiskit-on-iqm/pull/65>`_
+
+Version 8.2
+============
+
+* Add ``heralding`` option to ``IQMBackend``. `#63 <https://github.com/iqm-finland/qiskit-on-iqm/pull/63>`_
+* Upgrade to ``IQMClient`` version 12.5. `#63 <https://github.com/iqm-finland/qiskit-on-iqm/pull/63>`_
+
+Version 8.1
+===========
+
+* Upgrade to IQMClient version 12.4 `#61 <https://github.com/iqm-finland/qiskit-on-iqm/pull/61>`_
+* Add parameter ``circuit_duration_check`` allowing to control server-side maximum circuit duration check `#61 <https://github.com/iqm-finland/qiskit-on-iqm/pull/61>`_
+
+Version 8.0
+===========
+
+* Update the README `#58 <https://github.com/iqm-finland/qiskit-on-iqm/pull/58>`_ and `#60 <https://github.com/iqm-finland/qiskit-on-iqm/pull/60>`_
+* Clarify the example script `#62 <https://github.com/iqm-finland/qiskit-on-iqm/pull/62>`_
+
+Version 7.15
+============
+
+* Add info about custom calibration set to user guide `#59 <https://github.com/iqm-finland/qiskit-on-iqm/pull/59>`_
+
+Version 7.14
+============
+
+* Generate license information for dependencies on every release `#57 <https://github.com/iqm-finland/qiskit-on-iqm/pull/57>`_
+
+Version 7.13
+============
+
+* Upgrade to IQMClient version 12.2 `#56 <https://github.com/iqm-finland/qiskit-on-iqm/pull/56>`_
+
+Version 7.12
+============
+
+* Upgrade to IQMClient version 12.0 `#55 <https://github.com/iqm-finland/qiskit-on-iqm/pull/55>`_
+
+Version 7.11
+============
+
+* Bump Qiskit dependency to `~= 0.42.1` `#54 <https://github.com/iqm-finland/qiskit-on-iqm/pull/54>`_
+
+Version 7.10
+============
+
+* Add facade backend for Adonis by introducing ``facade_adonis`` backend type `#53 <https://github.com/iqm-finland/qiskit-on-iqm/pull/53>`_
+
+Version 7.9
+===========
+
+* Add request into result metadata `#51 <https://github.com/iqm-finland/qiskit-on-iqm/pull/51>`_
+
 Version 7.8
 ===========
 
