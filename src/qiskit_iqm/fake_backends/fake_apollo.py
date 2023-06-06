@@ -78,7 +78,7 @@ def IQMFakeApollo() -> IQMFakeBackend:
             ["QB19", "QB20"],
         ],
     )
-    error_profile = IQMErrorProfile(  # Coherence times in nanoseconds
+    error_profile = IQMErrorProfile(
         t1s={
             "QB1": 27000.0,
             "QB2": 33000.0,
