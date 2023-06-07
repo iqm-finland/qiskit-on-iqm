@@ -46,10 +46,9 @@ class IQMErrorProfile:
             lead to average gate fidelities that would be determined by benchmarking.
         single_qubit_gate_durations: Gate duration (in ns) for each single-qubit gate
         two_qubit_gate_durations: Gate duration (in ns) for each two-qubit gate.
-        readout_errors: Single-qubit readout errors, corresponding key is the physical qubit name. For each qubit,
-            specified are the probabilities :math:`P(1|0)` to observe the state :math:`\\ket{1}`
-            given the true state should be :math:`\\ket{0}` and :math:`P(0|1)` to observe the state :math:`\\ket{0}`
-            given the true state should be :math:`\\ket{1}`.
+        readout_errors: Maps physical qubit names to dicts that describe their single-qubit readout errors.
+            For each qubit, the inner dict maps the state labels "0" and "1" to the probability :math:`P(\\neg x|x)`
+            of observing the state :math:`\\ket{\\neg x}` given the true state is :math:`\\ket{x}`.
         id_: Identifier of the chip sample. Defaults to None.
 
     Example:
