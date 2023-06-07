@@ -224,3 +224,14 @@ def test_fake_backend_with_readout_errors_more_qubits_than_in_quantum_architectu
             },
         )
         IQMFakeBackend(linear_architecture_3q, error_profile)
+
+
+def test_noise_model_contains_all_errors(backend):
+    """
+    Test that the noise model contains all necessary errors.
+    """
+    target_instructions = ["r", "cz", "measure"]
+
+    noise_model_instructions = backend.noise_model.noise_instructions
+
+    assert set(target_instructions) == set(noise_model_instructions)
