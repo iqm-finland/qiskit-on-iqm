@@ -33,7 +33,7 @@ from qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 # pylint: disable=too-many-instance-attributes
 @dataclass
 class IQMErrorProfile:
-    """Collection of various properties of an IQM QPU to be used for constructing error model.
+    r"""Collection of various properties of an IQM QPU to be used for constructing error model.
 
     Args:
         t1s: :math:`T_1` times (in ns) for each qubit of the chip, corresponding key is the physical qubit name.
@@ -47,8 +47,8 @@ class IQMErrorProfile:
         single_qubit_gate_durations: Gate duration (in ns) for each single-qubit gate
         two_qubit_gate_durations: Gate duration (in ns) for each two-qubit gate.
         readout_errors: Maps physical qubit names to dicts that describe their single-qubit readout errors.
-            For each qubit, the inner dict maps the state labels "0" and "1" to the probability :math:`P(\\neg x|x)`
-            of observing the state :math:`\\ket{\\neg x}` given the true state is :math:`\\ket{x}`.
+            For each qubit, the inner dict maps the state labels "0" and "1" to the probability :math:`P(\neg x|x)`
+            of observing the state :math:`\ket{\neg x}` given the true state is :math:`\ket{x}`.
         id_: Identifier of the chip sample. Defaults to None.
 
     Example:
