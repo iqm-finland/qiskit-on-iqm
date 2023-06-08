@@ -230,8 +230,8 @@ Now we can study how the circuit gets transpiled:
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
 
-Simulating the execution of a transpiled circuit locally
---------------------------------------------------------
+Noisy simulation of quantum circuit execution
+---------------------------------------------
 
 The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
 To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a
@@ -253,9 +253,10 @@ pre-populated properties and noise model.
     job.result().get_counts()
 
 
-Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis
-chip. If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you
-can create a copy of the fake Adonis instance with updated error profile:
+Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
+The noise model includes relaxation (:math:`T_1`) and dephasing (:math:`T_2`), gate infidelities and readout errors.
+If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you can create
+a copy of the fake Adonis instance with updated error profile:
 
 .. code-block:: python
 
