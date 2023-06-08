@@ -32,6 +32,8 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>window.MathJax = {"tex": {"macros": {"vr": "\\vec{r}", "ket": ["\\left| #1 \\right\\rangle", 1], "iprod": ["\\left\\langle #1 | #2 \\right\\rangle", 2]}}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -264,6 +266,9 @@
 <ul class="version_list">
     
       <li class="version_item current_version">dev</li>
+    
+    
+      <li class="version_item"><a href="versions/9.0/user_guide.html">9.0</a></li>
     
     
       <li class="version_item"><a href="versions/8.3/user_guide.html">8.3</a></li>
@@ -531,8 +536,8 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#simulating-the-execution-of-a-transpiled-circuit-locally">
-   Simulating the execution of a transpiled circuit locally
+  <a class="reference internal nav-link" href="#noisy-simulation-of-quantum-circuit-execution">
+   Noisy simulation of quantum circuit execution
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -590,8 +595,8 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#simulating-the-execution-of-a-transpiled-circuit-locally">
-   Simulating the execution of a transpiled circuit locally
+  <a class="reference internal nav-link" href="#noisy-simulation-of-quantum-circuit-execution">
+   Noisy simulation of quantum circuit execution
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -636,7 +641,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/8.3/user_guide.html">8.3</a>.
+    For the latest released version, please have a look at <a href="versions/9.0/user_guide.html">9.0</a>.
     
   </strong>
 </div>
@@ -847,8 +852,8 @@ ancilla_1 -&gt; 3 ────────────────────�
 </pre></div>
 </div>
 </section>
-<section id="simulating-the-execution-of-a-transpiled-circuit-locally">
-<h2>Simulating the execution of a transpiled circuit locally<a class="headerlink" href="#simulating-the-execution-of-a-transpiled-circuit-locally" title="Permalink to this headline">#</a></h2>
+<section id="noisy-simulation-of-quantum-circuit-execution">
+<h2>Noisy simulation of quantum circuit execution<a class="headerlink" href="#noisy-simulation-of-quantum-circuit-execution" title="Permalink to this headline">#</a></h2>
 <p>The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
 To this end, Qiskit on IQM provides the class  <a class="reference internal" href="api/qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeBackend</span></code></a> that can be instantiated with properties of a
 certain QPU, or subclasses of it such as <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> that represent certain quantum architectures with
@@ -866,9 +871,10 @@ pre-populated properties and noise model.</p>
 <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Above, we use an <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> instance to run a noisy simulation of <code class="docutils literal notranslate"><span class="pre">circuit</span></code> on a simulated 5-qubit Adonis
-chip. If you want to customize the noise model instead of using the default one provided by <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code>, you
-can create a copy of the fake Adonis instance with updated error profile:</p>
+<p>Above, we use an <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> instance to run a noisy simulation of <code class="docutils literal notranslate"><span class="pre">circuit</span></code> on a simulated 5-qubit Adonis chip.
+The noise model includes relaxation (<span class="math notranslate nohighlight">\(T_1\)</span>) and dephasing (<span class="math notranslate nohighlight">\(T_2\)</span>), gate infidelities and readout errors.
+If you want to customize the noise model instead of using the default one provided by <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code>, you can create
+a copy of the fake Adonis instance with updated error profile:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">error_profile</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">error_profile</span>
 <span class="n">error_profile</span><span class="o">.</span><span class="n">t1s</span><span class="p">[</span><span class="s1">&#39;QB2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">30000.0</span>  <span class="c1"># Change T1 time of QB2 as example</span>
 <span class="n">custom_fake_backend</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">copy_with_error_profile</span><span class="p">(</span><span class="n">error_profile</span><span class="p">)</span>

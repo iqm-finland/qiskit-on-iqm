@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="../versions/9.0/index.html">9.0</a></li>
+    
+    
       <li class="version_item"><a href="../versions/8.3/index.html">8.3</a></li>
     
     
@@ -531,7 +534,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/8.3/index.html">8.3</a>.
+    For the latest released version, please have a look at <a href="../versions/9.0/index.html">9.0</a>.
     
   </strong>
 </div>
@@ -541,7 +544,7 @@ title="Print to PDF"
 <h1>qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile<a class="headerlink" href="#qiskit-iqm-fake-backends-iqm-fake-backend-iqmerrorprofile" title="Permalink to this headline">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.fake_backends.iqm_fake_backend.</span></span><span class="sig-name descname"><span class="pre">IQMErrorProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t1s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t2s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_qubit_gate_depolarizing_error_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_qubit_gate_depolarizing_error_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_qubit_gate_durations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_qubit_gate_durations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.fake_backends.iqm_fake_backend.</span></span><span class="sig-name descname"><span class="pre">IQMErrorProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t1s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t2s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_qubit_gate_depolarizing_error_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_qubit_gate_depolarizing_error_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_qubit_gate_durations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_qubit_gate_durations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout_errors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Collection of various properties of an IQM QPU to be used for constructing error model.</p>
 <dl class="field-list simple">
@@ -557,6 +560,9 @@ connection. Using the values in the depolarizing channel, concatenated with a th
 lead to average gate fidelities that would be determined by benchmarking.</p></li>
 <li><p><strong>single_qubit_gate_durations</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em>) – Gate duration (in ns) for each single-qubit gate</p></li>
 <li><p><strong>two_qubit_gate_durations</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em>) – Gate duration (in ns) for each two-qubit gate.</p></li>
+<li><p><strong>readout_errors</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>]</em><em>]</em>) – Maps physical qubit names to dicts that describe their single-qubit readout errors.
+For each qubit, the inner dict maps the state labels “0” and “1” to the probability <span class="math notranslate nohighlight">\(P(\neg x|x)\)</span>
+of observing the state <span class="math notranslate nohighlight">\(\ket{\neg x}\)</span> given the true state is <span class="math notranslate nohighlight">\(\ket{x}\)</span>.</p></li>
 <li><p><strong>id</strong> – Identifier of the chip sample. Defaults to None.</p></li>
 <li><p><strong>id_</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em>) – </p></li>
 </ul>
@@ -573,6 +579,9 @@ lead to average gate fidelities that would be determined by benchmarking.</p></l
     <span class="n">two_qubit_gate_depolarizing_error_parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cz&quot;</span><span class="p">:</span> <span class="p">{(</span><span class="s2">&quot;QB1&quot;</span><span class="p">,</span> <span class="s2">&quot;QB2&quot;</span><span class="p">):</span> <span class="mf">0.08</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;QB2&quot;</span><span class="p">,</span> <span class="s2">&quot;QB3&quot;</span><span class="p">):</span> <span class="mf">0.03</span><span class="p">}},</span>
     <span class="n">single_qubit_gate_durations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mf">50.</span><span class="p">},</span>
     <span class="n">two_qubit_gate_durations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cz&quot;</span><span class="p">:</span> <span class="mf">100.</span><span class="p">},</span>
+    <span class="n">readout_errors</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;QB1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">},</span>
+                    <span class="s2">&quot;QB2&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">},</span>
+                    <span class="s2">&quot;QB3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">}},</span>
     <span class="n">id_</span><span class="o">=</span><span class="s2">&quot;threequbit-example_sample&quot;</span>
 <span class="p">)</span>
 </pre></div>
@@ -603,6 +612,9 @@ lead to average gate fidelities that would be determined by benchmarking.</p></l
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">two_qubit_gate_durations</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">readout_errors</span></code></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
