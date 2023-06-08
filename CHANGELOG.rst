@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 8.4
+Version 9.0
 ============
 * Add readout errors to ``IQMErrorProfile``. `#50 <https://github.com/iqm-finland/qiskit-on-iqm/pull/50>`_
 
