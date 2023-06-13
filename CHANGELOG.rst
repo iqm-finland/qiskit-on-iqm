@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.0
+============
+
+* Fix a bug in the Hello world example. `#67 <https://github.com/iqm-finland/qiskit-on-iqm/pull/67>`_
+
 Version 9.0
 ============
 * Add readout errors to ``IQMErrorProfile``. `#50 <https://github.com/iqm-finland/qiskit-on-iqm/pull/50>`_
