@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.1
+============
+
+* Update the script link for the Hello world example. `#68 <https://github.com/iqm-finland/qiskit-on-iqm/pull/68>`_
+
 Version 10.0
 ============
 
