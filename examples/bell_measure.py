@@ -28,7 +28,7 @@ argparser.add_argument(
     help='URL of the IQM Cortex server',
     default='https://demo.qc.iqm.fi/cocos',
 )
-server_url = argparser.parse_args().server_url
+server_url = argparser.parse_args().cortex_server_url
 
 circuit = QuantumCircuit(2)
 circuit.h(0)
