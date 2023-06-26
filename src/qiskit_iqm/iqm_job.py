@@ -119,10 +119,9 @@ class IQMJob(JobV1):
         """
         try:
             self._client.abort_job(uuid.UUID(self._job_id))
-            print(f'Job {self._job_id} cancelled successfully.')
             return True
         except JobAbortionError as e:
-            print(f'Failed to cancel job: {e}')
+            warnings.warn(f'Failed to cancel job: {e}')
             return False
 
     def result(self) -> Result:

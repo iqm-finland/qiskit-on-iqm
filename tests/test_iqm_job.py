@@ -77,16 +77,18 @@ def test_submit_raises(job):
         job.submit()
 
 
-def test_cancel_successful(job):
+def test_cancel_successful(job, recwarn):
     when(job._client).abort_job(uuid.UUID(job.job_id())).thenReturn(None)
     assert job.cancel() is True
+    assert len(recwarn) == 0
     verify(job._client, times=1).abort_job(uuid.UUID(job.job_id()))
     unstub()
 
 
 def test_cancel_failed(job):
     when(job._client).abort_job(uuid.UUID(job.job_id())).thenRaise(JobAbortionError)
-    assert job.cancel() is False
+    with pytest.warns(UserWarning, match='Failed to cancel job'):
+        assert job.cancel() is False
     verify(job._client, times=1).abort_job(uuid.UUID(job.job_id()))
     unstub()
 
