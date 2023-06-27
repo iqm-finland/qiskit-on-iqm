@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 11.0
+Version 10.2
 ============
 
 * Implement ``cancel`` method for ``IQMJob``. `#69 <https://github.com/iqm-finland/qiskit-on-iqm/pull/69>`_
