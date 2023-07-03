@@ -16,9 +16,18 @@
 """
 import uuid
 
-from iqm_client import HeraldingMode, Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
+from iqm_client import (
+    HeraldingMode,
+    Instruction,
+    IQMClient,
+    JobAbortionError,
+    RunResult,
+    RunStatus,
+    SingleQubitMapping,
+    Status,
+)
 import mockito
-from mockito import mock, when
+from mockito import mock, unstub, verify, when
 import pytest
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
@@ -68,9 +77,20 @@ def test_submit_raises(job):
         job.submit()
 
 
-def test_cancel_raises(job):
-    with pytest.raises(NotImplementedError, match='Canceling jobs is currently not supported.'):
-        job.cancel()
+def test_cancel_successful(job, recwarn):
+    when(job._client).abort_job(uuid.UUID(job.job_id())).thenReturn(None)
+    assert job.cancel() is True
+    assert len(recwarn) == 0
+    verify(job._client, times=1).abort_job(uuid.UUID(job.job_id()))
+    unstub()
+
+
+def test_cancel_failed(job):
+    when(job._client).abort_job(uuid.UUID(job.job_id())).thenRaise(JobAbortionError)
+    with pytest.warns(UserWarning, match='Failed to cancel job'):
+        assert job.cancel() is False
+    verify(job._client, times=1).abort_job(uuid.UUID(job.job_id()))
+    unstub()
 
 
 def test_status_for_ready_result(job):
@@ -97,6 +117,11 @@ def test_status_running(job, run_status):
 def test_status_fail(job):
     when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.FAILED))
     assert job.status() == JobStatus.ERROR
+
+
+def test_status_cancel(job):
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.ABORTED))
+    assert job.status() == JobStatus.CANCELLED
 
 
 def test_result(job, iqm_result_two_registers, iqm_metadata):

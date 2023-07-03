@@ -21,7 +21,15 @@ from typing import Optional, Union
 import uuid
 import warnings
 
-from iqm_client import CircuitMeasurementResults, HeraldingMode, IQMClient, RunRequest, RunResult, Status
+from iqm_client import (
+    CircuitMeasurementResults,
+    HeraldingMode,
+    IQMClient,
+    JobAbortionError,
+    RunRequest,
+    RunResult,
+    Status,
+)
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
@@ -103,8 +111,18 @@ class IQMJob(JobV1):
             'checking the progress and retrieving the results of the submitted job.'
         )
 
-    def cancel(self):
-        raise NotImplementedError('Canceling jobs is currently not supported.')
+    def cancel(self) -> bool:
+        """Attempt to cancel the job.
+
+        Returns:
+            True if the job was cancelled successfully, False otherwise
+        """
+        try:
+            self._client.abort_job(uuid.UUID(self._job_id))
+            return True
+        except JobAbortionError as e:
+            warnings.warn(f'Failed to cancel job: {e}')
+            return False
 
     def result(self) -> Result:
         if not self._result:
@@ -152,4 +170,6 @@ class IQMJob(JobV1):
             return JobStatus.DONE
         if result.status == Status.FAILED:
             return JobStatus.ERROR
+        if result.status == Status.ABORTED:
+            return JobStatus.CANCELLED
         return JobStatus.RUNNING
