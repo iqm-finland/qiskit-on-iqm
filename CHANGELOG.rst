@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.3
+============
+
+* Add support for Python 3.11. `#70 <https://github.com/iqm-finland/qiskit-on-iqm/pull/70>`_
+
 Version 10.2
 ============
 
