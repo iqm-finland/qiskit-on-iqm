@@ -20,12 +20,36 @@ import re
 from typing import Final, Optional
 
 from iqm_client import QuantumArchitectureSpecification
-from qiskit.circuit import Parameter
-from qiskit.circuit.library import CZGate, Measure, RGate
+from qiskit import QuantumRegister
+from qiskit.circuit import Parameter, QuantumCircuit
+from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
+from qiskit.circuit.library import CZGate, IGate, Measure, RGate, RXGate, RYGate, RZGate, UGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
+
+
+def _add_idenity_gate_equivalances():
+    q = QuantumRegister(1, 'q')
+    def_id = QuantumCircuit(q)
+    def_id.append(UGate(0, 0, 0), [q[0]])
+    SessionEquivalenceLibrary.add_equivalence(IGate(), def_id)
+
+    q = QuantumRegister(1, 'q')
+    def_id_rx = QuantumCircuit(q)
+    def_id_rx.append(RXGate(0), [q[0]])
+    SessionEquivalenceLibrary.add_equivalence(IGate(), def_id_rx)
+
+    q = QuantumRegister(1, 'q')
+    def_id_ry = QuantumCircuit(q)
+    def_id_ry.append(RYGate(0), [q[0]])
+    SessionEquivalenceLibrary.add_equivalence(IGate(), def_id_ry)
+
+    q = QuantumRegister(1, 'q')
+    def_id_rz = QuantumCircuit(q)
+    def_id_rz.append(RZGate(0), [q[0]])
+    SessionEquivalenceLibrary.add_equivalence(IGate(), def_id_rz)
 
 
 class IQMBackendBase(BackendV2, ABC):
@@ -37,6 +61,8 @@ class IQMBackendBase(BackendV2, ABC):
 
     def __init__(self, architecture: QuantumArchitectureSpecification, **kwargs):
         super().__init__(**kwargs)
+
+        _add_idenity_gate_equivalances()
 
         def get_num_or_zero(name: str) -> int:
             match = re.search(r'(\d+)', name)

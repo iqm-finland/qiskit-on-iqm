@@ -58,6 +58,7 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
 
 def test_transpile(backend):
     circuit = QuantumCircuit(3, 3)
+    circuit.id(1)
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.cx(1, 2)
