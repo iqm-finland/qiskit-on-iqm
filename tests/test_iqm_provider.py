@@ -195,8 +195,16 @@ def test_serialize_circuit_barrier(circuit, backend):
     assert circuit_ser.instructions[1].args == {}
 
 
+def test_serialize_circuit_id(circuit, backend):
+    circuit.r(theta=np.pi, phi=0, qubit=0)
+    circuit.id(0)
+    circuit_ser = backend.serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+
+
 def test_transpile(backend, circuit):
     circuit.h(0)
+    circuit.id(1)
     circuit.cx(0, 1)
     circuit.cx(1, 2)
     circuit.cx(2, 0)
