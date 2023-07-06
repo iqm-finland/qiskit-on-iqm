@@ -184,9 +184,10 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
 
 ::
 
-    Native operations of the backend: ['r', 'cz', 'measure']
+    Native operations of the backend: ['r', 'id', 'cz', 'measure']
     Coupling map of the backend: [[0, 2], [1, 2], [2, 3], [2, 4]]
 
+Note that for IQM backends the identiy gate 'id' is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods

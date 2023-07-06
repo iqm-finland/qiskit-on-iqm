@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 10.4
+============
+
+* Support the identity gate. `#71 <https://github.com/iqm-finland/qiskit-on-iqm/pull/71>`_
+
+
 Version 10.3
 ============
 
