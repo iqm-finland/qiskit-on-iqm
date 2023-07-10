@@ -200,6 +200,7 @@ def test_serialize_circuit_id(circuit, backend):
     circuit.id(0)
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'phased_rx'
 
 
 def test_transpile(backend, circuit):
