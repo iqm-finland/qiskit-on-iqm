@@ -134,6 +134,8 @@ class IQMBackend(IQMBackendBase):
             elif instruction.name == 'measure':
                 mk = MeasurementKey.from_clbit(clbits[0], circuit)
                 instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
+            elif instruction.name == 'id':
+                pass
             else:
                 raise ValueError(
                     f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
