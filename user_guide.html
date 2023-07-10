@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/10.4/user_guide.html">10.4</a></li>
+    
+    
       <li class="version_item"><a href="versions/10.3/user_guide.html">10.3</a></li>
     
     
@@ -653,7 +656,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/10.3/user_guide.html">10.3</a>.
+    For the latest released version, please have a look at <a href="versions/10.4/user_guide.html">10.4</a>.
     
   </strong>
 </div>
@@ -822,11 +825,12 @@ connectivity:</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Coupling map of the backend: </span><span class="si">{</span><span class="n">backend</span><span class="o">.</span><span class="n">coupling_map</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Native</span> <span class="n">operations</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">,</span> <span class="s1">&#39;measure&#39;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Native</span> <span class="n">operations</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">,</span> <span class="s1">&#39;measure&#39;</span><span class="p">]</span>
 <span class="n">Coupling</span> <span class="nb">map</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>At IQM we identify qubits by their names, e.g. ‘QB1’, ‘QB2’, etc. as demonstrated above. In Qiskit, qubits are
+<p>Note that for IQM backends the identiy gate <code class="docutils literal notranslate"><span class="pre">id</span></code> is not actually a gate that is executed on the device and is simply omitted.
+At IQM we identify qubits by their names, e.g. ‘QB1’, ‘QB2’, etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.qubit_name_to_index()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.index_to_qubit_name()</span></code> can become handy.</p>
