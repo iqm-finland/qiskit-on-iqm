@@ -254,7 +254,7 @@ class IQMFakeBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, calibration_set_id=None)
+        return Options(shots=1024, calibration_set_id=None, memory=False)
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -283,9 +283,10 @@ class IQMFakeBackend(IQMBackendBase):
             raise ValueError("Empty list of circuits submitted for execution.")
 
         shots = options.get("shots", self.options.shots)
+        memory = options.get("memory", self.options.memory)
 
         # Create noisy simulator backend and run circuits
         sim_noise = AerSimulator(noise_model=self.noise_model)
-        job = sim_noise.run(circuits, shots=shots)
+        job = sim_noise.run(circuits, shots=shots, memory=memory)
 
         return job

@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.5
+============
+
+* Enable option ``memory`` in IQMFakeBackend. `#72 <https://github.com/iqm-finland/qiskit-on-iqm/pull/72>`_
+
 Version 10.4
 ============
 

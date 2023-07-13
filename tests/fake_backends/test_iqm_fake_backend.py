@@ -180,6 +180,11 @@ def test_run_single_circuit(backend):
     assert isinstance(job, JobV1)
     assert job.result() is not None
 
+    job = backend.run(circuit, qubit_mapping=None, shots=shots, memory=True)
+    assert isinstance(job, JobV1)
+    assert job.result() is not None
+    assert job.result().get_memory() is not None
+
 
 def test_error_on_empty_circuit_list(backend):
     """Test that calling run with an empty list of circuits raises a ValueError."""
