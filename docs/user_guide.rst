@@ -125,15 +125,15 @@ their current values using `backend.options`. Below table summarizes currently a
    * - `calibration_set_id`
      - str
      - "f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"
-     - Indicates the calibration set to use. By default it is `None`, which means an IQM server will use the best
-       available calibration set automatically. The value is string representation of a UUID.
+     - Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
+       available calibration set automatically.
    * - `circuit_duration_check`
      - bool
      - False
-     - Enable/Disable server-side circuit duration check. The default value is `True`, which means if any job is
-       estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
-       the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
-       limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.
+     - Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
+       estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
+       time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
+       circuit duration check should always remain enabled.
    * - `heralding_mode`
      - :py:class:`~iqm_client.iqm_client.HeraldingMode`
      - "zeros"
