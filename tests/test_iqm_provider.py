@@ -18,7 +18,7 @@ from importlib.metadata import version
 from numbers import Number
 import uuid
 
-from iqm_client import IQMClient, RunResult, RunStatus
+from iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
 from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
@@ -48,6 +48,22 @@ def circuit_2() -> QuantumCircuit:
     circuit = QuantumCircuit(5)
     circuit.cz(0, 1)
     return circuit
+
+
+@pytest.fixture
+def submit_circuits_default_kwargs() -> dict:
+    return {
+        'qubit_mapping': None,
+        'calibration_set_id': None,
+        'shots': 1024,
+        'circuit_duration_check': True,
+        'heralding_mode': HeraldingMode.NONE,
+    }
+
+
+@pytest.fixture
+def job_id():
+    return uuid.uuid4()
 
 
 def test_default_options(backend):
@@ -179,8 +195,17 @@ def test_serialize_circuit_barrier(circuit, backend):
     assert circuit_ser.instructions[1].args == {}
 
 
+def test_serialize_circuit_id(circuit, backend):
+    circuit.r(theta=np.pi, phi=0, qubit=0)
+    circuit.id(0)
+    circuit_ser = backend.serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'phased_rx'
+
+
 def test_transpile(backend, circuit):
     circuit.h(0)
+    circuit.id(1)
     circuit.cx(0, 1)
     circuit.cx(1, 2)
     circuit.cx(2, 0)
@@ -225,22 +250,19 @@ def test_run_gets_options_from_execute_function(backend, circuit):
     )
 
 
-def test_run_single_circuit(backend, circuit):
+def test_run_single_circuit(backend, circuit, submit_circuits_default_kwargs, job_id):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    some_id = uuid.uuid4()
-    shots = 10
-    when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=None, shots=shots
-    ).thenReturn(some_id)
-    job = backend.run(circuit, shots=shots)
+    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1'}}
+    when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
+    job = backend.run(circuit)
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(some_id)
+    assert job.job_id() == str(job_id)
 
     # Should also work if the circuit is passed inside a list
-    job = backend.run([circuit], shots=shots)
+    job = backend.run([circuit])
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(some_id)
+    assert job.job_id() == str(job_id)
 
 
 def test_run_sets_circuit_metadata_to_the_job(backend):
@@ -258,36 +280,62 @@ def test_run_sets_circuit_metadata_to_the_job(backend):
     assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
-def test_run_with_custom_calibration_set_id(backend, circuit):
+@pytest.mark.parametrize(
+    'calibration_set_id', ['67e77465-d90e-4839-986e-9270f952b743', uuid.UUID('67e77465-d90e-4839-986e-9270f952b743')]
+)
+def test_run_with_custom_calibration_set_id(
+    backend, circuit, submit_circuits_default_kwargs, job_id, calibration_set_id
+):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    some_id = uuid.uuid4()
-    shots = 10
-    calibration_set_id = '67e77465-d90e-4839-986e-9270f952b743'
-    when(backend.client).submit_circuits(
-        [circuit_ser], qubit_mapping={'0': 'QB1'}, calibration_set_id=calibration_set_id, shots=shots
-    ).thenReturn(some_id)
+    kwargs = submit_circuits_default_kwargs | {
+        'calibration_set_id': uuid.UUID('67e77465-d90e-4839-986e-9270f952b743'),
+        'qubit_mapping': {'0': 'QB1'},
+    }
+    when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
 
-    backend.run([circuit], calibration_set_id=calibration_set_id, shots=shots)
+    backend.run([circuit], calibration_set_id=calibration_set_id)
 
 
-def test_run_batch_of_circuits(backend, circuit):
+def test_run_with_duration_check_disabled(backend, circuit, submit_circuits_default_kwargs, job_id):
+    circuit.measure(0, 0)
+    circuit_ser = backend.serialize_circuit(circuit)
+    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1'}, 'circuit_duration_check': False}
+    when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
+
+    backend.run([circuit], circuit_duration_check=False)
+
+
+def test_run_uses_heralding_mode_none_by_default(backend, circuit, submit_circuits_default_kwargs, job_id):
+    circuit.measure(0, 0)
+    circuit_ser = backend.serialize_circuit(circuit)
+    kwargs = submit_circuits_default_kwargs | {'heralding_mode': HeraldingMode.NONE, 'qubit_mapping': {'0': 'QB1'}}
+    when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
+    backend.run([circuit])
+
+
+def test_run_with_heralding_mode_zeros(backend, circuit, submit_circuits_default_kwargs, job_id):
+    circuit.measure(0, 0)
+    circuit_ser = backend.serialize_circuit(circuit)
+    kwargs = submit_circuits_default_kwargs | {'heralding_mode': HeraldingMode.ZEROS, 'qubit_mapping': {'0': 'QB1'}}
+    when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
+    backend.run([circuit], heralding_mode='zeros')
+
+
+def test_run_batch_of_circuits(backend, circuit, submit_circuits_default_kwargs, job_id):
     theta = Parameter('theta')
     theta_range = np.linspace(0, 2 * np.pi, 3)
-    shots = 10
-    some_id = uuid.uuid4()
     circuit.cz(0, 1)
     circuit.r(theta, 0, 0)
     circuit.cz(0, 1)
     circuits = [circuit.bind_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [backend.serialize_circuit(circuit) for circuit in circuits]
-    when(backend.client).submit_circuits(
-        circuits_serialized, qubit_mapping={'0': 'QB1', '1': 'QB2'}, calibration_set_id=None, shots=shots
-    ).thenReturn(some_id)
+    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2'}}
+    when(backend.client).submit_circuits(circuits_serialized, **kwargs).thenReturn(job_id)
 
-    job = backend.run(circuits, shots=shots)
+    job = backend.run(circuits)
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(some_id)
+    assert job.job_id() == str(job_id)
 
 
 def test_error_on_empty_circuit_list(backend):
@@ -366,12 +414,12 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     result_status = {'status': 'failed'}
 
     when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
-    when(IQMClient).submit_circuits(ANY, qubit_mapping=ANY, calibration_set_id=ANY, shots=ANY).thenReturn(uuid.uuid4())
-    when(IQMClient).get_run(ANY).thenReturn(RunResult.from_dict(result))
-    when(IQMClient).get_run_status(ANY).thenReturn(RunStatus.from_dict(result_status))
+    when(IQMClient).submit_circuits(...).thenReturn(uuid.uuid4())
+    when(IQMClient).get_run(ANY(uuid.UUID)).thenReturn(RunResult.from_dict(result))
+    when(IQMClient).get_run_status(ANY(uuid.UUID)).thenReturn(RunStatus.from_dict(result_status))
 
     provider = IQMProvider(url)
     backend = provider.get_backend('facade_adonis')
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError, match='Remote execution did not succeed'):
         backend.run(circuit_2)

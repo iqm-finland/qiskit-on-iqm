@@ -31,6 +31,11 @@ def create_3q_error_profile():
             "two_qubit_gate_depolarizing_error_parameters": {"cz": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}},
             "single_qubit_gate_durations": {"phased_rx": 1.0},
             "two_qubit_gate_durations": {"cz": 1.5},
+            "readout_errors": {
+                "QB1": {"0": 0.02, "1": 0.03},
+                "QB2": {"0": 0.02, "1": 0.03},
+                "QB3": {"0": 0.02, "1": 0.03},
+            },
             "id_": "adonis-example_sample",
         }
         error_profile_contents.update(kwargs)

@@ -30,9 +30,10 @@ from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 from qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class IQMErrorProfile:
-    """Properties of an IQM QPU specimen, used for constructing an error model.
+    r"""Properties of an IQM QPU specimen, used for constructing an error model.
 
     All the attributes of this class refer to the qubits of the QPU using their physical names.
 
@@ -49,7 +50,10 @@ class IQMErrorProfile:
             qubits, leads to average gate fidelities that would be determined by benchmarking.
         single_qubit_gate_durations: Gate duration (in ns) for each single-qubit gate
         two_qubit_gate_durations: Gate duration (in ns) for each two-qubit gate.
-        id_: Identifier of the chip sample. Defaults to None.
+        readout_errors: Maps physical qubit names to dicts that describe their single-qubit readout errors.
+            For each qubit, the inner dict maps the state labels "0" and "1" to the probability :math:`P(\neg x|x)`
+            of observing the state :math:`\ket{\neg x}` given the true state is :math:`\ket{x}`.
+        id_: Identifier of the QPU specimen.
 
     Example:
         .. code-block::
@@ -61,6 +65,9 @@ class IQMErrorProfile:
                 two_qubit_gate_depolarizing_error_parameters={"cz": {("QB1", "QB2"): 0.08, ("QB2", "QB3"): 0.03}},
                 single_qubit_gate_durations={"r": 50.},
                 two_qubit_gate_durations={"cz": 100.},
+                readout_errors={"QB1": {"0": 0.02, "1": 0.03},
+                                "QB2": {"0": 0.02, "1": 0.03},
+                                "QB3": {"0": 0.02, "1": 0.03}},
                 id_="threequbit-example_sample"
             )
     """
@@ -71,6 +78,7 @@ class IQMErrorProfile:
     two_qubit_gate_depolarizing_error_parameters: dict[str, dict[tuple[str, str], float]]
     single_qubit_gate_durations: dict[str, float]
     two_qubit_gate_durations: dict[str, float]
+    readout_errors: dict[str, dict[str, float]]
     id_: Optional[str] = None
 
 
@@ -81,11 +89,11 @@ class IQMFakeBackend(IQMBackendBase):
 
     A fake backend contains information about a specific IQM system, such as the quantum architecture (number of qubits,
     connectivity), the native gate set, and a noise model based on system parameters such as relaxation (:math:`T_1`)
-    and dephasing (:math:`T_2`) times and gate infidelities.
+    and dephasing (:math:`T_2`) times, gate infidelities, and readout errors.
 
     Args:
-        architecture: Description of the quantum architecture associated with the backend instance.
-        error_profile: Describes the characteristics of a particular QPU specimen.
+        architecture: Quantum architecture associated with the backend instance.
+        error_profile: Characteristics of a particular QPU specimen.
     """
 
     def __init__(self, architecture: QuantumArchitectureSpecification, error_profile: IQMErrorProfile, **kwargs):
@@ -118,7 +126,7 @@ class IQMFakeBackend(IQMBackendBase):
     def _validate_architecture_and_error_profile(
         architecture: QuantumArchitectureSpecification, error_profile: IQMErrorProfile
     ) -> None:
-        """Verifies that the parameters of the chip sample match the constraints of its IQMQuantumArchitecture.
+        """Verifies that the parameters of the QPU error profile match the constraints of its quantum architecture.
 
         Raises:
             ValueError: when length of `t1s` and number of qubits do not match.
@@ -173,11 +181,11 @@ class IQMFakeBackend(IQMBackendBase):
         # Check that the basis gates of the chip sample match the quantum architecture's
         for property_name, specified_gates in [
             (
-                "single qubit gate depolarizing_error_parameters",
+                "single_qubit_gate_depolarizing_error_parameters",
                 error_profile.single_qubit_gate_depolarizing_error_parameters.keys(),
             ),
             (
-                "two qubit gate depolarizing_error_parameters",
+                "two_qubit_gate_depolarizing_error_parameters",
                 error_profile.two_qubit_gate_depolarizing_error_parameters.keys(),
             ),
             ("durations", (error_profile.single_qubit_gate_durations | error_profile.two_qubit_gate_durations).keys()),
@@ -186,11 +194,17 @@ class IQMFakeBackend(IQMBackendBase):
                 if gate not in architecture.operations:
                     raise ValueError(
                         (
-                            f"Gate `{gate}` in `gate_{property_name}` "
+                            f"Gate `{gate}` in `{property_name}` "
                             "is not supported by quantum architecture `{self.quantum_architecture.id_}`. "
                             f"Valid gates: {architecture.operations}"
                         )
                     )
+        if set(error_profile.readout_errors.keys()) != set(architecture.qubits):
+            raise ValueError(
+                f"The qubits specified in readout errors ({set(error_profile.readout_errors.keys())}) "
+                f"don't match the qubits of the quantum architecture "
+                f"`{architecture.name}` ({architecture.qubits})."
+            )
 
     def _create_noise_model(
         self, architecture: QuantumArchitectureSpecification, error_profile: IQMErrorProfile
@@ -235,6 +249,11 @@ class IQMFakeBackend(IQMBackendBase):
                     IQM_TO_QISKIT_GATE_NAME[gate],
                     [self.qubit_name_to_index(qb1), self.qubit_name_to_index(qb2)],
                 )
+
+        # Add readout errors
+        for qb, readout_error in error_profile.readout_errors.items():
+            probabilities = [[1 - readout_error["0"], readout_error["0"]], [readout_error["1"], 1 - readout_error["1"]]]
+            noise_model.add_readout_error(probabilities, [self.qubit_name_to_index(qb)])
 
         return noise_model
 

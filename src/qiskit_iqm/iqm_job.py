@@ -19,8 +19,17 @@ from collections import Counter
 from datetime import date
 from typing import Optional, Union
 import uuid
+import warnings
 
-from iqm_client import CircuitMeasurementResults, IQMClient, RunRequest, RunResult, Status
+from iqm_client import (
+    CircuitMeasurementResults,
+    HeraldingMode,
+    IQMClient,
+    JobAbortionError,
+    RunRequest,
+    RunResult,
+    Status,
+)
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
@@ -46,31 +55,44 @@ class IQMJob(JobV1):
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
-        """Convert the measurement results from a circuit(s) run into the Qiskit format."""
+        """Convert the measurement results from a batch of circuits into the Qiskit format."""
         if iqm_result.measurements is None:
             raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
 
-        shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
-        shape = (shots, 1)  # only one qubit is measured per measurement op
+        requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
+        # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
+        expect_exact_shots = iqm_result.metadata.request.heralding_mode == HeraldingMode.NONE
 
         return [
-            (circuit.name, self._format_measurement_results(measurements, shape))
+            (circuit.name, self._format_measurement_results(measurements, requested_shots, expect_exact_shots))
             for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.request.circuits)
         ]
 
     @staticmethod
     def _format_measurement_results(
-        measurement_results: CircuitMeasurementResults, shape: tuple[int, int]
+        measurement_results: CircuitMeasurementResults, requested_shots: int, expect_exact_shots: bool = True
     ) -> list[str]:
+        """Convert the measurement results from a circuit into the Qiskit format."""
         formatted_results: dict[int, np.ndarray] = {}
-        shots = shape[0]
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
+            if len(v) == 0 and not expect_exact_shots:
+                warnings.warn(
+                    'Received measurement results containing zero shots. '
+                    'In case you are using non-default heralding mode, this could be because of bad calibration.'
+                )
+                res = np.array([])
+            else:
+                # in Qiskit each measurement is a separate single-qubit instruction. qiskit-iqm assigns unique
+                # measurement key to each such instruction, so only one column is expected per measurement key.
+                if res.shape[1] != 1:
+                    raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected (*, 1)')
+                res = res[:, 0]
 
-            if res.shape != shape:
-                raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected {shape}')
-            res = res[:, 0]
+            shots = len(res)
+            if expect_exact_shots and shots != requested_shots:
+                raise ValueError(f'Expected {requested_shots} shots but got {shots} for measurement result {mk}')
 
             # group the measurements into cregs, fill in zeros for unused bits
             creg = formatted_results.setdefault(mk.creg_idx, np.zeros((shots, mk.creg_len), dtype=int))
@@ -80,7 +102,7 @@ class IQMJob(JobV1):
         # 2. Within each register the highest index is the most significant, so it goes to the leftmost position.
         return [
             ' '.join(''.join(map(str, res[s, ::-1])) for _, res in sorted(formatted_results.items(), reverse=True))
-            for s in range(shots)
+            for s in range(len(res))
         ]
 
     def submit(self):
@@ -90,8 +112,18 @@ class IQMJob(JobV1):
             'checking the progress and retrieving the results of the submitted job.'
         )
 
-    def cancel(self):
-        raise NotImplementedError('Canceling jobs is currently not supported.')
+    def cancel(self) -> bool:
+        """Attempt to cancel the job.
+
+        Returns:
+            True if the job was cancelled successfully, False otherwise
+        """
+        try:
+            self._client.abort_job(uuid.UUID(self._job_id))
+            return True
+        except JobAbortionError as e:
+            warnings.warn(f'Failed to cancel job: {e}')
+            return False
 
     def result(self) -> Result:
         if not self._result:
@@ -141,4 +173,8 @@ class IQMJob(JobV1):
             return JobStatus.RUNNING
         if result.status == Status.READY:
             return JobStatus.DONE
-        return JobStatus.ERROR
+        if result.status == Status.FAILED:
+            return JobStatus.ERROR
+        if result.status == Status.ABORTED:
+            return JobStatus.CANCELLED
+        raise RuntimeError(f"Unknown run status '{result.status}'")

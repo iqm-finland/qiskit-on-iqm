@@ -16,9 +16,18 @@
 """
 import uuid
 
-from iqm_client import Instruction, IQMClient, RunResult, RunStatus, SingleQubitMapping, Status
+from iqm_client import (
+    HeraldingMode,
+    Instruction,
+    IQMClient,
+    JobAbortionError,
+    RunResult,
+    RunStatus,
+    SingleQubitMapping,
+    Status,
+)
 import mockito
-from mockito import mock, when
+from mockito import mock, unstub, verify, when
 import pytest
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
@@ -37,8 +46,8 @@ def job(adonis_architecture):
 
 
 @pytest.fixture()
-def iqm_result_single_register():
-    return {'c_2_0_0': [[0], [1], [0], [1]], 'c_2_0_1': [[1], [1], [1], [0]]}
+def iqm_result_no_shots():
+    return {'c_2_0_0': [], 'c_2_0_1': []}
 
 
 @pytest.fixture()
@@ -68,9 +77,20 @@ def test_submit_raises(job):
         job.submit()
 
 
-def test_cancel_raises(job):
-    with pytest.raises(NotImplementedError, match='Canceling jobs is currently not supported.'):
-        job.cancel()
+def test_cancel_successful(job, recwarn):
+    when(job._client).abort_job(uuid.UUID(job.job_id())).thenReturn(None)
+    assert job.cancel() is True
+    assert len(recwarn) == 0
+    verify(job._client, times=1).abort_job(uuid.UUID(job.job_id()))
+    unstub()
+
+
+def test_cancel_failed(job):
+    when(job._client).abort_job(uuid.UUID(job.job_id())).thenRaise(JobAbortionError)
+    with pytest.warns(UserWarning, match='Failed to cancel job'):
+        assert job.cancel() is False
+    verify(job._client, times=1).abort_job(uuid.UUID(job.job_id()))
+    unstub()
 
 
 def test_status_for_ready_result(job):
@@ -99,6 +119,11 @@ def test_status_fail(job):
     assert job.status() == JobStatus.ERROR
 
 
+def test_status_cancel(job):
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.ABORTED))
+    assert job.status() == JobStatus.CANCELLED
+
+
 def test_result(job, iqm_result_two_registers, iqm_metadata):
     client_result = RunResult(
         status=Status.READY,
@@ -123,6 +148,23 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     assert isinstance(result, QiskitResult)
     assert job.status() == JobStatus.DONE
     mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))
+
+
+def test_result_no_shots(job, iqm_result_no_shots, iqm_metadata):
+    iqm_metadata['request']['heralding_mode'] = HeraldingMode.ZEROS
+    client_result = RunResult(
+        status=Status.READY,
+        measurements=[iqm_result_no_shots],
+        metadata=iqm_metadata,
+    )
+    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+
+    with pytest.warns(UserWarning, match='Received measurement results containing zero shots.'):
+        result = job.result()
+
+    assert isinstance(result, QiskitResult)
+    assert result.get_memory() == []
+    assert result.get_counts() == Counts({})
 
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):

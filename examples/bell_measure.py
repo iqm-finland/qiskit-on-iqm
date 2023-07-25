@@ -23,14 +23,16 @@ from qiskit import QuantumCircuit, execute
 from qiskit_iqm import IQMProvider
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument('--server_url', help='URL of the IQM server', default='https://demo.qc.iqm.fi/cocos')
-argparser.add_argument('--backend', help='Whether to use custom backend, e.g. facade_adonis', default=None)
-server_url = argparser.parse_args().server_url
-backend_name = argparser.parse_args().backend
+argparser.add_argument(
+    '--cortex_server_url',
+    help='URL of the IQM Cortex server',
+    default='https://demo.qc.iqm.fi/cocos',
+)
+server_url = argparser.parse_args().cortex_server_url
 
 circuit = QuantumCircuit(2)
 circuit.h(0)
 circuit.cx(0, 1)
 circuit.measure_all()
 
-print(execute(circuit, IQMProvider(server_url).get_backend(backend_name), shots=1000).result().get_counts())
+print(execute(circuit, IQMProvider(server_url).get_backend(), shots=1000).result().get_counts())

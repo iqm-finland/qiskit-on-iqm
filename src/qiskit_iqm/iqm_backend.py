@@ -21,7 +21,7 @@ from typing import Final, Optional
 
 from iqm_client import QuantumArchitectureSpecification
 from qiskit.circuit import Parameter
-from qiskit.circuit.library import CZGate, Measure, RGate
+from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
 
@@ -52,6 +52,7 @@ class IQMBackendBase(BackendV2, ABC):
         target.add_instruction(
             RGate(Parameter('theta'), Parameter('phi')), {(qb_to_idx[qb],): None for qb in architecture.qubits}
         )
+        target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
         target.add_instruction(
             CZGate(), {(qb_to_idx[qb1], qb_to_idx[qb2]): None for qb1, qb2 in architecture.qubit_connectivity}
         )

@@ -21,8 +21,7 @@ from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.iqm_provider import IQMBackend, IQMProvider
 
 try:
-    dist_name = "qiskit-iqm"
-    __version__ = version(dist_name)
+    __version__ = version("qiskit-iqm")
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 finally:
