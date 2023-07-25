@@ -44,7 +44,7 @@ def IQMFakeAdonis() -> IQMFakeBackend:
             "QB4": {"0": 0.021, "1": 0.021},
             "QB5": {"0": 0.023, "1": 0.023},
         },
-        id_="sample-chip",
+        name="sample-chip",
     )
 
     return IQMFakeBackend(architecture, error_profile)

@@ -53,7 +53,7 @@ class IQMErrorProfile:
         readout_errors: Maps physical qubit names to dicts that describe their single-qubit readout errors.
             For each qubit, the inner dict maps the state labels "0" and "1" to the probability :math:`P(\neg x|x)`
             of observing the state :math:`\ket{\neg x}` given the true state is :math:`\ket{x}`.
-        id_: Identifier of the QPU specimen.
+        name: Identifier of the QPU specimen.
 
     Example:
         .. code-block::
@@ -68,7 +68,7 @@ class IQMErrorProfile:
                 readout_errors={"QB1": {"0": 0.02, "1": 0.03},
                                 "QB2": {"0": 0.02, "1": 0.03},
                                 "QB3": {"0": 0.02, "1": 0.03}},
-                id_="threequbit-example_sample"
+                name="threequbit-example_sample"
             )
     """
 
@@ -79,7 +79,7 @@ class IQMErrorProfile:
     single_qubit_gate_durations: dict[str, float]
     two_qubit_gate_durations: dict[str, float]
     readout_errors: dict[str, dict[str, float]]
-    id_: Optional[str] = None
+    name: Optional[str] = None
 
 
 class IQMFakeBackend(IQMBackendBase):
@@ -195,7 +195,7 @@ class IQMFakeBackend(IQMBackendBase):
                     raise ValueError(
                         (
                             f"Gate `{gate}` in `{property_name}` "
-                            "is not supported by quantum architecture `{self.quantum_architecture.id_}`. "
+                            f"is not supported by quantum architecture `{architecture.name}`. "
                             f"Valid gates: {architecture.operations}"
                         )
                     )
