@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/10.5/user_guide.html">10.5</a></li>
+    
+    
       <li class="version_item"><a href="versions/10.4/user_guide.html">10.4</a></li>
     
     
@@ -656,7 +659,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/10.4/user_guide.html">10.4</a>.
+    For the latest released version, please have a look at <a href="versions/10.5/user_guide.html">10.5</a>.
     
   </strong>
 </div>
@@ -773,16 +776,16 @@ their current values using <cite>backend.options</cite>. Below table summarizes 
 <tr class="row-odd"><td><p><cite>calibration_set_id</cite></p></td>
 <td><p>str</p></td>
 <td><p>“f7d9642e-b0ca-4f2d-af2a-30195bd7a76d”</p></td>
-<td><p>Indicates the calibration set to use. By default it is <cite>None</cite>, which means an IQM server will use the best
-available calibration set automatically. The value is string representation of a UUID.</p></td>
+<td><p>Indicates the calibration set to use. Defaults to <cite>None</cite>, which means the IQM server will use the best
+available calibration set automatically.</p></td>
 </tr>
 <tr class="row-even"><td><p><cite>circuit_duration_check</cite></p></td>
 <td><p>bool</p></td>
 <td><p>False</p></td>
-<td><p>Enable/Disable server-side circuit duration check. The default value is <cite>True</cite>, which means if any job is
-estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
-the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
-limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.</p></td>
+<td><p>Enable or disable server-side circuit duration checks. The default value is <cite>True</cite>, which means if any job is
+estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
+time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
+circuit duration check should always remain enabled.</p></td>
 </tr>
 <tr class="row-odd"><td><p><cite>heralding_mode</cite></p></td>
 <td><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.HeraldingMode.html#iqm_client.iqm_client.HeraldingMode" title="(in IQM client vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeraldingMode</span></code></a></p></td>
