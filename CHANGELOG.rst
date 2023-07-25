@@ -2,11 +2,15 @@
 Changelog
 =========
 
+Version 10.5
+============
+
+* Clarify the documentation on backend options. `#73 <https://github.com/iqm-finland/qiskit-on-iqm/pull/73>`_
+
 Version 10.4
 ============
 
 * Support the identity gate. `#71 <https://github.com/iqm-finland/qiskit-on-iqm/pull/71>`_
-
 
 Version 10.3
 ============
