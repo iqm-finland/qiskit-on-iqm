@@ -108,20 +108,18 @@ def test_status_done(job, iqm_metadata):
     assert job._result is None
 
 
-@pytest.mark.parametrize('run_status', [Status.PENDING_COMPILATION, Status.PENDING_EXECUTION])
-def test_status_running(job, run_status):
+@pytest.mark.parametrize(
+    'run_status,job_status',
+    [
+        (Status.PENDING_COMPILATION, JobStatus.QUEUED),
+        (Status.PENDING_EXECUTION, JobStatus.RUNNING),
+        (Status.FAILED, JobStatus.ERROR),
+        (Status.ABORTED, JobStatus.CANCELLED),
+    ],
+)
+def test_other_job_statuses(job, run_status: Status, job_status: JobStatus):
     when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=run_status))
-    assert job.status() == JobStatus.RUNNING
-
-
-def test_status_fail(job):
-    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.FAILED))
-    assert job.status() == JobStatus.ERROR
-
-
-def test_status_cancel(job):
-    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=Status.ABORTED))
-    assert job.status() == JobStatus.CANCELLED
+    assert job.status() == job_status
 
 
 def test_result(job, iqm_result_two_registers, iqm_metadata):
