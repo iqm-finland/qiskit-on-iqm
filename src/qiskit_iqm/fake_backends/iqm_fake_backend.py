@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Backend for simulating IQM quantum computers.
+Error profile and fake backend base class for simulating IQM quantum computers.
 """
 from __future__ import annotations
 
