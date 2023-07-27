@@ -96,14 +96,14 @@ def test_fake_backend_with_two_qubit_gate_depolarizing_errors_more_couplings_tha
 
 
 @pytest.mark.parametrize(
-    'param_name,param_value',
+    "param_name,param_value",
     [
         (
-            'single_qubit_gate_depolarizing_error_parameters',
+            "single_qubit_gate_depolarizing_error_parameters",
             {"wrong": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0}},
         ),
         (
-            'two_qubit_gate_depolarizing_error_parameters',
+            "two_qubit_gate_depolarizing_error_parameters",
             {"wrong": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001}},
         ),
     ],
