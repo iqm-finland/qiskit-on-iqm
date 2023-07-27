@@ -32,9 +32,9 @@ from qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
 try:
-    __version__ = version("qiskit-iqm")
+    __version__ = version('qiskit-iqm')
 except PackageNotFoundError:  # pragma: no cover
-    __version__ = "unknown"
+    __version__ = 'unknown'
 finally:
     del version, PackageNotFoundError
 
