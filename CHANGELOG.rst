@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 10.6
+============
+
+* More accurate mapping of job statuses in :meth:`IQMJob.status`.
+* Documentation fixes.
+
 Version 10.5
 ============
 

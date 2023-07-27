@@ -16,4 +16,4 @@
 from qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis
 from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.iqm_provider import __version__, IQMBackend, IQMProvider
+from qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__

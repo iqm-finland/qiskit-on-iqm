@@ -13,8 +13,8 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
-from functools import reduce
 from importlib.metadata import PackageNotFoundError, version
+from functools import reduce
 from typing import Optional, Union
 from uuid import UUID
 import warnings
@@ -29,7 +29,6 @@ from qiskit_iqm.fake_backends import IQMFakeAdonis
 from qiskit_iqm.iqm_backend import IQMBackendBase
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import MeasurementKey
-
 
 try:
     __version__ = version('qiskit-iqm')
