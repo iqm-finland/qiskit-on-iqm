@@ -36,7 +36,7 @@ def create_3q_error_profile():
                 "QB2": {"0": 0.02, "1": 0.03},
                 "QB3": {"0": 0.02, "1": 0.03},
             },
-            "id_": "adonis-example_sample",
+            "name": "adonis-example_sample",
         }
         error_profile_contents.update(kwargs)
         return IQMErrorProfile(**error_profile_contents)

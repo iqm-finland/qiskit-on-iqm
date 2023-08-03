@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Fake backend for IQM Adonis QPU.
+"""Fake backend for IQM's 5-qubit Adonis architecture.
 """
 from iqm_client import QuantumArchitectureSpecification
 
@@ -44,7 +44,7 @@ def IQMFakeAdonis() -> IQMFakeBackend:
             "QB4": {"0": 0.021, "1": 0.021},
             "QB5": {"0": 0.023, "1": 0.023},
         },
-        id_="sample-chip",
+        name="sample-chip",
     )
 
     return IQMFakeBackend(architecture, error_profile)

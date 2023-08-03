@@ -11,19 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Types for representing and methods for manipulating operations on IQM's quantum computers.
+"""Qiskit adapter for IQM's quantum computers.
 """
-from importlib.metadata import PackageNotFoundError, version
-
 from qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis
 from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.iqm_provider import IQMBackend, IQMProvider
-
-try:
-    dist_name = "qiskit-iqm"
-    __version__ = version(dist_name)
-except PackageNotFoundError:  # pragma: no cover
-    __version__ = "unknown"
-finally:
-    del version, PackageNotFoundError
+from qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__

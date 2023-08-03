@@ -55,7 +55,7 @@ class IQMJob(JobV1):
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
-        """Convert the measurement results from a circuit(s) run into the Qiskit format."""
+        """Convert the measurement results from a batch of circuits into the Qiskit format."""
         if iqm_result.measurements is None:
             raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
 
@@ -72,6 +72,7 @@ class IQMJob(JobV1):
     def _format_measurement_results(
         measurement_results: CircuitMeasurementResults, requested_shots: int, expect_exact_shots: bool = True
     ) -> list[str]:
+        """Convert the measurement results from a circuit into the Qiskit format."""
         formatted_results: dict[int, np.ndarray] = {}
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
@@ -166,10 +167,14 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
+        if result.status == Status.PENDING_COMPILATION:
+            return JobStatus.QUEUED
+        if result.status == Status.PENDING_EXECUTION:
+            return JobStatus.RUNNING
         if result.status == Status.READY:
             return JobStatus.DONE
         if result.status == Status.FAILED:
             return JobStatus.ERROR
         if result.status == Status.ABORTED:
             return JobStatus.CANCELLED
-        return JobStatus.RUNNING
+        raise RuntimeError(f"Unknown run status '{result.status}'")

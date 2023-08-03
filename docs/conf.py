@@ -152,7 +152,7 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/' + python_version, None),
     'matplotlib': ('https://matplotlib.org/stable', None),
     'numpy': ('https://numpy.org/doc/stable', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy', None),
     'qiskit': ('https://qiskit.org/documentation', None),
     'iqm_client': ('https://iqm-finland.github.io/iqm-client', None),
 }

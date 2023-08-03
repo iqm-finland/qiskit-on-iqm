@@ -140,8 +140,6 @@ ignore_missing_imports = true
 
 [tool.pylint.main]
 disable = [
-    "abstract-method",
-    "duplicate-code",
     "fixme",
     "invalid-name",
     "protected-access",
