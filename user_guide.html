@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/10.6/user_guide.html">10.6</a></li>
+    
+    
       <li class="version_item"><a href="versions/10.5/user_guide.html">10.5</a></li>
     
     
@@ -659,7 +662,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/10.5/user_guide.html">10.5</a>.
+    For the latest released version, please have a look at <a href="versions/10.6/user_guide.html">10.6</a>.
     
   </strong>
 </div>
@@ -730,8 +733,9 @@ meas_1: ══════════════════════╩═
 meas_2: ═════════════════════════╩═
 </pre></div>
 </div>
-<p>To execute this circuit against an IQM quantum computer you need to initialize an appropriate Qiskit backend instance
-that represents the IQM quantum computer under use, and simply use Qiskit’s <code class="docutils literal notranslate"><span class="pre">execute</span></code> function as normal:</p>
+<p>To execute this circuit on an IQM quantum computer you need to initialize an <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a> instance
+with the IQM server URL, use it to retrieve an <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMBackend.html#qiskit_iqm.iqm_provider.IQMBackend" title="qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a> instance representing the
+quantum computer, and use Qiskit’s <code class="docutils literal notranslate"><span class="pre">execute</span></code> function as usual:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span>
 <span class="kn">from</span> <span class="nn">qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
@@ -796,11 +800,11 @@ circuit duration check should always remain enabled.</p></td>
 </table>
 <p>If the IQM server you are connecting to requires authentication, you will also have to use
 <a class="reference external" href="https://github.com/iqm-finland/cortex-cli">Cortex CLI</a> to retrieve and automatically refresh access tokens,
-then set the <code class="docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable to use those tokens.
+then set the <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable, as instructed, to point to the tokens file.
 See Cortex CLI’s <a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html">documentation</a> for details.
-Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
-or pass them as arguments to the constructor of <a class="reference internal" href="api/qiskit_iqm.iqm_provider.IQMProvider.html#qiskit_iqm.iqm_provider.IQMProvider" title="qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>, however this approach is less secure
-and considered as deprecated.</p>
+Alternatively, you may authenticate yourself using the <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_SERVER</span></code>,
+<span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_USERNAME</span></code> and <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_PASSWORD</span></code> environment variables, or pass them as
+arguments to <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMProvider.__init__()</span></code>, however this approach is less secure and considered deprecated.</p>
 <p>The results of a job, that was executed with IQM quantum computer, contain the original request with the
 qubit mapping that was used in execution. You can check this mapping once execution has finished.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">qubit_mapping</span><span class="p">)</span>
@@ -936,9 +940,9 @@ are any.</p>
 <h2>More advanced examples<a class="headerlink" href="#more-advanced-examples" title="Permalink to this headline">#</a></h2>
 <p>In this section we demonstrate some less simple examples of using Qiskit on IQM and its interoperability with various
 tools available in Qiskit.</p>
-<p>It is possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
-running the circuits one by one. For batch execution there are some restriction that we shall keep in mind, namely all
-circuits have to measure the same qubits, and all circuits will be executed for the same number of shots. For starters,
+<p>It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
+time efficient than running the circuits one by one. Batch execution has some restrictions: all the
+circuits must measure the same qubits, and be executed for the same number of shots. For starters,
 let’s construct two circuits preparing and measuring different Bell states:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">qc_1</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">qc_1</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>

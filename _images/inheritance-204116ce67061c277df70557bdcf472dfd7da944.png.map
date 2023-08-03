@@ -3,6 +3,6 @@
 <area shape="rect" id="node3" title="Abstract class for Backends" alt="" coords="173,55,268,80"/>
 <area shape="rect" id="node4" href="qiskit_iqm.iqm_backend.IQMBackendBase.html#qiskit_iqm.iqm_backend.IQMBackendBase" target="_top" title="Abstract base class for various IQM&#45;specific backends." alt="" coords="316,80,451,105"/>
 <area shape="rect" id="node2" title="Base common type for all versioned Backend abstract classes." alt="" coords="27,55,104,80"/>
-<area shape="rect" id="node6" href="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" target="_top" title="Fake backend that mimics the behaviour of IQM quantum computers. Can be used to perform noisy gate&#45;level" alt="" coords="499,80,631,105"/>
-<area shape="rect" id="node5" href="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" target="_top" title="Collection of various properties of an IQM QPU to be used for constructing error model." alt="" coords="5,5,125,31"/>
+<area shape="rect" id="node6" href="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" target="_top" title="Simulated backend that mimics the behaviour of IQM quantum computers." alt="" coords="499,80,631,105"/>
+<area shape="rect" id="node5" href="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" target="_top" title="Properties of an IQM QPU specimen, used for constructing an error model." alt="" coords="5,5,125,31"/>
 </map>

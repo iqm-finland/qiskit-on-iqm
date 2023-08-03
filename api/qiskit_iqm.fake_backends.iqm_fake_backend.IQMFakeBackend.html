@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="../versions/10.6/index.html">10.6</a></li>
+    
+    
       <li class="version_item"><a href="../versions/10.5/index.html">10.5</a></li>
     
     
@@ -552,7 +555,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/10.5/index.html">10.5</a>.
+    For the latest released version, please have a look at <a href="../versions/10.6/index.html">10.6</a>.
     
   </strong>
 </div>
@@ -564,17 +567,16 @@ title="Print to PDF"
 <dt class="sig sig-object py" id="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qiskit_iqm.fake_backends.iqm_fake_backend.</span></span><span class="sig-name descname"><span class="pre">IQMFakeBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">architecture</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_profile</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="qiskit_iqm.iqm_backend.IQMBackendBase.html#qiskit_iqm.iqm_backend.IQMBackendBase" title="qiskit_iqm.iqm_backend.IQMBackendBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit_iqm.iqm_backend.IQMBackendBase</span></code></a></p>
-<p>Fake backend that mimics the behaviour of IQM quantum computers. Can be used to perform noisy gate-level
-simulations of quantum circuit execution on IQM hardware.</p>
+<p>Simulated backend that mimics the behaviour of IQM quantum computers.</p>
+<p>Can be used to perform noisy gate-level simulations of quantum circuit execution on IQM hardware.</p>
 <p>A fake backend contains information about a specific IQM system, such as the quantum architecture (number of qubits,
 connectivity), the native gate set, and a noise model based on system parameters such as relaxation (<span class="math notranslate nohighlight">\(T_1\)</span>)
-and decoherence (<span class="math notranslate nohighlight">\(T_2\)</span>) times, gate infidelities and readout errors.</p>
+and dephasing (<span class="math notranslate nohighlight">\(T_2\)</span>) times, gate infidelities, and readout errors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>architecture</strong> (<em>QuantumArchitectureSpecification</em>) – Description of the quantum architecture associated with the backend instance.</p></li>
-<li><p><strong>chip_sample</strong> – Describes the characteristics of a specific chip sample.</p></li>
-<li><p><strong>error_profile</strong> (<a class="reference internal" href="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile"><em>IQMErrorProfile</em></a>) – </p></li>
+<li><p><strong>architecture</strong> (<em>QuantumArchitectureSpecification</em>) – Quantum architecture associated with the backend instance.</p></li>
+<li><p><strong>error_profile</strong> (<a class="reference internal" href="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile.html#qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile"><em>IQMErrorProfile</em></a>) – Characteristics of a particular QPU specimen.</p></li>
 </ul>
 </dd>
 </dl>
@@ -634,7 +636,7 @@ options.</p></li>
 <td><p>Return the default options</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_architecture_and_error_profile</span></code>(...)</p></td>
-<td><p>Verifies that the parameters of the chip sample match the constraints of its IQMQuantumArchitecture.</p></td>
+<td><p>Verifies that the parameters of the QPU error profile match the constraints of its quantum architecture.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.copy_with_error_profile" title="qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.copy_with_error_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_with_error_profile</span></code></a>(new_error_profile)</p></td>
 <td><p>Return another instance of IQMFakeBackend, which has the same quantum architecture but a different error profile.</p></td>
