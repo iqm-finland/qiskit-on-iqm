@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.7
+============
+
+* Capture execution timestamps in :meth:`IQMJob.result`.
+
 Version 10.6
 ============
 
