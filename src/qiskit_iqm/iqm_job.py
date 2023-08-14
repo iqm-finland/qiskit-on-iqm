@@ -130,6 +130,8 @@ class IQMJob(JobV1):
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
             self._calibration_set_id = results.metadata.calibration_set_id
             self._request = results.metadata.request
+            if results.metadata.timestamps is not None:
+                self.metadata['timestamps'] = results.metadata.timestamps.copy()
             self._result = self._format_iqm_results(results)
             # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
             # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
@@ -159,6 +161,7 @@ class IQMJob(JobV1):
             ],
             'date': date.today(),
             'request': self._request,
+            'timestamps': self.metadata.get('timestamps'),
         }
         return Result.from_dict(result_dict)
 

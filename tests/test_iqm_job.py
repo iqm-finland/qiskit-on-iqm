@@ -72,6 +72,27 @@ def iqm_metadata():
     }
 
 
+@pytest.fixture()
+def iqm_metadata_with_timestamps():
+    measurement = Instruction(name='measurement', implementation=None, qubits=('0',), args={'key': 'm1'})
+    return {
+        'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
+        'request': {
+            'shots': 4,
+            'circuits': [{'name': 'circuit_1', 'instructions': (measurement,), 'metadata': {'a': 'b'}}],
+            'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
+            'qubit_mapping': [
+                SingleQubitMapping(logical_name='0', physical_name='QB1'),
+                SingleQubitMapping(logical_name='1', physical_name='QB2'),
+            ],
+        },
+        'timestamps': {
+            'job_start': 0.0,
+            'job_end': 2.3,
+        },
+    }
+
+
 def test_submit_raises(job):
     with pytest.raises(NotImplementedError, match='You should never have to submit jobs by calling this method.'):
         job.submit()
@@ -202,3 +223,19 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
         assert r.calibration_set_id == uuid.UUID('9d75904b-0c93-461f-b1dc-bd200cfad1f1')
         assert r.data.metadata == {'a': i}
     assert result.request.qubit_mapping == iqm_metadata_multiple_circuits['request']['qubit_mapping']
+
+
+def test_result_with_timestamps(job, iqm_result_two_registers, iqm_metadata_with_timestamps):
+    client_result = RunResult(
+        status=Status.READY,
+        measurements=[iqm_result_two_registers],
+        metadata=iqm_metadata_with_timestamps,
+    )
+    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+
+    assert job.metadata.get('timestamps') is None
+    result = job.result()
+    assert 'timestamps' in job.metadata
+    assert job.metadata.pop('timestamps') == iqm_metadata_with_timestamps.get('timestamps')
+    assert 'timestamps' in result._metadata
+    assert result.timestamps == iqm_metadata_with_timestamps.get('timestamps')
