@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.8
+============
+
+* Fix two-qubit gate error construction in ``IQMFakeBackend``.
+
 Version 10.7
 ============
 
