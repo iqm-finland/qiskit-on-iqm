@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="../versions/10.8/index.html">10.8</a></li>
+    
+    
       <li class="version_item"><a href="../versions/10.7/index.html">10.7</a></li>
     
     
@@ -558,7 +561,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/10.7/index.html">10.7</a>.
+    For the latest released version, please have a look at <a href="../versions/10.8/index.html">10.8</a>.
     
   </strong>
 </div>
@@ -588,14 +591,14 @@ and dephasing (<span class="math notranslate nohighlight">\(T_2\)</span>) times,
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>provider</strong> – An optional backwards reference to the
-<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.Provider.html#qiskit.providers.Provider" title="(in Qiskit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code></a> object that the backend
+<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.Provider.html#qiskit.providers.Provider" title="(in Qiskit v0.44)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code></a> object that the backend
 is from</p></li>
 <li><p><strong>name</strong> – An optional name for the backend</p></li>
 <li><p><strong>description</strong> – An optional description of the backend</p></li>
 <li><p><strong>online_date</strong> – An optional datetime the backend was brought online</p></li>
 <li><p><strong>backend_version</strong> – An optional backend version string. This differs
-from the <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> attribute
-as <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> is for the
+from the <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit v0.44)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> attribute
+as <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit v0.44)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> is for the
 abstract <code class="xref py py-attr docutils literal notranslate"><span class="pre">Backend</span></code> abstract interface
 version of the object while <code class="docutils literal notranslate"><span class="pre">backend_version</span></code> is for
 versioning the backend itself.</p></li>
@@ -683,12 +686,12 @@ run in a single job.</p>
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.run" title="Permalink to this definition">#</a></dt>
 <dd><p>Run <cite>run_input</cite> on the fake backend using a simulator.</p>
 <p>This method runs circuit jobs (an individual or a list of QuantumCircuit
-) and returns a <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.JobV1.html#qiskit.providers.JobV1" title="(in Qiskit)"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobV1</span></code></a> object.</p>
+) and returns a <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.JobV1.html#qiskit.providers.JobV1" title="(in Qiskit v0.44)"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobV1</span></code></a> object.</p>
 <p>It will run the simulation with a noise model of the fake backend (e.g. Adonis).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>run_input</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><em>Union</em></a><em>[</em><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.html#qiskit.circuit.QuantumCircuit" title="(in Qiskit)"><em>qiskit.circuit.quantumcircuit.QuantumCircuit</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.html#qiskit.circuit.QuantumCircuit" title="(in Qiskit)"><em>qiskit.circuit.quantumcircuit.QuantumCircuit</em></a><em>]</em><em>]</em>) – One or more quantum circuits to simulate on the backend.</p></li>
+<li><p><strong>run_input</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Union" title="(in Python v3.9)"><em>Union</em></a><em>[</em><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.html#qiskit.circuit.QuantumCircuit" title="(in Qiskit v0.44)"><em>qiskit.circuit.quantumcircuit.QuantumCircuit</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.circuit.QuantumCircuit.html#qiskit.circuit.QuantumCircuit" title="(in Qiskit v0.44)"><em>qiskit.circuit.quantumcircuit.QuantumCircuit</em></a><em>]</em><em>]</em>) – One or more quantum circuits to simulate on the backend.</p></li>
 <li><p><strong>options</strong> – Any kwarg options to pass to the backend.</p></li>
 </ul>
 </dd>
@@ -699,7 +702,7 @@ run in a single job.</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – If empty list of circuits is provided.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.JobV1.html#qiskit.providers.JobV1" title="(in Qiskit)">qiskit.providers.job.JobV1</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.JobV1.html#qiskit.providers.JobV1" title="(in Qiskit v0.44)">qiskit.providers.job.JobV1</a></p>
 </dd>
 </dl>
 </dd></dl>
