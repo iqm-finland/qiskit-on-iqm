@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass
+from itertools import permutations
 from typing import Any, Optional, Union
 
 from iqm_client import QuantumArchitectureSpecification
@@ -231,24 +232,25 @@ class IQMFakeBackend(IQMBackendBase):
         # Add two-qubit gate errors to noise model
         for gate, rates in error_profile.two_qubit_gate_depolarizing_error_parameters.items():
             for (qb1, qb2), rate in rates.items():
-                thermal_relaxation_channel = thermal_relaxation_error(
-                    error_profile.t1s[qb1],
-                    error_profile.t2s[qb1],
-                    error_profile.two_qubit_gate_durations[gate],
-                ).tensor(
-                    thermal_relaxation_error(
-                        error_profile.t1s[qb2],
-                        error_profile.t2s[qb2],
+                for qb_order in permutations((qb1, qb2)):
+                    thermal_relaxation_channel = thermal_relaxation_error(
+                        error_profile.t1s[qb_order[0]],
+                        error_profile.t2s[qb_order[0]],
                         error_profile.two_qubit_gate_durations[gate],
+                    ).tensor(
+                        thermal_relaxation_error(
+                            error_profile.t1s[qb_order[1]],
+                            error_profile.t2s[qb_order[1]],
+                            error_profile.two_qubit_gate_durations[gate],
+                        )
                     )
-                )
-                depolarizing_channel = depolarizing_error(rate, 2)
-                full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
-                noise_model.add_quantum_error(
-                    full_error_channel,
-                    IQM_TO_QISKIT_GATE_NAME[gate],
-                    [self.qubit_name_to_index(qb1), self.qubit_name_to_index(qb2)],
-                )
+                    depolarizing_channel = depolarizing_error(rate, 2)
+                    full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
+                    noise_model.add_quantum_error(
+                        full_error_channel,
+                        IQM_TO_QISKIT_GATE_NAME[gate],
+                        [self.qubit_name_to_index(qb_order[0]), self.qubit_name_to_index(qb_order[1])],
+                    )
 
         # Add readout errors
         for qb, readout_error in error_profile.readout_errors.items():

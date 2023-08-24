@@ -227,3 +227,6 @@ def test_noise_model_contains_all_errors(backend):
     Test that the noise model contains all necessary errors.
     """
     assert set(backend.noise_model.noise_instructions) == {"r", "cz", "measure"}
+
+    # Assert that CZ gate error is applied independent of argument order in gate specification
+    assert set(backend.noise_model._local_quantum_errors["cz"].keys()) == set([(0, 1), (1, 0), (1, 2), (2, 1)])
