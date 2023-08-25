@@ -87,8 +87,8 @@ def iqm_metadata_with_timestamps():
             ],
         },
         'timestamps': {
-            'job_start': 0.0,
-            'job_end': 2.3,
+            'job_start': '2023-01-02T12:34:56.123456+00:00',
+            'job_end': '2023-01-02T12:34:56.123456+03:00',
         },
     }
 
