@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.9
+============
+
+* Upgrade to iqm-client >= 13.2. `#76 <https://github.com/iqm-finland/qiskit-on-iqm/pull/76>`_
+
 Version 10.8
 ============
 
