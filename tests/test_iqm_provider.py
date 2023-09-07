@@ -371,7 +371,7 @@ def test_get_backend(linear_architecture_3q):
     assert isinstance(backend, IQMBackend)
     assert backend.client._base_url == url
     assert backend.num_qubits == 3
-    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2)}
+    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
 
 
 def test_client_signature():
@@ -381,7 +381,7 @@ def test_client_signature():
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
 
 
-def test_get_facade_backend(adonis_architecture):
+def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     url = 'http://some_url'
     when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
 
@@ -391,7 +391,7 @@ def test_get_facade_backend(adonis_architecture):
     assert isinstance(backend, IQMFacadeBackend)
     assert backend.client._base_url == url
     assert backend.num_qubits == 5
-    assert set(backend.coupling_map.get_edges()) == {(0, 2), (1, 2), (3, 2), (4, 2)}
+    assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
 
 
 def test_get_facade_backend_raises_error_non_matching_architecture(linear_architecture_3q):
