@@ -48,7 +48,8 @@ class IQMBackend(IQMBackendBase):
 
     def __init__(self, client: IQMClient, **kwargs):
         super().__init__(client.get_quantum_architecture(), **kwargs)
-        self.client = client
+        self.client: IQMClient = client
+        self._max_circuits: Optional[int] = None
 
     @classmethod
     def _default_options(cls) -> Options:
@@ -58,7 +59,17 @@ class IQMBackend(IQMBackendBase):
 
     @property
     def max_circuits(self) -> Optional[int]:
-        return None
+        return self._max_circuits
+
+    @max_circuits.setter
+    def max_circuits(self, value: Optional[int]) -> None:
+        """Set the max_circuits property to a custom value.
+
+        Generally, this property is set automatically during the construction of backend instance. However, in certain
+        situations (mostly when using qiskit_experiments), user wants to have control over how many circuits are
+        included in a single batch. This setter method makes it easy to override the default value with desired one.
+        """
+        self._max_circuits = value
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
         if self.client is None:
