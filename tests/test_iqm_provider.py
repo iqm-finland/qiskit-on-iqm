@@ -77,8 +77,18 @@ def test_retrieve_job(backend):
     assert job.job_id() == 'a job id'
 
 
-def test_max_circuits(backend):
+def test_default_max_circuits(backend):
     assert backend.max_circuits is None
+
+
+def test_set_max_circuits(backend):
+    assert backend.max_circuits is None
+
+    backend.max_circuits = 17
+    assert backend.max_circuits == 17
+
+    backend.max_circuits = 168
+    assert backend.max_circuits == 168
 
 
 def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
