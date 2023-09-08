@@ -53,8 +53,16 @@ class IQMBackendBase(BackendV2, ABC):
             RGate(Parameter('theta'), Parameter('phi')), {(qb_to_idx[qb],): None for qb in architecture.qubits}
         )
         target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
+        # Even though CZ is a symmetric gate, we still need to add properties for both directions. This is because
+        # coupling maps in Qiskit are directed graphs and the gate symmetry is not implicitly planted there. It should
+        # be explicitly supplied. This allows Qiskit to have coupling maps with non-symmetric gates like cx.
         target.add_instruction(
-            CZGate(), {(qb_to_idx[qb1], qb_to_idx[qb2]): None for qb1, qb2 in architecture.qubit_connectivity}
+            CZGate(),
+            {
+                (qb_to_idx[qb1], qb_to_idx[qb2]): None
+                for pair in architecture.qubit_connectivity
+                for qb1, qb2 in (pair, pair[::-1])
+            },
         )
         target.add_instruction(Measure(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
 

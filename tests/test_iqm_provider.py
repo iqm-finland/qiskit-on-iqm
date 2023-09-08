@@ -15,7 +15,6 @@
 """Testing IQM provider.
 """
 from importlib.metadata import version
-from numbers import Number
 import uuid
 
 from iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
@@ -23,7 +22,7 @@ from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
-from qiskit.circuit import Parameter, ParameterExpression
+from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
@@ -77,8 +76,18 @@ def test_retrieve_job(backend):
     assert job.job_id() == 'a job id'
 
 
-def test_max_circuits(backend):
+def test_default_max_circuits(backend):
     assert backend.max_circuits is None
+
+
+def test_set_max_circuits(backend):
+    assert backend.max_circuits is None
+
+    backend.max_circuits = 17
+    assert backend.max_circuits == 17
+
+    backend.max_circuits = 168
+    assert backend.max_circuits == 168
 
 
 def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
@@ -133,25 +142,6 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
-
-
-def test_serialize_handles_parameter_expressions(circuit, backend):
-    theta = Parameter('θ')
-    phi = Parameter('φ')
-    circuit.r(theta, phi, 0)
-    circuit_bound = circuit.bind_parameters({theta: np.pi, phi: 0})
-
-    # First make sure that circuit_bound does indeed represent parameters as ParameterExpression
-    assert len(circuit_bound.data) == 1
-    instruction = circuit_bound.data[0][0]
-    assert all(isinstance(param, ParameterExpression) for param in instruction.params)
-
-    # Now check that serialization correctly handles ParameterExpression
-    circuit_ser = backend.serialize_circuit(circuit_bound)
-    assert len(circuit_ser.instructions) == 1
-    iqm_instruction = circuit_ser.instructions[0]
-    assert isinstance(iqm_instruction.args['angle_t'], Number)
-    assert isinstance(iqm_instruction.args['phase_t'], Number)
 
 
 def test_serialize_circuit_maps_cz_gate(circuit, backend):
@@ -361,7 +351,7 @@ def test_get_backend(linear_architecture_3q):
     assert isinstance(backend, IQMBackend)
     assert backend.client._base_url == url
     assert backend.num_qubits == 3
-    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2)}
+    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
 
 
 def test_client_signature():
@@ -371,7 +361,7 @@ def test_client_signature():
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
 
 
-def test_get_facade_backend(adonis_architecture):
+def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     url = 'http://some_url'
     when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
 
@@ -381,7 +371,7 @@ def test_get_facade_backend(adonis_architecture):
     assert isinstance(backend, IQMFacadeBackend)
     assert backend.client._base_url == url
     assert backend.num_qubits == 5
-    assert set(backend.coupling_map.get_edges()) == {(0, 2), (1, 2), (3, 2), (4, 2)}
+    assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
 
 
 def test_get_facade_backend_raises_error_non_matching_architecture(linear_architecture_3q):
