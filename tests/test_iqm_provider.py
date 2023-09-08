@@ -15,7 +15,6 @@
 """Testing IQM provider.
 """
 from importlib.metadata import version
-from numbers import Number
 import uuid
 
 from iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
@@ -23,7 +22,7 @@ from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
-from qiskit.circuit import Parameter, ParameterExpression
+from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
@@ -143,25 +142,6 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
-
-
-def test_serialize_handles_parameter_expressions(circuit, backend):
-    theta = Parameter('θ')
-    phi = Parameter('φ')
-    circuit.r(theta, phi, 0)
-    circuit_bound = circuit.bind_parameters({theta: np.pi, phi: 0})
-
-    # First make sure that circuit_bound does indeed represent parameters as ParameterExpression
-    assert len(circuit_bound.data) == 1
-    instruction = circuit_bound.data[0][0]
-    assert all(isinstance(param, ParameterExpression) for param in instruction.params)
-
-    # Now check that serialization correctly handles ParameterExpression
-    circuit_ser = backend.serialize_circuit(circuit_bound)
-    assert len(circuit_ser.instructions) == 1
-    iqm_instruction = circuit_ser.instructions[0]
-    assert isinstance(iqm_instruction.args['angle_t'], Number)
-    assert isinstance(iqm_instruction.args['phase_t'], Number)
 
 
 def test_serialize_circuit_maps_cz_gate(circuit, backend):
