@@ -181,3 +181,7 @@ class IQMJob(JobV1):
         if result.status == Status.ABORTED:
             return JobStatus.CANCELLED
         raise RuntimeError(f"Unknown run status '{result.status}'")
+
+    def error_message(self) -> Optional[str]:
+        """Returns the error message if job has failed, otherwise returns None."""
+        return self._client.get_run_status(uuid.UUID(self._job_id)).message

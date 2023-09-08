@@ -143,6 +143,21 @@ def test_other_job_statuses(job, run_status: Status, job_status: JobStatus):
     assert job.status() == job_status
 
 
+def test_error_message(job, iqm_metadata):
+    err_msg = 'The job failed with this error message'
+    client_result = RunResult(status=Status.FAILED, message=err_msg, metadata=iqm_metadata)
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(client_result)
+    assert job.status() == JobStatus.ERROR
+    assert job.error_message() == err_msg
+
+
+def test_error_message_on_successful_job(job, iqm_metadata):
+    client_result = RunResult(status=Status.READY, metadata=iqm_metadata)
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(client_result)
+    assert job.status() == JobStatus.DONE
+    assert job.error_message() is None
+
+
 def test_result(job, iqm_result_two_registers, iqm_metadata):
     client_result = RunResult(
         status=Status.READY,
