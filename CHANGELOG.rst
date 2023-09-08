@@ -2,6 +2,14 @@
 Changelog
 =========
 
+Version 10.10
+=============
+
+* Upgrade to qiskit ~= 0.44.1. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+* Make the ``max_circuits`` property of ``IQMBackend`` user-configurable. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+* Implement ``error_message`` method for ``IQMJob``. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>``
+* Explicitly specify symmetric CZ properties when building the transpilation target. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+
 Version 10.9
 ============
 
