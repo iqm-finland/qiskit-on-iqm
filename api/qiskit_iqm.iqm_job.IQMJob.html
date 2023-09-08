@@ -290,6 +290,9 @@
       <li class="version_item"><a href="../versions/10.2/index.html">10.2</a></li>
     
     
+      <li class="version_item"><a href="../versions/10.10/index.html">10.10</a></li>
+    
+    
       <li class="version_item"><a href="../versions/10.1/index.html">10.1</a></li>
     
     
@@ -620,13 +623,16 @@ the job.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.cancel" title="qiskit_iqm.iqm_job.IQMJob.cancel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cancel</span></code></a>()</p></td>
 <td><p>Attempt to cancel the job.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.result" title="qiskit_iqm.iqm_job.IQMJob.result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">result</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.error_message" title="qiskit_iqm.iqm_job.IQMJob.error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error_message</span></code></a>()</p></td>
+<td><p>Returns the error message if job has failed, otherwise returns None.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.result" title="qiskit_iqm.iqm_job.IQMJob.result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">result</span></code></a>()</p></td>
 <td><p>Return the results of the job.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.status" title="qiskit_iqm.iqm_job.IQMJob.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.status" title="qiskit_iqm.iqm_job.IQMJob.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a>()</p></td>
 <td><p>Return the status of the job, among the values of <code class="docutils literal notranslate"><span class="pre">JobStatus</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.submit" title="qiskit_iqm.iqm_job.IQMJob.submit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_iqm.iqm_job.IQMJob.submit" title="qiskit_iqm.iqm_job.IQMJob.submit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit</span></code></a>()</p></td>
 <td><p>Submit the job to the backend for execution.</p></td>
 </tr>
 </tbody>
@@ -669,6 +675,17 @@ the job.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.JobStatus.html#qiskit.providers.JobStatus" title="(in Qiskit v0.44)">qiskit.providers.jobstatus.JobStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qiskit_iqm.iqm_job.IQMJob.error_message">
+<span class="sig-name descname"><span class="pre">error_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#qiskit_iqm.iqm_job.IQMJob.error_message" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the error message if job has failed, otherwise returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/typing.html#typing.Optional" title="(in Python v3.9)"><em>Optional</em></a>[<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
