@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 10.11
+=============
+
+* Update user guide with information of execution timestamps. `#78 <https://github.com/iqm-finland/qiskit-on-iqm/pull/78>`_
+
 Version 10.10
 =============
 
