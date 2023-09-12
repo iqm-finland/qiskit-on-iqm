@@ -163,6 +163,20 @@ qubit mapping that was used in execution. You can check this mapping once execut
       SingleQubitMapping(logical_name='2', physical_name='QB3')
     ]
 
+The job also contains metadata of the execution including timestamps of the various phases of the execution.
+There are timestamps for compilation start and finish and execution start and finish. The whole duration of
+the job is captured in job start and job end timestamps. The timestamps can be accessed in the job results
+with keys like `job_start`, `job_end`, `compile_start`, `compile_end`, `execution_start` and `execution_end`.
+
+For example:
+
+.. code-block:: python
+
+    print(job.result().timestamps['job_start'])
+    print(job.result().timestamps['compile_start'])
+    print(job.result().timestamps['execution_end'])
+
+
 
 The ``backend`` instance we created above provides all the standard backend functionality that one expects from a
 backend in Qiskit. For this example, I am connected to an IQM backend that features a 5-qubit chip with star-like
