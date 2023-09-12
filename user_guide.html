@@ -292,6 +292,9 @@
       <li class="version_item"><a href="versions/10.2/user_guide.html">10.2</a></li>
     
     
+      <li class="version_item"><a href="versions/10.11/user_guide.html">10.11</a></li>
+    
+    
       <li class="version_item"><a href="versions/10.10/user_guide.html">10.10</a></li>
     
     
@@ -827,6 +830,16 @@ qubit mapping that was used in execution. You can check this mapping once execut
   <span class="n">SingleQubitMapping</span><span class="p">(</span><span class="n">logical_name</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="n">physical_name</span><span class="o">=</span><span class="s1">&#39;QB2&#39;</span><span class="p">),</span>
   <span class="n">SingleQubitMapping</span><span class="p">(</span><span class="n">logical_name</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">physical_name</span><span class="o">=</span><span class="s1">&#39;QB3&#39;</span><span class="p">)</span>
 <span class="p">]</span>
+</pre></div>
+</div>
+<p>The job also contains metadata of the execution including timestamps of the various phases of the execution.
+There are timestamps for compilation start and finish and execution start and finish. The whole duration of
+the job is captured in job start and job end timestamps. The timestamps can be accessed in the job results
+with keys like <cite>job_start</cite>, <cite>job_end</cite>, <cite>compile_start</cite>, <cite>compile_end</cite>, <cite>execution_start</cite> and <cite>execution_end</cite>.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[</span><span class="s1">&#39;job_start&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[</span><span class="s1">&#39;compile_start&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[</span><span class="s1">&#39;execution_end&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">backend</span></code> instance we created above provides all the standard backend functionality that one expects from a
