@@ -16,7 +16,7 @@
 
 import pytest
 
-from qiskit_iqm.fake_backends import IQMErrorProfile
+from iqm.qiskit_iqm.fake_backends import IQMErrorProfile
 
 
 @pytest.fixture

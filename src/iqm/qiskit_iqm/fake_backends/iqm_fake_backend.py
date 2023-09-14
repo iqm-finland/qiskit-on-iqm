@@ -21,14 +21,14 @@ from dataclasses import dataclass
 from itertools import permutations
 from typing import Any, Optional, Union
 
-from iqm_client import QuantumArchitectureSpecification
+from iqm.iqm_client import QuantumArchitectureSpecification
 from qiskit import QuantumCircuit
 from qiskit.providers import JobV1, Options
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
-from qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
+from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 
 
 # pylint: disable=too-many-instance-attributes

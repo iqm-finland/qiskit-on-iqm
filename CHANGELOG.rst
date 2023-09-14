@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.0
+============
+
+* Move ``qiskit_iqm`` package to ``iqm`` namespace. `#79 <https://github.com/iqm-finland/qiskit-on-iqm/pull/79>`_
+
 Version 10.11
 =============
 

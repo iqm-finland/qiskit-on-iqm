@@ -14,12 +14,12 @@
 
 """Testing IQM backend.
 """
-from iqm_client import IQMClient
+from iqm.iqm_client import IQMClient
 from mockito import mock, when
 import pytest
 from qiskit import QuantumCircuit, transpile
 
-from qiskit_iqm.iqm_provider import IQMFacadeBackend
+from iqm.qiskit_iqm.iqm_provider import IQMFacadeBackend
 
 
 def test_run_fails_empty_cregs(adonis_architecture):

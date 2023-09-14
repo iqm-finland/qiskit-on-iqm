@@ -6,4 +6,4 @@ API Reference
    :template: autosummary-module-template.rst
    :recursive:
 
-   qiskit_iqm
+   iqm.qiskit_iqm

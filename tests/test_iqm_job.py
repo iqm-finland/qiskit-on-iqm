@@ -16,7 +16,7 @@
 """
 import uuid
 
-from iqm_client import (
+from iqm.iqm_client import (
     HeraldingMode,
     Instruction,
     IQMClient,
@@ -34,7 +34,7 @@ from qiskit.providers import JobStatus
 from qiskit.result import Counts
 from qiskit.result import Result as QiskitResult
 
-from qiskit_iqm import IQMBackend, IQMJob
+from iqm.qiskit_iqm import IQMBackend, IQMJob
 
 
 @pytest.fixture()

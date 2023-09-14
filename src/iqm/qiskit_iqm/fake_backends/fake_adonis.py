@@ -13,9 +13,9 @@
 # limitations under the License.
 """Fake backend for IQM's 5-qubit Adonis architecture.
 """
-from iqm_client import QuantumArchitectureSpecification
+from iqm.iqm_client import QuantumArchitectureSpecification
 
-from qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
+from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
 
 
 def IQMFakeAdonis() -> IQMFakeBackend:
