@@ -90,6 +90,8 @@ autoclass_content = 'both'
 # Sphinx 3.3+: manually clean up type alias rendering in the docs
 # autodoc_type_aliases = {'TypeAlias': 'exa.experiment.somemodule.TypeAlias'}
 
+# This is required to make docs build work after the client packages were moved to iqm namespace.
+autodoc_mock_imports = ["iqm_client"]
 
 # -- Autosummary ------------------------------------------------------------
 
