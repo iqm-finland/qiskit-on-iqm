@@ -14,7 +14,6 @@
 """Fake backend for IQM's 5-qubit Adonis architecture.
 """
 from iqm.iqm_client import QuantumArchitectureSpecification
-
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
 
 

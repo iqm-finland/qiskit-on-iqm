@@ -19,12 +19,12 @@ from typing import Optional, Union
 from uuid import UUID
 import warnings
 
-from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
-from iqm.iqm_client.util import to_json_dict
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
+from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
+from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
 from iqm.qiskit_iqm.iqm_job import IQMJob

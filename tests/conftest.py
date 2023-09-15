@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Shared definitions for tests."""
-from iqm.iqm_client import QuantumArchitectureSpecification
 import pytest
+
+from iqm.iqm_client import QuantumArchitectureSpecification
 
 
 @pytest.fixture

@@ -19,11 +19,12 @@ from abc import ABC
 import re
 from typing import Final, Optional
 
-from iqm.iqm_client import QuantumArchitectureSpecification
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
+
+from iqm.iqm_client import QuantumArchitectureSpecification
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
 
