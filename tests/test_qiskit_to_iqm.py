@@ -17,7 +17,7 @@
 import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 
-from qiskit_iqm.qiskit_to_iqm import MeasurementKey
+from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
 @pytest.fixture()

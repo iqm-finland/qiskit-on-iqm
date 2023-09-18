@@ -17,7 +17,6 @@
 from importlib.metadata import version
 import uuid
 
-from iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
 from mockito import ANY, mock, patch, when
 import numpy as np
 import pytest
@@ -26,8 +25,9 @@ from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate
 from qiskit.compiler import transpile
 
-from qiskit_iqm import IQMBackend, IQMJob, IQMProvider
-from qiskit_iqm.iqm_provider import IQMFacadeBackend
+from iqm.iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
+from iqm.qiskit_iqm import IQMBackend, IQMJob, IQMProvider
+from iqm.qiskit_iqm.iqm_provider import IQMFacadeBackend
 
 
 @pytest.fixture

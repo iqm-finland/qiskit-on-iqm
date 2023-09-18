@@ -21,7 +21,11 @@ from typing import Optional, Union
 import uuid
 import warnings
 
-from iqm_client import (
+import numpy as np
+from qiskit.providers import JobStatus, JobV1
+from qiskit.result import Counts, Result
+
+from iqm.iqm_client import (
     CircuitMeasurementResults,
     HeraldingMode,
     IQMClient,
@@ -30,11 +34,7 @@ from iqm_client import (
     RunResult,
     Status,
 )
-import numpy as np
-from qiskit.providers import JobStatus, JobV1
-from qiskit.result import Counts, Result
-
-from qiskit_iqm.qiskit_to_iqm import MeasurementKey
+from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
 class IQMJob(JobV1):

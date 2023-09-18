@@ -16,7 +16,15 @@
 """
 import uuid
 
-from iqm_client import (
+import mockito
+from mockito import mock, unstub, verify, when
+import pytest
+from qiskit import QuantumCircuit
+from qiskit.providers import JobStatus
+from qiskit.result import Counts
+from qiskit.result import Result as QiskitResult
+
+from iqm.iqm_client import (
     HeraldingMode,
     Instruction,
     IQMClient,
@@ -26,15 +34,7 @@ from iqm_client import (
     SingleQubitMapping,
     Status,
 )
-import mockito
-from mockito import mock, unstub, verify, when
-import pytest
-from qiskit import QuantumCircuit
-from qiskit.providers import JobStatus
-from qiskit.result import Counts
-from qiskit.result import Result as QiskitResult
-
-from qiskit_iqm import IQMBackend, IQMJob
+from iqm.qiskit_iqm import IQMBackend, IQMJob
 
 
 @pytest.fixture()

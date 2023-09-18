@@ -21,7 +21,7 @@ from qiskit import QuantumCircuit
 from qiskit.compiler import transpile
 from qiskit.providers import Options
 
-from qiskit_iqm.iqm_backend import IQMBackendBase
+from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
 
 
 class DummyIQMBackend(IQMBackendBase):

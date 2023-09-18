@@ -18,7 +18,7 @@ from qiskit import QuantumCircuit
 from qiskit.providers import JobV1
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from qiskit_iqm import IQMFakeBackend
+from iqm.qiskit_iqm import IQMFakeBackend
 
 
 @pytest.fixture

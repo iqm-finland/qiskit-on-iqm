@@ -30,7 +30,7 @@ version = ''
 # The full version, including alpha/beta/rc tags.
 release = ''
 try:
-    from qiskit_iqm import __version__ as version
+    from iqm.qiskit_iqm import __version__ as version
 except ImportError:
     pass
 else:
@@ -90,6 +90,8 @@ autoclass_content = 'both'
 # Sphinx 3.3+: manually clean up type alias rendering in the docs
 # autodoc_type_aliases = {'TypeAlias': 'exa.experiment.somemodule.TypeAlias'}
 
+# This is required to make docs build work after the client packages were moved to iqm namespace.
+autodoc_mock_imports = ["iqm_client"]
 
 # -- Autosummary ------------------------------------------------------------
 

@@ -42,7 +42,7 @@ After installation Qiskit on IQM can be imported in your Python code as follows:
 
 .. code-block:: python
 
-   import qiskit_iqm
+   from iqm import qiskit_iqm
 
 
 Running a quantum circuit on an IQM quantum computer
@@ -87,7 +87,7 @@ quantum computer, and use Qiskit's ``execute`` function as usual:
 .. code-block:: python
 
     from qiskit import execute
-    from qiskit_iqm import IQMProvider
+    from iqm.qiskit_iqm import IQMProvider
 
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
@@ -257,7 +257,7 @@ pre-populated properties and noise model.
 .. code-block:: python
 
     from qiskit import execute, QuantumCircuit
-    from qiskit_iqm import IQMFakeAdonis
+    from iqm.qiskit_iqm import IQMFakeAdonis
 
     circuit = QuantumCircuit(2)
     circuit.h(0)
@@ -296,7 +296,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
 .. code-block:: python
 
     from qiskit import execute, QuantumCircuit
-    from qiskit_iqm import IQMProvider
+    from iqm.qiskit_iqm import IQMProvider
 
     circuit = QuantumCircuit(2)
     circuit.h(0)
