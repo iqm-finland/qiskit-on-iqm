@@ -266,6 +266,9 @@
       <li class="version_item"><a href="../../../index.html">dev</a></li>
     
     
+      <li class="version_item"><a href="../../11.0/index.html">11.0</a></li>
+    
+    
       <li class="version_item current_version">10.9</li>
     
     
@@ -557,6 +560,22 @@ title="Print to PDF"
               <div>
                 
 
+<style type="text/css">
+  .version_notice {
+    background-color: #ffc107;
+    padding: 0.5em 0.75em;
+    margin-bottom: 1em;
+  }
+</style>
+<div class="version_notice">
+  <strong>
+    
+    You're reading an old version of this documentation.
+    If you want up-to-date information, please have a look at <a href="../../11.0/index.html">11.0</a>.
+    
+  </strong>
+</div>
+
 
   <section id="qiskit-iqm-iqm-provider-iqmbackend">
 <h1>qiskit_iqm.iqm_provider.IQMBackend<a class="headerlink" href="#qiskit-iqm-iqm-provider-iqmbackend" title="Permalink to this headline">#</a></h1>
@@ -568,7 +587,7 @@ title="Print to PDF"
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.IQMClient.html#iqm_client.iqm_client.IQMClient" title="(in IQM client vdev)"><em>iqm_client.iqm_client.IQMClient</em></a>) – client instance for communicating with an IQM server</p></li>
+<li><p><strong>client</strong> (<em>iqm_client.IQMClient</em>) – client instance for communicating with an IQM server</p></li>
 <li><p><strong>**kwargs</strong> – optional arguments to be passed to the parent Backend initializer</p></li>
 </ul>
 </dd>
@@ -591,7 +610,7 @@ version of the object while <code class="docutils literal notranslate"><span cla
 versioning the backend itself.</p></li>
 <li><p><strong>fields</strong> – kwargs for the values to use to override the default
 options.</p></li>
-<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.IQMClient.html#iqm_client.iqm_client.IQMClient" title="(in IQM client vdev)"><em>iqm_client.iqm_client.IQMClient</em></a>) – </p></li>
+<li><p><strong>client</strong> (<em>iqm_client.IQMClient</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -714,7 +733,7 @@ documentation for more details).</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – circuit contains an unsupported instruction or is not transpiled in general</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm_client.iqm_client.Circuit.html#iqm_client.iqm_client.Circuit" title="(in IQM client vdev)">iqm_client.iqm_client.Circuit</a></p>
+<dd class="field-even"><p>iqm_client.Circuit</p>
 </dd>
 </dl>
 </dd></dl>
