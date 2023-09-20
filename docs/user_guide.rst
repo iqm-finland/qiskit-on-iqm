@@ -139,6 +139,17 @@ their current values using `backend.options`. Below table summarizes currently a
      - :py:class:`~iqm_client.iqm_client.HeraldingMode`
      - "zeros"
      - Heralding mode to use during execution. The default value is "none".
+   * - `circuit_callback`
+     - :py:class:`collections.abc.Callable`
+     - ``None``
+     - A function that accepts a list of :py:class:`qiskit.QuantumCircuit` instances and does not return anything.
+       When the backend receives circuits for execution, it will call this function (if provided) and pass those
+       circuits as argument. This may be useful in situations when you do not have explicit control over transpilation,
+       but need some information on how it was done. This can happen, for example, when you use pre-implemented
+       algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
+       delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
+       those transpiled circuits, extract any info you need.
+
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
