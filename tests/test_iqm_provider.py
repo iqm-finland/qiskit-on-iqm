@@ -14,6 +14,7 @@
 
 """Testing IQM provider.
 """
+from collections.abc import Sequence
 from importlib.metadata import version
 import uuid
 
@@ -68,6 +69,9 @@ def job_id():
 def test_default_options(backend):
     assert backend.options.shots == 1024
     assert backend.options.calibration_set_id is None
+    assert backend.options.circuit_duration_check is True
+    assert backend.options.heralding_mode == HeraldingMode.NONE
+    assert backend.options.circuit_callback is None
 
 
 def test_retrieve_job(backend):
@@ -270,6 +274,14 @@ def test_run_sets_circuit_metadata_to_the_job(backend):
     assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
+@pytest.mark.parametrize('shots', [13, 978, 1137])
+def test_run_with_custom_number_of_shots(backend, circuit, submit_circuits_default_kwargs, job_id, shots):
+    circuit.measure(0, 0)
+    kwargs = submit_circuits_default_kwargs | {'shots': shots, 'qubit_mapping': {'0': 'QB1'}}
+    when(backend.client).submit_circuits(ANY, **kwargs).thenReturn(job_id)
+    backend.run(circuit, shots=shots)
+
+
 @pytest.mark.parametrize(
     'calibration_set_id', ['67e77465-d90e-4839-986e-9270f952b743', uuid.UUID('67e77465-d90e-4839-986e-9270f952b743')]
 )
@@ -310,6 +322,31 @@ def test_run_with_heralding_mode_zeros(backend, circuit, submit_circuits_default
     kwargs = submit_circuits_default_kwargs | {'heralding_mode': HeraldingMode.ZEROS, 'qubit_mapping': {'0': 'QB1'}}
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
     backend.run([circuit], heralding_mode='zeros')
+
+
+def test_run_with_circuit_callback(backend, job_id, submit_circuits_default_kwargs):
+    qc1 = QuantumCircuit(3)
+    qc1.measure_all()
+    qc2 = QuantumCircuit(3)
+    qc2.r(np.pi, 0.3, 0)
+    qc2.measure_all()
+
+    def sample_callback(circuits) -> None:
+        assert isinstance(circuits, Sequence)
+        assert all(isinstance(c, QuantumCircuit) for c in circuits)
+        assert len(circuits) == 2
+        assert circuits[0].name == qc1.name
+        assert circuits[1].name == qc2.name
+
+    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2', '2': 'QB3'}}
+    when(backend.client).submit_circuits(ANY, **kwargs).thenReturn(job_id)
+    backend.run([qc1, qc2], circuit_callback=sample_callback)
+
+
+def test_run_with_unknown_option(backend, circuit):
+    circuit.measure_all()
+    with pytest.raises(ValueError, match=r'Unknown backend option\(s\)'):
+        backend.run(circuit, to_option_or_not_to_option=17)
 
 
 def test_run_batch_of_circuits(backend, circuit, submit_circuits_default_kwargs, job_id):
