@@ -13,6 +13,7 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
+from copy import copy
 from importlib.metadata import PackageNotFoundError, version
 from functools import reduce
 from typing import Optional, Union
@@ -88,14 +89,17 @@ class IQMBackend(IQMBackendBase):
         if unknown_options:
             raise ValueError(f'Unknown backend option(s): {unknown_options}')
 
-        shots = options.get('shots', self.options.shots)
-        calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
+        # merge given options with default options and get resulting values
+        merged_options = copy(self.options)
+        merged_options.update_options(**dict(options))
+        shots = merged_options['shots']
+        calibration_set_id = merged_options['calibration_set_id']
         if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
             calibration_set_id = UUID(calibration_set_id)
-        circuit_duration_check = options.get('circuit_duration_check', self.options.circuit_duration_check)
-        heralding_mode = options.get('heralding_mode', self.options.heralding_mode)
+        circuit_duration_check = merged_options['circuit_duration_check']
+        heralding_mode = merged_options['heralding_mode']
 
-        circuit_callback = options.get('circuit_callback', self.options.circuit_callback)
+        circuit_callback = merged_options['circuit_callback']
         if circuit_callback:
             circuit_callback(circuits)
 
