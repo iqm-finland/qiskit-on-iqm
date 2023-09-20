@@ -84,6 +84,10 @@ class IQMBackend(IQMBackendBase):
         if len(circuits) == 0:
             raise ValueError('Empty list of circuits submitted for execution.')
 
+        unknown_options = set(options.keys()) - set(self.options.keys())
+        if unknown_options:
+            raise ValueError(f'Unknown backend option(s): {unknown_options}')
+
         shots = options.get('shots', self.options.shots)
         calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
         if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
