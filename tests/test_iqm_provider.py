@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
 from qiskit.circuit import Parameter
-from qiskit.circuit.library import RGate
+from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 from qiskit.compiler import transpile
 
 from iqm.iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
@@ -119,6 +119,14 @@ def test_serialize_circuit_raises_error_for_unsupported_instruction(backend, cir
         backend.serialize_circuit(circuit)
 
 
+def test_serialize_circuit_does_not_raise_for_x_rx_y_ry(backend, circuit):
+    circuit.x(0)
+    circuit.rx(0.123, 0)
+    circuit.y(0)
+    circuit.ry(0.321, 0)
+    backend.serialize_circuit(circuit)
+
+
 def test_serialize_circuit_raises_error_for_unsupported_metadata(backend, circuit):
     circuit.append(RGate(theta=np.pi, phi=0), [0])
     circuit.metadata = {'some-key': complex(1.0, 2.0)}
@@ -144,6 +152,28 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     assert instr.name == 'phased_rx'
     assert instr.qubits == ('0',)
     # Serialized angles should be in full turns
+    assert instr.args['angle_t'] == expected_angle
+    assert instr.args['phase_t'] == expected_phase
+
+
+@pytest.mark.parametrize(
+    'gate, expected_angle, expected_phase',
+    [
+        (XGate(), 1 / 2, 0),
+        (RXGate(theta=np.pi / 2), 1 / 4, 0),
+        (RXGate(theta=2 * np.pi / 3), 1 / 3, 0),
+        (YGate(), 1 / 2, 1 / 4),
+        (RYGate(theta=np.pi / 2), 1 / 4, 1 / 4),
+        (RYGate(theta=2 * np.pi / 3), 1 / 3, 1 / 4),
+    ],
+)
+def test_serialize_circuit_maps_x_rx_y_ry_gates(backend, circuit, gate, expected_angle, expected_phase):
+    circuit.append(gate, [0])
+    circuit_ser = backend.serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    instr = circuit_ser.instructions[0]
+    assert instr.name == 'phased_rx'
+    assert instr.qubits == ('0',)
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
 
