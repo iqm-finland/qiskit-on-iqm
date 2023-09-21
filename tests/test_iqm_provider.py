@@ -354,6 +354,7 @@ def test_run_with_heralding_mode_zeros(backend, circuit, submit_circuits_default
     backend.run([circuit], heralding_mode='zeros')
 
 
+# mypy: disable-error-code="attr-defined"
 def test_run_with_circuit_callback(backend, job_id, submit_circuits_default_kwargs):
     qc1 = QuantumCircuit(3)
     qc1.measure_all()
@@ -367,10 +368,14 @@ def test_run_with_circuit_callback(backend, job_id, submit_circuits_default_kwar
         assert len(circuits) == 2
         assert circuits[0].name == qc1.name
         assert circuits[1].name == qc2.name
+        sample_callback.called = True
+
+    sample_callback.called = False
 
     kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2', '2': 'QB3'}}
     when(backend.client).submit_circuits(ANY, **kwargs).thenReturn(job_id)
     backend.run([qc1, qc2], circuit_callback=sample_callback)
+    assert sample_callback.called is True
 
 
 def test_run_with_unknown_option(backend, circuit):
