@@ -146,7 +146,8 @@ their current values using `backend.options`. Below table summarizes currently a
        but need some information on how it was done. This can happen, for example, when you use pre-implemented
        algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
        delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
-       those transpiled circuits, extract any info you need.
+       those transpiled circuits, extract any info you need. As a side effect, you can also use this callback to modify
+       the transpiled circuits in-place, just before execution, however we do not recommend to use it for this purpose.
 
 
 If the IQM server you are connecting to requires authentication, you will also have to use
