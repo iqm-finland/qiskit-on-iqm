@@ -2,6 +2,15 @@
 Changelog
 =========
 
+Version 11.1
+============
+
+* Add ``circuit_callback`` option to ``IQMBackend``. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* Raise error when unknown option is passed to ``IQMBackend.run``. Previously they were silently ignored. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* Improve handling of options passed to ``IQMBackend.run``. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* Fix the type of ``date`` in result object. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* ``IQMBackend.run`` can now accept circuits containing `x`, `rx`, `y` and `ry` gates. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+
 Version 11.0
 ============
 
