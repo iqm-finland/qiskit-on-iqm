@@ -266,6 +266,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="../versions/11.1/index.html">11.1</a></li>
+    
+    
       <li class="version_item"><a href="../versions/11.0/index.html">11.0</a></li>
     
     
@@ -571,7 +574,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/11.0/index.html">11.0</a>.
+    For the latest released version, please have a look at <a href="../versions/11.1/index.html">11.1</a>.
     
   </strong>
 </div>
@@ -718,6 +721,13 @@ object.</p></li>
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit">
 <span class="sig-name descname"><span class="pre">serialize_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit" title="Permalink to this definition">#</a></dt>
 <dd><p>Serialize a quantum circuit into the IQM data transfer format.</p>
+<p>Serializing is not strictly bound to the native gateset, i.e. some gates that are not explicitly mentioned in
+the native gateset of the backend can still be serialized. For example, the native single qubit gate for IQM
+backend is the ‘r’ gate, however ‘x’, ‘rx’, ‘y’ and ‘ry’ gates can also be serialized since they are just
+particular cases of the ‘r’ gate. If the circuit was transpiled against a backend using Qiskit’s transpiler
+machinery, these gates are not supposed to be present. However, when constructing circuits manually and
+submitting directly to the backend, it is sometimes more explicit and understandable to use these concrete
+gates rather than ‘r’. Serializing them explicitly makes it possible for the backend to accept such circuits.</p>
 <p>Qiskit uses one measurement instruction per qubit (i.e. there is no measurement grouping concept). While
 serializing we do not group any measurements together but rather associate a unique measurement key with each
 measurement instruction, so that the results can later be reconstructed correctly (see <code class="xref py py-class docutils literal notranslate"><span class="pre">MeasurementKey</span></code>

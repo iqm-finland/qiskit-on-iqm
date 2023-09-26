@@ -268,6 +268,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/11.1/user_guide.html">11.1</a></li>
+    
+    
       <li class="version_item"><a href="versions/11.0/user_guide.html">11.0</a></li>
     
     
@@ -680,7 +683,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/11.0/user_guide.html">11.0</a>.
+    For the latest released version, please have a look at <a href="versions/11.1/user_guide.html">11.1</a>.
     
   </strong>
 </div>
@@ -777,42 +780,50 @@ and then call execution methods without specifying additional keyword arguments.
 their current values using <cite>backend.options</cite>. Below table summarizes currently available options:</p>
 <table class="colwidths-given table">
 <colgroup>
-<col style="width: 15%" />
-<col style="width: 12%" />
-<col style="width: 15%" />
-<col style="width: 59%" />
+<col style="width: 20%" />
+<col style="width: 80%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Name</p></th>
-<th class="head"><p>Type</p></th>
-<th class="head"><p>Example value</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><cite>shots</cite></p></td>
-<td><p>int</p></td>
-<td><p>1207</p></td>
-<td><p>Number of shots.</p></td>
+<td><p>Type: <code class="docutils literal notranslate"><span class="pre">int</span></code>, Example value: <code class="docutils literal notranslate"><span class="pre">1207</span></code>.</p>
+<p>Number of shots.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><cite>calibration_set_id</cite></p></td>
-<td><p>str</p></td>
-<td><p>“f7d9642e-b0ca-4f2d-af2a-30195bd7a76d”</p></td>
-<td><p>Indicates the calibration set to use. Defaults to <cite>None</cite>, which means the IQM server will use the best
-available calibration set automatically.</p></td>
+<td><p>Type: <code class="docutils literal notranslate"><span class="pre">str</span></code>, Example value <code class="docutils literal notranslate"><span class="pre">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span></code>.</p>
+<p>Indicates the calibration set to use. Defaults to <cite>None</cite>, which means the IQM server will use the best
+available calibration set automatically.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><cite>circuit_duration_check</cite></p></td>
-<td><p>bool</p></td>
-<td><p>False</p></td>
-<td><p>Enable or disable server-side circuit duration checks. The default value is <cite>True</cite>, which means if any job is
+<td><p>Type: <code class="docutils literal notranslate"><span class="pre">bool</span></code>, Example value: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p>Enable or disable server-side circuit duration checks. The default value is <cite>True</cite>, which means if any job is
 estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
 time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
-circuit duration check should always remain enabled.</p></td>
+circuit duration check should always remain enabled.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><cite>heralding_mode</cite></p></td>
-<td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">HeraldingMode</span></code></p></td>
-<td><p>“zeros”</p></td>
-<td><p>Heralding mode to use during execution. The default value is “none”.</p></td>
+<td><p>Type: <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.HeraldingMode.html#iqm.iqm_client.iqm_client.HeraldingMode" title="(in IQM client vdev)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeraldingMode</span></code></a>, Example value: <code class="docutils literal notranslate"><span class="pre">&quot;zeros&quot;</span></code>.</p>
+<p>Heralding mode to use during execution. The default value is “none”.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><cite>circuit_callback</cite></p></td>
+<td><p>Type: <a class="reference external" href="https://docs.python.org/3.9/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Callable</span></code></a>, Example value: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>A function that accepts a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.QuantumCircuit</span></code> instances and does not return anything.
+When the backend receives circuits for execution, it will call this function (if provided) and pass those
+circuits as argument. This may be useful in situations when you do not have explicit control over transpilation,
+but need some information on how it was done. This can happen, for example, when you use pre-implemented
+algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
+delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
+those transpiled circuits, extract any info you need. As a side effect, you can also use this callback to modify
+the transpiled circuits in-place, just before execution, however we do not recommend to use it for this purpose.</p>
+</td>
 </tr>
 </tbody>
 </table>
