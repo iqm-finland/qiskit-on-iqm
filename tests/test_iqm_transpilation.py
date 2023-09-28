@@ -39,7 +39,7 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
 
     transpiled_unitary = simulator.run(transpiled_circuit).result().get_unitary(transpiled_circuit)
 
-    optimized_unitary = simulator.run(optimized_circuit).result().get_unitary(transpiled_circuit)
+    optimized_unitary = simulator.run(optimized_circuit).result().get_unitary(optimized_circuit)
 
     # test that the two unitaries are equal up to a global phase
     np.testing.assert_almost_equal(
@@ -50,6 +50,19 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
         ),
         0,
     )
+
+
+def test_optimize_1qb_gate_decomposition_reduces_gate_count():
+    """Test that 1 qubit gate decomposition optimizes the number of one qubit gates."""
+    circuit = QuantumCircuit(2, 2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.measure_all()
+
+    transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
+    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit)
+
+    assert len(optimized_circuit.get_instructions('r')) == 3
 
 
 def test_optimize_1qb_gate_decomposition_raises_on_invalid_basis():
