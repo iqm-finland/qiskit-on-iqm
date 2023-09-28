@@ -21,21 +21,22 @@ from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.transpiler.passes import Optimize1qGatesDecomposition, Unroller
 from qiskit.transpiler.passmanager import PassManager
 
-# pylint: disable=anomalous-backslash-in-string
 
 
 class IQMOptimize1QbDecomposition(TransformationPass):
-    """Optimize the decomposition of 1 qubit gates for the IQM gate set. This optimisation pass expects
-    the circuit to be correctly layouted and translated to the IQM architecture and raises an error otherwise.
+    r"""Optimize the decomposition of 1 qubit gates for the IQM gate set.
+    
+    This optimisation pass expects the circuit to be correctly layouted and translated to the IQM architecture
+    and raises an error otherwise.
     The optimisation logic follows the following steps:
 
-    1. Convert single qubit gates to `U` gates and combine all neighbouring `U` gates
-    2. Convert `U` gates according to
-       :math:`U(\\theta , \phi , \lambda) = R_Z(\phi + \lambda) R(\\theta, \pi / 2  - \lambda)`
-    3. Commute `R_Z` gates to the end of the circuit using the fact that `R_Z` and `C_Z` gates commute and
-       :math:`R(\\theta , \phi) R_Z(\lambda) = R_Z(\lambda) R(\\theta, \phi - \lambda)`
-    4. Drop `R_Z` gates immediately before measurements otherwise replace according to
-       :math:`R_Z(\lambda) = R_X(\pi / 2) R_Y(\lambda) R_X(-\pi / 2)`
+    1. Convert single qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
+    2. Convert :math:`U` gates according to
+       :math:`U(\theta , \phi , \lambda) = RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
+    3. Commute `RZ` gates to the end of the circuit using the fact that `RZ` and `CZ` gates commute, and
+       :math:`R(\theta , \phi) RZ(\lambda) = RZ(\lambda) R(\theta, \phi - \lambda)`.
+    4. Drop `RZ` gates immediately before measurements, and otherwise replace them according to
+       :math:`RZ(\lambda) = RX(\pi / 2) RY(\lambda) RX(-\pi / 2)`.
     """
 
     def __init__(self):
@@ -43,8 +44,9 @@ class IQMOptimize1QbDecomposition(TransformationPass):
         self._basis = ['r', 'cz']
         self._intermediate_basis = ['u', 'cz']
 
-    def run(self, dag: DAGCircuit):
+    def run(self, dag: DAGCircuit) -> DAGCircuit:
         self._validate_ops(dag)
+        # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         virtual_z_frames: list[float] = [0] * dag.num_qubits()
         optimized_dag: DAGCircuit = Unroller(self._intermediate_basis).run(dag)
         optimized_dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(optimized_dag)
@@ -77,11 +79,11 @@ class IQMOptimize1QbDecomposition(TransformationPass):
             if node.name not in self._basis + ['measure', 'barrier']:
                 raise ValueError(
                     f"""Invalid operation '{node.name}' found in IQMOptimize1QbDecomposition pass, 
-                    expected operations {self._basis + ['measurement', 'barrier']}"""
+                    expected operations {self._basis + ['measure', 'barrier']}"""
                 )
 
 
-def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit):
+def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit) -> QuantumCircuit:
     """Optimize number of single qubit gates in a transpiled circuit exploting the IQM specific gate set.
 
     Args:
