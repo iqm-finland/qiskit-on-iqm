@@ -21,7 +21,7 @@ from qiskit_aer import Aer
 from iqm.qiskit_iqm.iqm_transpilation import optimize_1_qb_gate_decomposition
 
 
-def test_optimize_1qb_gate_decomposition():
+def test_optimize_1qb_gate_decomposition_preserves_unitary():
     """Test that 1 qubit gate decomposition preserves the unitary of the circuit."""
     circuit = QuantumCircuit(2, 2)
     circuit.t(0)
@@ -41,7 +41,15 @@ def test_optimize_1qb_gate_decomposition():
 
     optimized_unitary = simulator.run(optimized_circuit).result().get_unitary(transpiled_circuit)
 
-    np.testing.assert_almost_equal(transpiled_unitary, optimized_unitary)
+    # test that the two unitaries are equal up to a global phase
+    np.testing.assert_almost_equal(
+        2
+        * (
+            transpiled_unitary.data.shape[0]
+            - np.abs(np.trace(np.matmul(transpiled_unitary.data.T.conj(), optimized_unitary.data)))
+        ),
+        0,
+    )
 
 
 def test_optimize_1qb_gate_decomposition_raises_on_invalid_basis():

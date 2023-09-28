@@ -22,17 +22,16 @@ from qiskit.transpiler.passes import Optimize1qGatesDecomposition, Unroller
 from qiskit.transpiler.passmanager import PassManager
 
 
-
 class IQMOptimize1QbDecomposition(TransformationPass):
     r"""Optimize the decomposition of 1 qubit gates for the IQM gate set.
-    
+
     This optimisation pass expects the circuit to be correctly layouted and translated to the IQM architecture
     and raises an error otherwise.
     The optimisation logic follows the following steps:
 
     1. Convert single qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
     2. Convert :math:`U` gates according to
-       :math:`U(\theta , \phi , \lambda) = RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
+       :math:`U(\theta , \phi , \lambda) ~ RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
     3. Commute `RZ` gates to the end of the circuit using the fact that `RZ` and `CZ` gates commute, and
        :math:`R(\theta , \phi) RZ(\lambda) = RZ(\lambda) R(\theta, \phi - \lambda)`.
     4. Drop `RZ` gates immediately before measurements, and otherwise replace them according to
@@ -48,10 +47,12 @@ class IQMOptimize1QbDecomposition(TransformationPass):
         self._validate_ops(dag)
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         virtual_z_frames: list[float] = [0] * dag.num_qubits()
+        # convert all gates in the circuit to U and CZ gates
         optimized_dag: DAGCircuit = Unroller(self._intermediate_basis).run(dag)
+        # combine all sequential U gates into one
         optimized_dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(optimized_dag)
         last_op_is_measurement: dict[Qubit, bool] = {qubit: False for qubit in dag.qubits}
-        for node in dag.topological_op_nodes():
+        for node in optimized_dag.topological_op_nodes():
             if node.name == 'u':
                 qubit_index = optimized_dag.find_bit(node.qargs[0])[0]
                 optimized_dag.substitute_node(
