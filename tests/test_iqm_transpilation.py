@@ -41,15 +41,7 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
 
     optimized_unitary = simulator.run(optimized_circuit).result().get_unitary(optimized_circuit)
 
-    # test that the two unitaries are equal up to a global phase
-    np.testing.assert_almost_equal(
-        2
-        * (
-            transpiled_unitary.data.shape[0]
-            - np.abs(np.trace(np.matmul(transpiled_unitary.data.T.conj(), optimized_unitary.data)))
-        ),
-        0,
-    )
+    np.testing.assert_almost_equal(transpiled_unitary.data, optimized_unitary.data)
 
 
 def test_optimize_1qb_gate_decomposition_reduces_gate_count():

@@ -48,17 +48,19 @@ class IQMOptimize1QbDecomposition(TransformationPass):
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
         # convert all gates in the circuit to U and CZ gates
-        optimized_dag: DAGCircuit = Unroller(self._intermediate_basis).run(dag)
+        dag = Unroller(self._intermediate_basis).run(dag)
         # combine all sequential U gates into one
-        optimized_dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(optimized_dag)
+        dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(dag)
         last_op_is_measurement: dict[Qubit, bool] = {qubit: False for qubit in dag.qubits}
-        for node in optimized_dag.topological_op_nodes():
+        for node in dag.topological_op_nodes():
             if node.name == 'u':
-                qubit_index = optimized_dag.find_bit(node.qargs[0])[0]
-                optimized_dag.substitute_node(
+                qubit_index = dag.find_bit(node.qargs[0])[0]
+                dag.substitute_node(
                     node, RGate(node.op.params[0], np.pi / 2 - node.op.params[2] - rz_angles[qubit_index])
                 )
-                rz_angles[qubit_index] += node.op.params[1] + node.op.params[2]
+                phase = node.op.params[1] + node.op.params[2]
+                dag.global_phase += phase / 2
+                rz_angles[qubit_index] += phase
             if node.name == 'measure':
                 for qubit in node.qargs:
                     last_op_is_measurement[qubit] = True
@@ -67,12 +69,12 @@ class IQMOptimize1QbDecomposition(TransformationPass):
                     last_op_is_measurement[qubit] = False
 
         for qubit, has_terminal_measurement in last_op_is_measurement.items():
-            qubit_index = optimized_dag.find_bit(qubit)[0]
+            qubit_index = dag.find_bit(qubit)[0]
             if not has_terminal_measurement and rz_angles[qubit_index] != 0:
-                optimized_dag.apply_operation_back(RGate(-np.pi, 0), qargs=(qubit,))
-                optimized_dag.apply_operation_back(RGate(np.pi, rz_angles[qubit_index] / 2), qargs=(qubit,))
+                dag.apply_operation_back(RGate(-np.pi, 0), qargs=(qubit,))
+                dag.apply_operation_back(RGate(np.pi, rz_angles[qubit_index] / 2), qargs=(qubit,))
 
-        return optimized_dag
+        return dag
 
     def _validate_ops(self, dag: DAGCircuit):
         for node in dag.op_nodes():
