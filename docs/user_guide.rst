@@ -245,6 +245,35 @@ Now we can study how the circuit gets transpiled:
                                                                                               ║
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
+We also provide a IQM specific optimization pass exploiting the native IQM gate set which aims at reducing the number
+of one qubit gates. This optimization expects an already transpiled circuit. As an example lets apply it to the above circuit:
+
+.. code-block:: python
+
+    from iqm.qiskit_iqm.iqm_transpilation import optimize_1_qb_gate_decomposition
+
+    qc_optimized = optimize_1_qb_gate_decomposition(qc_transpiled)
+
+    print(qc_optimized.draw(output='text'))
+
+::
+
+global phase: 3π/2
+        ┌─────────────┐   ┌─────────────┐                ░    ┌─┐   
+   q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
+        ├─────────────┤ │ └─────────────┘┌─────────────┐ ░    └╥┘┌─┐
+   q_1: ┤ R(π/2,3π/2) ├─┼────────■───────┤ R(π/2,5π/2) ├─░─────╫─┤M├
+        ├─────────────┤ │        │       └─────────────┘ ░ ┌─┐ ║ └╥┘
+   q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫──╫─
+        └─────────────┘                                  ░ └╥┘ ║  ║ 
+   q_3: ────────────────────────────────────────────────────╫──╫──╫─
+                                                            ║  ║  ║ 
+   q_4: ────────────────────────────────────────────────────╫──╫──╫─
+                                                            ║  ║  ║ 
+   c: 3/════════════════════════════════════════════════════╬══╬══╬═
+                                                            ║  ║  ║ 
+meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+                                                            0  1  2 
 
 Noisy simulation of quantum circuit execution
 ---------------------------------------------
