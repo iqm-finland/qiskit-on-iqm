@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.1
+============
+
+* Add IQM specific circuit optimization. `#81 <https://github.com/iqm-finland/qiskit-on-iqm/pull/81>`_
+
 Version 11.0
 ============
 

@@ -17,3 +17,4 @@ from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from iqm.qiskit_iqm.iqm_job import IQMJob
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
+from iqm.qiskit_iqm.iqm_transpilation import optimize_1_qb_gate_decomposition
