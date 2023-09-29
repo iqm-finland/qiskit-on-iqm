@@ -112,33 +112,43 @@ and then call execution methods without specifying additional keyword arguments.
 their current values using `backend.options`. Below table summarizes currently available options:
 
 .. list-table::
-   :widths: 25 20 25 100
+   :widths: 25 100
    :header-rows: 1
 
    * - Name
-     - Type
-     - Example value
      - Description
    * - `shots`
-     - int
-     - 1207
-     - Number of shots.
+     - Type: ``int``, Example value: ``1207``.
+
+       Number of shots.
    * - `calibration_set_id`
-     - str
-     - "f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"
-     - Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
+     - Type: ``str``, Example value ``"f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"``.
+
+       Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
        available calibration set automatically.
    * - `circuit_duration_check`
-     - bool
-     - False
-     - Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
+     - Type: ``bool``, Example value: ``False``.
+
+       Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
        estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
        time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
        circuit duration check should always remain enabled.
    * - `heralding_mode`
-     - :py:class:`~iqm_client.iqm_client.HeraldingMode`
-     - "zeros"
-     - Heralding mode to use during execution. The default value is "none".
+     - Type: :class:`~iqm.iqm_client.iqm_client.HeraldingMode`, Example value: ``"zeros"``.
+
+       Heralding mode to use during execution. The default value is "none".
+   * - `circuit_callback`
+     - Type: :class:`collections.abc.Callable`, Example value: ``None``.
+
+       A function that accepts a list of :class:`qiskit.QuantumCircuit` instances and does not return anything.
+       When the backend receives circuits for execution, it will call this function (if provided) and pass those
+       circuits as argument. This may be useful in situations when you do not have explicit control over transpilation,
+       but need some information on how it was done. This can happen, for example, when you use pre-implemented
+       algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
+       delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
+       those transpiled circuits, extract any info you need. As a side effect, you can also use this callback to modify
+       the transpiled circuits in-place, just before execution, however we do not recommend to use it for this purpose.
+
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,

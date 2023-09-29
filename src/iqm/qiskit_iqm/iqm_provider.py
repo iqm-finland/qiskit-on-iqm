@@ -13,6 +13,7 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
+from copy import copy
 from importlib.metadata import PackageNotFoundError, version
 from functools import reduce
 from typing import Optional, Union
@@ -54,7 +55,11 @@ class IQMBackend(IQMBackendBase):
     @classmethod
     def _default_options(cls) -> Options:
         return Options(
-            shots=1024, calibration_set_id=None, circuit_duration_check=True, heralding_mode=HeraldingMode.NONE
+            shots=1024,
+            calibration_set_id=None,
+            circuit_duration_check=True,
+            heralding_mode=HeraldingMode.NONE,
+            circuit_callback=None,
         )
 
     @property
@@ -80,12 +85,23 @@ class IQMBackend(IQMBackendBase):
         if len(circuits) == 0:
             raise ValueError('Empty list of circuits submitted for execution.')
 
-        shots = options.get('shots', self.options.shots)
-        calibration_set_id = options.get('calibration_set_id', self.options.calibration_set_id)
+        unknown_options = set(options.keys()) - set(self.options.keys())
+        if unknown_options:
+            raise ValueError(f'Unknown backend option(s): {unknown_options}')
+
+        # merge given options with default options and get resulting values
+        merged_options = copy(self.options)
+        merged_options.update_options(**dict(options))
+        shots = merged_options['shots']
+        calibration_set_id = merged_options['calibration_set_id']
         if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
             calibration_set_id = UUID(calibration_set_id)
-        circuit_duration_check = options.get('circuit_duration_check', self.options.circuit_duration_check)
-        heralding_mode = options.get('heralding_mode', self.options.heralding_mode)
+        circuit_duration_check = merged_options['circuit_duration_check']
+        heralding_mode = merged_options['heralding_mode']
+
+        circuit_callback = merged_options['circuit_callback']
+        if circuit_callback:
+            circuit_callback(circuits)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         used_indices: set[int] = reduce(
@@ -117,6 +133,14 @@ class IQMBackend(IQMBackendBase):
     def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
 
+        Serializing is not strictly bound to the native gateset, i.e. some gates that are not explicitly mentioned in
+        the native gateset of the backend can still be serialized. For example, the native single qubit gate for IQM
+        backend is the 'r' gate, however 'x', 'rx', 'y' and 'ry' gates can also be serialized since they are just
+        particular cases of the 'r' gate. If the circuit was transpiled against a backend using Qiskit's transpiler
+        machinery, these gates are not supposed to be present. However, when constructing circuits manually and
+        submitting directly to the backend, it is sometimes more explicit and understandable to use these concrete
+        gates rather than 'r'. Serializing them explicitly makes it possible for the backend to accept such circuits.
+
         Qiskit uses one measurement instruction per qubit (i.e. there is no measurement grouping concept). While
         serializing we do not group any measurements together but rather associate a unique measurement key with each
         measurement instruction, so that the results can later be reconstructed correctly (see :class:`MeasurementKey`
@@ -131,6 +155,7 @@ class IQMBackend(IQMBackendBase):
         Raises:
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
+        # pylint: disable=too-many-branches
         if len(circuit.qregs) != 1 or len(circuit.qregs[0]) != self.num_qubits:
             raise ValueError(
                 f"The circuit '{circuit.name}' does not contain a single quantum register of length {self.num_qubits}, "
@@ -144,6 +169,24 @@ class IQMBackend(IQMBackendBase):
                 phase_t = float(instruction.params[1] / (2 * np.pi))
                 instructions.append(
                     Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
+                )
+            elif instruction.name == 'x':
+                instructions.append(
+                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.0})
+                )
+            elif instruction.name == 'rx':
+                angle_t = float(instruction.params[0] / (2 * np.pi))
+                instructions.append(
+                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.0})
+                )
+            elif instruction.name == 'y':
+                instructions.append(
+                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.25})
+                )
+            elif instruction.name == 'ry':
+                angle_t = float(instruction.params[0] / (2 * np.pi))
+                instructions.append(
+                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.25})
                 )
             elif instruction.name == 'cz':
                 instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))

@@ -159,7 +159,7 @@ class IQMJob(JobV1):
                 }
                 for i, (name, measurement_results) in enumerate(self._result)
             ],
-            'date': date.today(),
+            'date': date.today().isoformat(),
             'request': self._request,
             'timestamps': self.metadata.get('timestamps'),
         }
