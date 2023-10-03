@@ -87,7 +87,7 @@ class IQMBackend(IQMBackendBase):
 
         unknown_options = set(options.keys()) - set(self.options.keys())
         if unknown_options:
-            raise ValueError(f'Unknown backend option(s): {unknown_options}')
+            warnings.warn(f'Unknown backend option(s): {unknown_options}')
 
         # merge given options with default options and get resulting values
         merged_options = copy(self.options)

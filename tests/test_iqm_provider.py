@@ -378,9 +378,10 @@ def test_run_with_circuit_callback(backend, job_id, submit_circuits_default_kwar
     assert sample_callback.called is True
 
 
-def test_run_with_unknown_option(backend, circuit):
+def test_run_with_unknown_option(backend, circuit, job_id):
     circuit.measure_all()
-    with pytest.raises(ValueError, match=r'Unknown backend option\(s\)'):
+    when(backend.client).submit_circuits(...).thenReturn(job_id)
+    with pytest.warns(Warning, match=r'Unknown backend option\(s\)'):
         backend.run(circuit, to_option_or_not_to_option=17)
 
 
