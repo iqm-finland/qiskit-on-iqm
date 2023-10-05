@@ -22,7 +22,7 @@ from iqm.qiskit_iqm.iqm_transpilation import optimize_1_qb_gate_decomposition
 
 
 def test_optimize_1qb_gate_decomposition_preserves_unitary():
-    """Test that 1 qubit gate decomposition preserves the unitary of the circuit."""
+    """Test that single-qubit gate decomposition preserves the unitary of the circuit."""
     circuit = QuantumCircuit(2, 2)
     circuit.t(0)
     circuit.rx(0.4, 0)
@@ -45,7 +45,7 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
 
 
 def test_optimize_1qb_gate_decomposition_reduces_gate_count():
-    """Test that 1 qubit gate decomposition optimizes the number of one qubit gates."""
+    """Test that single-qubit gate decomposition optimizes the number of single-qubit gates."""
     circuit = QuantumCircuit(2, 2)
     circuit.h(0)
     circuit.cx(0, 1)
