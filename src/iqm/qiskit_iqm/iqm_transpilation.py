@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Transpilation tool to optimize the decomposition of 1 qubit gates tailored to IQM hardware."""
+"""Transpilation tool to optimize the decomposition of single-qubit gates tailored to IQM hardware."""
 import copy
 
 import numpy as np
@@ -25,13 +25,13 @@ from qiskit.transpiler.passmanager import PassManager
 
 
 class IQMOptimize1QbDecomposition(TransformationPass):
-    r"""Optimize the decomposition of 1 qubit gates for the IQM gate set.
+    r"""Optimize the decomposition of single-qubit gates for the IQM gate set.
 
     This optimisation pass expects the circuit to be correctly layouted and translated to the IQM architecture
     and raises an error otherwise.
-    The optimisation logic follows the following steps:
+    The optimisation logic follows the steps:
 
-    1. Convert single qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
+    1. Convert single-qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
     2. Convert :math:`U` gates according to
        :math:`U(\theta , \phi , \lambda) ~ RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
     3. Commute `RZ` gates to the end of the circuit using the fact that `RZ` and `CZ` gates commute, and
@@ -88,7 +88,7 @@ class IQMOptimize1QbDecomposition(TransformationPass):
 
 
 def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit) -> QuantumCircuit:
-    """Optimize number of single qubit gates in a transpiled circuit exploiting the IQM specific gate set.
+    """Optimize number of single-qubit gates in a transpiled circuit exploiting the IQM specific gate set.
 
     Args:
         circuit: quantum circuit to optimise

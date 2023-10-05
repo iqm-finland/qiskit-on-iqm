@@ -256,7 +256,7 @@ Now we can study how the circuit gets transpiled:
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
 We also provide a IQM specific optimization pass exploiting the native IQM gate set which aims at reducing the number
-of one qubit gates. This optimization expects an already transpiled circuit. As an example lets apply it to the above circuit:
+of single-qubit gates. This optimization expects an already transpiled circuit. As an example, lets apply it to the above circuit:
 
 .. code-block:: python
 
