@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Transpilation tool to optimize the decomposition of single-qubit gates tailored to IQM hardware."""
-import copy
 
 import numpy as np
 from qiskit import QuantumCircuit
@@ -96,4 +95,4 @@ def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit) -> QuantumCircuit:
     Returns:
         optimised circuit
     """
-    return PassManager(IQMOptimize1QbDecomposition()).run(copy.deepcopy(circuit))
+    return PassManager(IQMOptimize1QbDecomposition()).run(circuit)

@@ -58,7 +58,7 @@ def test_optimize_1qb_gate_decomposition_reduces_gate_count():
 
 
 def test_optimize_1qb_gate_decomposition_raises_on_invalid_basis():
-    """Test that optimisation pass raises error if gates other than `R_Z, C_Z` are provided."""
+    """Test that optimisation pass raises error if gates other than ``RZ`` and ``CZ`` are provided."""
     circuit = QuantumCircuit(1, 1)
     circuit.h(0)
 
