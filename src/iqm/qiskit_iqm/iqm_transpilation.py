@@ -15,7 +15,6 @@
 
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.circuit import Qubit
 from qiskit.circuit.library import RGate
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
@@ -39,10 +38,11 @@ class IQMOptimize1QbDecomposition(TransformationPass):
        :math:`RZ(\lambda) = R(\pi, \lambda / 2) R(- \pi, 0)`.
     """
 
-    def __init__(self):
+    def __init__(self, drop_final_rz: bool = False):
         super().__init__()
         self._basis = ['r', 'cz']
         self._intermediate_basis = ['u', 'cz']
+        self._drop_final_rz = drop_final_rz
 
     def run(self, dag: DAGCircuit) -> DAGCircuit:
         self._validate_ops(dag)
@@ -52,10 +52,9 @@ class IQMOptimize1QbDecomposition(TransformationPass):
         dag = Unroller(self._intermediate_basis).run(dag)
         # combine all sequential U gates into one
         dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(dag)
-        last_op_is_measurement: dict[Qubit, bool] = {qubit: False for qubit in dag.qubits}
         for node in dag.topological_op_nodes():
+            qubit_index = dag.find_bit(node.qargs[0])[0]
             if node.name == 'u':
-                qubit_index = dag.find_bit(node.qargs[0])[0]
                 dag.substitute_node(
                     node, RGate(node.op.params[0], np.pi / 2 - node.op.params[2] - rz_angles[qubit_index])
                 )
@@ -64,16 +63,13 @@ class IQMOptimize1QbDecomposition(TransformationPass):
                 rz_angles[qubit_index] += phase
             if node.name == 'measure':
                 for qubit in node.qargs:
-                    last_op_is_measurement[qubit] = True
-            else:
-                for qubit in node.qargs:
-                    last_op_is_measurement[qubit] = False
-
-        for qubit, has_terminal_measurement in last_op_is_measurement.items():
-            qubit_index = dag.find_bit(qubit)[0]
-            if not has_terminal_measurement and rz_angles[qubit_index] != 0:
-                dag.apply_operation_back(RGate(-np.pi, 0), qargs=(qubit,))
-                dag.apply_operation_back(RGate(np.pi, rz_angles[qubit_index] / 2), qargs=(qubit,))
+                    rz_angles[qubit_index] = 0
+        if not self._drop_final_rz:
+            for qubit_index, rz_angle in enumerate(rz_angles):
+                if rz_angle != 0:
+                    qubit = dag.qubits[qubit_index]
+                    dag.apply_operation_back(RGate(-np.pi, 0), qargs=(qubit,))
+                    dag.apply_operation_back(RGate(np.pi, rz_angles[qubit_index] / 2), qargs=(qubit,))
 
         return dag
 
@@ -86,7 +82,7 @@ class IQMOptimize1QbDecomposition(TransformationPass):
                 )
 
 
-def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit) -> QuantumCircuit:
+def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit, drop_final_rz: bool = True) -> QuantumCircuit:
     """Optimize number of single-qubit gates in a transpiled circuit exploiting the IQM specific gate set.
 
     Args:
@@ -95,4 +91,4 @@ def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit) -> QuantumCircuit:
     Returns:
         optimised circuit
     """
-    return PassManager(IQMOptimize1QbDecomposition()).run(circuit)
+    return PassManager(IQMOptimize1QbDecomposition(drop_final_rz)).run(circuit)

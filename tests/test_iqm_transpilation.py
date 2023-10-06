@@ -35,13 +35,42 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
     simulator = Aer.get_backend(name='unitary_simulator')
 
     transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
-    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit)
+    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit, drop_final_rz=False)
 
     transpiled_unitary = simulator.run(transpiled_circuit).result().get_unitary(transpiled_circuit)
 
     optimized_unitary = simulator.run(optimized_circuit).result().get_unitary(optimized_circuit)
 
     np.testing.assert_almost_equal(transpiled_unitary.data, optimized_unitary.data)
+
+
+def test_optimize_1qb_gate_decomposition_drops_final_rz():
+    """Test that single-qubit gate decomposition drops the final rz gate if requested and there is no measurement."""
+    circuit = QuantumCircuit(2, 1)
+    circuit.h(0)
+    circuit.h(1)
+    circuit.cz(0, 1)
+    circuit.h(1)
+    circuit.measure(1, 0)
+
+    simulator = Aer.get_backend(name='statevector_simulator')
+
+    transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
+    optimized_circuit_dropped_rz = optimize_1_qb_gate_decomposition(transpiled_circuit)
+    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit, drop_final_rz=False)
+
+    shots = 1000
+    transpiled_counts = simulator.run(transpiled_circuit, shots=shots).result().get_counts()
+    optimized_counts = simulator.run(optimized_circuit, shots=shots).result().get_counts()
+    optimized_dropped_rz_counts = simulator.run(optimized_circuit_dropped_rz, shots=shots).result().get_counts()
+
+    for counts in [transpiled_counts, optimized_counts, optimized_dropped_rz_counts]:
+        for key in counts:
+            counts[key] = np.round(counts[key] / shots, 1)
+
+    assert transpiled_counts == optimized_counts == optimized_dropped_rz_counts
+    assert len(optimized_circuit_dropped_rz.get_instructions('r')) == 3
+    assert len(optimized_circuit.get_instructions('r')) == 5
 
 
 def test_optimize_1qb_gate_decomposition_reduces_gate_count():
