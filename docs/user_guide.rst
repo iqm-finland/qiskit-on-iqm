@@ -286,7 +286,7 @@ of single-qubit gates. This optimization expects an already transpiled circuit. 
                                                                  0  1  2 
 
 Under the hood :meth:`optimize_1_qb_gate_decomposition` uses :class:`IQMOptimize1QbDecomposition` which inherits from
-the Qiskit provided class :class:`TransformationPass` and can also be used by more advanced users that want to assemble
+the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
 custom transpilation procedures manually.
 
 Noisy simulation of quantum circuit execution
