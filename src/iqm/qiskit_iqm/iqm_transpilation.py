@@ -36,6 +36,10 @@ class IQMOptimize1QbDecomposition(TransformationPass):
        :math:`R(\theta , \phi) RZ(\lambda) = RZ(\lambda) R(\theta, \phi - \lambda)`.
     4. Drop `RZ` gates immediately before measurements, and otherwise replace them according to
        :math:`RZ(\lambda) = R(\pi, \lambda / 2) R(- \pi, 0)`.
+
+    Args:
+        drop_final_rz: drop the final Rz gate even if there is no measurement following it, note that this
+            will change the unitary of the circuit
     """
 
     def __init__(self, drop_final_rz: bool = False):
@@ -87,6 +91,8 @@ def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit, drop_final_rz: boo
 
     Args:
         circuit: quantum circuit to optimise
+        drop_final_rz: drop the final Rz gate even if there is no measurement following it, note that this
+            will change the unitary of the circuit
 
     Returns:
         optimised circuit
