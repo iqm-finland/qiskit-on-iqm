@@ -18,7 +18,7 @@ import pytest
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
 
-from iqm.qiskit_iqm.iqm_transpilation import optimize_1_qb_gate_decomposition
+from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
 
 
 def test_optimize_1qb_gate_decomposition_preserves_unitary():
@@ -35,7 +35,7 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
     simulator = Aer.get_backend(name='unitary_simulator')
 
     transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
-    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit, drop_final_rz=False)
+    optimized_circuit = optimize_single_qubit_gates(transpiled_circuit, drop_final_rz=False)
 
     transpiled_unitary = simulator.run(transpiled_circuit).result().get_unitary(transpiled_circuit)
 
@@ -56,8 +56,8 @@ def test_optimize_1qb_gate_decomposition_drops_final_rz():
     simulator = Aer.get_backend(name='statevector_simulator')
 
     transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
-    optimized_circuit_dropped_rz = optimize_1_qb_gate_decomposition(transpiled_circuit)
-    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit, drop_final_rz=False)
+    optimized_circuit_dropped_rz = optimize_single_qubit_gates(transpiled_circuit)
+    optimized_circuit = optimize_single_qubit_gates(transpiled_circuit, drop_final_rz=False)
 
     shots = 1000
     transpiled_counts = simulator.run(transpiled_circuit, shots=shots).result().get_counts()
@@ -81,7 +81,7 @@ def test_optimize_1qb_gate_decomposition_reduces_gate_count():
     circuit.measure_all()
 
     transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
-    optimized_circuit = optimize_1_qb_gate_decomposition(transpiled_circuit)
+    optimized_circuit = optimize_single_qubit_gates(transpiled_circuit)
 
     assert len(optimized_circuit.get_instructions('r')) == 3
 
@@ -92,4 +92,4 @@ def test_optimize_1qb_gate_decomposition_raises_on_invalid_basis():
     circuit.h(0)
 
     with pytest.raises(ValueError, match="Invalid operation 'h' found "):
-        optimize_1_qb_gate_decomposition(circuit)
+        optimize_single_qubit_gates(circuit)

@@ -38,8 +38,8 @@ class IQMOptimize1QbDecomposition(TransformationPass):
        :math:`RZ(\lambda) = R(\pi, \lambda / 2) R(- \pi, 0)`.
 
     Args:
-        drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect the measurement results).
-            Note that this will change the unitary propagator of the circuit.
+        drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
+            the measurement results). Note that this will change the unitary propagator of the circuit.
     """
 
     def __init__(self, drop_final_rz: bool = False):
@@ -57,8 +57,8 @@ class IQMOptimize1QbDecomposition(TransformationPass):
         # combine all sequential U gates into one
         dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(dag)
         for node in dag.topological_op_nodes():
-            qubit_index = dag.find_bit(node.qargs[0])[0]
             if node.name == 'u':
+                qubit_index = dag.find_bit(node.qargs[0])[0]
                 dag.substitute_node(
                     node, RGate(node.op.params[0], np.pi / 2 - node.op.params[2] - rz_angles[qubit_index])
                 )
@@ -67,7 +67,7 @@ class IQMOptimize1QbDecomposition(TransformationPass):
                 rz_angles[qubit_index] += phase
             elif node.name == 'measure':
                 for qubit in node.qargs:
-                    rz_angles[qubit_index] = 0
+                    rz_angles[dag.find_bit(qubit)[0]] = 0
         if not self._drop_final_rz:
             for qubit_index, rz_angle in enumerate(rz_angles):
                 if rz_angle != 0:
@@ -86,13 +86,13 @@ class IQMOptimize1QbDecomposition(TransformationPass):
                 )
 
 
-def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit, drop_final_rz: bool = True) -> QuantumCircuit:
+def optimize_single_qubit_gates(circuit: QuantumCircuit, drop_final_rz: bool = True) -> QuantumCircuit:
     """Optimize number of single-qubit gates in a transpiled circuit exploiting the IQM specific gate set.
 
     Args:
         circuit: quantum circuit to optimise
-        drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect the measurement results).
-            Note that this will change the unitary propagator of the circuit.
+        drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
+            the measurement results). Note that this will change the unitary propagator of the circuit.
 
     Returns:
         optimised circuit
