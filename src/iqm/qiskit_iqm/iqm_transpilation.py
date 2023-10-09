@@ -22,7 +22,7 @@ from qiskit.transpiler.passes import Optimize1qGatesDecomposition, Unroller
 from qiskit.transpiler.passmanager import PassManager
 
 
-class IQMOptimize1QbDecomposition(TransformationPass):
+class IQMOptimizeSingleQubitGates(TransformationPass):
     r"""Optimize the decomposition of single-qubit gates for the IQM gate set.
 
     This optimisation pass expects the circuit to be correctly layouted and translated to the IQM architecture
@@ -97,4 +97,4 @@ def optimize_single_qubit_gates(circuit: QuantumCircuit, drop_final_rz: bool = T
     Returns:
         optimised circuit
     """
-    return PassManager(IQMOptimize1QbDecomposition(drop_final_rz)).run(circuit)
+    return PassManager(IQMOptimizeSingleQubitGates(drop_final_rz)).run(circuit)

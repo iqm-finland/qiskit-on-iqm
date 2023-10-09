@@ -21,7 +21,7 @@ from qiskit_aer import Aer
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
 
 
-def test_optimize_1qb_gate_decomposition_preserves_unitary():
+def test_optimize_single_qubit_gates_preserves_unitary():
     """Test that single-qubit gate decomposition preserves the unitary of the circuit."""
     circuit = QuantumCircuit(2, 2)
     circuit.t(0)
@@ -44,7 +44,7 @@ def test_optimize_1qb_gate_decomposition_preserves_unitary():
     np.testing.assert_almost_equal(transpiled_unitary.data, optimized_unitary.data)
 
 
-def test_optimize_1qb_gate_decomposition_drops_final_rz():
+def test_optimize_single_qubit_gates_drops_final_rz():
     """Test that single-qubit gate decomposition drops the final rz gate if requested and there is no measurement."""
     circuit = QuantumCircuit(2, 1)
     circuit.h(0)
@@ -73,7 +73,7 @@ def test_optimize_1qb_gate_decomposition_drops_final_rz():
     assert len(optimized_circuit.get_instructions('r')) == 5
 
 
-def test_optimize_1qb_gate_decomposition_reduces_gate_count():
+def test_optimize_single_qubit_gates_reduces_gate_count():
     """Test that single-qubit gate decomposition optimizes the number of single-qubit gates."""
     circuit = QuantumCircuit(2, 2)
     circuit.h(0)
@@ -86,7 +86,7 @@ def test_optimize_1qb_gate_decomposition_reduces_gate_count():
     assert len(optimized_circuit.get_instructions('r')) == 3
 
 
-def test_optimize_1qb_gate_decomposition_raises_on_invalid_basis():
+def test_optimize_single_qubit_gates_raises_on_invalid_basis():
     """Test that optimisation pass raises error if gates other than ``RZ`` and ``CZ`` are provided."""
     circuit = QuantumCircuit(1, 1)
     circuit.h(0)
