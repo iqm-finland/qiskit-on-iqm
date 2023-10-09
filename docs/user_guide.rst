@@ -255,14 +255,14 @@ Now we can study how the circuit gets transpiled:
                                                                                               ║
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
-We also provide a IQM specific optimization pass exploiting the native IQM gate set which aims at reducing the number
+We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
 of single-qubit gates. This optimization expects an already transpiled circuit. As an example, lets apply it to the above circuit:
 
 .. code-block:: python
 
-    from iqm.qiskit_iqm.iqm_transpilation import optimize_1_qb_gate_decomposition
+    from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
 
-    qc_optimized = optimize_1_qb_gate_decomposition(qc_transpiled)
+    qc_optimized = optimize_single_qubit_gates(qc_transpiled)
 
     print(qc_optimized.draw(output='text'))
 
@@ -285,7 +285,7 @@ of single-qubit gates. This optimization expects an already transpiled circuit. 
      meas: 3/════════════════════════════════════════════════════╩══╩══╩═
                                                                  0  1  2 
 
-Under the hood :meth:`optimize_1_qb_gate_decomposition` uses :class:`IQMOptimize1QbDecomposition` which inherits from
+Under the hood :func:`optimize_single_qubit_gates` uses :class:`IQMOptimizeSingleQubitGates` which inherits from
 the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
 custom transpilation procedures manually.
 

@@ -38,8 +38,8 @@ class IQMOptimize1QbDecomposition(TransformationPass):
        :math:`RZ(\lambda) = R(\pi, \lambda / 2) R(- \pi, 0)`.
 
     Args:
-        drop_final_rz: drop the final Rz gate even if there is no measurement following it, note that this
-            will change the unitary of the circuit
+        drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect the measurement results).
+            Note that this will change the unitary propagator of the circuit.
     """
 
     def __init__(self, drop_final_rz: bool = False):
@@ -65,7 +65,7 @@ class IQMOptimize1QbDecomposition(TransformationPass):
                 phase = node.op.params[1] + node.op.params[2]
                 dag.global_phase += phase / 2
                 rz_angles[qubit_index] += phase
-            if node.name == 'measure':
+            elif node.name == 'measure':
                 for qubit in node.qargs:
                     rz_angles[qubit_index] = 0
         if not self._drop_final_rz:
@@ -91,8 +91,8 @@ def optimize_1_qb_gate_decomposition(circuit: QuantumCircuit, drop_final_rz: boo
 
     Args:
         circuit: quantum circuit to optimise
-        drop_final_rz: drop the final Rz gate even if there is no measurement following it, note that this
-            will change the unitary of the circuit
+        drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect the measurement results).
+            Note that this will change the unitary propagator of the circuit.
 
     Returns:
         optimised circuit
