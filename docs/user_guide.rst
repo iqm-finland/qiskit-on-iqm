@@ -255,6 +255,39 @@ Now we can study how the circuit gets transpiled:
                                                                                               ║
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
+We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
+of single-qubit gates. This optimization expects an already transpiled circuit. As an example, lets apply it to the above circuit:
+
+.. code-block:: python
+
+    from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
+
+    qc_optimized = optimize_single_qubit_gates(qc_transpiled)
+
+    print(qc_optimized.draw(output='text'))
+
+::
+
+    global phase: 3π/2
+             ┌─────────────┐   ┌─────────────┐                ░    ┌─┐   
+        q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
+             ├─────────────┤ │ └─────────────┘┌─────────────┐ ░    └╥┘┌─┐
+        q_1: ┤ R(π/2,3π/2) ├─┼────────■───────┤ R(π/2,5π/2) ├─░─────╫─┤M├
+             ├─────────────┤ │        │       └─────────────┘ ░ ┌─┐ ║ └╥┘
+        q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫──╫─
+             └─────────────┘                                  ░ └╥┘ ║  ║ 
+        q_3: ────────────────────────────────────────────────────╫──╫──╫─
+                                                                 ║  ║  ║ 
+        q_4: ────────────────────────────────────────────────────╫──╫──╫─
+                                                                 ║  ║  ║ 
+        c: 3/════════════════════════════════════════════════════╬══╬══╬═
+                                                                 ║  ║  ║ 
+     meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+                                                                 0  1  2 
+
+Under the hood :func:`optimize_single_qubit_gates` uses :class:`IQMOptimizeSingleQubitGates` which inherits from
+the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
+custom transpilation procedures manually.
 
 Noisy simulation of quantum circuit execution
 ---------------------------------------------

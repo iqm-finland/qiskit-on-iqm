@@ -2,11 +2,15 @@
 Changelog
 =========
 
+Version 11.3
+============
+
+* Add IQM specific circuit optimization. `#81 <https://github.com/iqm-finland/qiskit-on-iqm/pull/81>`_
+
 Version 11.2
 ============
 
 * Raise warning instead of error when unknown option is passed to ``IQMBackend.run``. `#82 <https://github.com/iqm-finland/qiskit-on-iqm/pull/82>`_
-
 
 Version 11.1
 ============
