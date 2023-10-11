@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.4
+============
+
+* Fix typo in how the job status is reported
+
 Version 11.3
 ============
 
