@@ -183,7 +183,7 @@ def IQMFakeApollo() -> IQMFakeBackend:
         },
         single_qubit_gate_durations={"phased_rx": 40.0},
         two_qubit_gate_durations={"cz": 80.0},
-        id_="sample-chip",
+        name="sample-chip",
     )
 
     return IQMFakeBackend(architecture, error_profile)
