@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Shared definitions for tests."""
-from iqm_client import QuantumArchitectureSpecification
 import pytest
+
+from iqm.iqm_client import QuantumArchitectureSpecification
 
 
 @pytest.fixture
@@ -44,3 +45,8 @@ def adonis_architecture_shuffled_names():
         qubits=['QB2', 'QB3', 'QB1', 'QB5', 'QB4'],
         qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
     )
+
+
+@pytest.fixture
+def adonis_coupling_map():
+    return {(0, 2), (2, 0), (1, 2), (2, 1), (2, 3), (3, 2), (2, 4), (4, 2)}

@@ -16,7 +16,7 @@
 """
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from qiskit_iqm import IQMFakeAdonis
+from iqm.qiskit_iqm import IQMFakeAdonis
 
 
 def test_iqm_fake_adonis():
@@ -24,9 +24,9 @@ def test_iqm_fake_adonis():
     assert backend.num_qubits == 5
 
 
-def test_iqm_fake_adonis_connectivity():
+def test_iqm_fake_adonis_connectivity(adonis_coupling_map):
     backend = IQMFakeAdonis()
-    assert backend.coupling_map.get_edges() == [(0, 2), (1, 2), (2, 3), (2, 4)]
+    assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
 
 
 def test_iqm_fake_adonis_noise_model_instantiated():

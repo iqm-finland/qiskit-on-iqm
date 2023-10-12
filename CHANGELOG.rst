@@ -2,6 +2,58 @@
 Changelog
 =========
 
+Version 11.4
+============
+
+* Fix typo in how the job status is reported
+
+Version 11.3
+============
+
+* Add IQM specific circuit optimization. `#81 <https://github.com/iqm-finland/qiskit-on-iqm/pull/81>`_
+
+Version 11.2
+============
+
+* Raise warning instead of error when unknown option is passed to ``IQMBackend.run``. `#82 <https://github.com/iqm-finland/qiskit-on-iqm/pull/82>`_
+
+Version 11.1
+============
+
+* Add ``circuit_callback`` option to ``IQMBackend``. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* Raise error when unknown option is passed to ``IQMBackend.run``. Previously they were silently ignored. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* Improve handling of options passed to ``IQMBackend.run``. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* Fix the type of ``date`` in result object. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+* ``IQMBackend.run`` can now accept circuits containing `x`, `rx`, `y` and `ry` gates. `#80 <https://github.com/iqm-finland/qiskit-on-iqm/pull/80>`_
+
+Version 11.0
+============
+
+* Move ``qiskit_iqm`` package to ``iqm`` namespace. `#79 <https://github.com/iqm-finland/qiskit-on-iqm/pull/79>`_
+
+Version 10.11
+=============
+
+* Update user guide with information of execution timestamps. `#78 <https://github.com/iqm-finland/qiskit-on-iqm/pull/78>`_
+
+Version 10.10
+=============
+
+* Upgrade to qiskit ~= 0.44.1. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+* Make the ``max_circuits`` property of ``IQMBackend`` user-configurable. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+* Implement ``error_message`` method for ``IQMJob``. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>``
+* Explicitly specify symmetric CZ properties when building the transpilation target. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+
+Version 10.9
+============
+
+* Upgrade to iqm-client >= 13.2. `#76 <https://github.com/iqm-finland/qiskit-on-iqm/pull/76>`_
+
+Version 10.8
+============
+
+* Fix two-qubit gate error construction in ``IQMFakeBackend``.
+
 Version 10.7
 ============
 

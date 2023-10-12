@@ -21,7 +21,11 @@ from typing import Optional, Union
 import uuid
 import warnings
 
-from iqm_client import (
+import numpy as np
+from qiskit.providers import JobStatus, JobV1
+from qiskit.result import Counts, Result
+
+from iqm.iqm_client import (
     CircuitMeasurementResults,
     HeraldingMode,
     IQMClient,
@@ -30,11 +34,7 @@ from iqm_client import (
     RunResult,
     Status,
 )
-import numpy as np
-from qiskit.providers import JobStatus, JobV1
-from qiskit.result import Counts, Result
-
-from qiskit_iqm.qiskit_to_iqm import MeasurementKey
+from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
 
 class IQMJob(JobV1):
@@ -57,7 +57,9 @@ class IQMJob(JobV1):
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
         """Convert the measurement results from a batch of circuits into the Qiskit format."""
         if iqm_result.measurements is None:
-            raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
+            raise ValueError(
+                f'Cannot format IQM result without measurements. Job status is "{iqm_result.status.value.upper()}"'
+            )
 
         requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
@@ -159,7 +161,7 @@ class IQMJob(JobV1):
                 }
                 for i, (name, measurement_results) in enumerate(self._result)
             ],
-            'date': date.today(),
+            'date': date.today().isoformat(),
             'request': self._request,
             'timestamps': self.metadata.get('timestamps'),
         }
@@ -181,3 +183,7 @@ class IQMJob(JobV1):
         if result.status == Status.ABORTED:
             return JobStatus.CANCELLED
         raise RuntimeError(f"Unknown run status '{result.status}'")
+
+    def error_message(self) -> Optional[str]:
+        """Returns the error message if job has failed, otherwise returns None."""
+        return self._client.get_run_status(uuid.UUID(self._job_id)).message

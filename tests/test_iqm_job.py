@@ -16,7 +16,15 @@
 """
 import uuid
 
-from iqm_client import (
+import mockito
+from mockito import mock, unstub, verify, when
+import pytest
+from qiskit import QuantumCircuit
+from qiskit.providers import JobStatus
+from qiskit.result import Counts
+from qiskit.result import Result as QiskitResult
+
+from iqm.iqm_client import (
     HeraldingMode,
     Instruction,
     IQMClient,
@@ -26,15 +34,7 @@ from iqm_client import (
     SingleQubitMapping,
     Status,
 )
-import mockito
-from mockito import mock, unstub, verify, when
-import pytest
-from qiskit import QuantumCircuit
-from qiskit.providers import JobStatus
-from qiskit.result import Counts
-from qiskit.result import Result as QiskitResult
-
-from qiskit_iqm import IQMBackend, IQMJob
+from iqm.qiskit_iqm import IQMBackend, IQMJob
 
 
 @pytest.fixture()
@@ -87,8 +87,8 @@ def iqm_metadata_with_timestamps():
             ],
         },
         'timestamps': {
-            'job_start': 0.0,
-            'job_end': 2.3,
+            'job_start': '2023-01-02T12:34:56.123456+00:00',
+            'job_end': '2023-01-02T12:34:56.123456+03:00',
         },
     }
 
@@ -141,6 +141,21 @@ def test_status_done(job, iqm_metadata):
 def test_other_job_statuses(job, run_status: Status, job_status: JobStatus):
     when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(RunStatus(status=run_status))
     assert job.status() == job_status
+
+
+def test_error_message(job, iqm_metadata):
+    err_msg = 'The job failed with this error message'
+    client_result = RunResult(status=Status.FAILED, message=err_msg, metadata=iqm_metadata)
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(client_result)
+    assert job.status() == JobStatus.ERROR
+    assert job.error_message() == err_msg
+
+
+def test_error_message_on_successful_job(job, iqm_metadata):
+    client_result = RunResult(status=Status.READY, metadata=iqm_metadata)
+    when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(client_result)
+    assert job.status() == JobStatus.DONE
+    assert job.error_message() is None
 
 
 def test_result(job, iqm_result_two_registers, iqm_metadata):

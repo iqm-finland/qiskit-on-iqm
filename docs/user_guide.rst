@@ -42,7 +42,7 @@ After installation Qiskit on IQM can be imported in your Python code as follows:
 
 .. code-block:: python
 
-   import qiskit_iqm
+   from iqm import qiskit_iqm
 
 
 Running a quantum circuit on an IQM quantum computer
@@ -87,7 +87,7 @@ quantum computer, and use Qiskit's ``execute`` function as usual:
 .. code-block:: python
 
     from qiskit import execute
-    from qiskit_iqm import IQMProvider
+    from iqm.qiskit_iqm import IQMProvider
 
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
@@ -112,33 +112,43 @@ and then call execution methods without specifying additional keyword arguments.
 their current values using `backend.options`. Below table summarizes currently available options:
 
 .. list-table::
-   :widths: 25 20 25 100
+   :widths: 25 100
    :header-rows: 1
 
    * - Name
-     - Type
-     - Example value
      - Description
    * - `shots`
-     - int
-     - 1207
-     - Number of shots.
+     - Type: ``int``, Example value: ``1207``.
+
+       Number of shots.
    * - `calibration_set_id`
-     - str
-     - "f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"
-     - Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
+     - Type: ``str``, Example value ``"f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"``.
+
+       Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
        available calibration set automatically.
    * - `circuit_duration_check`
-     - bool
-     - False
-     - Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
+     - Type: ``bool``, Example value: ``False``.
+
+       Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
        estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
        time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
        circuit duration check should always remain enabled.
    * - `heralding_mode`
-     - :py:class:`~iqm_client.iqm_client.HeraldingMode`
-     - "zeros"
-     - Heralding mode to use during execution. The default value is "none".
+     - Type: :class:`~iqm.iqm_client.iqm_client.HeraldingMode`, Example value: ``"zeros"``.
+
+       Heralding mode to use during execution. The default value is "none".
+   * - `circuit_callback`
+     - Type: :class:`collections.abc.Callable`, Example value: ``None``.
+
+       A function that accepts a list of :class:`qiskit.QuantumCircuit` instances and does not return anything.
+       When the backend receives circuits for execution, it will call this function (if provided) and pass those
+       circuits as argument. This may be useful in situations when you do not have explicit control over transpilation,
+       but need some information on how it was done. This can happen, for example, when you use pre-implemented
+       algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
+       delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
+       those transpiled circuits, extract any info you need. As a side effect, you can also use this callback to modify
+       the transpiled circuits in-place, just before execution, however we do not recommend to use it for this purpose.
+
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
@@ -162,6 +172,20 @@ qubit mapping that was used in execution. You can check this mapping once execut
       SingleQubitMapping(logical_name='1', physical_name='QB2'),
       SingleQubitMapping(logical_name='2', physical_name='QB3')
     ]
+
+The job also contains metadata of the execution including timestamps of the various phases of the execution.
+There are timestamps for compilation start and finish and execution start and finish. The whole duration of
+the job is captured in job start and job end timestamps. The timestamps can be accessed in the job results
+with keys like `job_start`, `job_end`, `compile_start`, `compile_end`, `execution_start` and `execution_end`.
+
+For example:
+
+.. code-block:: python
+
+    print(job.result().timestamps['job_start'])
+    print(job.result().timestamps['compile_start'])
+    print(job.result().timestamps['execution_end'])
+
 
 
 The ``backend`` instance we created above provides all the standard backend functionality that one expects from a
@@ -231,6 +255,39 @@ Now we can study how the circuit gets transpiled:
                                                                                               ║
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
+We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
+of single-qubit gates. This optimization expects an already transpiled circuit. As an example, lets apply it to the above circuit:
+
+.. code-block:: python
+
+    from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
+
+    qc_optimized = optimize_single_qubit_gates(qc_transpiled)
+
+    print(qc_optimized.draw(output='text'))
+
+::
+
+    global phase: 3π/2
+             ┌─────────────┐   ┌─────────────┐                ░    ┌─┐   
+        q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
+             ├─────────────┤ │ └─────────────┘┌─────────────┐ ░    └╥┘┌─┐
+        q_1: ┤ R(π/2,3π/2) ├─┼────────■───────┤ R(π/2,5π/2) ├─░─────╫─┤M├
+             ├─────────────┤ │        │       └─────────────┘ ░ ┌─┐ ║ └╥┘
+        q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫──╫─
+             └─────────────┘                                  ░ └╥┘ ║  ║ 
+        q_3: ────────────────────────────────────────────────────╫──╫──╫─
+                                                                 ║  ║  ║ 
+        q_4: ────────────────────────────────────────────────────╫──╫──╫─
+                                                                 ║  ║  ║ 
+        c: 3/════════════════════════════════════════════════════╬══╬══╬═
+                                                                 ║  ║  ║ 
+     meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+                                                                 0  1  2 
+
+Under the hood :func:`optimize_single_qubit_gates` uses :class:`IQMOptimizeSingleQubitGates` which inherits from
+the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
+custom transpilation procedures manually.
 
 Noisy simulation of quantum circuit execution
 ---------------------------------------------
@@ -243,7 +300,7 @@ pre-populated properties and noise model.
 .. code-block:: python
 
     from qiskit import execute, QuantumCircuit
-    from qiskit_iqm import IQMFakeAdonis
+    from iqm.qiskit_iqm import IQMFakeAdonis
 
     circuit = QuantumCircuit(2)
     circuit.h(0)
@@ -282,7 +339,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
 .. code-block:: python
 
     from qiskit import execute, QuantumCircuit
-    from qiskit_iqm import IQMProvider
+    from iqm.qiskit_iqm import IQMProvider
 
     circuit = QuantumCircuit(2)
     circuit.h(0)
