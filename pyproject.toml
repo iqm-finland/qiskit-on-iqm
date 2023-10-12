@@ -17,11 +17,11 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License"
 ]
-requires-python = ">=3.9, <3.11"
+requires-python = ">=3.9, <3.12"
 dependencies = [
     "numpy",
     "qiskit ~= 0.42.1",
-    "iqm-client >= 12.5, < 13.0"
+    "iqm-client >= 13.1, < 14.0"
 ]
 
 [project.urls]
@@ -140,8 +140,6 @@ ignore_missing_imports = true
 
 [tool.pylint.main]
 disable = [
-    "abstract-method",
-    "duplicate-code",
     "fixme",
     "invalid-name",
     "protected-access",

@@ -19,7 +19,7 @@ Hello, world!
 Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
-1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/28b614461cfe952fe3ce63bee222e4b48037012c/examples/bell_measure.py>`_ (Save Page As...)
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/f82a7a5043f4af620b84b384c7fab80c38439ecf/examples/bell_measure.py>`_ (Save Page As...)
 2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
 3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
 4. Set the environment variable as instructed by Cortex CLI after logging in
@@ -80,8 +80,9 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
                                      ║
     meas_2: ═════════════════════════╩═
 
-To execute this circuit against an IQM quantum computer you need to initialize an appropriate Qiskit backend instance
-that represents the IQM quantum computer under use, and simply use Qiskit's ``execute`` function as normal:
+To execute this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider` instance
+with the IQM server URL, use it to retrieve an :class:`.IQMBackend` instance representing the
+quantum computer, and use Qiskit's ``execute`` function as usual:
 
 .. code-block:: python
 
@@ -125,15 +126,15 @@ their current values using `backend.options`. Below table summarizes currently a
    * - `calibration_set_id`
      - str
      - "f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"
-     - Indicates the calibration set to use. By default it is `None`, which means an IQM server will use the best
-       available calibration set automatically. The value is string representation of a UUID.
+     - Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
+       available calibration set automatically.
    * - `circuit_duration_check`
      - bool
      - False
-     - Enable/Disable server-side circuit duration check. The default value is `True`, which means if any job is
-       estimated to take unreasonably long compared to the coherence time of the QPU, or too long in wall-clock time,
-       the server will reject it. This option can be used to consciously disable this behaviour. Disabling may be
-       limited to certain users or groups. In normal use, the circuit duration check should always remain enabled.
+     - Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
+       estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
+       time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
+       circuit duration check should always remain enabled.
    * - `heralding_mode`
      - :py:class:`~iqm_client.iqm_client.HeraldingMode`
      - "zeros"
@@ -141,11 +142,11 @@ their current values using `backend.options`. Below table summarizes currently a
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
-then set the ``IQM_TOKENS_FILE`` environment variable to use those tokens.
+then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
 See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`__ for details.
-Alternatively, authorize with the IQM_AUTH_SERVER, IQM_AUTH_USERNAME and IQM_AUTH_PASSWORD environment variables
-or pass them as arguments to the constructor of :class:`.IQMProvider`, however this approach is less secure
-and considered as deprecated.
+Alternatively, you may authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
+:envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
+arguments to :meth:`.IQMProvider.__init__`, however this approach is less secure and considered deprecated.
 
 The results of a job, that was executed with IQM quantum computer, contain the original request with the
 qubit mapping that was used in execution. You can check this mapping once execution has finished.
@@ -184,9 +185,10 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
 
 ::
 
-    Native operations of the backend: ['r', 'cz', 'measure']
+    Native operations of the backend: ['id', 'r', 'cz', 'measure']
     Coupling map of the backend: [[0, 2], [1, 2], [2, 3], [2, 4]]
 
+Note that for IQM backends the identiy gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
@@ -230,8 +232,8 @@ Now we can study how the circuit gets transpiled:
            meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
 
 
-Simulating the execution of a transpiled circuit locally
---------------------------------------------------------
+Noisy simulation of quantum circuit execution
+---------------------------------------------
 
 The execution of circuits can be simulated locally, with a noise model to mimic the real hardware as much as possible.
 To this end, Qiskit on IQM provides the class  :class:`.IQMFakeBackend` that can be instantiated with properties of a
@@ -253,9 +255,10 @@ pre-populated properties and noise model.
     job.result().get_counts()
 
 
-Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis
-chip. If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you
-can create a copy of the fake Adonis instance with updated error profile:
+Above, we use an :class:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
+The noise model includes relaxation (:math:`T_1`) and dephasing (:math:`T_2`), gate infidelities and readout errors.
+If you want to customize the noise model instead of using the default one provided by :class:`.IQMFakeAdonis`, you can create
+a copy of the fake Adonis instance with updated error profile:
 
 .. code-block:: python
 
@@ -305,9 +308,9 @@ More advanced examples
 In this section we demonstrate some less simple examples of using Qiskit on IQM and its interoperability with various
 tools available in Qiskit.
 
-It is possible to run multiple circuits at once, as a batch. In many scenarios this is more time efficient than
-running the circuits one by one. For batch execution there are some restriction that we shall keep in mind, namely all
-circuits have to measure the same qubits, and all circuits will be executed for the same number of shots. For starters,
+It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
+time efficient than running the circuits one by one. Batch execution has some restrictions: all the
+circuits must measure the same qubits, and be executed for the same number of shots. For starters,
 let's construct two circuits preparing and measuring different Bell states:
 
 .. code-block:: python

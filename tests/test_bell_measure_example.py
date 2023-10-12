@@ -1,4 +1,4 @@
-# Copyright 2022 Qiskit on IQM developers
+# Copyright 2023 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,9 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Qiskit adapter for IQM's quantum computers.
+
+"""Testing Bell measure example script.
 """
-from qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFakeApollo
-from qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
-from qiskit_iqm.iqm_job import IQMJob
-from qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
+
+
+import subprocess
+
+
+def test_bell_measure_example_call():
+    """Test that example script runs and fails at establishing a connection."""
+    with subprocess.Popen(
+        ("python", "examples/bell_measure.py", "--cortex_server_url", "https://not.a.real.domain"),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ) as p:
+        (_, err) = p.communicate()
+        p.wait()
+        assert "ConnectionError" in str(err)

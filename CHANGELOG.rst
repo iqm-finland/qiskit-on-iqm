@@ -2,6 +2,51 @@
 Changelog
 =========
 
+Version 10.7
+============
+
+* Capture execution timestamps in :meth:`IQMJob.result`.
+
+Version 10.6
+============
+
+* More accurate mapping of job statuses in :meth:`IQMJob.status`.
+* Documentation fixes.
+
+Version 10.5
+============
+
+* Clarify the documentation on backend options. `#73 <https://github.com/iqm-finland/qiskit-on-iqm/pull/73>`_
+
+Version 10.4
+============
+
+* Support the identity gate. `#71 <https://github.com/iqm-finland/qiskit-on-iqm/pull/71>`_
+
+Version 10.3
+============
+
+* Add support for Python 3.11. `#70 <https://github.com/iqm-finland/qiskit-on-iqm/pull/70>`_
+
+Version 10.2
+============
+
+* Implement ``cancel`` method for ``IQMJob``. `#69 <https://github.com/iqm-finland/qiskit-on-iqm/pull/69>`_
+
+Version 10.1
+============
+
+* Update the script link for the Hello world example. `#68 <https://github.com/iqm-finland/qiskit-on-iqm/pull/68>`_
+
+Version 10.0
+============
+
+* Fix a bug in the Hello world example. `#67 <https://github.com/iqm-finland/qiskit-on-iqm/pull/67>`_
+
+Version 9.0
+============
+* Add readout errors to ``IQMErrorProfile``. `#50 <https://github.com/iqm-finland/qiskit-on-iqm/pull/50>`_
+
 Version 8.3
 ============
 

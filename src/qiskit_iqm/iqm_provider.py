@@ -13,7 +13,7 @@
 # limitations under the License.
 """Qiskit Backend Provider for IQM backends.
 """
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 from functools import reduce
 from typing import Optional, Union
 from uuid import UUID
@@ -29,6 +29,13 @@ from qiskit_iqm.fake_backends import IQMFakeAdonis
 from qiskit_iqm.iqm_backend import IQMBackendBase
 from qiskit_iqm.iqm_job import IQMJob
 from qiskit_iqm.qiskit_to_iqm import MeasurementKey
+
+try:
+    __version__ = version('qiskit-iqm')
+except PackageNotFoundError:  # pragma: no cover
+    __version__ = 'unknown'
+finally:
+    del version, PackageNotFoundError
 
 
 class IQMBackend(IQMBackendBase):
@@ -134,6 +141,8 @@ class IQMBackend(IQMBackendBase):
             elif instruction.name == 'measure':
                 mk = MeasurementKey.from_clbit(clbits[0], circuit)
                 instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
+            elif instruction.name == 'id':
+                pass
             else:
                 raise ValueError(
                     f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
@@ -223,7 +232,7 @@ class IQMProvider:
         Args:
             name: optional name of a custom facade backend
         """
-        client = IQMClient(self.url, client_signature=f'qiskit-iqm {version("qiskit-iqm")}', **self.user_auth_args)
+        client = IQMClient(self.url, client_signature=f'qiskit-iqm {__version__}', **self.user_auth_args)
         if name == 'facade_adonis':
             return IQMFacadeBackend(client)
         return IQMBackend(client)

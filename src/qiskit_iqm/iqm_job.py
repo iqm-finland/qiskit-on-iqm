@@ -21,7 +21,15 @@ from typing import Optional, Union
 import uuid
 import warnings
 
-from iqm_client import CircuitMeasurementResults, HeraldingMode, IQMClient, RunRequest, RunResult, Status
+from iqm_client import (
+    CircuitMeasurementResults,
+    HeraldingMode,
+    IQMClient,
+    JobAbortionError,
+    RunRequest,
+    RunResult,
+    Status,
+)
 import numpy as np
 from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
@@ -47,7 +55,7 @@ class IQMJob(JobV1):
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
-        """Convert the measurement results from a circuit(s) run into the Qiskit format."""
+        """Convert the measurement results from a batch of circuits into the Qiskit format."""
         if iqm_result.measurements is None:
             raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
 
@@ -64,6 +72,7 @@ class IQMJob(JobV1):
     def _format_measurement_results(
         measurement_results: CircuitMeasurementResults, requested_shots: int, expect_exact_shots: bool = True
     ) -> list[str]:
+        """Convert the measurement results from a circuit into the Qiskit format."""
         formatted_results: dict[int, np.ndarray] = {}
         for k, v in measurement_results.items():
             mk = MeasurementKey.from_string(k)
@@ -103,14 +112,26 @@ class IQMJob(JobV1):
             'checking the progress and retrieving the results of the submitted job.'
         )
 
-    def cancel(self):
-        raise NotImplementedError('Canceling jobs is currently not supported.')
+    def cancel(self) -> bool:
+        """Attempt to cancel the job.
+
+        Returns:
+            True if the job was cancelled successfully, False otherwise
+        """
+        try:
+            self._client.abort_job(uuid.UUID(self._job_id))
+            return True
+        except JobAbortionError as e:
+            warnings.warn(f'Failed to cancel job: {e}')
+            return False
 
     def result(self) -> Result:
         if not self._result:
             results = self._client.wait_for_results(uuid.UUID(self._job_id))
             self._calibration_set_id = results.metadata.calibration_set_id
             self._request = results.metadata.request
+            if results.metadata.timestamps is not None:
+                self.metadata['timestamps'] = results.metadata.timestamps.copy()
             self._result = self._format_iqm_results(results)
             # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
             # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
@@ -140,6 +161,7 @@ class IQMJob(JobV1):
             ],
             'date': date.today(),
             'request': self._request,
+            'timestamps': self.metadata.get('timestamps'),
         }
         return Result.from_dict(result_dict)
 
@@ -148,8 +170,14 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
+        if result.status == Status.PENDING_COMPILATION:
+            return JobStatus.QUEUED
+        if result.status == Status.PENDING_EXECUTION:
+            return JobStatus.RUNNING
         if result.status == Status.READY:
             return JobStatus.DONE
         if result.status == Status.FAILED:
             return JobStatus.ERROR
-        return JobStatus.RUNNING
+        if result.status == Status.ABORTED:
+            return JobStatus.CANCELLED
+        raise RuntimeError(f"Unknown run status '{result.status}'")
