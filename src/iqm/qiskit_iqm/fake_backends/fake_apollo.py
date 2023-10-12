@@ -14,7 +14,6 @@
 """Fake (i.e. simulated) backend for IQM's 20-qubit Apollo architecture
 """
 from iqm.iqm_client import QuantumArchitectureSpecification
-
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
 
 
