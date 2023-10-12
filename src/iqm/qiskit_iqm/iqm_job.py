@@ -57,7 +57,9 @@ class IQMJob(JobV1):
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
         """Convert the measurement results from a batch of circuits into the Qiskit format."""
         if iqm_result.measurements is None:
-            raise ValueError(f'Cannot format IQM result without measurements. Job status is ${iqm_result.status}')
+            raise ValueError(
+                f'Cannot format IQM result without measurements. Job status is "{iqm_result.status.value.upper()}"'
+            )
 
         requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
