@@ -5,12 +5,12 @@ Changelog
 Version 11.5
 ============
 
-* Use latest version of ``sphinx-multiversion-contrib`` to fix documentation version sorting `#84 <https://github.com/iqm-finland/qiskit-on-iqm/pull/84>`_
+* Use latest version of ``sphinx-multiversion-contrib`` to fix documentation version sorting. `#84 <https://github.com/iqm-finland/qiskit-on-iqm/pull/84>`_
 
 Version 11.4
 ============
 
-* Fix typo in how the job status is reported `#83 <https://github.com/iqm-finland/qiskit-on-iqm/pull/83>`_
+* Fix typo in how the job status is reported. `#83 <https://github.com/iqm-finland/qiskit-on-iqm/pull/83>`_
 
 Version 11.3
 ============
