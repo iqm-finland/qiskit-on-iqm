@@ -10,7 +10,7 @@ Version 11.5
 Version 11.4
 ============
 
-* Fix typo in how the job status is reported
+* Fix typo in how the job status is reported `#83 <https://github.com/iqm-finland/qiskit-on-iqm/pull/83>`_
 
 Version 11.3
 ============
