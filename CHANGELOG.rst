@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.5
+============
+
+* Use latest version of ``sphinx-multiversion-contrib`` to fix documentation version sorting `#84 <https://github.com/iqm-finland/qiskit-on-iqm/pull/84>`_
+
 Version 11.4
 ============
 
