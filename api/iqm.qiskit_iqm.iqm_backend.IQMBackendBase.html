@@ -288,6 +288,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="../versions/11.6/index.html">11.6</a></li>
+    
+    
       <li class="version_item"><a href="../versions/11.5/index.html">11.5</a></li>
     
     
@@ -608,7 +611,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/11.5/index.html">11.5</a>.
+    For the latest released version, please have a look at <a href="../versions/11.6/index.html">11.6</a>.
     
   </strong>
 </div>
@@ -619,7 +622,7 @@ title="Print to PDF"
 <dl class="py class">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_backend.IQMBackendBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_backend.</span></span><span class="sig-name descname"><span class="pre">IQMBackendBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">architecture</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_backend.IQMBackendBase" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2" title="(in Qiskit v0.44)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.providers.backend.BackendV2</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2" title="(in Qiskit v0.45)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.providers.backend.BackendV2</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract base class for various IQM-specific backends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -631,14 +634,14 @@ title="Print to PDF"
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>provider</strong> – An optional backwards reference to the
-<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.Provider.html#qiskit.providers.Provider" title="(in Qiskit v0.44)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code></a> object that the backend
+<a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.Provider.html#qiskit.providers.Provider" title="(in Qiskit v0.45)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code></a> object that the backend
 is from</p></li>
 <li><p><strong>name</strong> – An optional name for the backend</p></li>
 <li><p><strong>description</strong> – An optional description of the backend</p></li>
 <li><p><strong>online_date</strong> – An optional datetime the backend was brought online</p></li>
 <li><p><strong>backend_version</strong> – An optional backend version string. This differs
-from the <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit v0.44)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> attribute
-as <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit v0.44)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> is for the
+from the <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit v0.45)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> attribute
+as <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.providers.BackendV2.html#qiskit.providers.BackendV2.version" title="(in Qiskit v0.45)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> is for the
 abstract <code class="xref py py-attr docutils literal notranslate"><span class="pre">Backend</span></code> abstract interface
 version of the object while <code class="docutils literal notranslate"><span class="pre">backend_version</span></code> is for
 versioning the backend itself.</p></li>
@@ -660,7 +663,7 @@ options.</p></li>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a></p></td>
-<td><p>A <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.transpiler.Target.html#qiskit.transpiler.Target" title="(in Qiskit v0.44)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.Target</span></code></a> object for the backend.</p></td>
+<td><p>A <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.transpiler.Target.html#qiskit.transpiler.Target" title="(in Qiskit v0.45)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.Target</span></code></a> object for the backend.</p></td>
 </tr>
 </tbody>
 </table>
@@ -684,8 +687,8 @@ options.</p></li>
 </table>
 <dl class="py property">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.transpiler.Target.html#qiskit.transpiler.Target" title="(in Qiskit v0.44)"><span class="pre">qiskit.transpiler.target.Target</span></a></em><a class="headerlink" href="#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target" title="Permalink to this definition">#</a></dt>
-<dd><p>A <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.transpiler.Target.html#qiskit.transpiler.Target" title="(in Qiskit v0.44)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.Target</span></code></a> object for the backend.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.transpiler.Target.html#qiskit.transpiler.Target" title="(in Qiskit v0.45)"><span class="pre">qiskit.transpiler.target.Target</span></a></em><a class="headerlink" href="#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target" title="Permalink to this definition">#</a></dt>
+<dd><p>A <a class="reference external" href="https://qiskit.org/documentation/stubs/qiskit.transpiler.Target.html#qiskit.transpiler.Target" title="(in Qiskit v0.45)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.Target</span></code></a> object for the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Target</p>
