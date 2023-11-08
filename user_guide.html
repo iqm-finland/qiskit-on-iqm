@@ -290,6 +290,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/11.7/user_guide.html">11.7</a></li>
+    
+    
       <li class="version_item"><a href="versions/11.6/user_guide.html">11.6</a></li>
     
     
@@ -720,7 +723,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/11.6/user_guide.html">11.6</a>.
+    For the latest released version, please have a look at <a href="versions/11.7/user_guide.html">11.7</a>.
     
   </strong>
 </div>
@@ -883,10 +886,20 @@ qubit mapping that was used in execution. You can check this mapping once execut
 <span class="p">]</span>
 </pre></div>
 </div>
-<p>The job also contains metadata of the execution including timestamps of the various phases of the execution.
-There are timestamps for compilation start and finish and execution start and finish. The whole duration of
-the job is captured in job start and job end timestamps. The timestamps can be accessed in the job results
-with keys like <cite>job_start</cite>, <cite>job_end</cite>, <cite>compile_start</cite>, <cite>compile_end</cite>, <cite>execution_start</cite> and <cite>execution_end</cite>.</p>
+<p>The job result also contains metadata of the execution including timestamps of the various steps of processing the
+job. The timestamps are stored in dict <code class="docutils literal notranslate"><span class="pre">timestamps</span></code> in the metadata. The dict contains a timestamp for starting
+and ending of each step. The timestamps are stored with keys describing the point of processing where they were
+stored. For example, the timestamp of starting the circuit compilation is stored with key <code class="docutils literal notranslate"><span class="pre">compile_start</span></code>.
+In the same way the other steps have their own timestamps with keys consisting of the step name and a <code class="docutils literal notranslate"><span class="pre">_start</span></code> or
+<code class="docutils literal notranslate"><span class="pre">_end</span></code> suffix. In addition to processing step timestamps, there are also timestamps for the job itself,
+<code class="docutils literal notranslate"><span class="pre">job_start</span></code> for when the job request was received by the server and <code class="docutils literal notranslate"><span class="pre">job_end</span></code> for when the job processing
+was finished.</p>
+<p>The job processing has three steps, <code class="docutils literal notranslate"><span class="pre">compile</span></code> where the circuits are converted to pulse schedules, <code class="docutils literal notranslate"><span class="pre">submit</span></code>
+where the pulse schedules are submitted for execution and <code class="docutils literal notranslate"><span class="pre">execution</span></code> where the pulse schedules are executed
+and the measurement results are returned.</p>
+<p>If the processing of the job is terminated before it is complete, for example due to an error, the timestamps of
+processing steps that were not taken are not present in the dict.</p>
+<p>The timestamps dict can be accessed as <code class="docutils literal notranslate"><span class="pre">timestamps</span></code> attribute of the job results.</p>
 <p>For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[</span><span class="s1">&#39;job_start&#39;</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">timestamps</span><span class="p">[</span><span class="s1">&#39;compile_start&#39;</span><span class="p">])</span>
