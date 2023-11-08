@@ -12,4 +12,5 @@ Contributors
 * Adrian Auer <adrian.auer@meetiqm.com>
 * Stefan Seegerer <stefan.seegerer@meetiqm.com>
 * Vicente Pina Canelles <vicente.pina@meetiqm.com>
+* Jake Muff <jake.muff@vtt.fi>
 
