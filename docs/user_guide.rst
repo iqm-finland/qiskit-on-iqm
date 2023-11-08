@@ -19,7 +19,7 @@ Hello, world!
 Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
-1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/f82a7a5043f4af620b84b384c7fab80c38439ecf/examples/bell_measure.py>`_ (Save Page As...)
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/2ca3049f265bbee61b07984835250eadd1da1ad7/examples/bell_measure.py>`_ (Save Page As...)
 2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
 3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
 4. Set the environment variable as instructed by Cortex CLI after logging in
@@ -173,10 +173,23 @@ qubit mapping that was used in execution. You can check this mapping once execut
       SingleQubitMapping(logical_name='2', physical_name='QB3')
     ]
 
-The job also contains metadata of the execution including timestamps of the various phases of the execution.
-There are timestamps for compilation start and finish and execution start and finish. The whole duration of
-the job is captured in job start and job end timestamps. The timestamps can be accessed in the job results
-with keys like `job_start`, `job_end`, `compile_start`, `compile_end`, `execution_start` and `execution_end`.
+The job result also contains metadata of the execution including timestamps of the various steps of processing the
+job. The timestamps are stored in dict ``timestamps`` in the metadata. The dict contains a timestamp for starting
+and ending of each step. The timestamps are stored with keys describing the point of processing where they were
+stored. For example, the timestamp of starting the circuit compilation is stored with key ``compile_start``.
+In the same way the other steps have their own timestamps with keys consisting of the step name and a ``_start`` or
+``_end`` suffix. In addition to processing step timestamps, there are also timestamps for the job itself,
+``job_start`` for when the job request was received by the server and ``job_end`` for when the job processing
+was finished.
+
+The job processing has three steps, ``compile`` where the circuits are converted to pulse schedules, ``submit``
+where the pulse schedules are submitted for execution and ``execution`` where the pulse schedules are executed
+and the measurement results are returned.
+
+If the processing of the job is terminated before it is complete, for example due to an error, the timestamps of
+processing steps that were not taken are not present in the dict.
+
+The timestamps dict can be accessed as ``timestamps`` attribute of the job results.
 
 For example:
 
