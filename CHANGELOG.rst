@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.6
+============
+
+* Update example link in user guide. (Relates to `#79 <https://github.com/iqm-finland/qiskit-on-iqm/pull/79>`_.) `#86 <https://github.com/iqm-finland/qiskit-on-iqm/pull/86>`_
+
 Version 11.5
 ============
 
