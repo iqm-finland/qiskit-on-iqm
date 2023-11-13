@@ -77,7 +77,7 @@ def IQMFakeApollo() -> IQMFakeBackend:
             ["QB19", "QB20"],
         ],
     )
-     # Note that these specs are ballpark numbers and don't correspond directly to a specific device
+    # Note that these specs are ballpark numbers and don't correspond directly to a specific device
     error_profile = IQMErrorProfile(
         t1s={
             "QB1": 49500.0,
