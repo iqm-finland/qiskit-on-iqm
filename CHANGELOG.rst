@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.8
+============
+
+* Add ``IQMFakeApollo`` fake backend `#66 <https://github.com/iqm-finland/qiskit-on-iqm/pull/66>`_
+
 Version 11.7
 ============
 

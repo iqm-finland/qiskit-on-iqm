@@ -11,9 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Fake backends for simulating IQM quantum computers.
-"""
 
-from .fake_adonis import IQMFakeAdonis
-from .fake_apollo import IQMFakeApollo
-from .iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
+"""Testing fake Apollo backend.
+"""
+from qiskit_aer.noise.noise_model import NoiseModel
+
+from iqm.qiskit_iqm import IQMFakeApollo
+
+
+def test_iqm_fake_apollo():
+    backend = IQMFakeApollo()
+    assert backend.num_qubits == 20
+
+
+def test_iqm_fake_apollo_connectivity(apollo_coupling_map):
+    backend = IQMFakeApollo()
+    assert set(backend.coupling_map.get_edges()) == apollo_coupling_map
+
+
+def test_iqm_fake_apollo_noise_model_instantiated():
+    backend = IQMFakeApollo()
+    assert isinstance(backend.noise_model, NoiseModel)
