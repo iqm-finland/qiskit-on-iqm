@@ -104,7 +104,7 @@ you want to use, you can provide it as follows:
 
 .. code-block:: python
 
-    job = execute(circuit, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+    job = execute(qc, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
 
 Alternatively, you can update the values of the options directly on the backend instance using the :meth:`.IQMBackend.set_options`
