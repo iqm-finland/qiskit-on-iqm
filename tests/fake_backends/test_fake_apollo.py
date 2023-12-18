@@ -22,6 +22,7 @@ from iqm.qiskit_iqm import IQMFakeApollo
 def test_iqm_fake_apollo():
     backend = IQMFakeApollo()
     assert backend.num_qubits == 20
+    assert backend.name == 'IQMFakeApolloBackend'
 
 
 def test_iqm_fake_apollo_connectivity(apollo_coupling_map):

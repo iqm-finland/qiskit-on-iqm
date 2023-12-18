@@ -16,6 +16,7 @@
 """
 from collections.abc import Sequence
 from importlib.metadata import version
+import re
 import uuid
 
 from mockito import ANY, mock, patch, when
@@ -72,6 +73,10 @@ def test_default_options(backend):
     assert backend.options.circuit_duration_check is True
     assert backend.options.heralding_mode == HeraldingMode.NONE
     assert backend.options.circuit_callback is None
+
+
+def test_backend_name(backend):
+    assert re.match(r'IQM(.*)Backend', backend.name)
 
 
 def test_retrieve_job(backend):
