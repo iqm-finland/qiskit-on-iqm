@@ -22,6 +22,7 @@ from iqm.qiskit_iqm import IQMFakeAdonis
 def test_iqm_fake_adonis():
     backend = IQMFakeAdonis()
     assert backend.num_qubits == 5
+    assert backend.name == 'IQMFakeAdonisBackend'
 
 
 def test_iqm_fake_adonis_connectivity(adonis_coupling_map):

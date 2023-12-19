@@ -208,4 +208,4 @@ def IQMFakeApollo() -> IQMFakeBackend:
         name="sample-chip",
     )
 
-    return IQMFakeBackend(architecture, error_profile)
+    return IQMFakeBackend(architecture, error_profile, name="IQMFakeApolloBackend")

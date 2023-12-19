@@ -14,6 +14,8 @@
 
 """Testing IQM backend.
 """
+import re
+
 from mockito import mock, when
 import pytest
 from qiskit import QuantumCircuit, transpile
@@ -36,3 +38,10 @@ def test_run_fails_empty_cregs(adonis_architecture):
 
     with pytest.raises(ValueError, match='One or more circuits contain unused classical registers.'):
         backend.run(circuit_transpiled)
+
+
+def test_backend_name(adonis_architecture):
+    client = mock(IQMClient)
+    when(client).get_quantum_architecture().thenReturn(adonis_architecture)
+    backend = IQMFacadeBackend(client)
+    assert re.match(r'IQMFacade(.*)Backend', backend.name)

@@ -72,6 +72,7 @@ class IQMBackendBase(BackendV2, ABC):
         self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
         # Copy of the original quantum architecture that was used to construct the target. Used for validation only.
         self._quantum_architecture = architecture
+        self.name = 'IQMBackend'
 
     @property
     def target(self) -> Target:

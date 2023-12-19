@@ -97,13 +97,21 @@ class IQMFakeBackend(IQMBackendBase):
         error_profile: Characteristics of a particular QPU specimen.
     """
 
-    def __init__(self, architecture: QuantumArchitectureSpecification, error_profile: IQMErrorProfile, **kwargs):
+    def __init__(
+        self,
+        architecture: QuantumArchitectureSpecification,
+        error_profile: IQMErrorProfile,
+        name: str = "IQMFakeBackend",
+        **kwargs,
+    ):
         super().__init__(architecture, **kwargs)
 
         self._validate_architecture_and_error_profile(architecture, error_profile)
         self.__architecture, self.__error_profile = architecture, error_profile
 
         self.noise_model = self._create_noise_model(architecture, error_profile)
+
+        self.name = name
 
     @property
     def error_profile(self) -> IQMErrorProfile:

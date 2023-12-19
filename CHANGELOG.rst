@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.9
+============
+
+* Add ``name`` to backends `#88 <https://github.com/iqm-finland/qiskit-on-iqm/pull/88>`_
+
 Version 11.8
 ============
 

@@ -48,9 +48,11 @@ class IQMBackend(IQMBackendBase):
     """
 
     def __init__(self, client: IQMClient, **kwargs):
-        super().__init__(client.get_quantum_architecture(), **kwargs)
+        architecture = client.get_quantum_architecture()
+        super().__init__(architecture, **kwargs)
         self.client: IQMClient = client
         self._max_circuits: Optional[int] = None
+        self.name = f'IQM{architecture.name}Backend'
 
     @classmethod
     def _default_options(cls) -> Options:
@@ -233,6 +235,7 @@ class IQMFacadeBackend(IQMBackend):
 
         super().__init__(client, **kwargs)
         self.client = client
+        self.name = f'IQMFacade{target_architecture.name}Backend'
 
     def _validate_no_empty_cregs(self, circuit):
         """Returns True if given circuit has no empty (unused) classical registers, False otherwise."""
