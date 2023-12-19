@@ -101,7 +101,7 @@ class IQMFakeBackend(IQMBackendBase):
         self,
         architecture: QuantumArchitectureSpecification,
         error_profile: IQMErrorProfile,
-        name: Optional[str] = None,
+        name: str = "IQMFakeBackend",
         **kwargs,
     ):
         super().__init__(architecture, **kwargs)
@@ -111,10 +111,7 @@ class IQMFakeBackend(IQMBackendBase):
 
         self.noise_model = self._create_noise_model(architecture, error_profile)
 
-        if name:
-            self.name = name
-        else:
-            self.name = "IQMFakeBackend"
+        self.name = name
 
     @property
     def error_profile(self) -> IQMErrorProfile:
