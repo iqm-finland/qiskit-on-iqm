@@ -295,6 +295,9 @@
       <li class="version_item current_version">dev</li>
     
     
+      <li class="version_item"><a href="versions/11.9/user_guide.html">11.9</a></li>
+    
+    
       <li class="version_item"><a href="versions/11.8/user_guide.html">11.8</a></li>
     
     
@@ -731,7 +734,7 @@ title="Print to PDF"
   <strong>
     
     You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="versions/11.8/user_guide.html">11.8</a>.
+    For the latest released version, please have a look at <a href="versions/11.9/user_guide.html">11.9</a>.
     
   </strong>
 </div>
@@ -820,7 +823,7 @@ quantum computer, and use Qiskit’s <code class="docutils literal notranslate">
 <p>You can optionally set IQM backend specific options as additional keyword arguments to the <code class="docutils literal notranslate"><span class="pre">execute</span></code> method (which
 passes the values down to <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>). For example, if you know an ID of a specific calibration set that
 you want to use, you can provide it as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">calibration_set_id</span><span class="o">=</span><span class="s2">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">calibration_set_id</span><span class="o">=</span><span class="s2">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Alternatively, you can update the values of the options directly on the backend instance using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.set_options()</span></code>
