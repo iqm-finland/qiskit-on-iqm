@@ -158,8 +158,8 @@ intersphinx_mapping = {
 }
 
 extlinks = {
-    'issue': ('https://github.com/iqm-finland/qiskit-on-iqm/issues/%s', 'issue '),
-    'mr': ('https://github.com/iqm-finland/qiskit-on-iqm/pull/%s', 'MR '),
+    'issue': ('https://github.com/iqm-finland/qiskit-on-iqm/issues/%s', 'issue %s'),
+    'mr': ('https://github.com/iqm-finland/qiskit-on-iqm/pull/%s', 'MR %s'),
 }
 
 
