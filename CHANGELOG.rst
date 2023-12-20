@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.10
+=============
+
+* Require ``iqm-client >= 15.2``. Bump dependencies and dev tools. `#89 <https://github.com/iqm-finland/qiskit-on-iqm/pull/89>`_
+
 Version 11.9
 ============
 

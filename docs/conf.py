@@ -40,7 +40,7 @@ else:
 # -- General configuration ---------------------------------------------------
 
 # require a recent version of Sphinx
-needs_sphinx = '4.4'
+needs_sphinx = '6.2'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -108,11 +108,9 @@ import sphinx_book_theme
 #
 html_theme = 'sphinx_book_theme'
 
-html_theme_options = {
-    'logo_only': True,
-}
+html_theme_options = {}
 
-html_sidebars = {'**': ['sidebar-logo.html', 'search-field.html', 'sbt-sidebar-nav.html', 'versioning.html']}
+html_sidebars = {'**': ['navbar-logo.html', 'search-field.html', 'sbt-sidebar-nav.html', 'versioning.html']}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
