@@ -16,8 +16,8 @@
 """
 
 
-import subprocess
 import os
+import subprocess
 
 environment = os.environ.copy()
 
