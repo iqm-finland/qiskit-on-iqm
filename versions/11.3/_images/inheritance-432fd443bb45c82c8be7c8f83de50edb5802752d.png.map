@@ -1,5 +1,0 @@
-<map id="inheritance62f4a37e08" name="inheritance62f4a37e08">
-<area shape="rect" id="node1" title="Base class for transpiler passes." alt="" coords="5,5,88,31"/>
-<area shape="rect" id="node3" title="A transformation pass: change DAG, not property set." alt="" coords="136,5,285,31"/>
-<area shape="rect" id="node2" href="iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates.html#iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates" target="_top" title="Optimize the decomposition of single&#45;qubit gates for the IQM gate set." alt="" coords="333,5,553,31"/>
-</map>
