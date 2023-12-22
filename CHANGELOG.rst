@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 11.10
+=============
+
+* Require ``iqm-client >= 15.2``. Bump dependencies and dev tools. `#89 <https://github.com/iqm-finland/qiskit-on-iqm/pull/89>`_
+
 Version 11.9
 ============
 
@@ -64,10 +69,10 @@ Version 10.11
 Version 10.10
 =============
 
-* Upgrade to qiskit ~= 0.44.1. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
-* Make the ``max_circuits`` property of ``IQMBackend`` user-configurable. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
-* Implement ``error_message`` method for ``IQMJob``. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>``
-* Explicitly specify symmetric CZ properties when building the transpilation target. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`
+* Upgrade to qiskit ~= 0.44.1. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`_
+* Make the ``max_circuits`` property of ``IQMBackend`` user-configurable. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`_
+* Implement ``error_message`` method for ``IQMJob``. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`_
+* Explicitly specify symmetric CZ properties when building the transpilation target. `#77 <https://github.com/iqm-finland/qiskit-on-iqm/pull/77>`_
 
 Version 10.9
 ============

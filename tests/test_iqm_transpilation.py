@@ -16,7 +16,7 @@
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
-from qiskit_aer import Aer
+from qiskit_aer import AerSimulator
 
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
 
@@ -26,19 +26,19 @@ def test_optimize_single_qubit_gates_preserves_unitary():
     circuit = QuantumCircuit(2, 2)
     circuit.t(0)
     circuit.rx(0.4, 0)
-    circuit.cnot(0, 1)
+    circuit.cx(0, 1)
     circuit.ry(0.7, 1)
     circuit.h(1)
     circuit.r(0.2, 0.8, 0)
     circuit.h(0)
 
-    simulator = Aer.get_backend(name='unitary_simulator')
-
     transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
     optimized_circuit = optimize_single_qubit_gates(transpiled_circuit, drop_final_rz=False)
 
+    transpiled_circuit.save_unitary()
+    optimized_circuit.save_unitary()
+    simulator = AerSimulator(method='unitary')
     transpiled_unitary = simulator.run(transpiled_circuit).result().get_unitary(transpiled_circuit)
-
     optimized_unitary = simulator.run(optimized_circuit).result().get_unitary(optimized_circuit)
 
     np.testing.assert_almost_equal(transpiled_unitary.data, optimized_unitary.data)
@@ -53,12 +53,11 @@ def test_optimize_single_qubit_gates_drops_final_rz():
     circuit.h(1)
     circuit.measure(1, 0)
 
-    simulator = Aer.get_backend(name='statevector_simulator')
-
     transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'])
     optimized_circuit_dropped_rz = optimize_single_qubit_gates(transpiled_circuit)
     optimized_circuit = optimize_single_qubit_gates(transpiled_circuit, drop_final_rz=False)
 
+    simulator = AerSimulator(method='statevector')
     shots = 1000
     transpiled_counts = simulator.run(transpiled_circuit, shots=shots).result().get_counts()
     optimized_counts = simulator.run(optimized_circuit, shots=shots).result().get_counts()

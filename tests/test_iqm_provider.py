@@ -396,7 +396,7 @@ def test_run_batch_of_circuits(backend, circuit, submit_circuits_default_kwargs,
     circuit.cz(0, 1)
     circuit.r(theta, 0, 0)
     circuit.cz(0, 1)
-    circuits = [circuit.bind_parameters({theta: t}) for t in theta_range]
+    circuits = [circuit.assign_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [backend.serialize_circuit(circuit) for circuit in circuits]
     kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2'}}
     when(backend.client).submit_circuits(circuits_serialized, **kwargs).thenReturn(job_id)

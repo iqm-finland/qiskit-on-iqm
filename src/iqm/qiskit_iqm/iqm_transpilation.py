@@ -15,10 +15,11 @@
 
 import numpy as np
 from qiskit import QuantumCircuit
+from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from qiskit.circuit.library import RGate
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
-from qiskit.transpiler.passes import Optimize1qGatesDecomposition, Unroller
+from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition
 from qiskit.transpiler.passmanager import PassManager
 
 
@@ -53,7 +54,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
         # convert all gates in the circuit to U and CZ gates
-        dag = Unroller(self._intermediate_basis).run(dag)
+        dag = BasisTranslator(SessionEquivalenceLibrary, self._intermediate_basis).run(dag)
         # combine all sequential U gates into one
         dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(dag)
         for node in dag.topological_op_nodes():
