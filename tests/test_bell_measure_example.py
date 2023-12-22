@@ -17,7 +17,9 @@
 
 
 import subprocess
+import os
 
+environment = os.environ.copy()
 
 def test_bell_measure_example_call():
     """Test that example script runs and fails at establishing a connection."""
@@ -25,6 +27,7 @@ def test_bell_measure_example_call():
         ("python", "examples/bell_measure.py", "--cortex_server_url", "https://not.a.real.domain"),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        env=environment
     ) as p:
         (_, err) = p.communicate()
         p.wait()
