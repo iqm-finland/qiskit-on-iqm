@@ -47,7 +47,7 @@ def test_fake_backend_with_single_qubit_gate_depolarizing_errors_qubits_not_matc
     """Test that IQMFakeBackend construction fails if depolarizing rates are not provided for all qubits"""
     with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
         error_profile = create_3q_error_profile(
-            single_qubit_gate_depolarizing_error_parameters={"phased_rx": {"QB1": 0.0001, "QB2": 0.0001}},
+            single_qubit_gate_depolarizing_error_parameters={"prx": {"QB1": 0.0001, "QB2": 0.0001}},
         )
         IQMFakeBackend(linear_architecture_3q, error_profile)
 
@@ -61,7 +61,7 @@ def test_fake_backend_with_single_qubit_gate_depolarizing_errors_more_qubits_tha
     with pytest.raises(ValueError, match="The qubits specified for one-qubit gate"):
         error_profile = create_3q_error_profile(
             single_qubit_gate_depolarizing_error_parameters={
-                "phased_rx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0.0001, "QB4": 0.0001}
+                "prx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0.0001, "QB4": 0.0001}
             },
         )
         IQMFakeBackend(linear_architecture_3q, error_profile)

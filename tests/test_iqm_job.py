@@ -57,7 +57,7 @@ def iqm_result_two_registers():
 
 @pytest.fixture()
 def iqm_metadata():
-    measurement = Instruction(name='measurement', implementation=None, qubits=('0',), args={'key': 'm1'})
+    measurement = Instruction(name='measure', implementation=None, qubits=('0',), args={'key': 'm1'})
     return {
         'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
         'request': {
@@ -74,7 +74,7 @@ def iqm_metadata():
 
 @pytest.fixture()
 def iqm_metadata_with_timestamps():
-    measurement = Instruction(name='measurement', implementation=None, qubits=('0',), args={'key': 'm1'})
+    measurement = Instruction(name='measure', implementation=None, qubits=('0',), args={'key': 'm1'})
     return {
         'calibration_set_id': 'df124054-f6d8-41f9-b880-8487f90018f9',
         'request': {
@@ -202,7 +202,7 @@ def test_result_no_shots(job, iqm_result_no_shots, iqm_metadata):
 
 
 def test_result_multiple_circuits(job, iqm_result_two_registers):
-    instruction_meta = [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}]
+    instruction_meta = [{'name': 'measure', 'qubits': ['0'], 'args': {'key': 'm1'}}]
     iqm_metadata_multiple_circuits = {
         'calibration_set_id': '9d75904b-0c93-461f-b1dc-bd200cfad1f1',
         'request': {

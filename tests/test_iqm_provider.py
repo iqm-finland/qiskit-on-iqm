@@ -154,7 +154,7 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
-    assert instr.name == 'phased_rx'
+    assert instr.name == 'prx'
     assert instr.qubits == ('0',)
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
@@ -177,7 +177,7 @@ def test_serialize_circuit_maps_x_rx_y_ry_gates(backend, circuit, gate, expected
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
-    assert instr.name == 'phased_rx'
+    assert instr.name == 'prx'
     assert instr.qubits == ('0',)
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
@@ -199,7 +199,7 @@ def test_serialize_circuit_maps_individual_measurements(circuit, backend):
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
-        assert instruction.name == 'measurement'
+        assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
@@ -209,7 +209,7 @@ def test_serialize_circuit_batch_measurement(circuit, backend):
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
-        assert instruction.name == 'measurement'
+        assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
@@ -229,7 +229,7 @@ def test_serialize_circuit_id(circuit, backend):
     circuit.id(0)
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
-    assert circuit_ser.instructions[0].name == 'phased_rx'
+    assert circuit_ser.instructions[0].name == 'prx'
 
 
 def test_transpile(backend, circuit):
@@ -473,7 +473,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
                 'circuits': [
                     {
                         'name': 'circuit_2',
-                        'instructions': [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}],
+                        'instructions': [{'name': 'measure', 'qubits': ['0'], 'args': {'key': 'm1'}}],
                     }
                 ],
             }
