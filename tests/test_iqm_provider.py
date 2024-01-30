@@ -19,17 +19,18 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, mock, patch, when
+from mockito import ANY, matchers, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 from qiskit.compiler import transpile
+import requests
 
-from iqm.iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
-from iqm.qiskit_iqm import IQMBackend, IQMJob, IQMProvider
-from iqm.qiskit_iqm.iqm_provider import IQMFacadeBackend
+from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
+from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
+from tests.utils import get_mock_ok_response
 
 
 @pytest.fixture
@@ -432,9 +433,12 @@ def test_get_backend(linear_architecture_3q):
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
 
 
-def test_client_signature():
+def test_client_signature(adonis_architecture):
     url = 'http://some_url'
     provider = IQMProvider(url)
+    when(requests).get('http://some_url/quantum-architecture', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response(QuantumArchitecture(quantum_architecture=adonis_architecture).model_dump())
+    )
     backend = provider.get_backend()
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
 

@@ -18,7 +18,7 @@ from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler import PassManager, TranspilerError
 from qiskit.transpiler.passes import TrivialLayout
 
-from iqm.qiskit_iqm import IQMBackend
+from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 
 class IQMMoveLayout(TrivialLayout):

@@ -20,7 +20,7 @@ import argparse
 
 from qiskit import QuantumCircuit, execute
 
-from iqm.qiskit_iqm import IQMProvider
+from iqm.qiskit_iqm.iqm_provider import IQMProvider
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument(

@@ -34,7 +34,8 @@ from iqm.iqm_client import (
     SingleQubitMapping,
     Status,
 )
-from iqm.qiskit_iqm import IQMBackend, IQMJob
+from iqm.qiskit_iqm.iqm_job import IQMJob
+from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 
 @pytest.fixture()

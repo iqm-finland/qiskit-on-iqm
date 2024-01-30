@@ -12,10 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Shared definitions for tests."""
+from mockito import unstub
 import pytest
 
 from iqm.iqm_client import QuantumArchitectureSpecification
 from tests.move_architecture.move_architecture import move_architecture_specification
+
+
+@pytest.fixture(autouse=True)
+def reset_mocks_after_tests():
+    yield
+    unstub()
 
 
 @pytest.fixture

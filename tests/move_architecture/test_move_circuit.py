@@ -102,6 +102,7 @@ def test_transpiled_circuit(new_architecture):
     qc.h(6)
     qc.h(4)
     qc.cz(4, 0)
+    qc.barrier()
     qc.move(6, 0)
     qc.measure(6, 0)
     qc.measure(3, 1)
@@ -119,6 +120,8 @@ def test_transpiled_circuit(new_architecture):
         # h(6)
         'prx:6',
         'prx:6',
+        # barrier()
+        'barrier:0,1,2,3,4,5,6',
         # move (6, 0)
         'move:6,0',
         # measurements

@@ -13,42 +13,59 @@
 # limitations under the License.
 """Testing and mocking utility functions.
 """
+from unittest.mock import Mock
 from uuid import UUID
 
-from mockito import matchers, mock, when
+from mockito import matchers, when
 from qiskit import QuantumCircuit, execute
+import requests
+from requests import Response
 
 from iqm.iqm_client import Circuit, Instruction, IQMClient, QuantumArchitectureSpecification
-from iqm.qiskit_iqm import IQMBackend
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
+from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 
 def get_mocked_backend(
     architecture: QuantumArchitectureSpecification,
 ) -> tuple[IQMBackend, IQMClient]:
     """Returns an IQM backend running on a mocked IQM client that returns the given architecture."""
-    client = mock(IQMClient)
+    client = IQMClient(url='http://localhost')
     when(client).get_quantum_architecture().thenReturn(architecture)
     backend = IQMBackend(client)
     return backend, client
 
 
-def capture_submitted_circuits(client: IQMClient, job_id: UUID = UUID('00000001-0002-0003-0004-000000000005')):
+def capture_submitted_circuits(job_id: UUID = UUID('00000001-0002-0003-0004-000000000005')):
     """Mocks the given client to capture circuits that are run against it.
 
     Returns:
         a mockito captor that can be used to access the circuit submitted to the client.
     """
     submitted_circuits = matchers.captor()
-    when(client).submit_circuits(
-        submitted_circuits,
-        qubit_mapping=matchers.ANY,
-        calibration_set_id=matchers.ANY,
-        shots=matchers.ANY,
-        circuit_duration_check=matchers.ANY,
-        heralding_mode=matchers.ANY,
-    ).thenReturn(job_id)
+    when(requests).post(
+        matchers.ANY,
+        json=submitted_circuits,
+        headers=matchers.ANY,
+        timeout=matchers.ANY,
+    ).thenReturn(get_mock_ok_response({'id': str(job_id)}))
     return submitted_circuits
+
+
+def get_mock_ok_response(json: dict) -> Response:
+    """Constructs a mock response for use with mocking the requests library.
+
+    Args:
+        json - the mocked response (JSON)
+
+    Returns:
+        the mocked response class
+    """
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.history = []
+    mock_response.json.return_value = json
+    return mock_response
 
 
 # pylint: disable=too-many-arguments
@@ -66,8 +83,8 @@ def get_transpiled_circuit_json(
     Returns:
         the circuit that was transpiled by the IQM backend
     """
-    backend, client = get_mocked_backend(architecture)
-    submitted_circuits_batch = capture_submitted_circuits(client)
+    backend, _client = get_mocked_backend(architecture)
+    submitted_circuits_batch = capture_submitted_circuits()
 
     if create_move_layout:
         initial_layout = generate_initial_layout(backend, circuit)
@@ -81,8 +98,8 @@ def get_transpiled_circuit_json(
     )
     assert job.job_id() == '00000001-0002-0003-0004-000000000005'
     assert len(submitted_circuits_batch.all_values) == 1
-    assert len(submitted_circuits_batch.value) == 1
-    return submitted_circuits_batch.value[0]
+    assert len(submitted_circuits_batch.value['circuits']) == 1
+    return Circuit.model_validate(submitted_circuits_batch.value['circuits'][0])
 
 
 def describe_instruction(instruction: Instruction) -> str:
