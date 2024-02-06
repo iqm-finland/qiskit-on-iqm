@@ -17,30 +17,22 @@ from qiskit.circuit import Gate
 
 
 class MoveGate(Gate):
-    r"""The MOVE operation is an operation between a qubit and resonator than moves the
-    1 state between the qubit and resonator. Specifically, it transforms 01 to 10
-    and 10 to 01, where indexes are ordered qubit then resonator. However, the MOVE
-    operation is not defined when both the resonator and qubit are in the 1 state;
-    it is not defined on the 11 state. If the MOVE operation is applied to the
-    11 state there will be substantial (roughly 63%) leakage into the 02 state.
-    With 11 input undefined, the matrix form of the MOVE operation is:
+    r"""The MOVE operation is a unitary population exchange operation between a qubit and a resonator.
+    Its effect is only defined in the invariant subspace :math:`S = \text{span}\{|00\rangle, |01\rangle, |10\rangle\}`,
+    where it swaps the populations of the states :math:`|01\rangle` and :math:`|10\rangle`.
+    Its effect on the orthogonal subspace is undefined.
 
-    .. math::
+    MOVE has the following presentation in the subspace :math:`S`:
 
-        MOVE\ q, r =
-            \begin{bmatrix}
-                1 & 0 & 0 & n/a \\
-                0 & 0 & 1 & n/a \\
-                0 & 1 & 0 & n/a \\
-                0 & 0 & 0 & n/a
-            \end{bmatrix}
+    .. math:: \text{MOVE}_S = |00\rangle \langle 00| + a |10\rangle \langle 01| + a^{-1} |01\rangle \langle 10|,
 
-    Due to technical limitations, the MOVE operation must be defined with the
-    qubit as the first operator and the resonator as the second.
+    where :math:`a` is an undefined complex phase that is canceled when the MOVE gate is applied a second time.
 
-    To ensure that both the qubit and resonator are not both in the 1 state, it is
+    To ensure that the state of the qubit and resonator has no overlap with :math:`|11\rangle`, it is
     recommended that no single qubit gates are applied to the qubit in between a
     pair of MOVE operations.
+
+    Note: At this point the locus for the move gate must be defined in the order: ``[qubit, resonator]``.
     """
 
     def __init__(self, label=None):

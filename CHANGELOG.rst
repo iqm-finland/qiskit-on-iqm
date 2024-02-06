@@ -2,6 +2,14 @@
 Changelog
 =========
 
+Version 12.0
+=============
+
+* Require ``iqm-client >= 16.0`` (architecture model updated).
+* Add MoveGate to model the move operation between qubit and resonator.
+* Add ``IQMCircuit`` wrapper for ``QuantumCircuit`` to allow ``.move()`` operation to be used more easily.
+* Add a layout pass to ensure correct qubits are selected for transpilation based on quantum architecture.
+
 Version 11.10
 =============
 

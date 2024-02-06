@@ -25,6 +25,9 @@ class IQMCircuit(QuantumCircuit):
     def move(self, qubit: int, resonator: int):
         """Applies the MOVE gate to the circuit.
 
+        Note: at this point the circuit layout is only guaranteed to work if the order
+        of the qubit and the resonator is correct (qubit first, resonator second).
+
         Args:
             qubit: the logical index of the qubit
             resonator: the logical index of the resonator
