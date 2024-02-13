@@ -57,7 +57,7 @@ def submit_circuits_default_kwargs() -> dict:
         'qubit_mapping': None,
         'calibration_set_id': None,
         'shots': 1024,
-        'circuit_duration_check': True,
+        'max_circuit_duration_over_t2': None,
         'heralding_mode': HeraldingMode.NONE,
     }
 
@@ -70,7 +70,7 @@ def job_id():
 def test_default_options(backend):
     assert backend.options.shots == 1024
     assert backend.options.calibration_set_id is None
-    assert backend.options.circuit_duration_check is True
+    assert backend.options.max_circuit_duration_over_t2 is None
     assert backend.options.heralding_mode == HeraldingMode.NONE
     assert backend.options.circuit_callback is None
 
@@ -337,10 +337,10 @@ def test_run_with_custom_calibration_set_id(
 def test_run_with_duration_check_disabled(backend, circuit, submit_circuits_default_kwargs, job_id):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1'}, 'circuit_duration_check': False}
+    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1'}, 'max_circuit_duration_over_t2': 0.0}
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
 
-    backend.run([circuit], circuit_duration_check=False)
+    backend.run([circuit], max_circuit_duration_over_t2=0.0)
 
 
 def test_run_uses_heralding_mode_none_by_default(backend, circuit, submit_circuits_default_kwargs, job_id):

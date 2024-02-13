@@ -2,6 +2,14 @@
 Changelog
 =========
 
+Version 12.0
+============
+
+* Require ``iqm-client >= 16.0``.
+* Remove ``circuit_duration_check`` from ``IQMBackend`` options.
+* Add ``max_circuit_duration_over_t2`` to ``IQMBackend`` options.
+
+
 Version 11.10
 =============
 
