@@ -126,13 +126,12 @@ their current values using `backend.options`. Below table summarizes currently a
 
        Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
        available calibration set automatically.
-   * - `circuit_duration_check`
-     - Type: ``bool``, Example value: ``False``.
+   * - `max_circuit_duration_over_t2`
+     - Type: ``float``, Example value: ``1.0``.
 
-       Enable or disable server-side circuit duration checks. The default value is `True`, which means if any job is
-       estimated to take unreasonably long compared to the coherence times of the qubits, or too long in wall-clock
-       time, the server will reject it. This option can be used to disable this behaviour. In normal use, the
-       circuit duration check should always remain enabled.
+       Set server-side circuit disqualification threshold. If any job is estimated to take longer than the T2 time of the qubits
+       multiplied by this value the server will reject it. Setting this value to ``0.0`` will disable circuit duration check.
+       The default value ``None`` means the server default value will be used.
    * - `heralding_mode`
      - Type: :class:`~iqm.iqm_client.iqm_client.HeraldingMode`, Example value: ``"zeros"``.
 
