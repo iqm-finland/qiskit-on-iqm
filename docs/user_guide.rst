@@ -129,8 +129,9 @@ their current values using `backend.options`. Below table summarizes currently a
    * - `max_circuit_duration_over_t2`
      - Type: ``float``, Example value: ``1.0``.
 
-       Set server-side circuit disqualification threshold. If any job is estimated to take longer than the T2 time of the qubits
-       multiplied by this value the server will reject it. Setting this value to ``0.0`` will disable circuit duration check.
+       Set server-side circuit disqualification threshold. If any circuit in a job is estimated to take longer than the
+       shortest T2 time of any qubit used in the circuit multiplied by this value, the server will reject the job.
+       Setting this value to ``0.0`` will disable circuit duration check.
        The default value ``None`` means the server default value will be used.
    * - `heralding_mode`
      - Type: :class:`~iqm.iqm_client.iqm_client.HeraldingMode`, Example value: ``"zeros"``.
