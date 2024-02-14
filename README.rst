@@ -47,4 +47,4 @@ Copyright
 
 Qiskit on IQM is free software, released under the Apache License, version 2.0.
 
-Copyright 2022-2023 Qiskit on IQM developers.
+Copyright 2022-2024 Qiskit on IQM developers.
