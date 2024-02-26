@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 12.1
+============
+
+* Fix regex in Sphinx configuration that selects Git tags for documentation builds. `#93 <https://github.com/iqm-finland/qiskit-on-iqm/pull/93>`_
+
 Version 12.0
 ============
 
