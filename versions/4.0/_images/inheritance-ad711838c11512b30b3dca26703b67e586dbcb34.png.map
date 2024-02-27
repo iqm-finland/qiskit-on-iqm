@@ -1,4 +1,0 @@
-<map id="inheritance734c12f309" name="inheritance734c12f309">
-<area shape="rect" id="node1" href="qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError.html#qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError" target="_top" title="Raised when a given instruction is not supported by the IQM server." alt="" coords="5,55,216,80"/>
-<area shape="rect" id="node2" href="qiskit_iqm.qiskit_to_iqm.MeasurementKey.html#qiskit_iqm.qiskit_to_iqm.MeasurementKey" target="_top" title="Unique key associated with a measurement instruction." alt="" coords="43,5,179,31"/>
-</map>

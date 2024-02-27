@@ -1,0 +1,9 @@
+<map id="inheritance160c32e5b5" name="inheritance160c32e5b5">
+<area shape="rect" id="node1" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="20,102,91,126"/>
+<area shape="rect" id="node3" title="Abstract class for Backends" alt="" coords="153,53,245,78"/>
+<area shape="rect" id="node5" href="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase" target="_top" title="Abstract base class for various IQM&#45;specific backends." alt="" coords="292,78,424,103"/>
+<area shape="rect" id="node2" title="Base common type for all versioned Backend abstract classes." alt="" coords="18,53,93,78"/>
+<area shape="rect" id="node4" href="iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" target="_top" title="Backend for executing quantum circuits on IQM quantum computers." alt="" coords="471,78,571,103"/>
+<area shape="rect" id="node6" href="iqm.qiskit_iqm.iqm_provider.IQMFacadeBackend.html#iqm.qiskit_iqm.iqm_provider.IQMFacadeBackend" target="_top" title="Facade backend for mimicking the execution of quantum circuits on IQM quantum computers. Allows to submit a" alt="" coords="618,78,763,103"/>
+<area shape="rect" id="node7" href="iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" target="_top" title="Provider for IQM backends." alt="" coords="5,5,106,30"/>
+</map>

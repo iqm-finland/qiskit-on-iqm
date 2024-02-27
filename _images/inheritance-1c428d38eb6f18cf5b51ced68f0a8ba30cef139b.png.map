@@ -1,0 +1,6 @@
+<map id="inheritance84db8ff7d7" name="inheritance84db8ff7d7">
+<area shape="rect" id="node1" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="5,5,77,31"/>
+<area shape="rect" id="node3" title="Class to handle jobs" alt="" coords="125,31,197,56"/>
+<area shape="rect" id="node2" href="iqm.qiskit_iqm.iqm_job.IQMJob.html#iqm.qiskit_iqm.iqm_job.IQMJob" target="_top" title="Implementation of Qiskit&#39;s job interface to handle circuit execution on an IQM server." alt="" coords="245,31,317,56"/>
+<area shape="rect" id="node4" title="Base common type for all versioned Job abstract classes." alt="" coords="5,55,77,80"/>
+</map>

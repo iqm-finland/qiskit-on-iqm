@@ -1,15 +1,14 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.iqm_transpilation &#8212; Qiskit on IQM dev documentation</title>
+    <title>iqm.qiskit_iqm.iqm_transpilation &#8212; Qiskit on IQM 12.1 documentation</title>
   
   
   
@@ -19,29 +18,29 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=26a98ee5"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/iqm.qiskit_iqm.iqm_transpilation';</script>
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -57,10 +56,9 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -101,11 +99,14 @@
 </form></div>
   </div>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -134,29 +135,23 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM dev documentation - Home"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM dev documentation - Home"/>`);</script>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 12.1 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 12.1 documentation - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
-<form class="bd-search d-flex align-items-center"
-      action="../search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         id="search-input"
-         placeholder="Search..."
-         aria-label="Search..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User guide</a></li>
@@ -198,231 +193,13 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../authors.html">Contributors</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="sidebar-primary-item">
-<style type="text/css">
-  ul.version_list { padding-left: 0; }
-  ul.version_list li.version_item { display: inline; }
-  li.version_item a {
-    color: white;
-    background-color: #097aba;
-    padding: 0.12rem 0.45rem;
-    border-radius: 0.35rem;
-  }
-  li.version_item a:hover {
-    background-color: #064061;
-    text-decoration: none;
-  }
-  li.version_item.current_version {
-    color: white;
-    background-color: #064061;
-    padding: 0.12rem 0.45rem;
-    border-radius: 0.35rem;
-  }
-</style>
-<h3>Versions</h3>
-<ul class="version_list">
-    
-      <li class="version_item current_version">dev</li>
-    
-    
-      <li class="version_item"><a href="../versions/11.10/index.html">11.10</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.9/index.html">11.9</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.8/index.html">11.8</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.7/index.html">11.7</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.6/index.html">11.6</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.5/index.html">11.5</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.4/index.html">11.4</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.3/index.html">11.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.2/index.html">11.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.1/index.html">11.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/11.0/index.html">11.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.11/index.html">10.11</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.10/index.html">10.10</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.9/index.html">10.9</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.8/index.html">10.8</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.7/index.html">10.7</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.6/index.html">10.6</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.5/index.html">10.5</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.4/index.html">10.4</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.3/index.html">10.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.2/index.html">10.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.1/index.html">10.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/10.0/index.html">10.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/9.0/index.html">9.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/8.3/index.html">8.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/8.2/index.html">8.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/8.1/index.html">8.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/8.0/index.html">8.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.15/index.html">7.15</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.14/index.html">7.14</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.13/index.html">7.13</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.12/index.html">7.12</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.11/index.html">7.11</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.10/index.html">7.10</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.9/index.html">7.9</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.8/index.html">7.8</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.7/index.html">7.7</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.6/index.html">7.6</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.5/index.html">7.5</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.4/index.html">7.4</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.3/index.html">7.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.2/index.html">7.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.1/index.html">7.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/7.0/index.html">7.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/6.3/index.html">6.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/6.2/index.html">6.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/6.1/index.html">6.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/6.0/index.html">6.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/5.0/index.html">5.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.6/index.html">4.6</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.5/index.html">4.5</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.4/index.html">4.4</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.3/index.html">4.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.2/index.html">4.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.1/index.html">4.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/4.0/index.html">4.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/3.1/index.html">3.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/3.0/index.html">3.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/2.3/index.html">2.3</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/2.2/index.html">2.2</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/2.1/index.html">2.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/2.0/index.html">2.0</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/1.1/index.html">1.1</a></li>
-    
-    
-      <li class="version_item"><a href="../versions/1.0/index.html">1.0</a></li>
-    
-</ul>
-</div>
     </div>
   
   
@@ -567,28 +344,10 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
-
-<style type="text/css">
-  .version_notice {
-    background-color: #ffc107;
-    padding: 0.5em 0.75em;
-    margin-bottom: 1em;
-  }
-</style>
-<div class="version_notice">
-  <strong>
-    
-    You're reading the documentation for a development version.
-    For the latest released version, please have a look at <a href="../versions/11.10/index.html">11.10</a>.
-    
-  </strong>
-</div>
-
-
   <section id="module-iqm.qiskit_iqm.iqm_transpilation">
-<span id="iqm-qiskit-iqm-iqm-transpilation"></span><h1>iqm.qiskit_iqm.iqm_transpilation<a class="headerlink" href="#module-iqm.qiskit_iqm.iqm_transpilation" title="Permalink to this heading">#</a></h1>
+<span id="iqm-qiskit-iqm-iqm-transpilation"></span><h1>iqm.qiskit_iqm.iqm_transpilation<a class="headerlink" href="#module-iqm.qiskit_iqm.iqm_transpilation" title="Link to this heading">#</a></h1>
 <p>Transpilation tool to optimize the decomposition of single-qubit gates tailored to IQM hardware.</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
@@ -607,11 +366,11 @@ document.write(`
 </tbody>
 </table>
 <p class="rubric">Inheritance</p>
-<div class="graphviz"><img src="../_images/inheritance-69ca69997ad7965189cd18308124feadd105aaed.png" alt="Inheritance diagram of iqm.qiskit_iqm.iqm_transpilation" usemap="#inheritance62f4a37e08" class="inheritance graphviz" /></div>
+<div class="graphviz"><img src="../_images/inheritance-6f0aef76aa1c5a61e488a2e8fa48e59fe25bc716.png" alt="Inheritance diagram of iqm.qiskit_iqm.iqm_transpilation" usemap="#inheritance62f4a37e08" class="inheritance graphviz" /></div>
 <map id="inheritance62f4a37e08" name="inheritance62f4a37e08">
+<area shape="rect" id="node1" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="4,4,63,25"/>
 <area shape="rect" id="node5" href="iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates.html#iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates" target="_top" title="Optimize the decomposition of single&#45;qubit gates for the IQM gate set." alt="" coords="585,4,764,25"/>
 </map></section>
-
 
 
                 </article>
@@ -649,6 +408,8 @@ document.write(`
             
             
               
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
             
           </div>
           <footer class="bd-footer-content">
@@ -668,7 +429,7 @@ By Qiskit on IQM developers
 
   <p class="copyright">
     
-      © Copyright 2022-2023, Qiskit on IQM developers.
+      © Copyright 2022-2024, Qiskit on IQM developers.
       <br/>
     
   </p>
@@ -692,8 +453,8 @@ By Qiskit on IQM developers
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>
