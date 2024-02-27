@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 12.1
+============
+
+* Remove multiversion documentation `#92 <https://github.com/iqm-finland/qiskit-on-iqm/pull/92>`_
+
 Version 12.0
 ============
 

@@ -38,9 +38,8 @@ dev = [
     "tox == 4.11.4"
 ]
 docs = [
-    "sphinx == 6.2.1",
-    "sphinx-book-theme == 1.0.1",
-    "sphinx-multiversion-contrib == 0.3.2"
+    "sphinx == 7.2.6",
+    "sphinx-book-theme == 1.1.2",
 ]
 testing = [
     "black == 23.12.0",
