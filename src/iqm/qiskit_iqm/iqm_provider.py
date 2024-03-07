@@ -59,7 +59,7 @@ class IQMBackend(IQMBackendBase):
         return Options(
             shots=1024,
             calibration_set_id=None,
-            circuit_duration_check=True,
+            max_circuit_duration_over_t2=None,
             heralding_mode=HeraldingMode.NONE,
             circuit_callback=None,
         )
@@ -98,7 +98,7 @@ class IQMBackend(IQMBackendBase):
         calibration_set_id = merged_options['calibration_set_id']
         if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
             calibration_set_id = UUID(calibration_set_id)
-        circuit_duration_check = merged_options['circuit_duration_check']
+        max_circuit_duration_over_t2 = merged_options['max_circuit_duration_over_t2']
         heralding_mode = merged_options['heralding_mode']
 
         circuit_callback = merged_options['circuit_callback']
@@ -115,7 +115,7 @@ class IQMBackend(IQMBackendBase):
             qubit_mapping=qubit_mapping,
             calibration_set_id=calibration_set_id if calibration_set_id else None,
             shots=shots,
-            circuit_duration_check=circuit_duration_check,
+            max_circuit_duration_over_t2=max_circuit_duration_over_t2,
             heralding_mode=heralding_mode,
         )
         job = IQMJob(self, str(job_id), shots=shots)

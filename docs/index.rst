@@ -21,6 +21,10 @@ Contents
    API
    license
    authors
+
+.. toctree::
+   :maxdepth: 1
+   
    changelog
 
 
