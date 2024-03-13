@@ -35,3 +35,37 @@ move_architecture_specification = {
 }
 
 move_architecture_json = {"quantum_architecture": move_architecture_specification}
+
+deneb_architecture_specification = {
+    "name": "Ndonis",
+    "operations": {
+        "cz": [
+            ["QB1", "COMP_R"],
+            ["QB2", "COMP_R"],
+            ["QB3", "COMP_R"],
+            ["QB4", "COMP_R"],
+            ["QB5", "COMP_R"],
+            ["QB6", "COMP_R"],
+        ],
+        "prx": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"], ["QB6"]],
+        "move": [
+            ["QB1", "COMP_R"],
+            ["QB2", "COMP_R"],
+            ["QB3", "COMP_R"],
+            ["QB4", "COMP_R"],
+            ["QB5", "COMP_R"],
+            ["QB6", "COMP_R"],
+        ],
+        "barrier": [],
+        "measure": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"], ["QB6"]],
+    },
+    "qubits": ["COMP_R", "QB1", "QB2", "QB3", "QB4", "QB5", "QB6"],
+    "qubit_connectivity": [
+        ["QB1", "COMP_R"],
+        ["QB2", "COMP_R"],
+        ["QB3", "COMP_R"],
+        ["QB4", "COMP_R"],
+        ["QB5", "COMP_R"],
+        ["QB6", "COMP_R"],
+    ],
+}

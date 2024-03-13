@@ -16,7 +16,7 @@ from mockito import unstub
 import pytest
 
 from iqm.iqm_client import QuantumArchitectureSpecification
-from tests.move_architecture.move_architecture import move_architecture_specification
+from tests.move_architecture.move_architecture import deneb_architecture_specification, move_architecture_specification
 
 
 @pytest.fixture(autouse=True)
@@ -73,6 +73,11 @@ def adonis_architecture_shuffled_names():
 @pytest.fixture
 def adonis_coupling_map():
     return {(0, 2), (2, 0), (1, 2), (2, 1), (2, 3), (3, 2), (2, 4), (4, 2)}
+
+
+@pytest.fixture
+def deneb_adonis_architecture() -> QuantumArchitectureSpecification:
+    return QuantumArchitectureSpecification(**deneb_architecture_specification)
 
 
 @pytest.fixture
