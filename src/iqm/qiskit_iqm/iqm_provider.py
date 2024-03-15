@@ -66,11 +66,17 @@ class IQMBackend(IQMBackendBase):
 
     @property
     def max_circuits(self) -> Optional[int]:
-        """Set the max_circuits property to a custom value.
+        """Set :attr:`max_circuits` property to a custom value.
 
-        Generally, this property is set automatically during the construction of backend instance. However, in certain
-        situations (mostly when using qiskit_experiments), user wants to have control over how many circuits are
-        included in a single batch. This setter method makes it easy to override the default value with desired one.
+        Generally, this property is set automatically to `None` during the construction of backend instance. `None` means
+        there is no limit to the maximum number of circuits that can be run in a single batch.
+
+        However, in certain situations (mostly when using `qiskit_experiments`), user wants to have control over how many
+        circuits are included in a single batch. The setter method makes it easy to override the default value with
+        a custom one.
+
+        Besides the above use case, this property is not used to limit the amount of circuits that is being sent to
+        the backend.
         """
         return self._max_circuits
 
