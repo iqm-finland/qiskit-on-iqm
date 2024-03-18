@@ -19,6 +19,7 @@ from qiskit.transpiler.target import Target
 from .fake_backends.iqm_fake_backend import IQMFakeBackend
 from .iqm_circuit import IQMCircuit
 from .iqm_provider import IQMBackend
+from .iqm_transpilation import IQMOptimizeSingleQubitGates
 from .move_gate import MoveGate
 
 
@@ -281,14 +282,18 @@ def build_IQM_star_pass(pass_manager_config: PassManagerConfig) -> Transformatio
 def transpile_to_IQM(  # pylint: disable=too-many-arguments
     circuit: QuantumCircuit,
     backend: Union[IQMBackend, IQMFakeBackend],
+    optimize_single_qubits: bool = True,
+    ignore_barriers: bool = False,
+    remove_final_rzs: bool = False,
 ) -> QuantumCircuit:
     """Basic function for transpiling to an IQM star backends. Currently only works with Deneb
 
     Args:
         circuit (QuantumCircuit): The circuit to be transpiled.
         backend (IQMBackend | IQMFakeBackend): The target backend to compile to containing a single resonator.
-        **transpile_kwargs: Arguments to be passed to Qiskit transpile.
-                            Should ignore backend-related arguments such as basis_gates and coupling_map.
+        optimize_single_qubits (bool): Whether to optimize single qubit gates away (default = True).
+        ignore_barriers (bool): Whether to ignore barriers when optimizing single qubit gates away (default = False).
+        remove_final_rzs (bool): Whether to remove the final Rz rotations (default = False).
 
     Raises:
         NotImplementedError: Thrown when the backend supports multiple resonators.
@@ -299,6 +304,11 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
 
     pass_manager_config = build_pass_manager_config(backend, circuit)
     move_pass = build_IQM_star_pass(pass_manager_config)
+    passes = []
+    if optimize_single_qubits:
+        optimize_pass = IQMOptimizeSingleQubitGates(remove_final_rzs, ignore_barriers)
+        passes.append(optimize_pass)
+    passes.append(move_pass)
 
     backend_props = pass_manager_config.backend_properties.to_dict()
     qubit_indices = backend_props.get("qubit_indices")
@@ -346,6 +356,6 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     circuit_with_resonator._layout = new_layout
     circuit_with_resonator = circuit_with_resonator.decompose()
 
-    transpiled_circuit = PassManager(move_pass).run(circuit_with_resonator)
+    transpiled_circuit = PassManager(passes).run(circuit_with_resonator)
     transpiled_circuit._layout = new_layout
     return transpiled_circuit

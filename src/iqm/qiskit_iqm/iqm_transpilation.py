@@ -19,7 +19,7 @@ from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from qiskit.circuit.library import RGate
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
-from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition
+from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition, RemoveBarriers
 from qiskit.transpiler.passmanager import PassManager
 
 
@@ -41,18 +41,22 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
     Args:
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
+        ignore_barriers (bool): Removes the barriers from the circuit before optimization (default = False).
     """
 
-    def __init__(self, drop_final_rz: bool = False):
+    def __init__(self, drop_final_rz: bool = False, ignore_barriers: bool = False):
         super().__init__()
         self._basis = ['r', 'cz']
         self._intermediate_basis = ['u', 'cz']
         self._drop_final_rz = drop_final_rz
+        self._ignore_barriers = ignore_barriers
 
     def run(self, dag: DAGCircuit) -> DAGCircuit:
         self._validate_ops(dag)
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
+        if self._ignore_barriers:
+            dag = RemoveBarriers().run(dag)
         # convert all gates in the circuit to U and CZ gates
         dag = BasisTranslator(SessionEquivalenceLibrary, self._intermediate_basis).run(dag)
         # combine all sequential U gates into one
@@ -87,15 +91,18 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 )
 
 
-def optimize_single_qubit_gates(circuit: QuantumCircuit, drop_final_rz: bool = True) -> QuantumCircuit:
+def optimize_single_qubit_gates(
+    circuit: QuantumCircuit, drop_final_rz: bool = True, ignore_barriers: bool = False
+) -> QuantumCircuit:
     """Optimize number of single-qubit gates in a transpiled circuit exploiting the IQM specific gate set.
 
     Args:
         circuit: quantum circuit to optimise
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
+        ignore_barriers (bool): Removes barriers from the circuit if they exist (default = False) before optimization.
 
     Returns:
         optimised circuit
     """
-    return PassManager(IQMOptimizeSingleQubitGates(drop_final_rz)).run(circuit)
+    return PassManager(IQMOptimizeSingleQubitGates(drop_final_rz, ignore_barriers)).run(circuit)
