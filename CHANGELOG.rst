@@ -10,10 +10,15 @@ Version 13.0
 * Add ``IQMCircuit`` wrapper for ``QuantumCircuit`` to allow ``.move()`` operation to be used more easily.
 * Add a layout pass to ensure correct qubits are selected for transpilation based on quantum architecture.
 
+Version 12.2
+============
+
+* Use GitHub Action as a Trusted Publisher to publish packages to PyPI. `#94 <https://github.com/iqm-finland/qiskit-on-iqm/pull/94>`_
+
 Version 12.1
 ============
 
-* Remove multiversion documentation `#92 <https://github.com/iqm-finland/qiskit-on-iqm/pull/92>`_
+* Remove multiversion documentation. `#92 <https://github.com/iqm-finland/qiskit-on-iqm/pull/92>`_
 
 Version 12.0
 ============
@@ -30,12 +35,12 @@ Version 11.10
 Version 11.9
 ============
 
-* Add ``name`` to backends `#88 <https://github.com/iqm-finland/qiskit-on-iqm/pull/88>`_
+* Add ``name`` to backends. `#88 <https://github.com/iqm-finland/qiskit-on-iqm/pull/88>`_
 
 Version 11.8
 ============
 
-* Add ``IQMFakeApollo`` fake backend `#66 <https://github.com/iqm-finland/qiskit-on-iqm/pull/66>`_
+* Add ``IQMFakeApollo`` fake backend. `#66 <https://github.com/iqm-finland/qiskit-on-iqm/pull/66>`_
 
 Version 11.7
 ============
