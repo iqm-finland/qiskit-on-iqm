@@ -13,12 +13,14 @@
 # limitations under the License.
 """Testing IQM transpilation.
 """
+
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
+from tests.utils import get_transpiled_circuit_json
 
 
 def test_optimize_single_qubit_gates_preserves_unitary():
@@ -92,3 +94,36 @@ def test_optimize_single_qubit_gates_raises_on_invalid_basis():
 
     with pytest.raises(ValueError, match="Invalid operation 'h' found "):
         optimize_single_qubit_gates(circuit)
+
+
+def test_submitted_circuit(adonis_architecture):
+    """Test that a circuit submitted via IQM backend gets transpiled into proper JSON."""
+    circuit = QuantumCircuit(2, 2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+
+    circuit.measure_all()
+
+    # This transpilation seed maps virtual qubit 0 to physical qubit 2, and virtual qubit 1 to physical qubit 4
+    # Other seeds will switch the mapping, and may also reorder the first phased_rx instructions
+    submitted_circuit = get_transpiled_circuit_json(circuit, adonis_architecture, seed_transpiler=123)
+
+    instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]
+    assert instr_names == [
+        # Hadamard on 0 (= physical 0)
+        'prx:2',
+        'prx:2',
+        # CX phase 1: Hadamard on target qubit 1 (= physical 4)
+        'prx:4',
+        'prx:4',
+        # CX phase 2: CZ on 0,1 (= physical 2,4)
+        'cz:2,4',
+        # Hadamard again on target qubit 1 (= physical 4)
+        'prx:4',
+        'prx:4',
+        # Barrier before measurements
+        'barrier:2,4',
+        # Measurement on both qubits
+        'measure:2',
+        'measure:4',
+    ]

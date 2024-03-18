@@ -16,7 +16,7 @@
 """
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from iqm.qiskit_iqm import IQMFakeAdonis
+from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
 
 
 def test_iqm_fake_adonis():

@@ -2,6 +2,14 @@
 Changelog
 =========
 
+Version 13.0
+=============
+
+* Require ``iqm-client >= 17.0``  `#90 <https://github.com/iqm-finland/qiskit-on-iqm/pull/90>`_
+* Add MoveGate to model the move operation between qubit and resonator.
+* Add ``IQMCircuit`` wrapper for ``QuantumCircuit`` to allow ``.move()`` operation to be used more easily.
+* Add a layout pass to ensure correct qubits are selected for transpilation based on quantum architecture.
+
 Version 12.2
 ============
 
@@ -18,7 +26,6 @@ Version 12.0
 * Require ``iqm-client >= 16.0``.
 * Remove ``circuit_duration_check`` from ``IQMBackend`` options.
 * Add ``max_circuit_duration_over_t2`` to ``IQMBackend`` options.
-
 
 Version 11.10
 =============

@@ -24,9 +24,10 @@ from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
 
-from iqm.iqm_client import QuantumArchitectureSpecification
+from iqm.iqm_client import QuantumArchitectureSpecification, is_directed_instruction, is_multi_qubit_instruction
+from iqm.qiskit_iqm.move_gate import MoveGate
 
-IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'phased_rx': 'r', 'cz': 'cz'}
+IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
 
 
 class IQMBackendBase(BackendV2, ABC):
@@ -36,36 +37,54 @@ class IQMBackendBase(BackendV2, ABC):
         architecture: Description of the quantum architecture associated with the backend instance.
     """
 
+    architecture: QuantumArchitectureSpecification
+
     def __init__(self, architecture: QuantumArchitectureSpecification, **kwargs):
         super().__init__(**kwargs)
+        self.architecture = architecture
 
         def get_num_or_zero(name: str) -> int:
             match = re.search(r'(\d+)', name)
             return int(match.group(1)) if match else 0
 
         qb_to_idx = {qb: idx for idx, qb in enumerate(sorted(architecture.qubits, key=get_num_or_zero))}
+        operations = architecture.operations
 
         target = Target()
+
         # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
         # Such info is automatically deduced once all instruction properties are set. Currently, we do not retrieve
         # any properties from the server, and we are interested only in letting the target know what is the native gate
         # set and the connectivity of the device under use. Thus, we populate the target with None properties.
-        target.add_instruction(
-            RGate(Parameter('theta'), Parameter('phi')), {(qb_to_idx[qb],): None for qb in architecture.qubits}
-        )
+        def _create_connections(name: str):
+            """Creates the connection map of allowed loci for this instruction, mapped to None."""
+            if is_multi_qubit_instruction(name):
+                if is_directed_instruction(name):
+                    return {(qb_to_idx[qb1], qb_to_idx[qb2]): None for [qb1, qb2] in operations[name]}
+                return {
+                    (qb_to_idx[qb1], qb_to_idx[qb2]): None
+                    for pair in operations['cz']
+                    for qb1, qb2 in (pair, pair[::-1])
+                }
+            return {(qb_to_idx[qb],): None for [qb] in operations[name]}
+
+        if 'prx' in operations or 'phased_rx' in operations:
+            target.add_instruction(
+                RGate(Parameter('theta'), Parameter('phi')),
+                _create_connections('prx' if 'prx' in operations else 'phased_rx'),
+            )
         target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
         # Even though CZ is a symmetric gate, we still need to add properties for both directions. This is because
         # coupling maps in Qiskit are directed graphs and the gate symmetry is not implicitly planted there. It should
         # be explicitly supplied. This allows Qiskit to have coupling maps with non-symmetric gates like cx.
-        target.add_instruction(
-            CZGate(),
-            {
-                (qb_to_idx[qb1], qb_to_idx[qb2]): None
-                for pair in architecture.qubit_connectivity
-                for qb1, qb2 in (pair, pair[::-1])
-            },
-        )
-        target.add_instruction(Measure(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
+        if 'cz' in operations:
+            target.add_instruction(CZGate(), _create_connections('cz'))
+        if 'measure' in operations:
+            target.add_instruction(Measure(), _create_connections('measure'))
+        if 'measurement' in operations:
+            target.add_instruction(Measure(), _create_connections('measurement'))
+        if 'move' in operations:
+            target.add_instruction(MoveGate(), _create_connections('move'))
 
         self._target = target
         self._qb_to_idx = qb_to_idx
@@ -92,7 +111,7 @@ class IQMBackendBase(BackendV2, ABC):
         """Given a quantum architecture specification returns true if its number of qubits, names of qubits and qubit
         connectivity matches the architecture of this backend."""
         qubits_match = set(architecture.qubits) == set(self._quantum_architecture.qubits)
-        ops_match = set(architecture.operations) == set(self._quantum_architecture.operations)
+        ops_match = architecture.has_equivalent_operations(self._quantum_architecture)
 
         self_connectivity = set(map(frozenset, self._quantum_architecture.qubit_connectivity))  # type: ignore
         target_connectivity = set(map(frozenset, architecture.qubit_connectivity))  # type: ignore

@@ -12,16 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Shared definitions for tests."""
+from mockito import unstub
 import pytest
 
 from iqm.iqm_client import QuantumArchitectureSpecification
+from tests.move_architecture.move_architecture import move_architecture_specification
+
+
+@pytest.fixture(autouse=True)
+def reset_mocks_after_tests():
+    yield
+    unstub()
 
 
 @pytest.fixture
 def linear_architecture_3q():
     return QuantumArchitectureSpecification(
         name='3q_line',
-        operations=['phased_rx', 'cz'],
+        operations={'prx': [['QB1'], ['QB2'], ['QB3']], 'cz': [['QB1', 'QB2'], ['QB2', 'QB3']]},
         qubits=['QB1', 'QB2', 'QB3'],
         qubit_connectivity=[['QB1', 'QB2'], ['QB2', 'QB3']],
     )
@@ -31,17 +39,32 @@ def linear_architecture_3q():
 def adonis_architecture():
     return QuantumArchitectureSpecification(
         name='Adonis',
-        operations=['phased_rx', 'cz', 'measurement', 'barrier'],
+        operations={
+            'prx': [['QB1'], ['QB2'], ['QB3'], ['QB4'], ['QB5']],
+            'cz': [['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
+            'measure': [['QB1'], ['QB2'], ['QB3'], ['QB4'], ['QB5']],
+            'barrier': [],
+        },
         qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5'],
         qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
     )
+
+
+@pytest.fixture()
+def new_architecture() -> QuantumArchitectureSpecification:
+    return QuantumArchitectureSpecification(**move_architecture_specification)
 
 
 @pytest.fixture
 def adonis_architecture_shuffled_names():
     return QuantumArchitectureSpecification(
         name='Adonis',
-        operations=['phased_rx', 'cz', 'measurement', 'barrier'],
+        operations={
+            'prx': [['QB2'], ['QB3'], ['QB1'], ['QB5'], ['QB4']],
+            'cz': [['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
+            'measure': [['QB2'], ['QB3'], ['QB1'], ['QB5'], ['QB4']],
+            'barrier': [],
+        },
         qubits=['QB2', 'QB3', 'QB1', 'QB5', 'QB4'],
         qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
     )

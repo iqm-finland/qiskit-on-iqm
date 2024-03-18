@@ -19,17 +19,18 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, mock, patch, when
+from mockito import ANY, matchers, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 from qiskit.compiler import transpile
+import requests
 
-from iqm.iqm_client import HeraldingMode, IQMClient, RunResult, RunStatus
-from iqm.qiskit_iqm import IQMBackend, IQMJob, IQMProvider
-from iqm.qiskit_iqm.iqm_provider import IQMFacadeBackend
+from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
+from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
+from tests.utils import get_mock_ok_response
 
 
 @pytest.fixture
@@ -154,7 +155,7 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
-    assert instr.name == 'phased_rx'
+    assert instr.name == 'prx'
     assert instr.qubits == ('0',)
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
@@ -177,7 +178,7 @@ def test_serialize_circuit_maps_x_rx_y_ry_gates(backend, circuit, gate, expected
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
-    assert instr.name == 'phased_rx'
+    assert instr.name == 'prx'
     assert instr.qubits == ('0',)
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
@@ -199,7 +200,7 @@ def test_serialize_circuit_maps_individual_measurements(circuit, backend):
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
-        assert instruction.name == 'measurement'
+        assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
@@ -209,7 +210,7 @@ def test_serialize_circuit_batch_measurement(circuit, backend):
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
-        assert instruction.name == 'measurement'
+        assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
         assert instruction.args == {'key': f'c_3_0_{i}'}
 
@@ -229,7 +230,7 @@ def test_serialize_circuit_id(circuit, backend):
     circuit.id(0)
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
-    assert circuit_ser.instructions[0].name == 'phased_rx'
+    assert circuit_ser.instructions[0].name == 'prx'
 
 
 def test_transpile(backend, circuit):
@@ -432,9 +433,12 @@ def test_get_backend(linear_architecture_3q):
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
 
 
-def test_client_signature():
+def test_client_signature(adonis_architecture):
     url = 'http://some_url'
     provider = IQMProvider(url)
+    when(requests).get('http://some_url/quantum-architecture', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response(QuantumArchitecture(quantum_architecture=adonis_architecture).model_dump())
+    )
     backend = provider.get_backend()
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
 
@@ -473,7 +477,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
                 'circuits': [
                     {
                         'name': 'circuit_2',
-                        'instructions': [{'name': 'measurement', 'qubits': ['0'], 'args': {'key': 'm1'}}],
+                        'instructions': [{'name': 'measure', 'qubits': ['0'], 'args': {'key': 'm1'}}],
                     }
                 ],
             }
