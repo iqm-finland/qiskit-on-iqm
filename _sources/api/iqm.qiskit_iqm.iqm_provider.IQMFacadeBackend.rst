@@ -13,6 +13,7 @@ iqm.qiskit\_iqm.iqm\_provider.IQMFacadeBackend
 
    .. autosummary::
    
+      ~IQMFacadeBackend.architecture
       ~IQMFacadeBackend.name
       ~IQMFacadeBackend.description
       ~IQMFacadeBackend.online_date

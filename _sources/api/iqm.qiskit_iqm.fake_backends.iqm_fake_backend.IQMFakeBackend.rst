@@ -15,6 +15,7 @@ iqm.qiskit\_iqm.fake\_backends.iqm\_fake\_backend.IQMFakeBackend
    
       ~IQMFakeBackend.error_profile
       ~IQMFakeBackend.max_circuits
+      ~IQMFakeBackend.architecture
       ~IQMFakeBackend.name
       ~IQMFakeBackend.description
       ~IQMFakeBackend.online_date

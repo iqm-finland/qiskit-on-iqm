@@ -14,6 +14,7 @@ iqm.qiskit\_iqm.iqm\_backend.IQMBackendBase
    .. autosummary::
    
       ~IQMBackendBase.target
+      ~IQMBackendBase.architecture
       ~IQMBackendBase.name
       ~IQMBackendBase.description
       ~IQMBackendBase.online_date
