@@ -6,7 +6,7 @@ from typing import Optional, Union
 
 from qiskit import QuantumCircuit, user_config
 from qiskit.circuit import QuantumRegister, Qubit
-from qiskit.dagcircuit import DAGCircuit
+from qiskit.dagcircuit import DAGCircuit, DAGOpNode
 from qiskit.providers.models import BackendProperties
 from qiskit.transpiler import CouplingMap, Layout, TranspileLayout
 from qiskit.transpiler.basepasses import TransformationPass
@@ -113,8 +113,11 @@ class IQMNaiveResonatorMoving(TransformationPass):
                             )
                         )
                     # Load the new qubit to the resonator
-                    # TODO Use look ahead to pick a smarter qubit
-                    if physical_q0 in self.move_qubits:
+                    if physical_q0 in self.move_qubits and physical_q1 in self.move_qubits:
+                        # We can choose, let's select the better one by seeing which one is used most.
+                        chosen_qubit = self._lookahead_first_qubit_used(dag, subdag)
+                        new_qubit_to_load = current_layout[chosen_qubit]
+                    elif physical_q0 in self.move_qubits:
                         new_qubit_to_load = physical_q0
                     elif physical_q1 in self.move_qubits:
                         new_qubit_to_load = physical_q1
@@ -143,6 +146,30 @@ class IQMNaiveResonatorMoving(TransformationPass):
             )
         )
         return new_dag
+
+    def _lookahead_first_qubit_used(self, full_dag: DAGCircuit, current_layer: DAGCircuit) -> Qubit:
+        """Lookahead function to see which qubit will be used first again for a CZ gate.
+
+        Args:
+            full_dag (DAGCircuit): The DAG representing the circuit
+            current_layer (DAGCircuit): The DAG representing the current operator
+
+        Returns:
+            Qubit: Which qubit is recommended to move because it will be used first.
+        """
+        nodes = [n for n in current_layer.nodes() if isinstance(n, DAGOpNode)]
+        current_opnode = nodes[0]
+        qb1, qb2 = current_opnode.qargs
+        next_ops = [
+            n for n, _ in full_dag.bfs_successors(current_opnode) if isinstance(n, DAGOpNode) and n.name == "cz"
+        ]
+        # Check which qubit will be used next first
+        for qb1_used, qb2_used in zip([qb1 in n.qargs for n in next_ops], [qb2 in n.qargs for n in next_ops]):
+            if qb1_used and not qb2_used:
+                return qb1
+            if qb2_used and not qb1_used:
+                return qb2
+        return qb1
 
     def _move_resonator(self, qubit: int, canonical_register: QuantumRegister, current_layout: Layout):
         """Logic for creating the DAG for swapping a qubit in and out of the resonator.
@@ -285,15 +312,24 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     optimize_single_qubits: bool = True,
     ignore_barriers: bool = False,
     remove_final_rzs: bool = False,
+    optimization_level: Optional[int] = None,
 ) -> QuantumCircuit:
     """Basic function for transpiling to an IQM star backends. Currently only works with Deneb
 
     Args:
-        circuit (QuantumCircuit): The circuit to be transpiled.
+        circuit (QuantumCircuit): The circuit to be transpiled without MOVE gates.
         backend (IQMBackend | IQMFakeBackend): The target backend to compile to containing a single resonator.
         optimize_single_qubits (bool): Whether to optimize single qubit gates away (default = True).
         ignore_barriers (bool): Whether to ignore barriers when optimizing single qubit gates away (default = False).
         remove_final_rzs (bool): Whether to remove the final Rz rotations (default = False).
+        optimization_level: How much optimization to perform on the circuits as per Qiskit transpiler.
+            Higher levels generate more optimized circuits,
+            at the expense of longer transpilation time.
+
+            * 0: no optimization
+            * 1: light optimization (default)
+            * 2: heavy optimization
+            * 3: even heavier optimization
 
     Raises:
         NotImplementedError: Thrown when the backend supports multiple resonators.
@@ -317,8 +353,9 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     n_qubits = len(qubit_indices)
     n_resonators = len(resonator_indices)
 
-    config = user_config.get_config()
-    optimization_level = config.get("transpile_optimization_level", 1)
+    if optimization_level is None:
+        config = user_config.get_config()
+        optimization_level = config.get("transpile_optimization_level", 1)
 
     pass_manager = generate_preset_pass_manager(
         optimization_level,
