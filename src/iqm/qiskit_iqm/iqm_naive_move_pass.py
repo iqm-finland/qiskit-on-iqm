@@ -316,7 +316,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     remove_final_rzs: bool = False,
     optimization_level: Optional[int] = None,
 ) -> QuantumCircuit:
-    """Basic function for transpiling to an IQM star backends. Currently only works with Deneb
+    """Basic function for transpiling to IQM backends. Currently works with Deneb and Garnet
 
     Args:
         circuit (QuantumCircuit): The circuit to be transpiled without MOVE gates.
@@ -340,12 +340,23 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         QuantumCircuit: The transpiled circuit ready for running on the backend.
     """
 
-    pass_manager_config = build_IQM_star_pass_manager_config(backend, circuit)
-    move_pass = build_IQM_star_pass(pass_manager_config)
     passes = []
     if optimize_single_qubits:
         optimize_pass = IQMOptimizeSingleQubitGates(remove_final_rzs, ignore_barriers)
         passes.append(optimize_pass)
+
+    if optimization_level is None:
+        config = user_config.get_config()
+        optimization_level = config.get("transpile_optimization_level", 1)
+
+    if "move" not in backend.architecture.operations.keys():
+        pass_manager = generate_preset_pass_manager(backend=backend, optimization_level=optimization_level)
+        simple_transpile = pass_manager.run(circuit)
+        if passes:
+            return PassManager(passes).run(simple_transpile)
+        return simple_transpile
+    pass_manager_config = build_IQM_star_pass_manager_config(backend, circuit)
+    move_pass = build_IQM_star_pass(pass_manager_config)
     passes.append(move_pass)
 
     backend_props = pass_manager_config.backend_properties.to_dict()
@@ -354,10 +365,6 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     classical_registers = backend_props.get("classical_registers")
     n_qubits = len(qubit_indices)
     n_resonators = len(resonator_indices)
-
-    if optimization_level is None:
-        config = user_config.get_config()
-        optimization_level = config.get("transpile_optimization_level", 1)
 
     pass_manager = generate_preset_pass_manager(
         optimization_level,
