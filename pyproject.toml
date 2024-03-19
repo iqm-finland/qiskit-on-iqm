@@ -53,9 +53,6 @@ testing = [
     "types-Jinja2 == 2.11.9"
 ]
 
-[project.entry-points."qiskit.transpiler.translation"]
-iqm_n-star = "iqm.qiskit_iqm.iqm_qiskit_plugin:TranslateIQMPlugin"
-
 
 [tool.setuptools.packages.find]
 where = ["src"]
