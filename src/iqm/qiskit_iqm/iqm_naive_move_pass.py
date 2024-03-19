@@ -244,7 +244,9 @@ def _generate_coupling_map_without_resonator(backend: Union[IQMBackend, IQMFakeB
     return CouplingMap(edges)
 
 
-def build_pass_manager_config(backend: Union[IQMBackend, IQMFakeBackend], circuit: QuantumCircuit) -> PassManagerConfig:
+def build_IQM_star_pass_manager_config(
+    backend: Union[IQMBackend, IQMFakeBackend], circuit: QuantumCircuit
+) -> PassManagerConfig:
     """Build configuration for IQM backend.
 
     We need to pass precomputed values to be used in transpiler passes via backend_properties.
@@ -338,7 +340,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         QuantumCircuit: The transpiled circuit ready for running on the backend.
     """
 
-    pass_manager_config = build_pass_manager_config(backend, circuit)
+    pass_manager_config = build_IQM_star_pass_manager_config(backend, circuit)
     move_pass = build_IQM_star_pass(pass_manager_config)
     passes = []
     if optimize_single_qubits:
