@@ -63,22 +63,20 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
     qc.cx(0, 2)
     qc.measure_all()
 
-    print(qc.draw(output='text'))
+    print(qc.draw(output='text', idle_wires=False))
 
 ::
 
-            ┌───┐           ░ ┌─┐
+            ┌───┐           ░ ┌─┐      
        q_0: ┤ H ├──■────■───░─┤M├──────
-            └───┘┌─┴─┐  │   ░ └╥┘┌─┐
+            └───┘┌─┴─┐  │   ░ └╥┘┌─┐   
        q_1: ─────┤ X ├──┼───░──╫─┤M├───
                  └───┘┌─┴─┐ ░  ║ └╥┘┌─┐
        q_2: ──────────┤ X ├─░──╫──╫─┤M├
                       └───┘ ░  ║  ║ └╥┘
-    meas_0: ═══════════════════╩══╬══╬═
-                                  ║  ║
-    meas_1: ══════════════════════╩══╬═
-                                     ║
-    meas_2: ═════════════════════════╩═
+    meas: 3/═══════════════════╩══╩══╩═
+                               0  1  2 
+
 
 To execute this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider` instance
 with the IQM server URL, use it to retrieve an :class:`.IQMBackend` instance representing the
