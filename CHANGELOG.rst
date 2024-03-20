@@ -2,6 +2,13 @@
 Changelog
 =========
 
+Version 13.1
+=============
+
+* Add custom function ``transpile_to_IQM`` for transpiling to Deneb and Garnet architectures. `#96 <https://github.com/iqm-finland/qiskit-on-iqm/pull/96>`_
+* Require ``iqm-client >= 17.2``. `#96 <https://github.com/iqm-finland/qiskit-on-iqm/pull/96>`_
+* Define ``move`` gate as ``swap``. `#96 <https://github.com/iqm-finland/qiskit-on-iqm/pull/96>`_
+
 Version 13.0
 =============
 
