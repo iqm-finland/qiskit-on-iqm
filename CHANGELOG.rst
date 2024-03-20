@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.1
+============
+
+* Update the docstring of ``max_circuits`` property of ``IQMBackend``. `#95 <https://github.com/iqm-finland/qiskit-on-iqm/pull/95>`_
+
 Version 13.0
 =============
 
