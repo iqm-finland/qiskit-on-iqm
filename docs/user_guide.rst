@@ -236,37 +236,36 @@ Now we can study how the circuit gets transpiled:
 
 .. code-block:: python
 
-    from qiskit.compiler import transpile
+    from iqm.qiskit_iqm import transpile_to_IQM
 
-    qc_transpiled = transpile(qc, backend=backend, layout_method='sabre', optimization_level=3)
+    qc_transpiled = transpile_to_IQM(qc, backend=backend, optimization_level=3)
 
     print(qc_transpiled.draw(output='text'))
 
 ::
 
-    global phase: π/2
-                   ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
-          q_2 -> 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
-                   └────────────┘└────────┘         │       └────────────┘└────────┘ ░       └╥┘
-    ancilla_0 -> 1 ─────────────────────────────────┼─────────────────────────────────────────╫─
-                   ┌────────────┐┌────────┐         │                                ░ ┌─┐    ║
-          q_0 -> 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
-                   └────────────┘└────────┘ │                                        ░ └╥┘    ║
-    ancilla_1 -> 3 ─────────────────────────┼───────────────────────────────────────────╫─────╫─
-                   ┌────────────┐┌────────┐ │ ┌────────────┐  ┌────────┐             ░  ║ ┌─┐ ║
-          q_1 -> 4 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
-                   └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
-              c_0: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                        ║  ║  ║
-              c_1: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                        ║  ║  ║
-              c_2: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                        ║  ║  ║
-           meas_0: ═════════════════════════════════════════════════════════════════════╩══╬══╬═
-                                                                                           ║  ║
-           meas_1: ════════════════════════════════════════════════════════════════════════╩══╬═
-                                                                                              ║
-           meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
+                                                                  ┌───────┐                                    ┌───────┐         
+    Qubit(QuantumRegister(1, 'resonator'), 0) -> 0 ───────────────┤1      ├─■────────■─────────────────────────┤1      ├─────────
+                                                                  │       │ │        │                         │       │         
+      Qubit(QuantumRegister(3, 'ancilla'), 0) -> 1 ───────────────┤       ├─┼────────┼─────────────────────────┤       ├─────────
+                                                                  │       │ │        │                         │       │         
+      Qubit(QuantumRegister(3, 'ancilla'), 1) -> 2 ───────────────┤       ├─┼────────┼─────────────────────────┤       ├─────────
+                                                   ┌─────────────┐│  Move │ │        │       ┌─────────────┐ ░ │  Move │   ┌─┐   
+            Qubit(QuantumRegister(3, 'q'), 2) -> 3 ┤ R(π/2,3π/2) ├┤       ├─┼────────■───────┤ R(π/2,5π/2) ├─░─┤       ├───┤M├───
+                                                   ├─────────────┤│       │ │ ┌─────────────┐└─────────────┘ ░ │       │┌─┐└╥┘   
+            Qubit(QuantumRegister(3, 'q'), 1) -> 4 ┤ R(π/2,3π/2) ├┤       ├─■─┤ R(π/2,5π/2) ├────────────────░─┤       ├┤M├─╫────
+                                                   ├─────────────┤│       │   └─────────────┘                ░ │       │└╥┘ ║ ┌─┐
+            Qubit(QuantumRegister(3, 'q'), 0) -> 5 ┤ R(π/2,3π/2) ├┤0      ├──────────────────────────────────░─┤0      ├─╫──╫─┤M├
+                                                   └─────────────┘└───────┘                                  ░ └───────┘ ║  ║ └╥┘
+      Qubit(QuantumRegister(3, 'ancilla'), 2) -> 6 ──────────────────────────────────────────────────────────────────────╫──╫──╫─
+                                                                                                                         ║  ║  ║ 
+                                              c: 3/══════════════════════════════════════════════════════════════════════╩══╩══╩═
+                                                                                                                         1  2  0 
+
+Under the hood, this function uses the Qiskit transpiler :meth:`qiskit.compiler.transpile` to transpile the circuit.
+For Deneb architectures, the resonator is abstracted away for the Qiskit transpiler and then MoveGates are added using a separate
+transpilation pass afterwards. This transpilation pass can also be used manually using :class:`IQMNaiveResonatorMoving`.
+Additionally, if `optimize_single_qubits=True`, the transpiler will also apply the transpilation pass described below.
 
 We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
 of single-qubit gates. This optimization expects an already transpiled circuit. As an example, lets apply it to the above circuit:
