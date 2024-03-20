@@ -15,9 +15,9 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 
 @pytest.fixture
-def backend(deneb_adonis_architecture):
+def backend(ndonis_architecture):
     client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(deneb_adonis_architecture)
+    when(client).get_quantum_architecture().thenReturn(ndonis_architecture)
     return IQMBackend(client)
 
 

@@ -36,7 +36,7 @@ move_architecture_specification = {
 
 move_architecture_json = {"quantum_architecture": move_architecture_specification}
 
-deneb_architecture_specification = {
+ndonis_architecture_specification = {
     "name": "Ndonis",
     "operations": {
         "cz": [
