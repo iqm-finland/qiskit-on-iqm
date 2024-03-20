@@ -57,13 +57,13 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
 
     from qiskit import QuantumCircuit
 
-    qc = QuantumCircuit(3, 3)
+    qc = QuantumCircuit(3)
     qc.h(0)
     qc.cx(0, 1)
     qc.cx(0, 2)
     qc.measure_all()
 
-    print(qc.draw(output='text', idle_wires=False))
+    print(qc.draw(output='text'))
 
 ::
 
