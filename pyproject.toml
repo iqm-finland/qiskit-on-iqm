@@ -22,7 +22,7 @@ dependencies = [
     "numpy",
     "qiskit >= 0.45.1, < 0.46",
     "qiskit-aer >= 0.13.1, < 0.14",
-    "iqm-client >= 16.0, < 17.0"
+    "iqm-client >= 17.1, < 18.0"
 ]
 
 [project.urls]
@@ -33,7 +33,7 @@ changelog = "https://github.com/iqm-finland/qiskit-on-iqm/blob/main/CHANGELOG.rs
 
 [project.optional-dependencies]
 # Add here additional requirements for extra features, to install with:
-# `pip install qiskit-iqm[dev,docs,testing,cicd]
+# `pip install qiskit-iqm[dev,docs,testing]
 dev = [
     "tox == 4.11.4"
 ]
@@ -51,9 +51,6 @@ testing = [
     "pytest-cov == 4.1.0",
     "pytest-pylint == 0.21.0",
     "types-Jinja2 == 2.11.9"
-]
-cicd = [
-    "twine == 4.0.2"
 ]
 
 

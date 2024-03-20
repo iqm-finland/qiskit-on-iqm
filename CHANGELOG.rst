@@ -2,15 +2,28 @@
 Changelog
 =========
 
-Version 12.2
+Version 13.1
 ============
 
 * Update the docstring of ``max_circuits`` property of ``IQMBackend``. `#95 <https://github.com/iqm-finland/qiskit-on-iqm/pull/95>`_
 
+Version 13.0
+=============
+
+* Require ``iqm-client >= 17.0``  `#90 <https://github.com/iqm-finland/qiskit-on-iqm/pull/90>`_
+* Add MoveGate to model the move operation between qubit and resonator.
+* Add ``IQMCircuit`` wrapper for ``QuantumCircuit`` to allow ``.move()`` operation to be used more easily.
+* Add a layout pass to ensure correct qubits are selected for transpilation based on quantum architecture.
+
+Version 12.2
+============
+
+* Use GitHub Action as a Trusted Publisher to publish packages to PyPI. `#94 <https://github.com/iqm-finland/qiskit-on-iqm/pull/94>`_
+
 Version 12.1
 ============
 
-* Remove multiversion documentation `#92 <https://github.com/iqm-finland/qiskit-on-iqm/pull/92>`_
+* Remove multiversion documentation. `#92 <https://github.com/iqm-finland/qiskit-on-iqm/pull/92>`_
 
 Version 12.0
 ============
@@ -18,7 +31,6 @@ Version 12.0
 * Require ``iqm-client >= 16.0``.
 * Remove ``circuit_duration_check`` from ``IQMBackend`` options.
 * Add ``max_circuit_duration_over_t2`` to ``IQMBackend`` options.
-
 
 Version 11.10
 =============
@@ -28,12 +40,12 @@ Version 11.10
 Version 11.9
 ============
 
-* Add ``name`` to backends `#88 <https://github.com/iqm-finland/qiskit-on-iqm/pull/88>`_
+* Add ``name`` to backends. `#88 <https://github.com/iqm-finland/qiskit-on-iqm/pull/88>`_
 
 Version 11.8
 ============
 
-* Add ``IQMFakeApollo`` fake backend `#66 <https://github.com/iqm-finland/qiskit-on-iqm/pull/66>`_
+* Add ``IQMFakeApollo`` fake backend. `#66 <https://github.com/iqm-finland/qiskit-on-iqm/pull/66>`_
 
 Version 11.7
 ============

@@ -176,33 +176,31 @@ class IQMBackend(IQMBackendBase):
                 angle_t = float(instruction.params[0] / (2 * np.pi))
                 phase_t = float(instruction.params[1] / (2 * np.pi))
                 instructions.append(
-                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
+                    Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
                 )
             elif instruction.name == 'x':
-                instructions.append(
-                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.0})
-                )
+                instructions.append(Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.0}))
             elif instruction.name == 'rx':
                 angle_t = float(instruction.params[0] / (2 * np.pi))
                 instructions.append(
-                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.0})
+                    Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.0})
                 )
             elif instruction.name == 'y':
-                instructions.append(
-                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.25})
-                )
+                instructions.append(Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.25}))
             elif instruction.name == 'ry':
                 angle_t = float(instruction.params[0] / (2 * np.pi))
                 instructions.append(
-                    Instruction(name='phased_rx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.25})
+                    Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.25})
                 )
             elif instruction.name == 'cz':
                 instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))
+            elif instruction.name == 'move':
+                instructions.append(Instruction(name='move', qubits=qubit_names, args={}))
             elif instruction.name == 'barrier':
                 instructions.append(Instruction(name='barrier', qubits=qubit_names, args={}))
             elif instruction.name == 'measure':
                 mk = MeasurementKey.from_clbit(clbits[0], circuit)
-                instructions.append(Instruction(name='measurement', qubits=qubit_names, args={'key': str(mk)}))
+                instructions.append(Instruction(name='measure', qubits=qubit_names, args={'key': str(mk)}))
             elif instruction.name == 'id':
                 pass
             else:

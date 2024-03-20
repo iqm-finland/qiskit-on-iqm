@@ -15,6 +15,9 @@
 """
 from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFakeApollo
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
+from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 from iqm.qiskit_iqm.iqm_job import IQMJob
+from iqm.qiskit_iqm.iqm_move_layout import IQMMoveLayout, generate_initial_layout
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
 from iqm.qiskit_iqm.iqm_transpilation import IQMOptimizeSingleQubitGates, optimize_single_qubit_gates
+from iqm.qiskit_iqm.move_gate import MoveGate
