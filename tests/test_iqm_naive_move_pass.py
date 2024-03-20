@@ -3,6 +3,7 @@
 
 from qiskit.circuit import QuantumCircuit, Qubit
 from qiskit.circuit.library import Permutation, QuantumVolume
+from qiskit.circuit.quantumcircuitdata import CircuitInstruction
 from qiskit.quantum_info import Operator
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import ApplyLayout, SetLayout
@@ -67,6 +68,19 @@ def test_allowed_gates_only(ndonis_architecture):
             assert _is_valid_instruction(transpiled_circuit, allowed_ops, instruction)
 
 
+def test_moves_with_zero_state(ndonis_architecture):
+    """Test that move gate is applied only when one qubit is in zero state."""
+    backend, _client = get_mocked_backend(ndonis_architecture)
+    qubit_registers = _get_qubit_registers(backend)
+    n_qubits = len(qubit_registers)
+    for i in range(1, n_qubits + 1):
+        circuit = QuantumVolume(i)
+        resonator_index = next(i for i, q in enumerate(backend.architecture.qubits) if q.startswith("COMP_R"))
+        transpiled_circuit = transpile_to_IQM(circuit, backend)
+        moves = [instruction for instruction in transpiled_circuit.data if instruction.operation.name == "move"]
+        assert _is_valid_move_sequence(resonator_index, moves)
+
+
 def _get_qubit_registers(backend: IQMBackend) -> list[int]:
     return [
         q
@@ -75,3 +89,17 @@ def _get_qubit_registers(backend: IQMBackend) -> list[int]:
         if not r.startswith("COMP_R")
         if q is not None
     ]
+
+
+def _is_valid_move_sequence(resonator_index: int, moves: list[CircuitInstruction]) -> bool:
+    if len(moves) == 0:
+        return True
+    try:
+        qubit_to_resonator, qubit_from_resonator, *rest = moves
+        source_qubit, target_resonator = (q.index for q in qubit_to_resonator.qubits)
+        target_qubit, source_resonator = (q.index for q in qubit_from_resonator.qubits)
+        if source_qubit != target_qubit or target_resonator != resonator_index or source_resonator != resonator_index:
+            return False
+        return _is_valid_move_sequence(resonator_index, rest)
+    except ValueError:  # mismatched number of moves
+        return False
