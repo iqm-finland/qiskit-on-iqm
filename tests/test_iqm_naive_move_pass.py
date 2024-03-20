@@ -1,30 +1,21 @@
 """Testing IQM transpilation.
 """
 
-from mockito import mock, when
-import pytest
 from qiskit.circuit import QuantumCircuit, Qubit
 from qiskit.circuit.library import Permutation, QuantumVolume
 from qiskit.quantum_info import Operator
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import ApplyLayout, SetLayout
 
-from iqm.iqm_client import IQMClient
 from iqm.qiskit_iqm.iqm_naive_move_pass import transpile_to_IQM
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
-
-@pytest.fixture
-def backend(ndonis_architecture):
-    client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(ndonis_architecture)
-    return IQMBackend(client)
+from .utils import _get_allowed_ops, _is_valid_instruction, get_mocked_backend
 
 
-def test_transpile_to_IQM_semantically_preserving(backend):  # pylint: disable=too-many-locals
-    qubit_registers = [
-        backend.qubit_name_to_index(r) for r in backend.architecture.qubits if not r.startswith("COMP_R")
-    ]
+def test_transpile_to_IQM_star_semantically_preserving(ndonis_architecture):  # pylint: disable=too-many-locals
+    backend, _client = get_mocked_backend(ndonis_architecture)
+    qubit_registers = _get_qubit_registers(backend)
     n_qubits = len(qubit_registers)
     n_resonators = backend.num_qubits - n_qubits
     for i in range(1, n_qubits + 1):
@@ -61,3 +52,26 @@ def test_transpile_to_IQM_semantically_preserving(backend):  # pylint: disable=t
 
         circuit_operator = Operator(original_with_resonator_and_layout)
         assert circuit_operator.equiv(transpiled_operator)
+
+
+def test_allowed_gates_only(ndonis_architecture):
+    """Test that transpiled circuit has gates that are allowed by the backend"""
+    backend, _client = get_mocked_backend(ndonis_architecture)
+    qubit_registers = _get_qubit_registers(backend)
+    n_qubits = len(qubit_registers)
+    allowed_ops = _get_allowed_ops(backend)
+    for i in range(1, n_qubits + 1):
+        circuit = QuantumVolume(i)
+        transpiled_circuit = transpile_to_IQM(circuit, backend)
+        for instruction in transpiled_circuit.data:
+            assert _is_valid_instruction(transpiled_circuit, allowed_ops, instruction)
+
+
+def _get_qubit_registers(backend: IQMBackend) -> list[int]:
+    return [
+        q
+        for r in backend.architecture.qubits
+        for q in [backend.qubit_name_to_index(r)]
+        if not r.startswith("COMP_R")
+        if q is not None
+    ]

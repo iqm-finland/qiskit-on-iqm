@@ -13,17 +13,32 @@
 # limitations under the License.
 """Testing and mocking utility functions.
 """
+from functools import partial
+from typing import Any, Callable, Literal, TypedDict, cast
 from unittest.mock import Mock
 from uuid import UUID
 
 from mockito import matchers, when
-from qiskit import QuantumCircuit, execute
+from qiskit import execute
+from qiskit.circuit import QuantumCircuit, Qubit
+from qiskit.circuit.quantumcircuitdata import CircuitInstruction
+from qiskit.transpiler.exceptions import TranspilerError
 import requests
 from requests import Response
 
 from iqm.iqm_client import Circuit, Instruction, IQMClient, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
+
+
+class AllowedOps(TypedDict):
+    cz: list[tuple[int, int]]
+    prx: list[int]
+    move: list[tuple[int, int]]
+    measure: list[int]
+
+
+ALLOWED_OP_NAMES = AllowedOps.__annotations__.keys()
 
 
 def get_mocked_backend(
@@ -105,3 +120,74 @@ def get_transpiled_circuit_json(
 def describe_instruction(instruction: Instruction) -> str:
     """Returns a string describing the instruction (includes name and locus)."""
     return f"{instruction.name}:{','.join(instruction.qubits)}"
+
+
+def _get_allowed_ops(backend: IQMBackend) -> AllowedOps:
+    ops_with_indices = _map_operators_to_indices(backend.architecture.operations, backend.architecture.qubits)
+    return _coerce_to_allowed_ops(ops_with_indices)
+
+
+def _map_operators_to_indices(ops: dict[str, list[list[str]]], qubits: list[str]) -> dict[str, list[list[int]]]:
+    return {
+        op_name: [[qubits.index(q) for q in valid_operands] for valid_operands in ops[op_name]]
+        for op_name in ALLOWED_OP_NAMES
+        if op_name in ops
+    }
+
+
+def _coerce_to_allowed_ops(operations: dict[str, list[list[int]]]) -> AllowedOps:
+    op_mapping: dict[str, Callable] = {
+        'cz': partial(_tuplify, symmetric=True),  # Order of operations does not matter for CZ
+        'prx': _flatten,
+        'move': _tuplify,
+        'measure': _flatten,
+    }
+    ops = {op_name: fn(operations[op_name]) if op_name in operations else [] for op_name, fn in op_mapping.items()}
+    return cast(AllowedOps, ops)
+
+
+def _tuplify(valid_operands: list[list[int]], symmetric: bool = False) -> list[tuple[int, int]]:
+    result: list[tuple[int, int]] = []
+    for operands in valid_operands:
+        if len(operands) != 2:
+            raise TranspilerError('Binary operation must have two operands')
+        result.append((operands[0], operands[1]))
+        if symmetric:
+            result.append((operands[1], operands[0]))
+    return result
+
+
+def _flatten(operands: list[list[Any]]) -> list[Any]:
+    return sum(operands, [])
+
+
+def _is_valid_instruction(circuit: QuantumCircuit, allowed_ops: AllowedOps, instruction: CircuitInstruction) -> bool:
+    match instruction.operation.name:
+        case 'move':
+            return _verify_move(circuit, allowed_ops, instruction.qubits)
+        case 'r':
+            return _verify_r(circuit, allowed_ops, instruction.qubits)
+        case 'cz':
+            return _verify_cz(circuit, allowed_ops, instruction.qubits)
+        case _:
+            raise TranspilerError('Unknown operation.')
+
+
+def _make_verify_instruction(
+    instruction_name: Literal['cz', 'prx', 'move', 'measure'], n_operands: int
+) -> Callable[[QuantumCircuit, AllowedOps, tuple[Qubit, ...]], bool]:
+    def __verify(circuit: QuantumCircuit, allowed_ops: AllowedOps, qubits: tuple[Qubit, ...]) -> bool:
+        if instruction_name not in allowed_ops:
+            raise TranspilerError('Operation not supported.')
+        allowed_operands = allowed_ops[instruction_name]
+        idx = tuple(circuit.find_bit(q).index for q in qubits)
+        if len(idx) != n_operands:
+            raise TranspilerError('Operation got wrong number of operands.')
+        return (idx[0] if len(idx) == 1 else idx) in allowed_operands
+
+    return __verify
+
+
+_verify_move = _make_verify_instruction('move', 2)
+_verify_r = _make_verify_instruction('prx', 1)
+_verify_cz = _make_verify_instruction('cz', 2)
