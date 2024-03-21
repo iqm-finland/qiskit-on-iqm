@@ -311,8 +311,8 @@ Under the hood :func:`optimize_single_qubit_gates` uses :class:`IQMOptimizeSingl
 the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
 custom transpilation procedures manually.
 
-Using the computation resonator
--------------------------------
+Using the computational resonator
+---------------------------------
 
 Because the resonator is not a real qubit, the standard Qiskit transpiler does not know how to compile for it.
 Thus, we have a custom transpile method :func:`transpile_to_IQM` that can handle devices with a resonator (e.g. Deneb).
