@@ -291,21 +291,21 @@ of single-qubit gates. This optimization expects an already transpiled circuit. 
 ::
 
     global phase: 3π/2
-             ┌─────────────┐   ┌─────────────┐                ░    ┌─┐   
+             ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
         q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
              ├─────────────┤ │ └─────────────┘┌─────────────┐ ░    └╥┘┌─┐
         q_1: ┤ R(π/2,3π/2) ├─┼────────■───────┤ R(π/2,5π/2) ├─░─────╫─┤M├
              ├─────────────┤ │        │       └─────────────┘ ░ ┌─┐ ║ └╥┘
         q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫──╫─
-             └─────────────┘                                  ░ └╥┘ ║  ║ 
+             └─────────────┘                                  ░ └╥┘ ║  ║
         q_3: ────────────────────────────────────────────────────╫──╫──╫─
-                                                                 ║  ║  ║ 
+                                                                 ║  ║  ║
         q_4: ────────────────────────────────────────────────────╫──╫──╫─
-                                                                 ║  ║  ║ 
+                                                                 ║  ║  ║
         c: 3/════════════════════════════════════════════════════╬══╬══╬═
-                                                                 ║  ║  ║ 
+                                                                 ║  ║  ║
      meas: 3/════════════════════════════════════════════════════╩══╩══╩═
-                                                                 0  1  2 
+                                                                 0  1  2
 
 Under the hood :func:`optimize_single_qubit_gates` uses :class:`IQMOptimizeSingleQubitGates` which inherits from
 the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
@@ -329,38 +329,39 @@ Thus, we have a custom transpile method :func:`transpile_to_IQM` that can handle
         circuit.cx(0, i)
     circuit.measure_all()
 
-    backend = IQMProvider("https://cocos.resonance.meetiqm.com/deneb", token=os.environ["IQM_TOKEN"]).get_backend()
+    backend = IQMProvider("https://cocos.resonance.meetiqm.com/deneb").get_backend()
     transpiled_circuit = transpile_to_IQM(circuit, backend)
 
     print(transpiled_circuit)
 
 ::
-                                                                  ┌───────┐                                                                           ┌───────┐            
+
+                                                                  ┌───────┐                                                                           ┌───────┐
     Qubit(QuantumRegister(1, 'resonator'), 0) -> 0 ───────────────┤1      ├─■─────────────────■─────────────────■─────────────────■───────────────────┤1      ├────────────
                                                    ┌─────────────┐│  Move │ │                 │                 │                 │                 ░ │  Move │         ┌─┐
             Qubit(QuantumRegister(5, 'q'), 0) -> 1 ┤ R(π/2,3π/2) ├┤0      ├─┼─────────────────┼─────────────────┼─────────────────┼─────────────────░─┤0      ├─────────┤M├
                                                    ├─────────────┤└───────┘ │ ┌─────────────┐ │                 │                 │                 ░ └──┬─┬──┘         └╥┘
             Qubit(QuantumRegister(5, 'q'), 1) -> 2 ┤ R(π/2,3π/2) ├──────────■─┤ R(π/2,5π/2) ├─┼─────────────────┼─────────────────┼─────────────────░────┤M├─────────────╫─
-                                                   ├─────────────┤            └─────────────┘ │ ┌─────────────┐ │                 │                 ░    └╥┘   ┌─┐       ║ 
+                                                   ├─────────────┤            └─────────────┘ │ ┌─────────────┐ │                 │                 ░    └╥┘   ┌─┐       ║
             Qubit(QuantumRegister(5, 'q'), 2) -> 3 ┤ R(π/2,3π/2) ├────────────────────────────■─┤ R(π/2,5π/2) ├─┼─────────────────┼─────────────────░─────╫────┤M├───────╫─
-                                                   ├─────────────┤                              └─────────────┘ │ ┌─────────────┐ │                 ░     ║    └╥┘┌─┐    ║ 
+                                                   ├─────────────┤                              └─────────────┘ │ ┌─────────────┐ │                 ░     ║    └╥┘┌─┐    ║
             Qubit(QuantumRegister(5, 'q'), 3) -> 4 ┤ R(π/2,3π/2) ├──────────────────────────────────────────────■─┤ R(π/2,5π/2) ├─┼─────────────────░─────╫─────╫─┤M├────╫─
-                                                   ├─────────────┤                                                └─────────────┘ │ ┌─────────────┐ ░     ║     ║ └╥┘┌─┐ ║ 
+                                                   ├─────────────┤                                                └─────────────┘ │ ┌─────────────┐ ░     ║     ║ └╥┘┌─┐ ║
             Qubit(QuantumRegister(5, 'q'), 4) -> 5 ┤ R(π/2,3π/2) ├────────────────────────────────────────────────────────────────■─┤ R(π/2,5π/2) ├─░─────╫─────╫──╫─┤M├─╫─
-                                                   └─────────────┘                                                                  └─────────────┘ ░     ║     ║  ║ └╥┘ ║ 
+                                                   └─────────────┘                                                                  └─────────────┘ ░     ║     ║  ║ └╥┘ ║
       Qubit(QuantumRegister(1, 'ancilla'), 0) -> 6 ───────────────────────────────────────────────────────────────────────────────────────────────────────╫─────╫──╫──╫──╫─
-                                                                                                                                                          ║     ║  ║  ║  ║ 
-                                              c: 5/═══════════════════════════════════════════════════════════════════════════════════════════════════════╩═════╩══╩══╩══╩═ 
-                                                                                                                                                          1     2  3  4  0 
+                                                                                                                                                          ║     ║  ║  ║  ║
+                                              c: 5/═══════════════════════════════════════════════════════════════════════════════════════════════════════╩═════╩══╩══╩══╩═
+                                                                                                                                                          1     2  3  4  0
 
 
-Under the hood, the IQM transpiler pretends that the resonator does not exist for the Qiskit transpiler and then uses an additional transpiler pass (:class:`IQMNaiveResonatorMoving`) 
-to add Move Gates between qubits and resonators as necessary. Additionally, if ``optimize_single_qubits=True```, the :class:`IQMOptimizeSingleQubitGates` is also used.
-The resulting layout shows which register is the resonator, which registers were the original circuit, which registers are not used, and how they are mapped to the 
+Under the hood, the IQM transpiler pretends that the resonator does not exist for the Qiskit transpiler and then uses an additional transpiler pass (:class:`IQMNaiveResonatorMoving`)
+to add Move Gates between qubits and resonators as necessary. Additionally, if ``optimize_single_qubits=True``, the :class:`IQMOptimizeSingleQubitGates` is also used.
+The resulting layout shows which register is the resonator, which registers were the original circuit, which registers are not used, and how they are mapped to the
 registers on the target device. As you can see in the example, qubit 0 in the orginal circuit is stored in qubit register 1, then moved into the resonator
 so that all CZ gates can be performed. Lastly, logical qubit 0 is moved out of the resonator so that it can be measured.
 
-Additionally, if the IQM transpiler is used to transpile for a device that does not have a resonator, it will simply skip the :class:`IQMNaiveResonatorMoving` step 
+Additionally, if the IQM transpiler is used to transpile for a device that does not have a resonator, it will simply skip the :class:`IQMNaiveResonatorMoving` step
 and transpile with the Qiskit transpiler and the optional :class:`IQMOptimizeSingleQubitGates` step.
 It is also possible for the user to provide :meth:`transpile_to_IQM` with an ``optimization_level`` in the same manner as the Qiskit :meth:`transpile` function.
 
