@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 13.1 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 13.2 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="_static/documentation_options.js?v=da73bb09"></script>
+    <script src="_static/documentation_options.js?v=cd073b6f"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -137,8 +137,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.1 documentation - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.1 documentation - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.2 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.2 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -428,7 +428,7 @@ a simple quantum circuit on an IQM quantum computer.</p>
 <p>Let’s consider the following quantum circuit which prepares and measures a GHZ state:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
-<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -444,11 +444,8 @@ a simple quantum circuit on an IQM quantum computer.</p>
              └───┘┌─┴─┐ ░  ║ └╥┘┌─┐
    q_2: ──────────┤ X ├─░──╫──╫─┤M├
                   └───┘ ░  ║  ║ └╥┘
-meas_0: ═══════════════════╩══╬══╬═
-                              ║  ║
-meas_1: ══════════════════════╩══╬═
-                                 ║
-meas_2: ═════════════════════════╩═
+meas: 3/═══════════════════╩══╩══╩═
+                           0  1  2
 </pre></div>
 </div>
 <p>To execute this circuit on an IQM quantum computer you need to initialize an <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a> instance
@@ -457,6 +454,7 @@ quantum computer, and use Qiskit’s <code class="docutils literal notranslate">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span>
 <span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
+<span class="n">iqm_server_url</span> <span class="o">=</span> <span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span>  <span class="c1"># Replace this with the correct URL</span>
 <span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
 
@@ -465,7 +463,6 @@ quantum computer, and use Qiskit’s <code class="docutils literal notranslate">
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>Note that the code snippet above assumes that you have set the variable <code class="docutils literal notranslate"><span class="pre">iqm_server_url</span></code>.</p>
 <p>You can optionally set IQM backend specific options as additional keyword arguments to the <code class="docutils literal notranslate"><span class="pre">execute</span></code> method (which
 passes the values down to <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>). For example, if you know an ID of a specific calibration set that
 you want to use, you can provide it as follows:</p>
@@ -585,7 +582,7 @@ connectivity:</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Native</span> <span class="n">operations</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;cz&#39;</span><span class="p">,</span> <span class="s1">&#39;measure&#39;</span><span class="p">]</span>
-<span class="n">Coupling</span> <span class="nb">map</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="n">Coupling</span> <span class="nb">map</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>Note that for IQM backends the identiy gate <code class="docutils literal notranslate"><span class="pre">id</span></code> is not actually a gate that is executed on the device and is simply omitted.
@@ -599,32 +596,19 @@ the default Qiskit transpiler:</p>
 
 <span class="n">qc_transpiled</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">idle_wires</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global phase: π/2
-               ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
-      q_2 -&gt; 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
-               └────────────┘└────────┘         │       └────────────┘└────────┘ ░       └╥┘
-ancilla_0 -&gt; 1 ─────────────────────────────────┼─────────────────────────────────────────╫─
-               ┌────────────┐┌────────┐         │                                ░ ┌─┐    ║
-      q_0 -&gt; 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
-               └────────────┘└────────┘ │                                        ░ └╥┘    ║
-ancilla_1 -&gt; 3 ─────────────────────────┼───────────────────────────────────────────╫─────╫─
-               ┌────────────┐┌────────┐ │ ┌────────────┐  ┌────────┐             ░  ║ ┌─┐ ║
-      q_1 -&gt; 4 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
-               └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
-          c_0: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                    ║  ║  ║
-          c_1: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                    ║  ║  ║
-          c_2: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                    ║  ║  ║
-       meas_0: ═════════════════════════════════════════════════════════════════════╩══╬══╬═
-                                                                                       ║  ║
-       meas_1: ════════════════════════════════════════════════════════════════════════╩══╬═
-                                                                                          ║
-       meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
+         ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
+q_2 -&gt; 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
+         ├────────────┤├────────┤         │       └────────────┘└────────┘ ░ ┌─┐   └╥┘
+q_0 -&gt; 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
+         ├────────────┤├────────┤ │ ┌────────────┐  ┌────────┐             ░ └╥┘┌─┐ ║
+q_1 -&gt; 3 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
+         └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
+ meas: 3/═════════════════════════════════════════════════════════════════════╩══╩══╩═
+                                                                              0  1  2
 </pre></div>
 </div>
 <p>We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
@@ -633,25 +617,19 @@ of single-qubit gates. This optimization expects an already transpiled circuit. 
 
 <span class="n">qc_optimized</span> <span class="o">=</span> <span class="n">optimize_single_qubit_gates</span><span class="p">(</span><span class="n">qc_transpiled</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">qc_optimized</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc_optimized</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">idle_wires</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global phase: 3π/2
-         ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
-    q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
-         ├─────────────┤ │ └─────────────┘┌─────────────┐ ░    └╥┘┌─┐
-    q_1: ┤ R(π/2,3π/2) ├─┼────────■───────┤ R(π/2,5π/2) ├─░─────╫─┤M├
-         ├─────────────┤ │        │       └─────────────┘ ░ ┌─┐ ║ └╥┘
-    q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫──╫─
-         └─────────────┘                                  ░ └╥┘ ║  ║
-    q_3: ────────────────────────────────────────────────────╫──╫──╫─
-                                                             ║  ║  ║
-    q_4: ────────────────────────────────────────────────────╫──╫──╫─
-                                                             ║  ║  ║
-    c: 3/════════════════════════════════════════════════════╬══╬══╬═
-                                                             ║  ║  ║
- meas: 3/════════════════════════════════════════════════════╩══╩══╩═
-                                                             0  1  2
+        ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
+   q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
+        ├─────────────┤ │ └─────────────┘                ░ ┌─┐└╥┘
+   q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫────
+        ├─────────────┤          │       ┌─────────────┐ ░ └╥┘ ║ ┌─┐
+   q_3: ┤ R(π/2,3π/2) ├──────────■───────┤ R(π/2,5π/2) ├─░──╫──╫─┤M├
+        └─────────────┘                  └─────────────┘ ░  ║  ║ └╥┘
+meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+                                                            0  1  2
 </pre></div>
 </div>
 <p>Under the hood <code class="xref py py-func docutils literal notranslate"><span class="pre">optimize_single_qubit_gates()</span></code> uses <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMOptimizeSingleQubitGates</span></code> which inherits from
@@ -672,7 +650,9 @@ Thus, we have a custom transpile method <code class="xref py py-func docutils li
     <span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 
-<span class="n">backend</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="s2">&quot;https://cocos.resonance.meetiqm.com/deneb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
+<span class="n">iqm_server_url</span> <span class="o">=</span> <span class="s2">&quot;https://cocos.resonance.meetiqm.com/deneb&quot;</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
 <span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile_to_IQM</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">)</span>
@@ -752,7 +732,8 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
 <span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 
-<span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span><span class="p">)</span>
+<span class="n">iqm_server_url</span> <span class="o">=</span> <span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span>  <span class="c1"># Replace this with the correct URL</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;facade_adonis&#39;</span><span class="p">)</span>
 <span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
@@ -810,7 +791,7 @@ let’s construct two circuits preparing and measuring different Bell states:</p
 
 <span class="n">qc_transpiled</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
-<span class="n">circuits</span> <span class="o">=</span> <span class="p">[</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="n">n</span><span class="p">})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">theta_range</span><span class="p">]</span>
+<span class="n">circuits</span> <span class="o">=</span> <span class="p">[</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="n">n</span><span class="p">})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">theta_range</span><span class="p">]</span>
 <span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuits</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>

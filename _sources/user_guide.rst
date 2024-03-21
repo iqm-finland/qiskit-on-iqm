@@ -57,7 +57,7 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
 
     from qiskit import QuantumCircuit
 
-    qc = QuantumCircuit(3, 3)
+    qc = QuantumCircuit(3)
     qc.h(0)
     qc.cx(0, 1)
     qc.cx(0, 2)
@@ -74,11 +74,9 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
                  └───┘┌─┴─┐ ░  ║ └╥┘┌─┐
        q_2: ──────────┤ X ├─░──╫──╫─┤M├
                       └───┘ ░  ║  ║ └╥┘
-    meas_0: ═══════════════════╩══╬══╬═
-                                  ║  ║
-    meas_1: ══════════════════════╩══╬═
-                                     ║
-    meas_2: ═════════════════════════╩═
+    meas: 3/═══════════════════╩══╩══╩═
+                               0  1  2
+
 
 To execute this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider` instance
 with the IQM server URL, use it to retrieve an :class:`.IQMBackend` instance representing the
@@ -89,14 +87,13 @@ quantum computer, and use Qiskit's ``execute`` function as usual:
     from qiskit import execute
     from iqm.qiskit_iqm import IQMProvider
 
+    iqm_server_url = "https://demo.qc.iqm.fi/cocos/"  # Replace this with the correct URL
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
 
     job = execute(qc, backend, shots=1000)
 
     print(job.result().get_counts())
-
-Note that the code snippet above assumes that you have set the variable ``iqm_server_url``.
 
 You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
 passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
@@ -230,7 +227,7 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
 ::
 
     Native operations of the backend: ['id', 'r', 'cz', 'measure']
-    Coupling map of the backend: [[0, 2], [1, 2], [2, 3], [2, 4]]
+    Coupling map of the backend: [[0, 2], [2, 0], [1, 2], [2, 1], [2, 3], [3, 2], [2, 4], [4, 2]]
 
 Note that for IQM backends the identiy gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
@@ -248,33 +245,20 @@ the default Qiskit transpiler:
 
     qc_transpiled = transpile(qc, backend=backend, layout_method='sabre', optimization_level=3)
 
-    print(qc_transpiled.draw(output='text'))
+    print(qc_transpiled.draw(output='text', idle_wires=False))
 
 ::
 
     global phase: π/2
-                   ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
-          q_2 -> 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
-                   └────────────┘└────────┘         │       └────────────┘└────────┘ ░       └╥┘
-    ancilla_0 -> 1 ─────────────────────────────────┼─────────────────────────────────────────╫─
-                   ┌────────────┐┌────────┐         │                                ░ ┌─┐    ║
-          q_0 -> 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
-                   └────────────┘└────────┘ │                                        ░ └╥┘    ║
-    ancilla_1 -> 3 ─────────────────────────┼───────────────────────────────────────────╫─────╫─
-                   ┌────────────┐┌────────┐ │ ┌────────────┐  ┌────────┐             ░  ║ ┌─┐ ║
-          q_1 -> 4 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
-                   └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
-              c_0: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                        ║  ║  ║
-              c_1: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                        ║  ║  ║
-              c_2: ═════════════════════════════════════════════════════════════════════╬══╬══╬═
-                                                                                        ║  ║  ║
-           meas_0: ═════════════════════════════════════════════════════════════════════╩══╬══╬═
-                                                                                           ║  ║
-           meas_1: ════════════════════════════════════════════════════════════════════════╩══╬═
-                                                                                              ║
-           meas_2: ═══════════════════════════════════════════════════════════════════════════╩═
+             ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
+    q_2 -> 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
+             ├────────────┤├────────┤         │       └────────────┘└────────┘ ░ ┌─┐   └╥┘
+    q_0 -> 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
+             ├────────────┤├────────┤ │ ┌────────────┐  ┌────────┐             ░ └╥┘┌─┐ ║
+    q_1 -> 3 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
+             └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
+     meas: 3/═════════════════════════════════════════════════════════════════════╩══╩══╩═
+                                                                                  0  1  2
 
 
 We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
@@ -286,26 +270,20 @@ of single-qubit gates. This optimization expects an already transpiled circuit. 
 
     qc_optimized = optimize_single_qubit_gates(qc_transpiled)
 
-    print(qc_optimized.draw(output='text'))
+    print(qc_optimized.draw(output='text', idle_wires=False))
 
 ::
 
     global phase: 3π/2
-             ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
-        q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
-             ├─────────────┤ │ └─────────────┘┌─────────────┐ ░    └╥┘┌─┐
-        q_1: ┤ R(π/2,3π/2) ├─┼────────■───────┤ R(π/2,5π/2) ├─░─────╫─┤M├
-             ├─────────────┤ │        │       └─────────────┘ ░ ┌─┐ ║ └╥┘
-        q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫──╫─
-             └─────────────┘                                  ░ └╥┘ ║  ║
-        q_3: ────────────────────────────────────────────────────╫──╫──╫─
-                                                                 ║  ║  ║
-        q_4: ────────────────────────────────────────────────────╫──╫──╫─
-                                                                 ║  ║  ║
-        c: 3/════════════════════════════════════════════════════╬══╬══╬═
-                                                                 ║  ║  ║
-     meas: 3/════════════════════════════════════════════════════╩══╩══╩═
-                                                                 0  1  2
+            ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
+       q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
+            ├─────────────┤ │ └─────────────┘                ░ ┌─┐└╥┘
+       q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫────
+            ├─────────────┤          │       ┌─────────────┐ ░ └╥┘ ║ ┌─┐
+       q_3: ┤ R(π/2,3π/2) ├──────────■───────┤ R(π/2,5π/2) ├─░──╫──╫─┤M├
+            └─────────────┘                  └─────────────┘ ░  ║  ║ └╥┘
+    meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+                                                                0  1  2
 
 Under the hood :func:`optimize_single_qubit_gates` uses :class:`IQMOptimizeSingleQubitGates` which inherits from
 the Qiskit provided class :class:`TransformationPass` and can also be used directly if you want to assemble
@@ -329,7 +307,9 @@ Thus, we have a custom transpile method :func:`transpile_to_IQM` that can handle
         circuit.cx(0, i)
     circuit.measure_all()
 
-    backend = IQMProvider("https://cocos.resonance.meetiqm.com/deneb").get_backend()
+    iqm_server_url = "https://cocos.resonance.meetiqm.com/deneb"
+    provider = IQMProvider(iqm_server_url)
+    backend = provider.get_backend()
     transpiled_circuit = transpile_to_IQM(circuit, backend)
 
     print(transpiled_circuit)
@@ -423,7 +403,8 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
     circuit.cx(0, 1)
     circuit.measure_all()
 
-    provider = IQMProvider("https://demo.qc.iqm.fi/cocos/")
+    iqm_server_url = "https://demo.qc.iqm.fi/cocos/"  # Replace this with the correct URL
+    provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend('facade_adonis')
     job = execute(circuit, backend, shots=1000)
     job.result().get_counts()
@@ -488,7 +469,7 @@ The batch execution functionality can be used to run a parameterized circuit for
 
     qc_transpiled = transpile(qc, backend=backend, layout_method='sabre', optimization_level=3)
 
-    circuits = [qc_transpiled.bind_parameters({theta: n}) for n in theta_range]
+    circuits = [qc_transpiled.assign_parameters({theta: n}) for n in theta_range]
     job = execute(circuits, backend, shots=1000, optimization_level=0)
 
     print(job.result().get_counts())
