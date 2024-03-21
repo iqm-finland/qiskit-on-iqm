@@ -307,7 +307,9 @@ Thus, we have a custom transpile method :func:`transpile_to_IQM` that can handle
         circuit.cx(0, i)
     circuit.measure_all()
 
-    backend = IQMProvider("https://cocos.resonance.meetiqm.com/deneb").get_backend()
+    iqm_server_url = "https://cocos.resonance.meetiqm.com/deneb"
+    provider = IQMProvider(iqm_server_url)
+    backend = provider.get_backend()
     transpiled_circuit = transpile_to_IQM(circuit, backend)
 
     print(transpiled_circuit)
