@@ -162,15 +162,14 @@ def _flatten(operands: list[list[Any]]) -> list[Any]:
 
 
 def _is_valid_instruction(circuit: QuantumCircuit, allowed_ops: AllowedOps, instruction: CircuitInstruction) -> bool:
-    match instruction.operation.name:
-        case 'move':
-            return _verify_move(circuit, allowed_ops, instruction.qubits)
-        case 'r':
-            return _verify_r(circuit, allowed_ops, instruction.qubits)
-        case 'cz':
-            return _verify_cz(circuit, allowed_ops, instruction.qubits)
-        case _:
-            raise TranspilerError('Unknown operation.')
+    operation_name = instruction.operation.name
+    if operation_name == 'move':
+        return _verify_move(circuit, allowed_ops, instruction.qubits)
+    if operation_name == 'r':
+        return _verify_r(circuit, allowed_ops, instruction.qubits)
+    if operation_name == 'cz':
+        return _verify_cz(circuit, allowed_ops, instruction.qubits)
+    raise TranspilerError('Unknown operation.')
 
 
 def _make_verify_instruction(
