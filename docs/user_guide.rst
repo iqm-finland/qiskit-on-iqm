@@ -87,14 +87,13 @@ quantum computer, and use Qiskit's ``execute`` function as usual:
     from qiskit import execute
     from iqm.qiskit_iqm import IQMProvider
 
+    iqm_server_url = "https://demo.qc.iqm.fi/cocos/"  # Replace this with the correct URL
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
 
     job = execute(qc, backend, shots=1000)
 
     print(job.result().get_counts())
-
-Note that the code snippet above assumes that you have set the variable ``iqm_server_url``.
 
 You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
 passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
@@ -402,7 +401,8 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
     circuit.cx(0, 1)
     circuit.measure_all()
 
-    provider = IQMProvider("https://demo.qc.iqm.fi/cocos/")
+    iqm_server_url = "https://demo.qc.iqm.fi/cocos/"  # Replace this with the correct URL
+    provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend('facade_adonis')
     job = execute(circuit, backend, shots=1000)
     job.result().get_counts()
