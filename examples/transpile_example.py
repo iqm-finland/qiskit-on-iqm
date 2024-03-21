@@ -20,28 +20,28 @@ import argparse
 
 from qiskit import QuantumCircuit, execute
 
-from iqm.qiskit_iqm.iqm_provider import IQMProvider
 from iqm.qiskit_iqm import transpile_to_IQM
+from iqm.qiskit_iqm.iqm_provider import IQMProvider
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument(
     '--url',
     help='URL of the IQM service',
-    default='https://demo.qc.iqm.fi/cocos',
+    default='https://cocos.resonance.meetiqm.com/deneb',
 )
-argparser.add_argument(
-    '--token',
-    help='Access token to the IQM service'
-)
+argparser.add_argument('--token', help='Access token to the IQM service')
 server_url = argparser.parse_args().url
 token = argparser.parse_args().token
 
-circuit = QuantumCircuit(2)
+circuit = QuantumCircuit(5)
 circuit.h(0)
-circuit.cx(0, 1)
+for i in range(1, 5):
+    circuit.cx(0, i)
 circuit.measure_all()
 
 backend = IQMProvider(server_url, token=token).get_backend()
 transpiled_circuit = transpile_to_IQM(circuit, backend)
+
+print(transpiled_circuit)
 
 print(execute(transpiled_circuit, backend, shots=1000).result().get_counts())
