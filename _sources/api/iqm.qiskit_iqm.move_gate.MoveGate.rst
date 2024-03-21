@@ -23,5 +23,6 @@ iqm.qiskit\_iqm.move\_gate.MoveGate
 
    .. autosummary::
    
+      ~MoveGate._define
    
    
