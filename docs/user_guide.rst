@@ -158,6 +158,13 @@ Alternatively, you may authenticate yourself using the :envvar:`IQM_AUTH_SERVER`
 :envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
 arguments to :meth:`.IQMProvider.__init__`, however this approach is less secure and considered deprecated.
 
+.. note::
+
+   If you're using IQM Resonance, authentication is handled differently.
+   Use the :envvar:`IQM_TOKEN` environment variable to provide the API Token obtained
+   from the server dashboard.
+
+
 The results of a job, that was executed with IQM quantum computer, contain the original request with the
 qubit mapping that was used in execution. You can check this mapping once execution has finished.
 
