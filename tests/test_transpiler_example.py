@@ -23,7 +23,7 @@ import sys
 def test_transpile_example_call():
     """Test that example script runs and fails at establishing a connection."""
     with subprocess.Popen(
-        (sys.executable, "examples/transpile_example.py", "--url", "https://not.a.real.domain", "--token", "FAKETOKEN"),
+        (sys.executable, "examples/transpile_example.py", "--url", "https://not.a.real.domain"),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     ) as p:
