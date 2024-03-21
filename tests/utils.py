@@ -14,7 +14,7 @@
 """Testing and mocking utility functions.
 """
 from functools import partial
-from typing import Any, Callable, Literal, TypedDict, cast
+from typing import Any, Callable, Literal, TypedDict, cast, get_type_hints
 from unittest.mock import Mock
 from uuid import UUID
 
@@ -38,7 +38,7 @@ class AllowedOps(TypedDict):
     measure: list[int]
 
 
-ALLOWED_OP_NAMES = AllowedOps.__annotations__.keys()
+ALLOWED_OP_NAMES = get_type_hints(AllowedOps).keys()
 
 
 def get_mocked_backend(
