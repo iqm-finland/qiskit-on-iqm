@@ -2,13 +2,25 @@
 Changelog
 =========
 
-Version 13.1
+Version 13.3
 ============
 
 * Update the docstring of ``max_circuits`` property of ``IQMBackend``. `#95 <https://github.com/iqm-finland/qiskit-on-iqm/pull/95>`_
 
+Version 13.2
+============
+
+* Update code examples in user guide.  `#97 <https://github.com/iqm-finland/qiskit-on-iqm/pull/97>`_
+
+Version 13.1
+============
+
+* Computational resonator transpilation is now supported with ``transpile_to_IQM``. `#96 <https://github.com/iqm-finland/qiskit-on-iqm/pull/96>`_
+* Require ``iqm-client >= 17.2``. `#96 <https://github.com/iqm-finland/qiskit-on-iqm/pull/96>`_
+* Define ``move`` gate as ``swap``. `#96 <https://github.com/iqm-finland/qiskit-on-iqm/pull/96>`_
+
 Version 13.0
-=============
+============
 
 * Require ``iqm-client >= 17.0``  `#90 <https://github.com/iqm-finland/qiskit-on-iqm/pull/90>`_
 * Add MoveGate to model the move operation between qubit and resonator.
