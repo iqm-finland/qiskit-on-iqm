@@ -49,7 +49,7 @@ corresponding tag, and running the docs builder. For example, to build the docum
     $ git clone git@github.com:iqm-finland/qiskit-on-iqm.git
     $ cd qiskit-on-iqm
     $ git checkout 12.2
-    $ tox docs
+    $ tox run -e docs
 
 ``tox run -e docs`` will build the documentation at ``./build/sphinx/html``. This command requires the ``tox,``, ``sphinx`` and 
 ``sphinx-book-theme`` Python packages (see the ``docs`` optional dependency in :file:`pyproject.toml`); 
