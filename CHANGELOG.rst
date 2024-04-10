@@ -5,7 +5,7 @@ Changelog
 Version 13.3
 =============
 
-* Fix bug where Qiskit job monitoring could give an error when a job is queued. 
+* Fix bug where Qiskit job monitoring could give an error when a job is queued. `#99 <https://github.com/iqm-finland/qiskit-on-iqm/pull/99>`_
 
 Version 13.2
 =============
