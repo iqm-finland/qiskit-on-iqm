@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.3
+=============
+
+* Fix bug where Qiskit job monitoring could give an error when a job is queued. 
+
 Version 13.2
 =============
 

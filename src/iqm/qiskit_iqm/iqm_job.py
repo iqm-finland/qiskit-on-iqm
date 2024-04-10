@@ -183,12 +183,12 @@ class IQMJob(JobV1):
         if result.status == Status.ABORTED:
             return JobStatus.CANCELLED
         raise RuntimeError(f"Unknown run status '{result.status}'")
-    
+
     def queue_position(self, refresh: bool = False) -> Optional[int]:
         """Return the position of the job in the server queue.
 
         Note:
-            The position is not yet implemented and this function will always 
+            The position is not yet implemented and this function will always
             return ``None``. The ``refresh`` argument is ignored.
 
         Args:
@@ -198,8 +198,7 @@ class IQMJob(JobV1):
         Returns:
             Position in the queue or ``None`` if position is unknown or not applicable.
         """
-        pass
-    
+
     def error_message(self) -> Optional[str]:
         """Returns the error message if job has failed, otherwise returns None."""
         return self._client.get_run_status(uuid.UUID(self._job_id)).message
