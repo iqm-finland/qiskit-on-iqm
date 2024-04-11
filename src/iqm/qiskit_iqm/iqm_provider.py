@@ -67,7 +67,7 @@ class IQMBackend(IQMBackendBase):
     @property
     def max_circuits(self) -> Optional[int]:
         """Maximum number of circuits that should be run in a single batch.
-        
+
         Currently there is no hard limit on the number of circuits that can be executed in a single batch/job.
         However, some libraries like Qiskit Experiments use this property to split multi-circuit computational
         tasks into multiple baches/jobs.
