@@ -66,16 +66,14 @@ class IQMBackend(IQMBackendBase):
 
     @property
     def max_circuits(self) -> Optional[int]:
-        """Maximum number of circuits that should be run in a single batch by ``qiskit_experiments``.
+        """Maximum number of circuits that should be run in a single batch.
+        
+        Currently there is no hard limit on the number of circuits that can be executed in a single batch/job.
+        However, some libraries like Qiskit Experiments use this property to split multi-circuit computational
+        tasks into multiple baches/jobs.
 
-        Generally, this property is set automatically to `None` during the construction of backend instance. `None`
-        means there is no limit to the maximum number of circuits that can be run in a single batch.
-
-        However, in certain situations, user wants to have control over how many circuits are included in a single
-        batch. By setting this property user can easily override the default value with a custom one.
-
-        Besides the above use case, this property is not used to limit the amount of circuits that is being sent to
-        the backend.
+        The default value is ``None``, meaning there is no limit. You can set it to a specific integer
+        value to force these libraries to execute at most that many circuits in a single batch.
         """
         return self._max_circuits
 
