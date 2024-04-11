@@ -23,7 +23,12 @@ import sys
 def test_bell_measure_example_call():
     """Test that example script runs and fails at establishing a connection."""
     with subprocess.Popen(
-        (sys.executable, "examples/bell_measure.py", "--cortex_server_url", "https://not.a.real.domain"),
+        (
+            sys.executable,
+            "src/iqm/qiskit_iqm/examples/bell_measure.py",
+            "--cortex_server_url",
+            "https://not.a.real.domain",
+        ),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     ) as p:
