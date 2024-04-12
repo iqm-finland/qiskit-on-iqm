@@ -28,6 +28,7 @@
    :template: autosummary-module-template.rst
    :recursive:
 
+   ~iqm.qiskit_iqm.examples
    ~iqm.qiskit_iqm.fake_backends
    ~iqm.qiskit_iqm.iqm_backend
    ~iqm.qiskit_iqm.iqm_circuit
