@@ -41,7 +41,7 @@ The documentation of the latest Qiskit on IQM release is available
 Jump to our `User guide <https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html>`_
 for a quick introduction on how to use Qiskit on IQM.
 
-You can build documentation for any older version locally by cloning the Git repository, checking out the 
+You can build documentation for any older version locally by cloning the Git repository, checking out the
 corresponding tag, and running the docs builder. For example, to build the documentation for version ``12.2``:
 
 .. code-block:: bash
@@ -51,8 +51,8 @@ corresponding tag, and running the docs builder. For example, to build the docum
     $ git checkout 12.2
     $ tox run -e docs
 
-``tox run -e docs`` will build the documentation at ``./build/sphinx/html``. This command requires the ``tox,``, ``sphinx`` and 
-``sphinx-book-theme`` Python packages (see the ``docs`` optional dependency in :file:`pyproject.toml`); 
+``tox run -e docs`` will build the documentation at ``./build/sphinx/html``. This command requires the ``tox,``, ``sphinx`` and
+``sphinx-book-theme`` Python packages (see the ``docs`` optional dependency in ``pyproject.toml``);
 you can install the necessary packages with ``pip install -e ".[dev,docs]"``
 
 
