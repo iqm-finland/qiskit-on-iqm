@@ -27,6 +27,7 @@ iqm.qiskit\_iqm.iqm\_job.IQMJob
       ~IQMJob._format_measurement_results
       ~IQMJob.cancel
       ~IQMJob.error_message
+      ~IQMJob.queue_position
       ~IQMJob.result
       ~IQMJob.status
       ~IQMJob.submit

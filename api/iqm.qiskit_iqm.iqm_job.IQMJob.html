@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.iqm_job.IQMJob &#8212; Qiskit on IQM 13.3 documentation</title>
+    <title>iqm.qiskit_iqm.iqm_job.IQMJob &#8212; Qiskit on IQM 13.4 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../_static/documentation_options.js?v=76fbb972"></script>
+    <script src="../_static/documentation_options.js?v=e3ee3ba3"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -135,8 +135,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.3 documentation - Home"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.3 documentation - Home"/>`);</script>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.4 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.4 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -374,6 +374,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.cancel"><code class="docutils literal notranslate"><span class="pre">IQMJob.cancel()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.result"><code class="docutils literal notranslate"><span class="pre">IQMJob.result()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.status"><code class="docutils literal notranslate"><span class="pre">IQMJob.status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.queue_position"><code class="docutils literal notranslate"><span class="pre">IQMJob.queue_position()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.error_message"><code class="docutils literal notranslate"><span class="pre">IQMJob.error_message()</span></code></a></li>
 </ul>
 </li>
@@ -435,13 +436,16 @@ the job.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.error_message" title="iqm.qiskit_iqm.iqm_job.IQMJob.error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error_message</span></code></a>()</p></td>
 <td><p>Returns the error message if job has failed, otherwise returns None.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.result" title="iqm.qiskit_iqm.iqm_job.IQMJob.result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">result</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.queue_position" title="iqm.qiskit_iqm.iqm_job.IQMJob.queue_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">queue_position</span></code></a>([refresh])</p></td>
+<td><p>Return the position of the job in the server queue.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.result" title="iqm.qiskit_iqm.iqm_job.IQMJob.result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">result</span></code></a>()</p></td>
 <td><p>Return the results of the job.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.status" title="iqm.qiskit_iqm.iqm_job.IQMJob.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.status" title="iqm.qiskit_iqm.iqm_job.IQMJob.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a>()</p></td>
 <td><p>Return the status of the job, among the values of <code class="docutils literal notranslate"><span class="pre">JobStatus</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.submit" title="iqm.qiskit_iqm.iqm_job.IQMJob.submit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_job.IQMJob.submit" title="iqm.qiskit_iqm.iqm_job.IQMJob.submit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit</span></code></a>()</p></td>
 <td><p>Submit the job to the backend for execution.</p></td>
 </tr>
 </tbody>
@@ -484,6 +488,29 @@ the job.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.providers.JobStatus" title="(in Qiskit v1.0)"><em>JobStatus</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_job.IQMJob.queue_position">
+<span class="sig-name descname"><span class="pre">queue_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_job.IQMJob.queue_position" title="Link to this definition">#</a></dt>
+<dd><p>Return the position of the job in the server queue.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The position is not yet implemented and this function will always
+return <code class="docutils literal notranslate"><span class="pre">None</span></code>. The <code class="docutils literal notranslate"><span class="pre">refresh</span></code> argument is ignored.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>refresh</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, re-query the server to get the latest value.
+Otherwise return the cached value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Position in the queue or <code class="docutils literal notranslate"><span class="pre">None</span></code> if position is unknown or not applicable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)">int</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -553,6 +580,7 @@ the job.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.cancel"><code class="docutils literal notranslate"><span class="pre">IQMJob.cancel()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.result"><code class="docutils literal notranslate"><span class="pre">IQMJob.result()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.status"><code class="docutils literal notranslate"><span class="pre">IQMJob.status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.queue_position"><code class="docutils literal notranslate"><span class="pre">IQMJob.queue_position()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm.qiskit_iqm.iqm_job.IQMJob.error_message"><code class="docutils literal notranslate"><span class="pre">IQMJob.error_message()</span></code></a></li>
 </ul>
 </li>
