@@ -2,16 +2,16 @@
 Changelog
 =========
 
-Version 13.3
-<<<<<<< HEAD
-=============
+Version 13.4
+============
 
 * Fix bug where Qiskit job monitoring could give an error when a job is queued. `#99 <https://github.com/iqm-finland/qiskit-on-iqm/pull/99>`_
-=======
+
+Version 13.3
 ============
 
 * Move examples inside the Python package.  `#100 <https://github.com/iqm-finland/qiskit-on-iqm/pull/100>`_
->>>>>>> main
+
 
 Version 13.2
 ============
