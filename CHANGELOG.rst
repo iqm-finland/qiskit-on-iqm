@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.5
+============
+
+* Fix ``transpile_example`` so that it works also when less than 5 qubits are available. `#102 <https://github.com/iqm-finland/qiskit-on-iqm/pull/102>`_
+
 Version 13.4
 ============
 
