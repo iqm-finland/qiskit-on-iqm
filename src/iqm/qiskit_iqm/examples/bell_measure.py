@@ -20,25 +20,30 @@ import argparse
 
 from qiskit import QuantumCircuit, execute
 
-from iqm.qiskit_iqm import transpile_to_IQM
 from iqm.qiskit_iqm.iqm_provider import IQMProvider
 
-argparser = argparse.ArgumentParser()
-argparser.add_argument(
-    '--url',
-    help='URL of the IQM service',
-    default='https://cocos.resonance.meetiqm.com/deneb',
-)
-server_url = argparser.parse_args().url
 
-circuit = QuantumCircuit(5)
-circuit.h(0)
-for i in range(1, 5):
-    circuit.cx(0, i)
-circuit.measure_all()
+def bell_measure(server_url: str) -> dict[str, int]:
+    """Execute a circuit that prepares and measures a Bell state.
 
-backend = IQMProvider(server_url).get_backend()
-transpiled_circuit = transpile_to_IQM(circuit, backend)
+    Args:
+        server_url: URL of the IQM Cortex server used for execution
 
-print(transpiled_circuit)
-print(execute(transpiled_circuit, backend, shots=1000).result().get_counts())
+    Returns:
+        a mapping of bitstrings representing qubit measurement results to counts for each result
+    """
+    circuit = QuantumCircuit(2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.measure_all()
+    return execute(circuit, IQMProvider(server_url).get_backend(), shots=1000).result().get_counts()
+
+
+if __name__ == '__main__':
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument(
+        '--cortex_server_url',
+        help='URL of the IQM Cortex server',
+        default='https://demo.qc.iqm.fi/cocos',
+    )
+    print(bell_measure(argparser.parse_args().cortex_server_url))
