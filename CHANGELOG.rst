@@ -2,6 +2,13 @@
 Changelog
 =========
 
+
+Version 13.7
+============
+
+* Show full response error in all cases of receiving a HTTP 4xx error response. `#103 <https://github.com/iqm-finland/qiskit-on-iqm/pull/103>`_
+* Add new job states to support job delete operation in the backend.
+
 Version 13.6
 ============
 
