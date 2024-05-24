@@ -4,6 +4,7 @@ Changelog
 
 Version 13.8
 ============
+
 * Clarify the documentation on automatic transpilation. `#104 <https://github.com/iqm-finland/qiskit-on-iqm/pull/104>`_
 
 Version 13.7
