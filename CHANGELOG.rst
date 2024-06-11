@@ -3,6 +3,11 @@ Changelog
 =========
 
 
+Version 13.8
+============
+
+* Require ``iqm-client >= 17.6``. `#106 <https://github.com/iqm-finland/qiskit-on-iqm/pull/106>`_
+
 Version 13.7
 ============
 
