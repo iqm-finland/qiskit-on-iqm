@@ -131,7 +131,7 @@ their current values using `backend.options`. Below table summarizes currently a
        Setting this value to ``0.0`` will disable circuit duration check.
        The default value ``None`` means the server default value will be used.
    * - `heralding_mode`
-     - Type: :class:`~iqm.iqm_client.iqm_client.HeraldingMode`, Example value: ``"zeros"``.
+     - Type: :class:`~iqm.iqm_client.models.HeraldingMode`, Example value: ``"zeros"``.
 
        Heralding mode to use during execution. The default value is "none".
    * - `circuit_callback`
