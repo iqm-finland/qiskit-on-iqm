@@ -22,10 +22,9 @@ import uuid
 from mockito import ANY, matchers, mock, patch, when
 import numpy as np
 import pytest
-from qiskit import QuantumCircuit, execute
+from qiskit import QuantumCircuit, transpile
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
-from qiskit.compiler import transpile
 import requests
 
 from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
@@ -257,7 +256,8 @@ def test_run_non_native_circuit_with_the_execute_function(backend, circuit):
 
     some_id = uuid.uuid4()
     backend.client.submit_circuits = lambda *args, **kwargs: some_id
-    job = execute(circuit, backend=backend, optimization_level=0)
+    transpiled_circuit = transpile(circuit, backend, optimization_level=0)
+    job = backend.run(transpiled_circuit, optimization_level=0)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
 
@@ -265,6 +265,7 @@ def test_run_non_native_circuit_with_the_execute_function(backend, circuit):
 def test_run_gets_options_from_execute_function(backend, circuit):
     """Test that any additional keyword arguments to the `execute` function are passed to `IQMBackend.run`. This is more
     of a test for Qiskit's `execute` function itself, but still good to have it here to know that the use case works.
+    Execute used to be a wrapper for transpile and backend.run which has been removed in Qiskit 1.0.0.
     """
 
     def run_mock(qc, **kwargs):
@@ -274,9 +275,13 @@ def test_run_gets_options_from_execute_function(backend, circuit):
         assert 'something_else' in kwargs
         assert kwargs['something_else'] == [1, 2, 3]
 
+    transpiled_circuit = transpile(circuit, backend)
     patch(backend.run, run_mock)
-    execute(
-        circuit, backend, shots=10, calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f', something_else=[1, 2, 3]
+    backend.run(
+        transpiled_circuit,
+        shots=10,
+        calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f',
+        something_else=[1, 2, 3],
     )
 
 

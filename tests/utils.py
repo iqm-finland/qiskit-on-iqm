@@ -19,7 +19,7 @@ from unittest.mock import Mock
 from uuid import UUID
 
 from mockito import matchers, when
-from qiskit import execute
+from qiskit import transpile
 from qiskit.circuit import QuantumCircuit, Qubit
 from qiskit.circuit.quantumcircuitdata import CircuitInstruction
 from qiskit.transpiler.exceptions import TranspilerError
@@ -103,14 +103,14 @@ def get_transpiled_circuit_json(
 
     if create_move_layout:
         initial_layout = generate_initial_layout(backend, circuit)
-    job = execute(
+    transpiled_circuit = transpile(
         circuit,
         backend,
-        shots=1000,
         seed_transpiler=seed_transpiler,
         optimization_level=optimization_level,
         initial_layout=initial_layout,
     )
+    job = backend.run(transpiled_circuit, shots=1000)
     assert job.job_id() == '00000001-0002-0003-0004-000000000005'
     assert len(submitted_circuits_batch.all_values) == 1
     assert len(submitted_circuits_batch.value['circuits']) == 1

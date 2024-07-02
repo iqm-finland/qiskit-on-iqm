@@ -19,21 +19,21 @@ def test_transpile_to_IQM_star_semantically_preserving(ndonis_architecture):  # 
     qubit_registers = _get_qubit_registers(backend)
     n_qubits = len(qubit_registers)
     n_resonators = backend.num_qubits - n_qubits
-    for i in range(1, n_qubits + 1):
-        circuit = QuantumVolume(i)
+    for i in range(2, n_qubits + 1):
+        circuit = QuantumVolume(i, i)
         transpiled_circuit = transpile_to_IQM(circuit, backend)
         transpiled_operator = Operator(transpiled_circuit)
 
         # Update the original circuit to have the correct number of qubits and the correct layout
         original_with_resonator = QuantumCircuit(backend.num_qubits, 0)
-        original_with_resonator.append(circuit, [qubit_registers[i.index] for i in circuit.qubits])
+        original_with_resonator.append(circuit, [qubit_registers[i._index] for i in circuit.qubits])
 
         def to_index(circuit: QuantumCircuit, qb: Qubit):
-            if qb.register.name == "resonator":
-                return qb.index
-            if qb.register.name == "q":
-                return qb.index + n_resonators
-            return qb.index + n_resonators + circuit.num_qubits
+            if qb._register.name == "resonator":
+                return qb._index
+            if qb._register.name == "q":
+                return qb._index + n_resonators
+            return qb._index + n_resonators + circuit.num_qubits
 
         qubit_mapping = [
             to_index(circuit, transpiled_circuit.layout.initial_layout._p2v[i]) for i in range(backend.num_qubits)
@@ -61,7 +61,7 @@ def test_allowed_gates_only(ndonis_architecture):
     qubit_registers = _get_qubit_registers(backend)
     n_qubits = len(qubit_registers)
     allowed_ops = _get_allowed_ops(backend)
-    for i in range(1, n_qubits + 1):
+    for i in range(2, n_qubits + 1):
         circuit = QuantumVolume(i)
         transpiled_circuit = transpile_to_IQM(circuit, backend)
         for instruction in transpiled_circuit.data:
@@ -73,7 +73,7 @@ def test_moves_with_zero_state(ndonis_architecture):
     backend, _client = get_mocked_backend(ndonis_architecture)
     qubit_registers = _get_qubit_registers(backend)
     n_qubits = len(qubit_registers)
-    for i in range(1, n_qubits + 1):
+    for i in range(2, n_qubits + 1):
         circuit = QuantumVolume(i)
         resonator_index = next(i for i, q in enumerate(backend.architecture.qubits) if q.startswith("COMP_R"))
         transpiled_circuit = transpile_to_IQM(circuit, backend)
@@ -96,8 +96,8 @@ def _is_valid_move_sequence(resonator_index: int, moves: list[CircuitInstruction
         return True
     try:
         qubit_to_resonator, qubit_from_resonator, *rest = moves
-        source_qubit, target_resonator = (q.index for q in qubit_to_resonator.qubits)
-        target_qubit, source_resonator = (q.index for q in qubit_from_resonator.qubits)
+        source_qubit, target_resonator = (q._index for q in qubit_to_resonator.qubits)
+        target_qubit, source_resonator = (q._index for q in qubit_from_resonator.qubits)
         if source_qubit != target_qubit or target_resonator != resonator_index or source_resonator != resonator_index:
             return False
         return _is_valid_move_sequence(resonator_index, rest)

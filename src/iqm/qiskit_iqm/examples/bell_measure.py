@@ -18,7 +18,7 @@ https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 
 import argparse
 
-from qiskit import QuantumCircuit, execute
+from qiskit import QuantumCircuit, transpile
 
 from iqm.qiskit_iqm.iqm_provider import IQMProvider
 
@@ -36,7 +36,9 @@ def bell_measure(server_url: str) -> dict[str, int]:
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.measure_all()
-    return execute(circuit, IQMProvider(server_url).get_backend(), shots=1000).result().get_counts()
+    backend = IQMProvider(server_url).get_backend()
+    new_circuit = transpile(circuit, backend)
+    return backend.run(new_circuit, shots=1000).result().get_counts()
 
 
 if __name__ == '__main__':

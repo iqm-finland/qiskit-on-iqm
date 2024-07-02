@@ -18,7 +18,7 @@ https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 
 import argparse
 
-from qiskit import QuantumCircuit, execute
+from qiskit import QuantumCircuit
 
 from iqm.qiskit_iqm import transpile_to_IQM
 from iqm.qiskit_iqm.iqm_provider import IQMProvider
@@ -41,7 +41,7 @@ def transpile_example(server_url: str) -> tuple[QuantumCircuit, dict[str, int]]:
 
     backend = IQMProvider(server_url).get_backend()
     transpiled_circuit = transpile_to_IQM(circuit, backend)
-    counts = execute(transpiled_circuit, backend, shots=1000).result().get_counts()
+    counts = backend.run(transpiled_circuit, shots=1000).result().get_counts()
 
     return transpiled_circuit, counts
 
