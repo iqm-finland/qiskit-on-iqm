@@ -11,10 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Fake backends for simulating IQM quantum computers.
-"""
 
-from .fake_adonis import IQMFakeAdonis
-from .fake_apollo import IQMFakeApollo
-from .fake_deneb import IQMFakeDeneb
-from .iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
+"""Testing fake Deneb backend.
+"""
+from qiskit_aer.noise.noise_model import NoiseModel
+
+from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
+
+
+def test_iqm_fake_deneb():
+    backend = IQMFakeDeneb()
+    assert backend.num_qubits == 7
+    assert backend.name == 'IQMFakeDenebBackend'
+
+
+def test_iqm_fake_deneb_connectivity(deneb_coupling_map):
+    backend = IQMFakeDeneb()
+    assert set(backend.coupling_map.get_edges()) == deneb_coupling_map
+
+
+def test_iqm_fake_deneb_noise_model_instantiated():
+    backend = IQMFakeDeneb()
+    assert isinstance(backend.noise_model, NoiseModel)

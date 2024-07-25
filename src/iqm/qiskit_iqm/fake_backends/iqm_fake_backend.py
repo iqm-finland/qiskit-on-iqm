@@ -26,10 +26,12 @@ from qiskit.providers import JobV1, Options
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
+from qiskit.converters import circuit_to_dag
+from qiskit.transpiler import TransformationPass
 
 from iqm.iqm_client import QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
-
+from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 
 # pylint: disable=too-many-instance-attributes
 @dataclass
@@ -221,7 +223,13 @@ class IQMFakeBackend(IQMBackendBase):
         """
         Builds a noise model from the attributes.
         """
+
         noise_model = NoiseModel(basis_gates=["r", "cz"])
+
+        if architecture.name == 'Deneb':
+            # swap is used to simulate move gate
+            IQM_TO_QISKIT_GATE_NAME["swap"] = "swap"
+
 
         # Add single-qubit gate errors to noise model
         for gate in error_profile.single_qubit_gate_depolarizing_error_parameters.keys():
@@ -275,12 +283,13 @@ class IQMFakeBackend(IQMBackendBase):
     def max_circuits(self) -> Optional[int]:
         return None
 
-    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit], IQMCircuit, list[IQMCircuit]], **options) -> JobV1:
         """
         Run `run_input` on the fake backend using a simulator.
 
-        This method runs circuit jobs (an individual or a list of QuantumCircuit
-        ) and returns a :class:`~qiskit.providers.JobV1` object.
+        This method runs circuit jobs (an individual or a list of QuantumCircuit or IQMCircuit )
+        and returns a :class:`~qiskit.providers.JobV1` object. In case of IQMCircuit with move gates,
+        the moves are replaced with swap gates to allow execution with AerSimulator. 
 
         It will run the simulation with a noise model of the fake backend (e.g. Adonis).
 
@@ -292,11 +301,25 @@ class IQMFakeBackend(IQMBackendBase):
         Raises:
             ValueError: If empty list of circuits is provided.
         """
-        circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
+        circuits_aux = [run_input] if isinstance(run_input, (QuantumCircuit, IQMCircuit)) else run_input
 
-        if len(circuits) == 0:
+        if len(circuits_aux) == 0:
             raise ValueError("Empty list of circuits submitted for execution.")
 
+        # Change moves to swaps. It is assumed that moves are correctly placed.
+        class moves_to_swaps(TransformationPass):
+            def run(self, dag):
+                for node in dag.op_nodes():
+                    if node.op.name == 'move':
+                        replacement = QuantumCircuit(2, name='move')
+                        replacement.swap(0,1)
+                        dag.substitute_node_with_dag(node, circuit_to_dag(replacement))
+                return dag
+            
+        circuits = []
+        for circ in circuits_aux:
+            circuits.append(moves_to_swaps()(circ))
+ 
         shots = options.get("shots", self.options.shots)
 
         # Create noisy simulator backend and run circuits
