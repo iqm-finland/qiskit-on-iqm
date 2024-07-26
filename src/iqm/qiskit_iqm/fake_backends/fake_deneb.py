@@ -27,23 +27,91 @@ def IQMFakeDeneb() -> IQMFakeBackend:
         name="Deneb",
         operations={
             "prx": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"], ["QB6"]],
-            "cz": [["QB1", "COMP_R"], ["QB2", "COMP_R"], ["QB3", "COMP_R"], ["QB4", "COMP_R"], ["QB5", "COMP_R"], ["QB6", "COMP_R"]],
-            MOVE: [["QB1", "COMP_R"], ["QB2", "COMP_R"], ["QB3", "COMP_R"], ["QB4", "COMP_R"], ["QB5", "COMP_R"], ["QB6", "COMP_R"]],
+            "cz": [
+                ["QB1", "COMP_R"],
+                ["QB2", "COMP_R"],
+                ["QB3", "COMP_R"],
+                ["QB4", "COMP_R"],
+                ["QB5", "COMP_R"],
+                ["QB6", "COMP_R"],
+            ],
+            MOVE: [
+                ["QB1", "COMP_R"],
+                ["QB2", "COMP_R"],
+                ["QB3", "COMP_R"],
+                ["QB4", "COMP_R"],
+                ["QB5", "COMP_R"],
+                ["QB6", "COMP_R"],
+            ],
+            # this is needed for transpiler
+            "move": [
+                ["QB1", "COMP_R"],
+                ["QB2", "COMP_R"],
+                ["QB3", "COMP_R"],
+                ["QB4", "COMP_R"],
+                ["QB5", "COMP_R"],
+                ["QB6", "COMP_R"],
+            ],
             "measure": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"], ["QB6"]],
             "barrier": [],
         },
         qubits=["COMP_R", "QB1", "QB2", "QB3", "QB4", "QB5", "QB6"],
-        qubit_connectivity=[["QB1", "COMP_R"], ["QB2", "COMP_R"], ["QB3", "COMP_R"], ["QB4", "COMP_R"], ["QB5", "COMP_R"], ["QB6", "COMP_R"]],
+        qubit_connectivity=[
+            ["QB1", "COMP_R"],
+            ["QB2", "COMP_R"],
+            ["QB3", "COMP_R"],
+            ["QB4", "COMP_R"],
+            ["QB5", "COMP_R"],
+            ["QB6", "COMP_R"],
+        ],
     )
     error_profile = IQMErrorProfile(
-        t1s={"COMP_R": 5400.0, "QB1": 35000.0, "QB2": 35000.0, "QB3": 35000.0, "QB4": 35000.0, "QB5": 35000.0, "QB6": 35000.0},
-        t2s={"COMP_R" : 10800.0, "QB1": 33000.0, "QB2": 33000.0, "QB3": 33000.0, "QB4": 33000.0, "QB5": 33000.0, "QB6": 33000.0},
-        single_qubit_gate_depolarizing_error_parameters={
-            "prx": { "COMP_R" : 0.0, "QB1": 0.0002, "QB2": 0.0002, "QB3": 0.0002, "QB4": 0.0002, "QB5": 0.0002, "QB6": 0.0002}
+        t1s={
+            "COMP_R": 5400.0,
+            "QB1": 35000.0,
+            "QB2": 35000.0,
+            "QB3": 35000.0,
+            "QB4": 35000.0,
+            "QB5": 35000.0,
+            "QB6": 35000.0,
         },
-        two_qubit_gate_depolarizing_error_parameters={ 
-            "cz": {("QB1", "COMP_R"): 0.0128, ("QB2", "COMP_R"): 0.0128, ("QB3", "COMP_R"): 0.0128, ("QB4", "COMP_R"): 0.0128, ("QB5", "COMP_R"): 0.0128, ("QB6", "COMP_R"): 0.0128},
-            MOVE: {("QB1", "COMP_R"): 0.0, ("QB2", "COMP_R"): 0.0, ("QB3", "COMP_R"): 0.0, ("QB4", "COMP_R"): 0.0, ("QB5", "COMP_R"): 0.0, ("QB6", "COMP_R"): 0.0},
+        t2s={
+            "COMP_R": 10800.0,
+            "QB1": 33000.0,
+            "QB2": 33000.0,
+            "QB3": 33000.0,
+            "QB4": 33000.0,
+            "QB5": 33000.0,
+            "QB6": 33000.0,
+        },
+        single_qubit_gate_depolarizing_error_parameters={
+            "prx": {
+                "COMP_R": 0.0,
+                "QB1": 0.0002,
+                "QB2": 0.0002,
+                "QB3": 0.0002,
+                "QB4": 0.0002,
+                "QB5": 0.0002,
+                "QB6": 0.0002,
+            }
+        },
+        two_qubit_gate_depolarizing_error_parameters={
+            "cz": {
+                ("QB1", "COMP_R"): 0.0128,
+                ("QB2", "COMP_R"): 0.0128,
+                ("QB3", "COMP_R"): 0.0128,
+                ("QB4", "COMP_R"): 0.0128,
+                ("QB5", "COMP_R"): 0.0128,
+                ("QB6", "COMP_R"): 0.0128,
+            },
+            MOVE: {
+                ("QB1", "COMP_R"): 0.0,
+                ("QB2", "COMP_R"): 0.0,
+                ("QB3", "COMP_R"): 0.0,
+                ("QB4", "COMP_R"): 0.0,
+                ("QB5", "COMP_R"): 0.0,
+                ("QB6", "COMP_R"): 0.0,
+            },
         },
         single_qubit_gate_durations={"prx": 40.0},
         two_qubit_gate_durations={"cz": 120.0, MOVE: 96.0},
