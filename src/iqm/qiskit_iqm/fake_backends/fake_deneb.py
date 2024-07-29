@@ -21,6 +21,9 @@ def IQMFakeDeneb() -> IQMFakeBackend:
     """Return IQMFakeBackend instance representing IQM's Deneb architecture.
     Note: swaps are used in place of the move gates to enable the (noisy) simulation with AerSimulator.
     """
+    # The operations of the architecture include "move" as information for transpiler
+    # and "swap" for the (noisy) simulation with AerSimulator. 
+    # To highligt that "move" is realized by "swap", the latter is saved in a variable MOVE.
     MOVE = "swap"
 
     architecture = QuantumArchitectureSpecification(
@@ -35,7 +38,7 @@ def IQMFakeDeneb() -> IQMFakeBackend:
                 ["QB5", "COMP_R"],
                 ["QB6", "COMP_R"],
             ],
-            MOVE: [
+            "move": [
                 ["QB1", "COMP_R"],
                 ["QB2", "COMP_R"],
                 ["QB3", "COMP_R"],
@@ -43,8 +46,7 @@ def IQMFakeDeneb() -> IQMFakeBackend:
                 ["QB5", "COMP_R"],
                 ["QB6", "COMP_R"],
             ],
-            # this is needed for transpiler
-            "move": [
+            MOVE: [
                 ["QB1", "COMP_R"],
                 ["QB2", "COMP_R"],
                 ["QB3", "COMP_R"],
