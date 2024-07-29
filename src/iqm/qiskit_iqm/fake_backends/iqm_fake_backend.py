@@ -311,13 +311,40 @@ class IQMFakeBackend(IQMBackendBase):
         class moves_to_swaps(TransformationPass):
             """Change moves to swaps. It is assumed that moves are correctly placed."""
 
-            def run(self, dag):
+            def run(self, dag):       
+                qubits_involved_in_last_move = None # Store which qubit was last used for MOVE IN
                 for node in dag.op_nodes():
-                    if node.op.name == "move":
+                    if qubits_involved_in_last_move is not None:
+                        # Verify that no single qubit gate is performed on the qubit between MOVE IN and MOVE OUT
+                        if node.op.name != "move" and len(node.qargs) == 1 and node.qargs[0] == qubits_involved_in_last_move[0]:
+                            print(node.op.name)
+                            raise ValueError("Operations to qubits '{'QB" + 
+                                             str(qubits_involved_in_last_move[0].index + 1) + 
+                                             "'}' while their states are moved to a resonator.")
+                    if node.op.name == "move":  
+                        if qubits_involved_in_last_move is None:
+                            # MOVE IN was performed
+                            qubits_involved_in_last_move = node.qargs
+                        elif qubits_involved_in_last_move != node.qargs:
+                            raise ValueError("Cannot apply MOVE('QB"+ str(node.qargs[0].index + 1) + 
+                                             "', 'COMP_R') because COMP_R already holds the state of 'QB" +
+                                             str(qubits_involved_in_last_move[0].index + 1) + "'.")
+                        else: 
+                            # MOVE OUT was performed
+                            qubits_involved_in_last_move = None
+                            
                         move_as_swap = QuantumCircuit(2)
                         move_as_swap.swap(0, 1)
                         dag.substitute_node_with_dag(node, circuit_to_dag(move_as_swap))
+
+                    if qubits_involved_in_last_move is not None:
+                        raise ValueError("The following resonators are still holding qubit states " +
+                                         "at the end of the circuit: {'COMP_R': 'QB" + 
+                                         str(qubits_involved_in_last_move[0].index + 1) +
+                                         "'}")
+                
                 return dag
+
 
         circuits = []
         for circ in circuits_aux:
