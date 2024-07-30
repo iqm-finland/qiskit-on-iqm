@@ -19,12 +19,7 @@ from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFa
 
 def IQMFakeDeneb() -> IQMFakeBackend:
     """Return IQMFakeBackend instance representing IQM's Deneb architecture.
-    Note: swaps are used in place of the move gates to enable the (noisy) simulation with AerSimulator.
     """
-    # The operations of the architecture include "move" as information for transpiler
-    # and "swap" for the (noisy) simulation with AerSimulator. 
-    # To highligt that "move" is realized by "swap", the latter is saved in a variable MOVE.
-    MOVE = "swap"
 
     architecture = QuantumArchitectureSpecification(
         name="Deneb",
@@ -39,14 +34,6 @@ def IQMFakeDeneb() -> IQMFakeBackend:
                 ["QB6", "COMP_R"],
             ],
             "move": [
-                ["QB1", "COMP_R"],
-                ["QB2", "COMP_R"],
-                ["QB3", "COMP_R"],
-                ["QB4", "COMP_R"],
-                ["QB5", "COMP_R"],
-                ["QB6", "COMP_R"],
-            ],
-            MOVE: [
                 ["QB1", "COMP_R"],
                 ["QB2", "COMP_R"],
                 ["QB3", "COMP_R"],
@@ -106,17 +93,17 @@ def IQMFakeDeneb() -> IQMFakeBackend:
                 ("QB5", "COMP_R"): 0.0128,
                 ("QB6", "COMP_R"): 0.0128,
             },
-            MOVE: {
-                ("QB1", "COMP_R"): 0.0,
-                ("QB2", "COMP_R"): 0.0,
-                ("QB3", "COMP_R"): 0.0,
-                ("QB4", "COMP_R"): 0.0,
-                ("QB5", "COMP_R"): 0.0,
-                ("QB6", "COMP_R"): 0.0,
+            "move": {
+                ("QB1", "COMP_R"): 0.9,
+                ("QB2", "COMP_R"): 0.9,
+                ("QB3", "COMP_R"): 0.9,
+                ("QB4", "COMP_R"): 0.9,
+                ("QB5", "COMP_R"): 0.9,
+                ("QB6", "COMP_R"): 0.9,
             },
         },
         single_qubit_gate_durations={"prx": 40.0},
-        two_qubit_gate_durations={"cz": 120.0, MOVE: 96.0},
+        two_qubit_gate_durations={"cz": 120.0, "move": 96.0},
         readout_errors={
             "COMP_R": {"0": 0.0, "1": 0.0},
             "QB1": {"0": 0.977, "1": 0.977},

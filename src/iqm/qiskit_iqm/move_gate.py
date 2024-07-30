@@ -16,6 +16,7 @@
 from qiskit.circuit import Gate
 from qiskit.circuit.library import CXGate
 from qiskit.circuit.quantumcircuit import QuantumCircuit, QuantumRegister
+import qiskit.quantum_info as qi
 
 
 class MoveGate(Gate):
@@ -40,6 +41,10 @@ class MoveGate(Gate):
     def __init__(self, label=None):
         """Initializes the move gate"""
         super().__init__("move", 2, [], label=label)
+        self.unitary = qi.Operator([[1., 0., 0., 0.],
+                                    [0., 0., 1., 0.],
+                                    [0., 1., 0., 0.],
+                                    [0., 0., 0., 1.]])
 
     def _define(self):
         """Pretend that this gate is an SWAP for the purpose of matrix checking.
@@ -60,3 +65,5 @@ class MoveGate(Gate):
             qc._append(instr, qargs, cargs)
 
         self.definition = qc
+
+    
