@@ -354,7 +354,8 @@ class IQMFakeBackend(IQMBackendBase):
 
         # Create noisy simulator backend and run circuits
         sim_noise = AerSimulator(noise_model=self.noise_model)
-        job = sim_noise.run(circuits, shots=shots)
+        transpiled_circuits = transpile(circuits, sim_noise)
+        job = sim_noise.run(transpiled_circuits, shots=shots)
 
         return job
     
