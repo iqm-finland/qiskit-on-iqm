@@ -337,7 +337,6 @@ class IQMFakeBackend(IQMBackendBase):
                             # MOVE OUT was performed
                             qubits_involved_in_last_move = None
                             
-                        dag.substitute_node_with_dag(node, move_as_unitary_dag)
 
                 if qubits_involved_in_last_move is not None:
                     raise ValueError("The following resonators are still holding qubit states " +
