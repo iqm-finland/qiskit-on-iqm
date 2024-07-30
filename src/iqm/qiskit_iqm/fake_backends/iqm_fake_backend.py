@@ -315,9 +315,6 @@ class IQMFakeBackend(IQMBackendBase):
             """
 
             def run(self, dag):
-                move_as_unitary = IQMCircuit(2)
-                move_as_unitary.unitary(MoveGate().unitary, [0, 1], label = "move")
-                move_as_unitary_dag = circuit_to_dag(move_as_unitary)
 
                 qubits_involved_in_last_move = None # Store which qubit was last used for MOVE IN
                 for node in dag.op_nodes():
