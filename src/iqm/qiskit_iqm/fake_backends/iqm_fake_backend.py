@@ -294,6 +294,8 @@ class IQMFakeBackend(IQMBackendBase):
         the moves are replaced with swap gates to allow execution with AerSimulator.
 
         It will run the simulation with a noise model of the fake backend (e.g. Adonis).
+        For backends with move gates, the method checks their validity and models them with
+        unitary.
 
         Args:
             run_input: One or more quantum circuits to simulate on the backend.
@@ -308,8 +310,9 @@ class IQMFakeBackend(IQMBackendBase):
         if len(circuits_aux) == 0:
             raise ValueError("Empty list of circuits submitted for execution.")
 
-        class moves_to_swaps(TransformationPass):
-            """Checks for validity of move gates and changes them to swaps."""
+        class check_move_validity_and_model_as_unitary(TransformationPass):
+            """Checks for validity of move gates and replaces them with the MoveGate unitaries.
+            """
 
             def run(self, dag):
                 move_as_unitary = IQMCircuit(2)
@@ -350,7 +353,7 @@ class IQMFakeBackend(IQMBackendBase):
 
         circuits = []
         for circ in circuits_aux:
-            circuits.append(moves_to_swaps()(circ))
+            circuits.append(check_move_validity_and_model_as_unitary()(circ))
         shots = options.get("shots", self.options.shots)
 
         # Create noisy simulator backend and run circuits

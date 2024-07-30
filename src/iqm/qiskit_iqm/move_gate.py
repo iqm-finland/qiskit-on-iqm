@@ -47,7 +47,7 @@ class MoveGate(Gate):
                                     [0., 0., 0., 1.]])
 
     def _define(self):
-        """Pretend that this gate is an SWAP for the purpose of matrix checking.
+        """Pretend that this gate is a SWAP for the purpose of matrix checking.
 
         The |0> needs to be traced out for the resonator 'qubits'.
 
