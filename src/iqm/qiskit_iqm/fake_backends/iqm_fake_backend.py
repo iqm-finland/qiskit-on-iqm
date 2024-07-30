@@ -31,7 +31,6 @@ from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 from iqm.iqm_client import QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
-from iqm.qiskit_iqm.move_gate import MoveGate
 
 
 # pylint: disable=too-many-instance-attributes
@@ -289,12 +288,11 @@ class IQMFakeBackend(IQMBackendBase):
         Run `run_input` on the fake backend using a simulator.
 
         This method runs circuit jobs (an individual or a list of QuantumCircuit or IQMCircuit )
-        and returns a :class:`~qiskit.providers.JobV1` object. In case of IQMCircuit with move gates,
-        the moves are replaced with swap gates to allow execution with AerSimulator.
+        and returns a :class:`~qiskit.providers.JobV1` object. 
 
-        It will run the simulation with a noise model of the fake backend (e.g. Adonis).
-        For backends with move gates, the method checks their validity and models them with
-        unitary.
+        It will run the simulation with a noise model of the fake backend (e.g. Adonis, Deneb).
+        Validity of move gates is also checked. The method also transpiles circuit
+        to the native gates so that moves are implemented as unitaries.
 
         Args:
             run_input: One or more quantum circuits to simulate on the backend.
@@ -309,8 +307,8 @@ class IQMFakeBackend(IQMBackendBase):
         if len(circuits_aux) == 0:
             raise ValueError("Empty list of circuits submitted for execution.")
 
-        class check_move_validity_and_model_as_unitary(TransformationPass):
-            """Checks for validity of move gates and replaces them with the MoveGate unitaries.
+        class check_move_validity(TransformationPass):
+            """Checks that the placement of move gates is valid in the circuit.
             """
 
             def run(self, dag):
@@ -336,7 +334,6 @@ class IQMFakeBackend(IQMBackendBase):
                             # MOVE OUT was performed
                             qubits_involved_in_last_move = None
                             
-
                 if qubits_involved_in_last_move is not None:
                     raise ValueError("The following resonators are still holding qubit states " +
                                      "at the end of the circuit: {'COMP_R': 'QB" + 
@@ -345,10 +342,9 @@ class IQMFakeBackend(IQMBackendBase):
                 
                 return dag
 
-
         circuits = []
         for circ in circuits_aux:
-            circuits.append(check_move_validity_and_model_as_unitary()(circ))
+            circuits.append(check_move_validity()(circ))
         shots = options.get("shots", self.options.shots)
 
         # Create noisy simulator backend and run circuits
@@ -357,5 +353,3 @@ class IQMFakeBackend(IQMBackendBase):
         job = sim_noise.run(transpiled_circuits, shots=shots)
 
         return job
-    
-    
