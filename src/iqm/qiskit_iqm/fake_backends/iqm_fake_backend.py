@@ -22,7 +22,6 @@ from itertools import permutations
 from typing import Any, Optional, Union
 
 from qiskit import QuantumCircuit, transpile
-from qiskit.converters import circuit_to_dag
 from qiskit.providers import JobV1, Options
 from qiskit.transpiler import TransformationPass
 from qiskit_aer import AerSimulator
