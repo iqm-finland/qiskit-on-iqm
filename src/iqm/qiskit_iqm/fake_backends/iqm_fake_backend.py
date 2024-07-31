@@ -223,12 +223,12 @@ class IQMFakeBackend(IQMBackendBase):
         """
         Builds a noise model from the attributes.
         """
-        
+
         noise_model = NoiseModel(basis_gates=["r", "cz"])
 
         if architecture.name == "Deneb":
             # noise_model.add_basis_gates(["move"]) does not work because it checks against a list of standard gates
-            noise_model =  NoiseModel(basis_gates=["r", "cz", "move"]) 
+            noise_model = NoiseModel(basis_gates=["r", "cz", "move"])
 
         # Add single-qubit gate errors to noise model
         for gate in error_profile.single_qubit_gate_depolarizing_error_parameters.keys():
@@ -289,7 +289,7 @@ class IQMFakeBackend(IQMBackendBase):
         Run `run_input` on the fake backend using a simulator.
 
         This method runs circuit jobs (an individual or a list of QuantumCircuit or IQMCircuit )
-        and returns a :class:`~qiskit.providers.JobV1` object. 
+        and returns a :class:`~qiskit.providers.JobV1` object.
 
         It will run the simulation with a noise model of the fake backend (e.g. Adonis, Deneb).
         Validity of move gates is also checked. The method also transpiles circuit
@@ -309,51 +309,62 @@ class IQMFakeBackend(IQMBackendBase):
             raise ValueError("Empty list of circuits submitted for execution.")
 
         this = self
+
         class check_move_validity(TransformationPass):
-            """Checks that the placement of move gates is valid in the circuit.
-            """
+            """Checks that the placement of move gates is valid in the circuit."""
 
             def run(self, dag):
-                qubits_involved_in_last_move = None # Store which qubit was last used for MOVE IN
+                qubits_involved_in_last_move = None  # Store which qubit was last used for MOVE IN
                 for node in dag.op_nodes():
                     if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure", "measurement"]:
                         raise ValueError("Operation '" + node.op.name + "' is not supported by the backend.")
                     if qubits_involved_in_last_move is not None:
                         # Verify that no single qubit gate is performed on the qubit between MOVE IN and MOVE OUT
-                        if node.op.name not in ["move", "barrier", "measure"] and len(node.qargs) == 1 and node.qargs[0] == qubits_involved_in_last_move[0]:
-                            raise ValueError("Operations to qubits '{'QB" + 
-                                             str(qubits_involved_in_last_move[0].index + 1) + 
-                                             "'}' while their states are moved to a resonator.")
-                    if node.op.name == "move":  
+                        if (
+                            node.op.name not in ["move", "barrier", "measure"]
+                            and len(node.qargs) == 1
+                            and node.qargs[0] == qubits_involved_in_last_move[0]
+                        ):
+                            raise ValueError(
+                                "Operations to qubits '{'QB"
+                                + str(qubits_involved_in_last_move[0].index + 1)
+                                + "'}' while their states are moved to a resonator."
+                            )
+                    if node.op.name == "move":
                         if qubits_involved_in_last_move is None:
                             # MOVE IN was performed
                             qubits_involved_in_last_move = node.qargs
                         elif qubits_involved_in_last_move != node.qargs:
-                            raise ValueError("Cannot apply MOVE on 'QB"+ str(node.qargs[0].index + 1) + 
-                                             "' because COMP_R already holds the state of 'QB" +
-                                             str(qubits_involved_in_last_move[0].index + 1) + 
-                                             "'.")
-                        else: 
+                            raise ValueError(
+                                "Cannot apply MOVE on 'QB"
+                                + str(node.qargs[0].index + 1)
+                                + "' because COMP_R already holds the state of 'QB"
+                                + str(qubits_involved_in_last_move[0].index + 1)
+                                + "'."
+                            )
+                        else:
                             # MOVE OUT was performed
                             qubits_involved_in_last_move = None
-                            
+
                 if qubits_involved_in_last_move is not None:
-                    raise ValueError("The following resonators are still holding qubit states " +
-                                     "at the end of the circuit: {'COMP_R': 'QB" + 
-                                     str(qubits_involved_in_last_move[0].index + 1) +
-                                     "'}.")
-                
+                    raise ValueError(
+                        "The following resonators are still holding qubit states "
+                        + "at the end of the circuit: {'COMP_R': 'QB"
+                        + str(qubits_involved_in_last_move[0].index + 1)
+                        + "'}."
+                    )
+
                 return dag
 
         circuits = []
-        
+
         for circ in circuits_aux:
             circ_to_add = circ
-            
+
             if "move" in self.noise_model.basis_gates:
                 check_move_validity()(circ)
-                circ_to_add = circ.decompose(gates_to_decompose = 'move')
-            
+                circ_to_add = circ.decompose(gates_to_decompose='move')
+
             circuits.append(circ_to_add)
 
         shots = options.get("shots", self.options.shots)

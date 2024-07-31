@@ -20,6 +20,7 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
 from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
 import pytest
 
+
 def test_iqm_fake_deneb():
     backend = IQMFakeDeneb()
     assert backend.num_qubits == 7
@@ -38,75 +39,82 @@ def test_iqm_fake_deneb_noise_model_instantiated():
 
 def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
     backend = IQMFakeDeneb()
-    no_qubits = 6 
-    comp_r = QuantumRegister(1, 'comp_r') # Computational resonator
-    q = QuantumRegister(no_qubits, 'q') # Qubits 
-    c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
+    no_qubits = 6
+    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
+    q = QuantumRegister(no_qubits, 'q')  # Qubits
+    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
-    qc.move(1,0)
+    qc.move(1, 0)
     qc.x(1)
-    qc.move(1,0)
-    qc.measure(q,c)
+    qc.move(1, 0)
+    qc.measure(q, c)
 
-    with pytest.raises(ValueError, match="Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."):
+    with pytest.raises(
+        ValueError, match="Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."
+    ):
         execute(qc, backend, shots=1000)
 
 
 def test_move_gate_sandwich_interrupted_with_second_move_gate():
     backend = IQMFakeDeneb()
-    no_qubits = 6 
-    comp_r = QuantumRegister(1, 'comp_r') # Computational resonator
-    q = QuantumRegister(no_qubits, 'q') # Qubits 
-    c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
+    no_qubits = 6
+    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
+    q = QuantumRegister(no_qubits, 'q')  # Qubits
+    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
-    qc.move(1,0)
-    qc.move(2,0)
-    qc.move(1,0)
-    qc.measure(q,c)
+    qc.move(1, 0)
+    qc.move(2, 0)
+    qc.move(1, 0)
+    qc.measure(q, c)
 
-    with pytest.raises(ValueError, match="Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."):
+    with pytest.raises(
+        ValueError, match="Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."
+    ):
         execute(qc, backend, shots=1000)
 
 
 def test_move_gate_not_closed():
     backend = IQMFakeDeneb()
-    no_qubits = 6 
-    comp_r = QuantumRegister(1, 'comp_r') # Computational resonator
-    q = QuantumRegister(no_qubits, 'q') # Qubits 
-    c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
+    no_qubits = 6
+    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
+    q = QuantumRegister(no_qubits, 'q')  # Qubits
+    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
-    qc.move(1,0)
-    qc.measure(q,c)
+    qc.move(1, 0)
+    qc.measure(q, c)
 
-    with pytest.raises(ValueError, match= "The following resonators are still holding qubit states at the end of the circuit: {'COMP_R': 'QB1'}."):
+    with pytest.raises(
+        ValueError,
+        match="The following resonators are still holding qubit states at the end of the circuit: {'COMP_R': 'QB1'}.",
+    ):
         backend.run(qc, shots=1000)
 
 
 def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model_():
     backend = IQMFakeDeneb()
-    no_qubits = 6 
-    comp_r = QuantumRegister(1, 'comp_r') # Computational resonator
-    q = QuantumRegister(no_qubits, 'q') # Qubits 
-    c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
+    no_qubits = 6
+    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
+    q = QuantumRegister(no_qubits, 'q')  # Qubits
+    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
     qc.h(1)
-    qc.move(1,0) # MOVE into the resonator
+    qc.move(1, 0)  # MOVE into the resonator
 
-    for i in range(2, no_qubits+1):
+    for i in range(2, no_qubits + 1):
         qc.cx(0, i)
-    qc.move(1,0) # MOVE out of the resonator
+    qc.move(1, 0)  # MOVE out of the resonator
 
     qc.barrier()
-    qc.measure(q,c)
+    qc.measure(q, c)
 
     job = execute(qc, backend, shots=1000)
 
-    res=job.result()
-    counts=res.get_counts()
+    res = job.result()
+    counts = res.get_counts()
 
     # see that 000000 and 111111 states have most counts
     largest_two = sorted(counts.items(), key=lambda x: x[1])[-2:]
@@ -127,15 +135,14 @@ def test_transpile_to_IQM_for_ghz_with_fake_deneb_noise_model():
     transpiled_qc = transpile_to_IQM(qc, backend=backend)
 
     job = backend.run(transpiled_qc, shots=1000)
-    res=job.result()
-    counts=res.get_counts()
+    res = job.result()
+    counts = res.get_counts()
 
     # see that 000000 and 111111 states have most counts
     largest_two = sorted(counts.items(), key=lambda x: x[1])[-2:]
 
     for count in largest_two:
         assert count[0] in ["000000", "111111"]
-
 
 
 def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
@@ -152,7 +159,6 @@ def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
 
     for qc in qc_list:
         execute(qc, backend, shots=1000)
-        
+
         with pytest.raises(ValueError, match=r"^Operation '[A-Za-z]' is not supported by the backend."):
             backend.run(qc, shots=1000)
-        

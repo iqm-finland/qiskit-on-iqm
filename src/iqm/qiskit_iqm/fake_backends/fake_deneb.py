@@ -18,8 +18,7 @@ from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFa
 
 
 def IQMFakeDeneb() -> IQMFakeBackend:
-    """Return IQMFakeBackend instance representing IQM's Deneb architecture.
-    """
+    """Return IQMFakeBackend instance representing IQM's Deneb architecture."""
 
     architecture = QuantumArchitectureSpecification(
         name="Deneb",

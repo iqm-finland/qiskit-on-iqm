@@ -41,10 +41,9 @@ class MoveGate(Gate):
     def __init__(self, label=None):
         """Initializes the move gate"""
         super().__init__("move", 2, [], label=label)
-        self.unitary = qi.Operator([[1., 0., 0., 0.],
-                                    [0., 0., 1., 0.],
-                                    [0., 1., 0., 0.],
-                                    [0., 0., 0., 1.]])
+        self.unitary = qi.Operator(
+            [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+        )
 
     def _define(self):
         """Pretend that this gate is a SWAP for the purpose of matrix checking.
@@ -60,9 +59,7 @@ class MoveGate(Gate):
 
         q = QuantumRegister(2, "q")
         qc = QuantumCircuit(q, name=self.name)
-        
+
         qc.unitary(self.unitary, [q[0], q[1]], label="move")
 
         self.definition = qc
-
-    
