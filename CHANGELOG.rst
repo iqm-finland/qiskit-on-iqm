@@ -2,10 +2,13 @@
 Changelog
 =========
 
-Version 13.8
+
+Version 13.9
 ============
 
 * Clarify the documentation on automatic transpilation. `#104 <https://github.com/iqm-finland/qiskit-on-iqm/pull/104>`_
+* Added a missing character to the docs.  `#110 <https://github.com/iqm-finland/qiskit-on-iqm/pull/110>`_
+* Added IQMFakeDeneb backend for noisy simulation of the Deneb backend.  `#109 <https://github.com/iqm-finland/qiskit-on-iqm/pull/109>`_
 
 Version 13.8
 ============
