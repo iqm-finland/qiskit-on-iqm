@@ -14,11 +14,12 @@
 
 """Testing fake Deneb backend.
 """
-from qiskit_aer.noise.noise_model import NoiseModel
-from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, execute
-from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
 import pytest
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, execute
+from qiskit_aer.noise.noise_model import NoiseModel
+
+from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
+from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 
 
 def test_iqm_fake_deneb():
