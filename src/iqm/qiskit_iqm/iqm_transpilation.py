@@ -32,7 +32,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
 
     1. Convert single-qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
     2. Convert :math:`U` gates according to
-       :math:`U(\theta , \phi , \lambda) ~ RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
+       :math:`U(\theta , \phi , \lambda) = ~ RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
     3. Commute `RZ` gates to the end of the circuit using the fact that `RZ` and `CZ` gates commute, and
        :math:`R(\theta , \phi) RZ(\lambda) = RZ(\lambda) R(\theta, \phi - \lambda)`.
     4. Drop `RZ` gates immediately before measurements, and otherwise replace them according to
