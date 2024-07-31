@@ -27,7 +27,7 @@ from qiskit.transpiler import Target
 from iqm.iqm_client import QuantumArchitectureSpecification, is_directed_instruction, is_multi_qubit_instruction
 from iqm.qiskit_iqm.move_gate import MoveGate
 
-IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz', 'move': 'move'}
+IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
 
 
 class IQMBackendBase(BackendV2, ABC):
