@@ -41,9 +41,9 @@ def test_iqm_fake_deneb_noise_model_instantiated():
 def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
     backend = IQMFakeDeneb()
     no_qubits = 6
-    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
-    q = QuantumRegister(no_qubits, 'q')  # Qubits
-    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
+    comp_r = QuantumRegister(1, "comp_r")  # Computational resonator
+    q = QuantumRegister(no_qubits, "q")  # Qubits
+    c = ClassicalRegister(no_qubits, "c")  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
     qc.move(1, 0)
@@ -52,7 +52,7 @@ def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
     qc.measure(q, c)
 
     with pytest.raises(
-        ValueError, match="Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."
+        ValueError, match=r"Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."
     ):
         execute(qc, backend, shots=1000)
 
@@ -60,9 +60,9 @@ def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
 def test_move_gate_sandwich_interrupted_with_second_move_gate():
     backend = IQMFakeDeneb()
     no_qubits = 6
-    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
-    q = QuantumRegister(no_qubits, 'q')  # Qubits
-    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
+    comp_r = QuantumRegister(1, "comp_r")  # Computational resonator
+    q = QuantumRegister(no_qubits, "q")  # Qubits
+    c = ClassicalRegister(no_qubits, "c")  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
     qc.move(1, 0)
@@ -71,7 +71,7 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
     qc.measure(q, c)
 
     with pytest.raises(
-        ValueError, match="Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."
+        ValueError, match=r"Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."
     ):
         execute(qc, backend, shots=1000)
 
@@ -79,9 +79,9 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
 def test_move_gate_not_closed():
     backend = IQMFakeDeneb()
     no_qubits = 6
-    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
-    q = QuantumRegister(no_qubits, 'q')  # Qubits
-    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
+    comp_r = QuantumRegister(1, "comp_r")  # Computational resonator
+    q = QuantumRegister(no_qubits, "q")  # Qubits
+    c = ClassicalRegister(no_qubits, "c")  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
     qc.move(1, 0)
@@ -89,7 +89,7 @@ def test_move_gate_not_closed():
 
     with pytest.raises(
         ValueError,
-        match="The following resonators are still holding qubit states at the end of the circuit: {'COMP_R': 'QB1'}.",
+        match=r"The following resonators are still holding qubit states at the end of the circuit: {'COMP_R': 'QB1'}.",
     ):
         backend.run(qc, shots=1000)
 
@@ -97,9 +97,9 @@ def test_move_gate_not_closed():
 def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model_():
     backend = IQMFakeDeneb()
     no_qubits = 6
-    comp_r = QuantumRegister(1, 'comp_r')  # Computational resonator
-    q = QuantumRegister(no_qubits, 'q')  # Qubits
-    c = ClassicalRegister(no_qubits, 'c')  # Classical register, used for readout
+    comp_r = QuantumRegister(1, "comp_r")  # Computational resonator
+    q = QuantumRegister(no_qubits, "q")  # Qubits
+    c = ClassicalRegister(no_qubits, "c")  # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
     qc.h(1)
