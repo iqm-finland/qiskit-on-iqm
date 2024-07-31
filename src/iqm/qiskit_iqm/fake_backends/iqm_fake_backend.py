@@ -346,9 +346,15 @@ class IQMFakeBackend(IQMBackendBase):
                 return dag
 
         circuits = []
+        
         for circ in circuits_aux:
-            check_move_validity()(circ)
-            circuits.append(circ.decompose(gates_to_decompose = 'move'))
+            circ_to_add = circ
+            
+            if "move" in self.noise_model.basis_gates:
+                check_move_validity()(circ)
+                circ_to_add = circ.decompose(gates_to_decompose = 'move')
+            
+            circuits.append(circ_to_add)
 
         shots = options.get("shots", self.options.shots)
 
