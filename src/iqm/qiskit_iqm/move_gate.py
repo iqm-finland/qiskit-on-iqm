@@ -14,7 +14,6 @@
 """Move gate to be used with Qiskit Quantum Circuits."""
 
 from qiskit.circuit import Gate
-from qiskit.circuit.library import CXGate
 from qiskit.circuit.quantumcircuit import QuantumCircuit, QuantumRegister
 import qiskit.quantum_info as qi
 
