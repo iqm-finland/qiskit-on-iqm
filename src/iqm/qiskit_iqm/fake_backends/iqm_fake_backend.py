@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from itertools import permutations
 from typing import Any, Optional, Union
 
-from qiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit
 from qiskit.providers import JobV1, Options
 from qiskit.transpiler import TransformationPass
 from qiskit_aer import AerSimulator
@@ -363,7 +363,7 @@ class IQMFakeBackend(IQMBackendBase):
 
             if "move" in self.noise_model.basis_gates:
                 check_move_validity()(circ)
-                circ_to_add = circ.decompose(gates_to_decompose='move')
+                circ_to_add = circ.decompose(gates_to_decompose="move")
 
             circuits.append(circ_to_add)
 
