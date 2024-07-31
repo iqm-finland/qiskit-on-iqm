@@ -25,7 +25,7 @@ from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 def test_iqm_fake_deneb():
     backend = IQMFakeDeneb()
     assert backend.num_qubits == 7
-    assert backend.name == 'IQMFakeDenebBackend'
+    assert backend.name == "IQMFakeDenebBackend"
 
 
 def test_iqm_fake_deneb_connectivity(deneb_coupling_map):
@@ -151,7 +151,7 @@ def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
     num_qb = 6
     qc_list = []
     for _ in range(4):
-        qc_list.append(QuantumCircuit(6))
+        qc_list.append(QuantumCircuit(num_qb))
 
     qc_list[0].h(1)
     qc_list[1].x(2)
