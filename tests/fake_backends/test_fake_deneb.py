@@ -44,14 +44,13 @@ def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
     c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
-    qc.h(1)
     qc.move(1,0)
     qc.x(1)
     qc.move(1,0)
     qc.measure(q,c)
 
-    with pytest.raises(ValueError, match="Operations to qubits '{'QB1'}' while their states are moved to a resonator."):
-        backend.run(qc, shots=1000)
+    with pytest.raises(ValueError, match="Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."):
+        execute(qc, backend, shots=1000)
 
 
 def test_move_gate_sandwich_interrupted_with_second_move_gate():
@@ -62,14 +61,13 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
     c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
-    qc.h(1)
     qc.move(1,0)
     qc.move(2,0)
     qc.move(1,0)
     qc.measure(q,c)
 
-    with pytest.raises(ValueError, match="Cannot apply MOVE on 'QB2' because COMP_R already holds the state of 'QB1'."):
-        backend.run(qc, shots=1000)
+    with pytest.raises(ValueError, match="Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."):
+        execute(qc, backend, shots=1000)
 
 
 def test_move_gate_not_closed():
@@ -80,7 +78,6 @@ def test_move_gate_not_closed():
     c = ClassicalRegister(no_qubits, 'c') # Classical register, used for readout
     qc = IQMCircuit(comp_r, q, c)
 
-    qc.h(1)
     qc.move(1,0)
     qc.measure(q,c)
 
@@ -138,3 +135,24 @@ def test_transpile_to_IQM_for_ghz_with_fake_deneb_noise_model():
 
     for count in largest_two:
         assert count[0] in ["000000", "111111"]
+
+
+
+def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
+    backend = IQMFakeDeneb()
+    num_qb = 6
+    qc_list = []
+    for _ in range(4):
+        qc_list.append(QuantumCircuit(6))
+
+    qc_list[0].h(1)
+    qc_list[1].x(2)
+    qc_list[2].y(3)
+    qc_list[3].z(4)
+
+    for qc in qc_list:
+        execute(qc, backend, shots=1000)
+        
+        with pytest.raises(ValueError, match=r"^Operation '[A-Za-z]' is not supported by the backend."):
+            backend.run(qc, shots=1000)
+        

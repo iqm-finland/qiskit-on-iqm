@@ -60,9 +60,8 @@ class MoveGate(Gate):
 
         q = QuantumRegister(2, "q")
         qc = QuantumCircuit(q, name=self.name)
-        rules = [(CXGate(), [q[0], q[1]], []), (CXGate(), [q[1], q[0]], []), (CXGate(), [q[0], q[1]], [])]
-        for instr, qargs, cargs in rules:
-            qc._append(instr, qargs, cargs)
+        
+        qc.unitary(self.unitary, [q[0], q[1]], label="move")
 
         self.definition = qc
 

@@ -223,11 +223,12 @@ class IQMFakeBackend(IQMBackendBase):
         """
         Builds a noise model from the attributes.
         """
-
+        
         noise_model = NoiseModel(basis_gates=["r", "cz"])
 
         if architecture.name == "Deneb":
-            noise_model.basis_gates.append("move")
+            # noise_model.add_basis_gates(["move"]) does not work because it checks against a list of standard gates
+            noise_model =  NoiseModel(basis_gates=["r", "cz", "move"]) 
 
         # Add single-qubit gate errors to noise model
         for gate in error_profile.single_qubit_gate_depolarizing_error_parameters.keys():
@@ -307,14 +308,16 @@ class IQMFakeBackend(IQMBackendBase):
         if len(circuits_aux) == 0:
             raise ValueError("Empty list of circuits submitted for execution.")
 
+        this = self
         class check_move_validity(TransformationPass):
             """Checks that the placement of move gates is valid in the circuit.
             """
 
             def run(self, dag):
-
                 qubits_involved_in_last_move = None # Store which qubit was last used for MOVE IN
                 for node in dag.op_nodes():
+                    if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure", "measurement"]:
+                        raise ValueError("Operation '" + node.op.name + "' is not supported by the backend.")
                     if qubits_involved_in_last_move is not None:
                         # Verify that no single qubit gate is performed on the qubit between MOVE IN and MOVE OUT
                         if node.op.name not in ["move", "barrier", "measure"] and len(node.qargs) == 1 and node.qargs[0] == qubits_involved_in_last_move[0]:
@@ -344,12 +347,14 @@ class IQMFakeBackend(IQMBackendBase):
 
         circuits = []
         for circ in circuits_aux:
-            circuits.append(check_move_validity()(circ))
+            check_move_validity()(circ)
+            circuits.append(circ.decompose(gates_to_decompose = 'move'))
+
         shots = options.get("shots", self.options.shots)
 
         # Create noisy simulator backend and run circuits
         sim_noise = AerSimulator(noise_model=self.noise_model)
-        transpiled_circuits = transpile(circuits, sim_noise)
-        job = sim_noise.run(transpiled_circuits, shots=shots)
+
+        job = sim_noise.run(circuits, shots=shots)
 
         return job
