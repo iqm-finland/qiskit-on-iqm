@@ -57,7 +57,7 @@ class MoveGate(Gate):
         """
 
         q = QuantumRegister(2, "q")
-        qc = QuantumCircuit(q, name=self.name)
+        qc = QuantumCircuit(q, name=self.label if self.label else self.name)
 
         qc.unitary(self.unitary, [q[0], q[1]], label="move")
 
