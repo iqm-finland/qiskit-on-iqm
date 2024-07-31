@@ -224,12 +224,11 @@ class IQMFakeBackend(IQMBackendBase):
         Builds a noise model from the attributes.
         """
 
-        noise_model = NoiseModel(basis_gates=["r", "cz"])
-
-        if architecture.name == "Deneb":
-            # noise_model.add_basis_gates(["move"]) does not work because it checks against a list of standard gates
-            noise_model = NoiseModel(basis_gates=["r", "cz", "move"])
-
+        iqm_to_qiskit_gates = {iqm: qiskit for iqm, qiskit in IQM_TO_QISKIT_GATE_NAME}
+        for iqm_gate in architecture.operations.keys():
+            if iqm_gate not in ["measure", "barrier"] + iqm_to_qiskit_gates.keys():
+                iqm_to_qiskit_gates[iqm_gate] = iqm_gate
+        noise_model = NoiseModel(basis_gates=iqm_to_qiskit_gates.values())
         # Add single-qubit gate errors to noise model
         for gate in error_profile.single_qubit_gate_depolarizing_error_parameters.keys():
             for qb in architecture.qubits:
