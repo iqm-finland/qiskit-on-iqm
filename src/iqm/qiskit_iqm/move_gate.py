@@ -49,11 +49,7 @@ class MoveGate(Gate):
 
         The |0> needs to be traced out for the resonator 'qubits'.
 
-        gate swap a,b {
-            cx q[0],q[1];
-            cx q[1],q[0];
-            cx q[0],q[1];
-        }
+        gate swap a,b
         """
 
         q = QuantumRegister(2, "q")

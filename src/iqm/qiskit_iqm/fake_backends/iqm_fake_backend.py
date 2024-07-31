@@ -224,11 +224,11 @@ class IQMFakeBackend(IQMBackendBase):
         Builds a noise model from the attributes.
         """
 
-        iqm_to_qiskit_gates = {iqm: qiskit for iqm, qiskit in IQM_TO_QISKIT_GATE_NAME}
-        for iqm_gate in architecture.operations.keys():
-            if iqm_gate not in ["measure", "barrier"] + iqm_to_qiskit_gates.keys():
+        iqm_to_qiskit_gates = dict(IQM_TO_QISKIT_GATE_NAME)
+        for iqm_gate in architecture.operations:
+            if iqm_gate not in ["measure", "barrier"] + list(iqm_to_qiskit_gates):
                 iqm_to_qiskit_gates[iqm_gate] = iqm_gate
-        noise_model = NoiseModel(basis_gates=iqm_to_qiskit_gates.values())
+        noise_model = NoiseModel(basis_gates=list(iqm_to_qiskit_gates.values()))
         # Add single-qubit gate errors to noise model
         for gate in error_profile.single_qubit_gate_depolarizing_error_parameters.keys():
             for qb in architecture.qubits:
@@ -240,7 +240,7 @@ class IQMFakeBackend(IQMBackendBase):
                 )
                 full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                 noise_model.add_quantum_error(
-                    full_error_channel, IQM_TO_QISKIT_GATE_NAME[gate], [self.qubit_name_to_index(qb)]
+                    full_error_channel, iqm_to_qiskit_gates[gate], [self.qubit_name_to_index(qb)]
                 )
 
         # Add two-qubit gate errors to noise model
@@ -262,7 +262,7 @@ class IQMFakeBackend(IQMBackendBase):
                     full_error_channel = thermal_relaxation_channel.compose(depolarizing_channel)
                     noise_model.add_quantum_error(
                         full_error_channel,
-                        IQM_TO_QISKIT_GATE_NAME[gate],
+                        iqm_to_qiskit_gates[gate],
                         [self.qubit_name_to_index(qb_order[0]), self.qubit_name_to_index(qb_order[1])],
                     )
 
@@ -362,8 +362,11 @@ class IQMFakeBackend(IQMBackendBase):
 
             if "move" in self.noise_model.basis_gates:
                 check_move_validity()(circ)
-                circ_to_add = circ.decompose(gates_to_decompose="move")
 
+            for iqm_gate in [
+                g for g in self.noise_model.basis_gates if g not in list(IQM_TO_QISKIT_GATE_NAME.values())
+            ]:
+                circ_to_add = circ.decompose(gates_to_decompose=iqm_gate)
             circuits.append(circ_to_add)
 
         shots = options.get("shots", self.options.shots)
