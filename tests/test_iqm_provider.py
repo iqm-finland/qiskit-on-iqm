@@ -257,7 +257,7 @@ def test_run_non_native_circuit_with_the_execute_function(backend, circuit):
     some_id = uuid.uuid4()
     backend.client.submit_circuits = lambda *args, **kwargs: some_id
     transpiled_circuit = transpile(circuit, backend, optimization_level=0)
-    job = backend.run(transpiled_circuit, optimization_level=0)
+    job = backend.run(transpiled_circuit)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(some_id)
 
