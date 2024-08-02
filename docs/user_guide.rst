@@ -95,6 +95,13 @@ quantum computer, and use Qiskit's ``execute`` function as usual:
 
     print(job.result().get_counts())
 
+.. note::
+
+   Qiskit's :meth:`qiskit.execute` method performs transpilation by default. If you want to inspect the transpiled
+   circuits, refer to `circuit_callback` option in the execution options table below. If you want to execute circuits
+   without automatic transpilation, you can use the :meth:`.IQMBackend.run` method directly; in that case you have to
+   take care of transpilation yourself. Method :func:`transpile_to_IQM` can be used to transpile circuits.
+
 You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
 passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
 you want to use, you can provide it as follows:
@@ -131,7 +138,7 @@ their current values using `backend.options`. Below table summarizes currently a
        Setting this value to ``0.0`` will disable circuit duration check.
        The default value ``None`` means the server default value will be used.
    * - `heralding_mode`
-     - Type: :class:`~iqm.iqm_client.iqm_client.HeraldingMode`, Example value: ``"zeros"``.
+     - Type: :class:`~iqm.iqm_client.models.HeraldingMode`, Example value: ``"zeros"``.
 
        Heralding mode to use during execution. The default value is "none".
    * - `circuit_callback`
