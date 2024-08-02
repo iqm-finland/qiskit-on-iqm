@@ -24,7 +24,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
+from iqm.iqm_client import Circuit, CircuitCompilationOptions, Instruction, IQMClient
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
@@ -59,9 +59,9 @@ class IQMBackend(IQMBackendBase):
         return Options(
             shots=1024,
             calibration_set_id=None,
-            max_circuit_duration_over_t2=None,
-            heralding_mode=HeraldingMode.NONE,
+            circuit_compilation_options=CircuitCompilationOptions(),
             circuit_callback=None,
+            timeout_seconds=None,
         )
 
     @property
@@ -88,6 +88,16 @@ class IQMBackend(IQMBackendBase):
             raise ValueError('Empty list of circuits submitted for execution.')
 
         unknown_options = set(options.keys()) - set(self.options.keys())
+        # Catch deprecated options
+        if 'max_circuit_duration_over_t2' in unknown_options and 'circuit_compilation_options' not in options:
+            self.options['circuit_compilation_options'].max_circuit_duration_over_t2 = options.pop(
+                'max_circuit_duration_over_t2'
+            )
+            unknown_options.remove('max_circuit_duration_over_t2')
+        if 'heralding_mode' in unknown_options and 'circuit_compilation_options' not in options:
+            self.options['circuit_compilation_options'].heralding_mode = options.pop('heralding_mode')
+            unknown_options.remove('heralding_mode')
+
         if unknown_options:
             warnings.warn(f'Unknown backend option(s): {unknown_options}')
 
@@ -98,8 +108,6 @@ class IQMBackend(IQMBackendBase):
         calibration_set_id = merged_options['calibration_set_id']
         if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
             calibration_set_id = UUID(calibration_set_id)
-        max_circuit_duration_over_t2 = merged_options['max_circuit_duration_over_t2']
-        heralding_mode = merged_options['heralding_mode']
 
         circuit_callback = merged_options['circuit_callback']
         if circuit_callback:
@@ -115,10 +123,9 @@ class IQMBackend(IQMBackendBase):
             qubit_mapping=qubit_mapping,
             calibration_set_id=calibration_set_id if calibration_set_id else None,
             shots=shots,
-            max_circuit_duration_over_t2=max_circuit_duration_over_t2,
-            heralding_mode=heralding_mode,
+            options=merged_options['circuit_compilation_options'],
         )
-        job = IQMJob(self, str(job_id), shots=shots)
+        job = IQMJob(self, str(job_id), shots=shots, timeout_seconds=merged_options['timeout_seconds'])
         job.circuit_metadata = [c.metadata for c in circuits]
         return job
 

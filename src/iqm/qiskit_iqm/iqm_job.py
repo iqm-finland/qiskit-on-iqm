@@ -26,6 +26,7 @@ from qiskit.providers import JobStatus, JobV1
 from qiskit.result import Counts, Result
 
 from iqm.iqm_client import (
+    DEFAULT_TIMEOUT_SECONDS,
     CircuitMeasurementResults,
     HeraldingMode,
     IQMClient,
@@ -46,13 +47,14 @@ class IQMJob(JobV1):
         **kwargs: arguments to be passed to the initializer of the parent class
     """
 
-    def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, **kwargs):  # type: ignore
+    def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, timeout_seconds: Optional[float] = None, **kwargs):  # type: ignore
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None
         self._request: Optional[RunRequest] = None
         self._client: IQMClient = backend.client
         self.circuit_metadata: Optional[list] = None  # Metadata that was originally associated with circuits by user
+        self._timeout_seconds: float = timeout_seconds if timeout_seconds is not None else DEFAULT_TIMEOUT_SECONDS
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
         """Convert the measurement results from a batch of circuits into the Qiskit format."""
@@ -129,7 +131,7 @@ class IQMJob(JobV1):
 
     def result(self) -> Result:
         if not self._result:
-            results = self._client.wait_for_results(uuid.UUID(self._job_id))
+            results = self._client.wait_for_results(uuid.UUID(self._job_id), self._timeout_seconds)
             self._calibration_set_id = results.metadata.calibration_set_id
             self._request = results.metadata.request
             if results.metadata.timestamps is not None:

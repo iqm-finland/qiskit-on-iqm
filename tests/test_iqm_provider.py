@@ -28,7 +28,14 @@ from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 from qiskit.compiler import transpile
 import requests
 
-from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
+from iqm.iqm_client import (
+    HeraldingMode,
+    IQMClient,
+    QuantumArchitecture,
+    RunResult,
+    RunStatus,
+    CircuitCompilationOptions,
+)
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
 from tests.utils import get_mock_ok_response
 
@@ -54,13 +61,7 @@ def circuit_2() -> QuantumCircuit:
 
 @pytest.fixture
 def submit_circuits_default_kwargs() -> dict:
-    return {
-        'qubit_mapping': None,
-        'calibration_set_id': None,
-        'shots': 1024,
-        'max_circuit_duration_over_t2': None,
-        'heralding_mode': HeraldingMode.NONE,
-    }
+    return {'qubit_mapping': None, 'calibration_set_id': None, 'shots': 1024, 'options': ANY}
 
 
 @pytest.fixture
@@ -71,8 +72,9 @@ def job_id():
 def test_default_options(backend):
     assert backend.options.shots == 1024
     assert backend.options.calibration_set_id is None
-    assert backend.options.max_circuit_duration_over_t2 is None
-    assert backend.options.heralding_mode == HeraldingMode.NONE
+    for k, v in backend.options.circuit_compilation_options.__dict__.items():
+        assert v == CircuitCompilationOptions().__dict__[k]
+    assert backend.options.circuit_compilation_options
     assert backend.options.circuit_callback is None
 
 
@@ -338,16 +340,20 @@ def test_run_with_custom_calibration_set_id(
 def test_run_with_duration_check_disabled(backend, circuit, submit_circuits_default_kwargs, job_id):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1'}, 'max_circuit_duration_over_t2': 0.0}
+    options = CircuitCompilationOptions(max_circuit_duration_over_t2=0.0)
+    kwargs = submit_circuits_default_kwargs | {'qubit_mapping': {'0': 'QB1'}, 'options': options}
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
 
-    backend.run([circuit], max_circuit_duration_over_t2=0.0)
+    backend.run([circuit], circuit_compilation_options=options)
 
 
 def test_run_uses_heralding_mode_none_by_default(backend, circuit, submit_circuits_default_kwargs, job_id):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    kwargs = submit_circuits_default_kwargs | {'heralding_mode': HeraldingMode.NONE, 'qubit_mapping': {'0': 'QB1'}}
+    kwargs = submit_circuits_default_kwargs | {
+        'options': backend.options.circuit_compilation_options,
+        'qubit_mapping': {'0': 'QB1'},
+    }
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
     backend.run([circuit])
 
@@ -355,9 +361,13 @@ def test_run_uses_heralding_mode_none_by_default(backend, circuit, submit_circui
 def test_run_with_heralding_mode_zeros(backend, circuit, submit_circuits_default_kwargs, job_id):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    kwargs = submit_circuits_default_kwargs | {'heralding_mode': HeraldingMode.ZEROS, 'qubit_mapping': {'0': 'QB1'}}
+    options = CircuitCompilationOptions(heralding_mode=HeraldingMode.ZEROS)
+    kwargs = submit_circuits_default_kwargs | {
+        'options': options,
+        'qubit_mapping': {'0': 'QB1'},
+    }
     when(backend.client).submit_circuits([circuit_ser], **kwargs).thenReturn(job_id)
-    backend.run([circuit], heralding_mode='zeros')
+    backend.run([circuit], circuit_compilation_options=options)
 
 
 # mypy: disable-error-code="attr-defined"

@@ -165,7 +165,7 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
         measurements=[iqm_result_two_registers],
         metadata=iqm_metadata,
     )
-    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+    when(job._client).wait_for_results(uuid.UUID(job.job_id()), job._timeout_seconds).thenReturn(client_result)
 
     result = job.result()
 
@@ -182,7 +182,8 @@ def test_result(job, iqm_result_two_registers, iqm_metadata):
     result = job.result()
     assert isinstance(result, QiskitResult)
     assert job.status() == JobStatus.DONE
-    mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()))
+    mockito.verify(job._client, times=1).wait_for_results(uuid.UUID(job.job_id()), job._timeout_seconds)
+    assert job._timeout_seconds is not None
 
 
 def test_result_no_shots(job, iqm_result_no_shots, iqm_metadata):
@@ -192,7 +193,7 @@ def test_result_no_shots(job, iqm_result_no_shots, iqm_metadata):
         measurements=[iqm_result_no_shots],
         metadata=iqm_metadata,
     )
-    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+    when(job._client).wait_for_results(uuid.UUID(job.job_id()), job._timeout_seconds).thenReturn(client_result)
 
     with pytest.warns(UserWarning, match='Received measurement results containing zero shots.'):
         result = job.result()
@@ -225,7 +226,7 @@ def test_result_multiple_circuits(job, iqm_result_two_registers):
         measurements=[iqm_result_two_registers, iqm_result_two_registers],
         metadata=iqm_metadata_multiple_circuits,
     )
-    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+    when(job._client).wait_for_results(uuid.UUID(job.job_id()), job._timeout_seconds).thenReturn(client_result)
 
     result = job.result()
 
@@ -247,7 +248,7 @@ def test_result_with_timestamps(job, iqm_result_two_registers, iqm_metadata_with
         measurements=[iqm_result_two_registers],
         metadata=iqm_metadata_with_timestamps,
     )
-    when(job._client).wait_for_results(uuid.UUID(job.job_id())).thenReturn(client_result)
+    when(job._client).wait_for_results(uuid.UUID(job.job_id()), job._timeout_seconds).thenReturn(client_result)
 
     assert job.metadata.get('timestamps') is None
     result = job.result()
