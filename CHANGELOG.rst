@@ -6,8 +6,8 @@ Version 13.4
 ============
 
 * Added the option to change the timeout between waiting for results when a job is submitted. Github issue `#108 <https://github.com/iqm-finland/qiskit-on-iqm/issues/108>`_
-* Added support for optional MOVE gate validation bypassing for advanced users. 
-* Updated requirement for ``iqm-client`` to version 17.8.
+* Added support for optional MOVE gate validation bypassing for advanced users. `#112 <https://github.com/iqm-finland/qiskit-on-iqm/pull/112>`_
+* Updated requirement for ``iqm-client`` to version 17.8. `iqm-client PR #124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 
 
 Version 13.3
