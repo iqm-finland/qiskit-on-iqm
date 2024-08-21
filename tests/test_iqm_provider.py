@@ -19,7 +19,7 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, matchers, mock, patch, when
+from mockito import ANY, captor, expect, matchers, mock, patch, unstub, verifyNoUnwantedInteractions, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, execute
@@ -28,7 +28,7 @@ from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 from qiskit.compiler import transpile
 import requests
 
-from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
+from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunRequest, RunResult, RunStatus
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
 from tests.utils import get_mock_ok_response
 
@@ -495,3 +495,92 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
 
     with pytest.raises(RuntimeError, match='Remote execution did not succeed'):
         backend.run(circuit_2)
+
+
+def test_create_run_request_with_transpilation(backend, circuit):
+    options = {'optimization_level': 0, 'seed_transpiler': 123}
+
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.cx(0, 2)
+
+    circuits_serialized = captor()
+    qubit_mapping = captor()
+    calibration_set_id = captor()
+    shots = captor()
+    max_circuit_duration_over_t2 = captor()
+    heralding_mode = captor()
+
+    mock_run_request = mock(RunRequest)
+    when(backend.client).create_run_request(
+        circuits_serialized,
+        qubit_mapping=qubit_mapping,
+        calibration_set_id=calibration_set_id,
+        shots=shots,
+        max_circuit_duration_over_t2=max_circuit_duration_over_t2,
+        heralding_mode=heralding_mode,
+    ).thenReturn(mock_run_request)
+
+    run_request = backend.create_run_request(circuit, **options)
+
+    assert run_request == mock_run_request
+
+    # verifies that client.submit_circuits is called with exact same parameter values as client.create_run_request was
+    expect(backend.client, times=1).submit_circuits(
+        circuits_serialized.value,
+        qubit_mapping=qubit_mapping.value,
+        calibration_set_id=calibration_set_id.value,
+        shots=shots.value,
+        max_circuit_duration_over_t2=max_circuit_duration_over_t2.value,
+        heralding_mode=heralding_mode.value,
+    ).thenReturn(uuid.uuid4())
+
+    execute(circuit, backend=backend, **options)
+
+    verifyNoUnwantedInteractions()
+    unstub()
+
+
+def test_create_run_request_without_transpilation(backend, circuit):
+    options = {'optimization_level': 0}
+
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.cx(0, 2)
+    circuit_transpiled = transpile(circuit, backend=backend)
+
+    circuits_serialized = captor()
+    qubit_mapping = captor()
+    calibration_set_id = captor()
+    shots = captor()
+    max_circuit_duration_over_t2 = captor()
+    heralding_mode = captor()
+
+    mock_run_request = mock(RunRequest)
+    when(backend.client).create_run_request(
+        circuits_serialized,
+        qubit_mapping=qubit_mapping,
+        calibration_set_id=calibration_set_id,
+        shots=shots,
+        max_circuit_duration_over_t2=max_circuit_duration_over_t2,
+        heralding_mode=heralding_mode,
+    ).thenReturn(mock_run_request)
+
+    run_request = backend.create_run_request(circuit_transpiled, transpile_circuits=False, **options)
+
+    assert run_request == mock_run_request
+
+    # verifies that client.submit_circuits is called with exact same parameter values as client.create_run_request was
+    expect(backend.client, times=1).submit_circuits(
+        circuits_serialized.value,
+        qubit_mapping=qubit_mapping.value,
+        calibration_set_id=calibration_set_id.value,
+        shots=shots.value,
+        max_circuit_duration_over_t2=max_circuit_duration_over_t2.value,
+        heralding_mode=heralding_mode.value,
+    ).thenReturn(uuid.uuid4())
+
+    backend.run(circuit_transpiled, **options)
+
+    verifyNoUnwantedInteractions()
+    unstub()

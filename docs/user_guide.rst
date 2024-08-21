@@ -98,9 +98,11 @@ quantum computer, and use Qiskit's ``execute`` function as usual:
 .. note::
 
    Qiskit's :meth:`qiskit.execute` method performs transpilation by default. If you want to inspect the transpiled
-   circuits, refer to `circuit_callback` option in the execution options table below. If you want to execute circuits
-   without automatic transpilation, you can use the :meth:`.IQMBackend.run` method directly; in that case you have to
-   take care of transpilation yourself. Method :func:`transpile_to_IQM` can be used to transpile circuits.
+   circuits, refer to `circuit_callback` option in the execution options table below. See also
+   `Inspecting the final circuits before submitting them for execution`_ for inspecting the actual run request sent for
+   execution. If you want to execute circuits without automatic transpilation, you can use the :meth:`.IQMBackend
+   .run` method directly; in that case you have to take care of transpilation yourself. Method
+   :func:`transpile_to_IQM` can be used to transpile circuits.
 
 You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
 passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
@@ -423,6 +425,43 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
    0-filled bits. To make sure the facade backend returns results in the same format as a real IQM server,
    :meth:`.IQMFacadeBackend.run` checks for the presence of unused classical registers, and fails with an error if there
    are any.
+
+Inspecting the final circuits before submitting them for execution
+------------------------------------------------------------------
+
+It is possible to inspect the final circuits that would be submitted for execution before actually submitting them,
+which can be useful for debugging purposes. This can be done using :meth:`.IQMBackend.create_run_request`, which returns
+a :class:`~iqm.iqm_client.models.RunRequest` containing the circuits and other data. The method accepts the same
+parameters as :func:`~qiskit.execute` and by default performs transpilation in the same way.
+
+.. code-block:: python
+
+    # inspect the run_request without submitting it for execution
+    run_request = backend.create_run_request(circuit, shots=10, seed_transpiler=123)
+    print(run_request)
+
+    # the following calls submit exactly the same run request for execution on the server
+    execute(circuit, backend, shots=10, seed_transpiler=123)
+    backend.client.submit_run_request(run_request)
+
+Note that due to the stochastic nature of Qiskit transpilation, the submitted request may not be exactly the same unless
+the same ``seed_transpiler`` value is used. Thus it can make more sense to send the inspected run request using
+:meth:`~iqm.iqm_client.IQMClient.submit_run_request` rather than calling :func:`~qiskit.execute` separately. The
+transpilation in :meth:`.IQMBackend.create_run_request` can also be disabled by setting ``transpile_circuits=False``
+in which case it creates the run request in the same way as in :meth:`.IQMBackend.run`.
+
+.. code-block:: python
+
+    # inspect the run_request without submitting it for execution
+    run_request = backend.create_run_request(circuit, shots=10, transpile_circuits=False)
+    print(run_request)
+
+    # the following calls submit exactly the same run request for execution on the server
+    backend.run(circuit, shots=10)
+    backend.client.submit_run_request(run_request)
+
+It is also possible to print a run request when it is actually submitted by setting the environment variable
+``IQM_CLIENT_DEBUG=1``.
 
 More advanced examples
 ----------------------
