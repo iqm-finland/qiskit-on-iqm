@@ -159,7 +159,10 @@ class IQMBackend(IQMBackendBase):
         """
         # pylint: disable=too-many-branches
         instructions = []
-        for instruction, qubits, clbits in circuit.data:
+        for operation in circuit.data:
+            instruction = operation.operation
+            qubits = operation.qubits
+            clbits = operation.clbits
             qubit_names = [str(circuit.find_bit(qubit).index) for qubit in qubits]
             if instruction.name == 'r':
                 angle_t = float(instruction.params[0] / (2 * np.pi))

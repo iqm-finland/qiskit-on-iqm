@@ -33,13 +33,14 @@ def transpile_example(server_url: str) -> tuple[QuantumCircuit, dict[str, int]]:
     Returns:
         transpiled circuit, a mapping of bitstrings representing qubit measurement results to counts for each result
     """
-    circuit = QuantumCircuit(5)
+    backend = IQMProvider(server_url).get_backend()
+    n_qubits = min(backend.num_qubits, 5)
+    circuit = QuantumCircuit(n_qubits)
     circuit.h(0)
-    for i in range(1, 5):
+    for i in range(1, n_qubits):
         circuit.cx(0, i)
     circuit.measure_all()
 
-    backend = IQMProvider(server_url).get_backend()
     transpiled_circuit = transpile_to_IQM(circuit, backend)
     counts = backend.run(transpiled_circuit, shots=1000).result().get_counts()
 
