@@ -158,11 +158,6 @@ class IQMBackend(IQMBackendBase):
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
         # pylint: disable=too-many-branches
-        if len(circuit.qregs) != 1 or len(circuit.qregs[0]) != self.num_qubits:
-            raise ValueError(
-                f"The circuit '{circuit.name}' does not contain a single quantum register of length {self.num_qubits}, "
-                f'which indicates that it has not been transpiled against the current backend.'
-            )
         instructions = []
         for instruction, qubits, clbits in circuit.data:
             qubit_names = [str(circuit.find_bit(qubit).index) for qubit in qubits]

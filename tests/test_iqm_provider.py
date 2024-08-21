@@ -19,7 +19,7 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, matchers, mock, patch, when
+from mockito import ANY, matchers, mock, patch, when, expect
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
@@ -27,15 +27,16 @@ from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 import requests
 
-from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
+from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus, CircuitExecutionError
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
-from tests.utils import get_mock_ok_response
+from tests.utils import get_mock_ok_response, MockJsonResponse
 
 
 @pytest.fixture
 def backend(linear_architecture_3q):
     client = mock(IQMClient)
     when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    client._base_url = 'http://some_url'
     return IQMBackend(client)
 
 
@@ -112,10 +113,18 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     assert backend.qubit_name_to_index('Alice') is None
 
 
-def test_serialize_circuit_raises_error_for_non_transpiled_circuit(backend, circuit):
-    circuit = QuantumCircuit(2, 2)
-    with pytest.raises(ValueError, match='has not been transpiled against the current backend'):
-        backend.serialize_circuit(circuit)
+def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_architecture_3q):
+    client = IQMClient(url="http://some_url")
+    client._token_manager = None  # Do not use authentication
+    when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    expect(requests, times=1).post(client._base_url, ANY).thenReturn(
+        MockJsonResponse(201, {'id': str(uuid.UUID('3c3fcda3-e860-46bf-92a4-bcc59fa76ce9'))})
+    )
+    backend = IQMBackend(client)
+    circuit = QuantumCircuit(3)
+    circuit.cz(0, 2)
+    with pytest.raises(CircuitExecutionError):
+        backend.run(circuit)
 
 
 def test_serialize_circuit_raises_error_for_unsupported_instruction(backend, circuit):

@@ -14,7 +14,8 @@
 """Testing and mocking utility functions.
 """
 from functools import partial
-from typing import Any, Callable, Literal, TypedDict, cast, get_type_hints
+import json
+from typing import Any, Callable, Literal, TypedDict, cast, get_type_hints, Optional
 from unittest.mock import Mock
 from uuid import UUID
 
@@ -29,6 +30,24 @@ from requests import Response
 from iqm.iqm_client import Circuit, Instruction, IQMClient, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
+
+
+class MockJsonResponse:
+    def __init__(self, status_code: int, json_data: dict, history: Optional[list[Response]] = None):
+        self.status_code = status_code
+        self.json_data = json_data
+        self.history = history
+
+    @property
+    def text(self):
+        return json.dumps(self.json_data)
+
+    def json(self):
+        return self.json_data
+
+    def raise_for_status(self):
+        if 400 <= self.status_code < 600:
+            raise requests.HTTPError(f'{self.status_code}', response=self)
 
 
 class AllowedOps(TypedDict):
