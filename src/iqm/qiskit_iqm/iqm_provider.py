@@ -83,32 +83,43 @@ class IQMBackend(IQMBackendBase):
         self._max_circuits = value
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
-        (
-            circuits_serialized,
-            qubit_mapping,
-            calibration_set_id,
-            shots,
-            max_circuit_duration_over_t2,
-            heralding_mode,
-            circuit_metadata,
-        ) = self._prepare_circuits(run_input, **options)
-        # NOTE: make sure client.submit_circuits input is exactly the same as client.create_run_request input in
-        # create_run_request
-        job_id = self.client.submit_circuits(
-            circuits_serialized,
-            qubit_mapping=qubit_mapping,
-            calibration_set_id=calibration_set_id if calibration_set_id else None,
-            shots=shots,
-            max_circuit_duration_over_t2=max_circuit_duration_over_t2,
-            heralding_mode=heralding_mode,
-        )
-        job = IQMJob(self, str(job_id), shots=shots)
-        job.circuit_metadata = circuit_metadata
+        run_request = self.create_run_request(run_input, transpile_circuits=False, **options)
+        job_id = self.client.submit_run_request(run_request)
+        job = IQMJob(self, str(job_id), shots=run_request.shots)
+        job.circuit_metadata = [c.metadata for c in run_request.circuits]
         return job
 
-    def _prepare_circuits(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options):
+    def create_run_request(
+        self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], *, transpile_circuits=True, **options
+    ) -> RunRequest:
+        """Creates a run request without submitting it for execution.
+
+        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run` or
+        Qiskit's :func:`execute` function.
+
+        By default, transpiles the circuits in the same way as Qiskit's :func:`execute` function. Set
+        ``transpile_circuits=False`` to get the same behavior as calling :meth:`run` directly.
+
+        NOTE: because transpilation in Qiskit can be stochastic, the returned run request can be different than what
+        would be sent by a subsequent call to :func:`execute`. To avoid any differences, either set the same value for
+        ``seed_transpiler`` in both calls, or call :meth:`~iqm.iqm_client.IQMClient.submit_run_request` with the
+        returned run request instead of calling :func:`execute`.
+
+        Args:
+            run_input: same as ``run_input`` for :meth:`run`
+            transpile_circuits: If ``True``, transpile circuits in the same way as Qiskit's :func:`execute`.
+                Otherwise don't transpile circuits.
+            options: transpilation options similar to Qiskit's :func:`execute`, and other options similar to :meth:`run`
+
+        Returns:
+            the created run request object
+        """
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
+
+        if transpile_circuits:
+            # TODO: remove this when moving to Qiskit 1.0 which removes the execute function
+            run_input = self._transpile_circuits(run_input, **options)
 
         circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
@@ -138,56 +149,7 @@ class IQMBackend(IQMBackendBase):
             lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
-        circuit_metadata = [c.metadata for c in circuits]
-        return (
-            circuits_serialized,
-            qubit_mapping,
-            calibration_set_id,
-            shots,
-            max_circuit_duration_over_t2,
-            heralding_mode,
-            circuit_metadata,
-        )
 
-    def create_run_request(
-        self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], *, transpile_circuits=True, **options
-    ) -> RunRequest:
-        """Creates a run request without submitting it for execution.
-
-        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run` or
-        Qiskit's :func:`execute` function.
-
-        By default, transpiles the circuits in the same way as Qiskit's :func:`execute` function. Set
-        ``transpile_circuits=False`` to get the same behavior as calling :meth:`run` directly.
-
-        NOTE: because transpilation in Qiskit can be stochastic, the returned run request can be different than what
-        would be sent by a subsequent call to :func:`execute`. To avoid any differences, either set the same value for
-        ``seed_transpiler`` in both calls, or call :meth:`~iqm.iqm_client.IQMClient.submit_run_request` with the
-        returned run request instead of calling :func:`execute`.
-
-        Args:
-            run_input: same as ``run_input`` for :meth:`run`
-            transpile_circuits: If ``True``, transpile circuits in the same way as Qiskit's :func:`execute`.
-                Otherwise don't transpile circuits.
-            options: transpilation options similar to Qiskit's :func:`execute`, and other options similar to :meth:`run`
-
-        Returns:
-            the created run request object
-        """
-        if transpile_circuits:
-            # TODO: remove this when moving to Qiskit 1.0 which removes the execute function
-            run_input = self._transpile_circuits(run_input, **options)
-        (
-            circuits_serialized,
-            qubit_mapping,
-            calibration_set_id,
-            shots,
-            max_circuit_duration_over_t2,
-            heralding_mode,
-            _,
-        ) = self._prepare_circuits(run_input, **options)
-        # NOTE: make sure client.create_run_request input is exactly the same as client.submit_circuits input in
-        # submit_circuits
         return self.client.create_run_request(
             circuits_serialized,
             qubit_mapping=qubit_mapping,
