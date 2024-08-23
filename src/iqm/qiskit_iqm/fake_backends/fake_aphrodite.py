@@ -502,7 +502,7 @@ def IQMFakeAphrodite() -> IQMFakeBackend:
             "QB53": {"0": 0.044, "1": 0.049},
             "QB54": {"0": 0.056, "1": 0.049},
         },
-        name="sample-chip",
+        name="sample-aphrodite-noise-model",
     )
 
     return IQMFakeBackend(architecture, error_profile, name="IQMFakeAphroditeBackend")
