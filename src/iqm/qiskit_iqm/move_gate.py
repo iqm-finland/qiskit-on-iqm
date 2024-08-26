@@ -14,8 +14,8 @@
 """Move gate to be used with Qiskit Quantum Circuits."""
 
 from qiskit.circuit import Gate
-from qiskit.circuit.library import CXGate
 from qiskit.circuit.quantumcircuit import QuantumCircuit, QuantumRegister
+import qiskit.quantum_info as qi
 
 
 class MoveGate(Gate):
@@ -40,23 +40,21 @@ class MoveGate(Gate):
     def __init__(self, label=None):
         """Initializes the move gate"""
         super().__init__("move", 2, [], label=label)
+        self.unitary = qi.Operator(
+            [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+        )
 
     def _define(self):
-        """Pretend that this gate is an SWAP for the purpose of matrix checking.
+        """Pretend that this gate is a SWAP for the purpose of matrix checking.
 
         The |0> needs to be traced out for the resonator 'qubits'.
 
-        gate swap a,b {
-            cx q[0],q[1];
-            cx q[1],q[0];
-            cx q[0],q[1];
-        }
+        gate swap a,b
         """
 
         q = QuantumRegister(2, "q")
-        qc = QuantumCircuit(q, name=self.name)
-        rules = [(CXGate(), [q[0], q[1]], []), (CXGate(), [q[1], q[0]], []), (CXGate(), [q[0], q[1]], [])]
-        for instr, qargs, cargs in rules:
-            qc._append(instr, qargs, cargs)
+        qc = QuantumCircuit(q, name=self.label if self.label else self.name)
+
+        qc.unitary(self.unitary, [q[0], q[1]], label=self.name)
 
         self.definition = qc

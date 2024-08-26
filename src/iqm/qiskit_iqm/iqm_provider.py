@@ -24,7 +24,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
+from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient, RunRequest
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
@@ -66,19 +66,40 @@ class IQMBackend(IQMBackendBase):
 
     @property
     def max_circuits(self) -> Optional[int]:
+        """Maximum number of circuits that should be run in a single batch.
+
+        Currently there is no hard limit on the number of circuits that can be executed in a single batch/job.
+        However, some libraries like Qiskit Experiments use this property to split multi-circuit computational
+        tasks into multiple baches/jobs.
+
+        The default value is ``None``, meaning there is no limit. You can set it to a specific integer
+        value to force these libraries to execute at most that many circuits in a single batch.
+        """
         return self._max_circuits
 
     @max_circuits.setter
     def max_circuits(self, value: Optional[int]) -> None:
-        """Set the max_circuits property to a custom value.
-
-        Generally, this property is set automatically during the construction of backend instance. However, in certain
-        situations (mostly when using qiskit_experiments), user wants to have control over how many circuits are
-        included in a single batch. This setter method makes it easy to override the default value with desired one.
-        """
         self._max_circuits = value
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
+        run_request = self.create_run_request(run_input, **options)
+        job_id = self.client.submit_run_request(run_request)
+        job = IQMJob(self, str(job_id), shots=run_request.shots)
+        job.circuit_metadata = [c.metadata for c in run_request.circuits]
+        return job
+
+    def create_run_request(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> RunRequest:
+        """Creates a run request without submitting it for execution.
+
+        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run`.
+
+        Args:
+            run_input: same as ``run_input`` for :meth:`run`
+            options: same as ``options`` for :meth:`run`
+
+        Returns:
+            the created run request object
+        """
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
 
@@ -110,7 +131,8 @@ class IQMBackend(IQMBackendBase):
             lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
-        job_id = self.client.submit_circuits(
+
+        return self.client.create_run_request(
             circuits_serialized,
             qubit_mapping=qubit_mapping,
             calibration_set_id=calibration_set_id if calibration_set_id else None,
@@ -118,9 +140,6 @@ class IQMBackend(IQMBackendBase):
             max_circuit_duration_over_t2=max_circuit_duration_over_t2,
             heralding_mode=heralding_mode,
         )
-        job = IQMJob(self, str(job_id), shots=shots)
-        job.circuit_metadata = [c.metadata for c in circuits]
-        return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""

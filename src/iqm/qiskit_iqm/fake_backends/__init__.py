@@ -16,4 +16,5 @@
 
 from .fake_adonis import IQMFakeAdonis
 from .fake_apollo import IQMFakeApollo
+from .fake_deneb import IQMFakeDeneb
 from .iqm_fake_backend import IQMErrorProfile, IQMFakeBackend

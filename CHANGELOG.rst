@@ -2,6 +2,45 @@
 Changelog
 =========
 
+Version 13.10
+=============
+
+* Allow inspecting a run request before submitting it for execution. `#115 <https://github.com/iqm-finland/qiskit-on-iqm/pull/115>`_
+* Require ``iqm-client >= 17.8``. `#115 <https://github.com/iqm-finland/qiskit-on-iqm/pull/115>`_
+
+Version 13.9
+============
+
+* Clarify the documentation on automatic transpilation. `#104 <https://github.com/iqm-finland/qiskit-on-iqm/pull/104>`_
+* Added a missing character to the docs.  `#110 <https://github.com/iqm-finland/qiskit-on-iqm/pull/110>`_
+* Added IQMFakeDeneb backend for noisy simulation of the Deneb backend.  `#109 <https://github.com/iqm-finland/qiskit-on-iqm/pull/109>`_
+
+Version 13.8
+============
+
+* Require ``iqm-client >= 17.6``. `#106 <https://github.com/iqm-finland/qiskit-on-iqm/pull/106>`_
+
+Version 13.7
+============
+
+* Show full response error in all cases of receiving a HTTP 4xx error response. `#103 <https://github.com/iqm-finland/qiskit-on-iqm/pull/103>`_
+* Add new job states to support job delete operation in the backend.
+
+Version 13.6
+============
+
+* Update the docstring of ``max_circuits`` property of ``IQMBackend``. `#95 <https://github.com/iqm-finland/qiskit-on-iqm/pull/95>`_
+
+Version 13.5
+============
+
+* Fix ``transpile_example`` so that it works also when less than 5 qubits are available. `#102 <https://github.com/iqm-finland/qiskit-on-iqm/pull/102>`_
+
+Version 13.4
+============
+
+* Fix bug where Qiskit job monitoring could give an error when a job is queued. `#99 <https://github.com/iqm-finland/qiskit-on-iqm/pull/99>`_
+
 Version 13.3
 ============
 

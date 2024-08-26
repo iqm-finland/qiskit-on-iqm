@@ -184,6 +184,23 @@ class IQMJob(JobV1):
             return JobStatus.CANCELLED
         raise RuntimeError(f"Unknown run status '{result.status}'")
 
+    def queue_position(self, refresh: bool = False) -> Optional[int]:
+        """Return the position of the job in the server queue.
+
+        Note:
+            The position is not yet implemented and this function will always
+            return ``None``. The ``refresh`` argument is ignored.
+
+        Args:
+            refresh: If ``True``, re-query the server to get the latest value.
+                Otherwise return the cached value.
+
+        Returns:
+            Position in the queue or ``None`` if position is unknown or not applicable.
+        """
+        # pylint: disable=unused-argument
+        return None
+
     def error_message(self) -> Optional[str]:
         """Returns the error message if job has failed, otherwise returns None."""
         return self._client.get_run_status(uuid.UUID(self._job_id)).message
