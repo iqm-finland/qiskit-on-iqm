@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 13.9 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 13.10 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=05c0b826"></script>
+    <script src="_static/documentation_options.js?v=b0cdb9f3"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -140,8 +140,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.9 documentation - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.9 documentation - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.10 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.10 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -381,6 +381,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-computational-resonator">Using the computational resonator</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#noisy-simulation-of-quantum-circuit-execution">Noisy simulation of quantum circuit execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-a-quantum-circuit-on-a-facade-backend">Running a quantum circuit on a facade backend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-final-circuits-before-submitting-them-for-execution">Inspecting the final circuits before submitting them for execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-advanced-examples">More advanced examples</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-develop-and-contribute">How to develop and contribute</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tagging-and-releasing">Tagging and releasing</a></li>
@@ -475,9 +476,11 @@ quantum computer, and use Qiskit’s <code class="docutils literal notranslate">
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Qiskit’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">qiskit.execute()</span></code> method performs transpilation by default. If you want to inspect the transpiled
-circuits, refer to <cite>circuit_callback</cite> option in the execution options table below. If you want to execute circuits
-without automatic transpilation, you can use the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> method directly; in that case you have to
-take care of transpilation yourself. Method <code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> can be used to transpile circuits.</p>
+circuits, refer to <cite>circuit_callback</cite> option in the execution options table below. See also
+<a class="reference internal" href="#inspecting-the-final-circuits-before-submitting-them-for-execution">Inspecting the final circuits before submitting them for execution</a> for inspecting the actual run request sent for
+execution. If you want to execute circuits without automatic transpilation, you can use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend</span>
+<span class="pre">.run()</span></code> method directly; in that case you have to take care of transpilation yourself. Method
+<code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> can be used to transpile circuits.</p>
 </div>
 <p>You can optionally set IQM backend specific options as additional keyword arguments to the <code class="docutils literal notranslate"><span class="pre">execute</span></code> method (which
 passes the values down to <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>). For example, if you know an ID of a specific calibration set that
@@ -519,7 +522,7 @@ The default value <code class="docutils literal notranslate"><span class="pre">N
 </td>
 </tr>
 <tr class="row-odd"><td><p><cite>heralding_mode</cite></p></td>
-<td><p>Type: <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.HeraldingMode.html#iqm.iqm_client.models.HeraldingMode" title="(in IQM client v17.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeraldingMode</span></code></a>, Example value: <code class="docutils literal notranslate"><span class="pre">&quot;zeros&quot;</span></code>.</p>
+<td><p>Type: <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.HeraldingMode.html#iqm.iqm_client.models.HeraldingMode" title="(in IQM client v17.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeraldingMode</span></code></a>, Example value: <code class="docutils literal notranslate"><span class="pre">&quot;zeros&quot;</span></code>.</p>
 <p>Heralding mode to use during execution. The default value is “none”.</p>
 </td>
 </tr>
@@ -765,6 +768,24 @@ register is not used later, and the circuit is submitted to the IQM server, the 
 are any.</p>
 </div>
 </section>
+<section id="inspecting-the-final-circuits-before-submitting-them-for-execution">
+<h2>Inspecting the final circuits before submitting them for execution<a class="headerlink" href="#inspecting-the-final-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h2>
+<p>It is possible to inspect the final circuits that would be submitted for execution before actually submitting them,
+which can be useful for debugging purposes. This can be done using <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, which returns
+a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v17.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
+parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect the run_request without submitting it for execution</span>
+<span class="n">run_request</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_run_request</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">run_request</span><span class="p">)</span>
+
+<span class="c1"># the following two calls submit exactly the same run request for execution on the server</span>
+<span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">backend</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">submit_run_request</span><span class="p">(</span><span class="n">run_request</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is also possible to print a run request when it is actually submitted by setting the environment variable
+<code class="docutils literal notranslate"><span class="pre">IQM_CLIENT_DEBUG=1</span></code>.</p>
+</section>
 <section id="more-advanced-examples">
 <h2>More advanced examples<a class="headerlink" href="#more-advanced-examples" title="Link to this heading">#</a></h2>
 <p>In this section we demonstrate some less simple examples of using Qiskit on IQM and its interoperability with various
@@ -910,6 +931,7 @@ be created automatically based on the latest version definition in the CHANGELOG
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-computational-resonator">Using the computational resonator</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#noisy-simulation-of-quantum-circuit-execution">Noisy simulation of quantum circuit execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-a-quantum-circuit-on-a-facade-backend">Running a quantum circuit on a facade backend</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-final-circuits-before-submitting-them-for-execution">Inspecting the final circuits before submitting them for execution</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-advanced-examples">More advanced examples</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-develop-and-contribute">How to develop and contribute</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tagging-and-releasing">Tagging and releasing</a></li>

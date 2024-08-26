@@ -31,6 +31,7 @@ iqm.qiskit\_iqm.iqm\_provider.IQMBackend
    
       ~IQMBackend._default_options
       ~IQMBackend.close_client
+      ~IQMBackend.create_run_request
       ~IQMBackend.retrieve_job
       ~IQMBackend.run
       ~IQMBackend.serialize_circuit
