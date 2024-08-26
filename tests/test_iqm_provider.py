@@ -19,7 +19,7 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, matchers, mock, patch, when, expect
+from mockito import ANY, expect, matchers, mock, patch, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
@@ -27,9 +27,9 @@ from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 import requests
 
-from iqm.iqm_client import HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus, CircuitExecutionError
+from iqm.iqm_client import CircuitExecutionError, HeraldingMode, IQMClient, QuantumArchitecture, RunResult, RunStatus
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
-from tests.utils import get_mock_ok_response, MockJsonResponse
+from tests.utils import MockJsonResponse, get_mock_ok_response
 
 
 @pytest.fixture
@@ -114,7 +114,7 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
 
 
 def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_architecture_3q):
-    client = IQMClient(url="http://some_url")
+    client = IQMClient(url='http://some_url')
     client._token_manager = None  # Do not use authentication
     when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
     expect(requests, times=1).post(client._base_url, ANY).thenReturn(

@@ -15,7 +15,7 @@
 """
 from functools import partial
 import json
-from typing import Any, Callable, Literal, TypedDict, cast, get_type_hints, Optional
+from typing import Any, Callable, Literal, Optional, TypedDict, cast, get_type_hints
 from unittest.mock import Mock
 from uuid import UUID
 
