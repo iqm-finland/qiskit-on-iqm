@@ -258,17 +258,16 @@ def test_transpile(backend, circuit):
             assert ((idx1, idx2) in cmap) or ((idx2, idx1) in cmap)
 
 
-def test_run_non_native_circuit_with_the_execute_function(backend, circuit, run_request):
+def test_run_non_native_circuit_with_the_execute_function(backend, circuit, job_id, run_request):
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.cx(0, 2)
 
-    some_id = uuid.uuid4()
-    backend.client.create_run_request = lambda *args, **kwargs: run_request
-    backend.client.submit_run_request = lambda *args, **kwargs: some_id
+    when(backend.client).create_run_request(...).thenReturn(run_request)
+    when(backend.client).submit_run_request(run_request).thenReturn(job_id)
     job = execute(circuit, backend=backend, optimization_level=0)
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(some_id)
+    assert job.job_id() == str(job_id)
 
 
 def test_run_gets_options_from_execute_function(backend, circuit):
@@ -305,20 +304,19 @@ def test_run_single_circuit(backend, circuit, create_run_request_default_kwargs,
     assert job.job_id() == str(job_id)
 
 
-def test_run_sets_circuit_metadata_to_the_job(backend, run_request):
+def test_run_sets_circuit_metadata_to_the_job(backend, run_request, job_id):
     circuit_1 = QuantumCircuit(3)
     circuit_1.cz(0, 1)
     circuit_1.metadata = {'key1': 'value1', 'key2': 'value2'}
     circuit_2 = QuantumCircuit(3)
     circuit_2.cz(0, 1)
     circuit_2.metadata = {'key1': 'value2', 'key2': 'value1'}
-    some_id = uuid.uuid4()
     run_request.circuits = [backend.serialize_circuit(c) for c in [circuit_1, circuit_2]]
-    backend.client.create_run_request = lambda *args, **kwargs: run_request
-    backend.client.submit_run_request = lambda *args, **kwargs: some_id
+    when(backend.client).create_run_request(...).thenReturn(run_request)
+    when(backend.client).submit_run_request(run_request).thenReturn(job_id)
     job = backend.run([circuit_1, circuit_2], shots=10)
     assert isinstance(job, IQMJob)
-    assert job.job_id() == str(some_id)
+    assert job.job_id() == str(job_id)
     assert job.circuit_metadata == [circuit_1.metadata, circuit_2.metadata]
 
 
@@ -524,32 +522,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
         backend.run(circuit_2)
 
 
-def test_create_run_request_with_transpilation(backend, circuit, create_run_request_default_kwargs, run_request):
-    options = {'optimization_level': 0, 'seed_transpiler': 123}
-
-    circuit.h(0)
-    circuit.cx(0, 1)
-    circuit.cx(0, 2)
-
-    circuit_transpiled = transpile(circuit, backend, **options)
-    circuit_serialized = backend.serialize_circuit(circuit_transpiled)
-    kwargs = create_run_request_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2', '2': 'QB3'}}
-
-    # verifies that backend.create_run_request() and execute() call client.create_run_request() with same arguments
-    expect(backend.client, times=2).create_run_request(
-        [circuit_serialized],
-        **kwargs,
-    ).thenReturn(run_request)
-    when(backend.client).submit_run_request(run_request).thenReturn(uuid.uuid4())
-
-    assert backend.create_run_request(circuit, **options) == run_request
-    execute(circuit, backend=backend, **options)
-
-    verifyNoUnwantedInteractions()
-    unstub()
-
-
-def test_create_run_request_without_transpilation(backend, circuit, create_run_request_default_kwargs, run_request):
+def test_create_run_request(backend, circuit, create_run_request_default_kwargs, run_request):
     options = {'optimization_level': 0}
 
     circuit.h(0)
@@ -567,7 +540,7 @@ def test_create_run_request_without_transpilation(backend, circuit, create_run_r
     ).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(uuid.uuid4())
 
-    assert backend.create_run_request(circuit_transpiled, transpile_circuits=False, **options) == run_request
+    assert backend.create_run_request(circuit_transpiled, **options) == run_request
     backend.run(circuit_transpiled, **options)
 
     verifyNoUnwantedInteractions()

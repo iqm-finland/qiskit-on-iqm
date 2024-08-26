@@ -22,7 +22,6 @@ import warnings
 
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.compiler import transpile
 from qiskit.providers import JobStatus, JobV1, Options
 
 from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient, RunRequest
@@ -83,43 +82,26 @@ class IQMBackend(IQMBackendBase):
         self._max_circuits = value
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
-        run_request = self.create_run_request(run_input, transpile_circuits=False, **options)
+        run_request = self.create_run_request(run_input, **options)
         job_id = self.client.submit_run_request(run_request)
         job = IQMJob(self, str(job_id), shots=run_request.shots)
         job.circuit_metadata = [c.metadata for c in run_request.circuits]
         return job
 
-    def create_run_request(
-        self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], *, transpile_circuits=True, **options
-    ) -> RunRequest:
+    def create_run_request(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> RunRequest:
         """Creates a run request without submitting it for execution.
 
-        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run` or
-        Qiskit's :func:`execute` function.
-
-        By default, transpiles the circuits in the same way as Qiskit's :func:`execute` function. Set
-        ``transpile_circuits=False`` to get the same behavior as calling :meth:`run` directly.
-
-        NOTE: because transpilation in Qiskit can be stochastic, the returned run request can be different than what
-        would be sent by a subsequent call to :func:`execute`. To avoid any differences, either set the same value for
-        ``seed_transpiler`` in both calls, or call :meth:`~iqm.iqm_client.IQMClient.submit_run_request` with the
-        returned run request instead of calling :func:`execute`.
+        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run`.
 
         Args:
             run_input: same as ``run_input`` for :meth:`run`
-            transpile_circuits: If ``True``, transpile circuits in the same way as Qiskit's :func:`execute`.
-                Otherwise don't transpile circuits.
-            options: transpilation options similar to Qiskit's :func:`execute`, and other options similar to :meth:`run`
+            options: same as ``options`` for :meth:`run`
 
         Returns:
             the created run request object
         """
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
-
-        if transpile_circuits:
-            # TODO: remove this when moving to Qiskit 1.0 which removes the execute function
-            run_input = self._transpile_circuits(run_input, **options)
 
         circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
@@ -158,44 +140,6 @@ class IQMBackend(IQMBackendBase):
             max_circuit_duration_over_t2=max_circuit_duration_over_t2,
             heralding_mode=heralding_mode,
         )
-
-    def _transpile_circuits(self, circuits: Union[QuantumCircuit, list[QuantumCircuit]], **kwargs) -> QuantumCircuit:
-        """Transpiles circuits in the same way as Qiskit's :func:`execute`."""
-        basis_gates = kwargs['basis_gates'] if 'basis_gates' in kwargs else None
-        coupling_map = kwargs['coupling_map'] if 'coupling_map' in kwargs else None
-        backend_properties = kwargs['backend_properties'] if 'backend_properties' in kwargs else None
-        initial_layout = kwargs['initial_layout'] if 'initial_layout' in kwargs else None
-        seed_transpiler = kwargs['seed_transpiler'] if 'seed_transpiler' in kwargs else None
-        optimization_level = kwargs['optimization_level'] if 'optimization_level' in kwargs else None
-        pass_manager = kwargs['pass_manager'] if 'pass_manager' in kwargs else None
-        if pass_manager is not None:
-            conflicting_args = [
-                key
-                for key, value in {
-                    'basis_gates': basis_gates,
-                    'coupling_map': coupling_map,
-                    'backend_properties': backend_properties,
-                    'initial_layout': initial_layout,
-                    'seed_transpiler': seed_transpiler,
-                    'optimization_level': optimization_level,
-                }.items()
-                if value is not None
-            ]
-            if conflicting_args:
-                raise ValueError(f'The pass_manager parameter conflicts with parameter(s) {conflicting_args}.')
-            circuits_transpiled = pass_manager.run(circuits)
-        else:
-            circuits_transpiled = transpile(
-                circuits,
-                backend=self,
-                basis_gates=basis_gates,
-                coupling_map=coupling_map,
-                backend_properties=backend_properties,
-                initial_layout=initial_layout,
-                seed_transpiler=seed_transpiler,
-                optimization_level=optimization_level,
-            )
-        return circuits_transpiled
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""
