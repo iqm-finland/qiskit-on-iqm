@@ -440,7 +440,7 @@ parameters as :meth:`.IQMBackend.run`.
     run_request = backend.create_run_request(circuit, shots=10)
     print(run_request)
 
-    # the following calls submit exactly the same run request for execution on the server
+    # the following two calls submit exactly the same run request for execution on the server
     backend.run(circuit, shots=10)
     backend.client.submit_run_request(run_request)
 
