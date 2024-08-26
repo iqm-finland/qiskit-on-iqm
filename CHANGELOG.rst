@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.10
+=============
+
+* Allow inspecting a run request before submitting it for execution. `#115 <https://github.com/iqm-finland/qiskit-on-iqm/pull/115>`_
+* Require ``iqm-client >= 17.8``. `#115 <https://github.com/iqm-finland/qiskit-on-iqm/pull/115>`_
 
 Version 13.9
 ============

@@ -24,7 +24,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
+from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient, RunRequest
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
@@ -82,6 +82,24 @@ class IQMBackend(IQMBackendBase):
         self._max_circuits = value
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
+        run_request = self.create_run_request(run_input, **options)
+        job_id = self.client.submit_run_request(run_request)
+        job = IQMJob(self, str(job_id), shots=run_request.shots)
+        job.circuit_metadata = [c.metadata for c in run_request.circuits]
+        return job
+
+    def create_run_request(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> RunRequest:
+        """Creates a run request without submitting it for execution.
+
+        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run`.
+
+        Args:
+            run_input: same as ``run_input`` for :meth:`run`
+            options: same as ``options`` for :meth:`run`
+
+        Returns:
+            the created run request object
+        """
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
 
@@ -113,7 +131,8 @@ class IQMBackend(IQMBackendBase):
             lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
-        job_id = self.client.submit_circuits(
+
+        return self.client.create_run_request(
             circuits_serialized,
             qubit_mapping=qubit_mapping,
             calibration_set_id=calibration_set_id if calibration_set_id else None,
@@ -121,9 +140,6 @@ class IQMBackend(IQMBackendBase):
             max_circuit_duration_over_t2=max_circuit_duration_over_t2,
             heralding_mode=heralding_mode,
         )
-        job = IQMJob(self, str(job_id), shots=shots)
-        job.circuit_metadata = [c.metadata for c in circuits]
-        return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""
