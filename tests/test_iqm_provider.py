@@ -19,7 +19,7 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, expect, matchers, mock, patch, unstub, verifyNoUnwantedInteractions, when
+from mockito import ANY, expect, matchers, mock, unstub, verifyNoUnwantedInteractions, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
