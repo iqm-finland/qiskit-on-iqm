@@ -278,7 +278,7 @@ def test_transpile(backend, circuit):
             assert ((idx1, idx2) in cmap) or ((idx2, idx1) in cmap)
 
 
-def test_run_non_native_circuit_with_the_execute_function(backend, circuit, job_id, run_request):
+def test_run_non_native_circuit(backend, circuit, job_id, run_request):
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.cx(0, 2)
@@ -289,29 +289,6 @@ def test_run_non_native_circuit_with_the_execute_function(backend, circuit, job_
     job = backend.run(transpiled_circuit)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(job_id)
-
-
-def test_run_gets_options_from_execute_function(backend, circuit):
-    """Test that any additional keyword arguments to the `execute` function are passed to `IQMBackend.run`. This is more
-    of a test for Qiskit's `execute` function itself, but still good to have it here to know that the use case works.
-    Execute used to be a wrapper for transpile and backend.run which has been removed in Qiskit 1.0.0.
-    """
-
-    def run_mock(qc, **kwargs):
-        assert isinstance(qc, QuantumCircuit)
-        assert 'calibration_set_id' in kwargs
-        assert kwargs['calibration_set_id'] == '92d8dd9a-2678-467e-a20b-ef9c1a594d1f'
-        assert 'something_else' in kwargs
-        assert kwargs['something_else'] == [1, 2, 3]
-
-    transpiled_circuit = transpile(circuit, backend)
-    patch(backend.run, run_mock)
-    backend.run(
-        transpiled_circuit,
-        shots=10,
-        calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f',
-        something_else=[1, 2, 3],
-    )
 
 
 def test_run_single_circuit(backend, circuit, create_run_request_default_kwargs, job_id, run_request):
