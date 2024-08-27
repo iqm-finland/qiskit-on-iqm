@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This file is an example of using Qiskit on IQM to execute a simple but non-trivial quantum circuit on an IQM quantum
+"""This file is an example of using Qiskit on IQM to run a simple but non-trivial quantum circuit on an IQM quantum
 computer. See the Qiskit on IQM user guide for instructions:
 https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 """
@@ -25,7 +25,7 @@ from iqm.qiskit_iqm.iqm_provider import IQMProvider
 
 
 def transpile_example(server_url: str) -> tuple[QuantumCircuit, dict[str, int]]:
-    """Execute a circuit transpiled using transpile_to_IQM function.
+    """Run a circuit transpiled using transpile_to_IQM function.
 
     Args:
         server_url: URL of the IQM Cortex server used for execution

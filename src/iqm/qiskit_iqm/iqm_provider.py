@@ -73,7 +73,7 @@ class IQMBackend(IQMBackendBase):
         tasks into multiple baches/jobs.
 
         The default value is ``None``, meaning there is no limit. You can set it to a specific integer
-        value to force these libraries to execute at most that many circuits in a single batch.
+        value to force these libraries to run at most that many circuits in a single batch.
         """
         return self._max_circuits
 
