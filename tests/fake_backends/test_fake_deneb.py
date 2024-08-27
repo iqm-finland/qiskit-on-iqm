@@ -14,6 +14,8 @@
 
 """Testing fake Deneb backend.
 """
+import re
+
 import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit_aer.noise.noise_model import NoiseModel
@@ -52,7 +54,10 @@ def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
     qc.measure(q, c)
 
     with pytest.raises(
-        ValueError, match=r"Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."
+        ValueError,
+        match=re.escape(
+            "Operations to qubits Qubit(QuantumRegister(7, 'q'), 1) while their states are moved to a resonator."
+        ),
     ):
         backend.run(transpile(qc, backend=backend), shots=1000)
 
@@ -71,7 +76,11 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
     qc.measure(q, c)
 
     with pytest.raises(
-        ValueError, match=r"Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."
+        ValueError,
+        match=re.escape(
+            "Cannot apply MOVE on Qubit(QuantumRegister(6, 'q'), 1) because COMP_R already holds the state of "
+            + "Qubit(QuantumRegister(6, 'q'), 0)."
+        ),
     ):
         backend.run(qc, shots=1000)
 
@@ -89,7 +98,10 @@ def test_move_gate_not_closed():
 
     with pytest.raises(
         ValueError,
-        match=r"The following resonators are still holding qubit states at the end of the circuit: {'COMP_R': 'QB1'}.",
+        match=re.escape(
+            "The following resonators are still holding qubit states at the end of the circuit: "
+            + "Qubit(QuantumRegister(6, 'q'), 0)."
+        ),
     ):
         backend.run(qc, shots=1000)
 

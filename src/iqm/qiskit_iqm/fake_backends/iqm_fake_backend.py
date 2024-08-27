@@ -325,9 +325,7 @@ class IQMFakeBackend(IQMBackendBase):
                             and node.qargs[0] == qubits_involved_in_last_move[0]
                         ):
                             raise ValueError(
-                                "Operations to qubits '{'QB"
-                                + str(qubits_involved_in_last_move[0]._index + 1)
-                                + "'}' while their states are moved to a resonator."
+                                f"Operations to qubits {node.qargs[0]} while their states are moved to a resonator."
                             )
                     if node.op.name == "move":
                         if qubits_involved_in_last_move is None:
@@ -335,11 +333,8 @@ class IQMFakeBackend(IQMBackendBase):
                             qubits_involved_in_last_move = node.qargs
                         elif qubits_involved_in_last_move != node.qargs:
                             raise ValueError(
-                                "Cannot apply MOVE on 'QB"
-                                + str(node.qargs[0]._index + 1)
-                                + "' because COMP_R already holds the state of 'QB"
-                                + str(qubits_involved_in_last_move[0]._index + 1)
-                                + "'."
+                                f"Cannot apply MOVE on {node.qargs[0]} because COMP_R already holds the state of "
+                                + f"{qubits_involved_in_last_move[0]}."
                             )
                         else:
                             # MOVE OUT was performed
@@ -347,10 +342,8 @@ class IQMFakeBackend(IQMBackendBase):
 
                 if qubits_involved_in_last_move is not None:
                     raise ValueError(
-                        "The following resonators are still holding qubit states "
-                        + "at the end of the circuit: {'COMP_R': 'QB"
-                        + str(qubits_involved_in_last_move[0]._index + 1)
-                        + "'}."
+                        "The following resonators are still holding qubit states at the end of the circuit: "
+                        + f"{qubits_involved_in_last_move[0]}."
                     )
 
                 return dag

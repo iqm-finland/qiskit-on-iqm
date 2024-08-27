@@ -139,8 +139,8 @@ class IQMMoveLayout(TrivialLayout):
                 # The move operation requires that the first operand is the move qubit,
                 # and the second must be the resonator
                 (qubit, resonator) = node.qargs
-                _require_type(qubit._index, 'move_qubit', 'move')
-                _require_type(resonator._index, 'resonator', 'move')
+                _require_type(dag.qubits.index(qubit), 'move_qubit', 'move')
+                _require_type(dag.qubits.index(resonator), 'resonator', 'move')
 
         return required_types
 
