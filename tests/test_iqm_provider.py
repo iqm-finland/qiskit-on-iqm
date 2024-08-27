@@ -139,7 +139,9 @@ def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, line
     backend = IQMBackend(client)
     circuit = QuantumCircuit(3)
     circuit.cz(0, 2)
-    with pytest.raises(CircuitExecutionError):
+    with pytest.raises(
+        CircuitExecutionError, match=re.escape("'0', '2') = ('QB1', 'QB3') not allowed as locus for cz")
+    ):
         backend.run(circuit)
 
 
