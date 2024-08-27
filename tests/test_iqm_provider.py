@@ -567,7 +567,7 @@ def test_create_run_request(backend, circuit, create_run_request_default_kwargs,
     when(backend.client).submit_run_request(run_request).thenReturn(uuid.uuid4())
 
     assert backend.create_run_request(circuit_transpiled, **options) == run_request
-    backend.run(circuit_transpiled, **options)
+    backend.run(circuit_transpiled)
 
     verifyNoUnwantedInteractions()
     unstub()
