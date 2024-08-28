@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.12
+=============
+
+* Add IQMFakeAphrodite backend `#113 <https://github.com/iqm-finland/qiskit-on-iqm/pull/113>`_
+
 Version 13.11
 =============
 

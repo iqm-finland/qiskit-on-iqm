@@ -24,6 +24,11 @@ Then to build and view the docs run:
    $ tox -e docs
    $ firefox build/sphinx/html/index.html
 
+Format your code:
+
+.. code-block:: bash
+
+   $ tox -e format
 
 Run the tests:
 
