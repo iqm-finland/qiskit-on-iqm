@@ -29,12 +29,12 @@ from qiskit.compiler import transpile
 import requests
 
 from iqm.iqm_client import (
+    CircuitCompilationOptions,
     HeraldingMode,
     IQMClient,
     QuantumArchitecture,
     RunResult,
     RunStatus,
-    CircuitCompilationOptions,
 )
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
 from tests.utils import get_mock_ok_response

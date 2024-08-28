@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from collections import Counter
 from datetime import date
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 import uuid
 import warnings
 
@@ -37,6 +37,9 @@ from iqm.iqm_client import (
 )
 from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
 
+if TYPE_CHECKING:
+    from iqm.qiskit_iqm.iqm_provider import IQMBackend
+
 
 class IQMJob(JobV1):
     """Implementation of Qiskit's job interface to handle circuit execution on an IQM server.
@@ -48,7 +51,7 @@ class IQMJob(JobV1):
         **kwargs: arguments to be passed to the initializer of the parent class
     """
 
-    def __init__(self, backend: 'qiskit_iqm.IQMBackend', job_id: str, timeout_seconds: Optional[float] = None, **kwargs):  # type: ignore
+    def __init__(self, backend: IQMBackend, job_id: str, timeout_seconds: Optional[float] = None, **kwargs):
         super().__init__(backend, job_id=job_id, **kwargs)
         self._result: Union[None, list[tuple[str, list[str]]]] = None
         self._calibration_set_id: Optional[uuid.UUID] = None
