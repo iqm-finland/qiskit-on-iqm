@@ -2,13 +2,25 @@
 Changelog
 =========
 
-Version 13.11
+Version 13.13
 =============
 
 * Adjustments needed to support Qiskit V1 that are backwards compatible with ``qiskit < 1.0``. `#114 <https://github.com/iqm-finland/qiskit-on-iqm/pull/114>`_
 * Updated Qiskit dependencies and testing to support ``qiskit >= 0.45.3 < 1.2`` and ``qiskit-aer >= 0.13 < 0.15``. 
 * Adjusted documentation to recommend the use of :meth:`qiskit.transpile()` or :meth:`transpile_to_IQM()` in combination with :meth:`backend.run()` instead of using :meth:`execute()`.
 * Added a DeprecationWarning for use of ``qiskit < 1.0``. Users are encouraged to read the `Qiskit migration guide <https://docs.quantum.ibm.com/migration-guides>`_ to see how they need to change their code. 
+
+Version 13.12
+=============
+
+* Add IQMFakeAphrodite backend `#113 <https://github.com/iqm-finland/qiskit-on-iqm/pull/113>`_
+
+Version 13.11
+=============
+
+* Added the option to change the timeout between waiting for results when a job is submitted. `Github issue #108 <https://github.com/iqm-finland/qiskit-on-iqm/issues/108>`_
+* Added support for optional MOVE gate validation bypassing for advanced users. `#112 <https://github.com/iqm-finland/qiskit-on-iqm/pull/112>`_
+* Require ``iqm-client >= 18.0``. `iqm-client PR #124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 
 Version 13.10
 =============

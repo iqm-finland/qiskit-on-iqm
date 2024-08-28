@@ -28,8 +28,14 @@ def test_move_gate_trivial_layout(new_architecture):
     qc.append(MoveGate(), [6, 0])
     qc.cz(0, 3)
     qc.cz(2, 0)
+    qc.append(MoveGate(), [6, 0])
     submitted_circuit = get_transpiled_circuit_json(qc, new_architecture)
-    assert [describe_instruction(i) for i in submitted_circuit.instructions] == ['move:6,0', 'cz:0,3', 'cz:2,0']
+    assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
+        'move:6,0',
+        'cz:0,3',
+        'cz:2,0',
+        'move:6,0',
+    ]
 
 
 def test_move_gate_nontrivial_layout(new_architecture):
@@ -49,10 +55,11 @@ def test_mapped_move_qubit(new_architecture):
     initial layout using the IQMMoveLayout() layout pass.
     """
     qc = QuantumCircuit(7)
+    qc.append(MoveGate(), [3, 0])
     qc.cz(0, 2)
     qc.append(MoveGate(), [3, 0])
     submitted_circuit = get_transpiled_circuit_json(qc, new_architecture, create_move_layout=True)
-    assert [describe_instruction(i) for i in submitted_circuit.instructions] == ['cz:0,2', 'move:6,0']
+    assert [describe_instruction(i) for i in submitted_circuit.instructions] == ['move:6,0', 'cz:0,2', 'move:6,0']
 
 
 def test_mapped_move_qubit_and_resonator(new_architecture):
@@ -99,7 +106,6 @@ def test_transpiled_circuit(new_architecture):
     qc = IQMCircuit(7, 2)
     qc.move(6, 0)
     qc.cz(0, 3)
-    qc.h(6)
     qc.h(4)
     qc.cz(4, 0)
     qc.barrier()
@@ -118,8 +124,6 @@ def test_transpiled_circuit(new_architecture):
         # cz(4, 0) is optimized before h(6)
         'cz:4,0',
         # h(6)
-        'prx:6',
-        'prx:6',
         # barrier()
         'barrier:0,1,2,3,4,5,6',
         # move (6, 0)

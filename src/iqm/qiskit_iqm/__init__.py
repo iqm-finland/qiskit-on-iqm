@@ -17,7 +17,7 @@ from warnings import warn
 
 from qiskit import __version__ as qiskit_version
 
-from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFakeApollo, IQMFakeDeneb
+from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFakeAphrodite, IQMFakeApollo, IQMFakeDeneb
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 from iqm.qiskit_iqm.iqm_job import IQMJob
