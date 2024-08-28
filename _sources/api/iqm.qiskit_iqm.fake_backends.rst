@@ -29,6 +29,7 @@ iqm.qiskit\_iqm.fake\_backends
    :recursive:
 
    ~iqm.qiskit_iqm.fake_backends.fake_adonis
+   ~iqm.qiskit_iqm.fake_backends.fake_aphrodite
    ~iqm.qiskit_iqm.fake_backends.fake_apollo
    ~iqm.qiskit_iqm.fake_backends.fake_deneb
    ~iqm.qiskit_iqm.fake_backends.iqm_fake_backend
