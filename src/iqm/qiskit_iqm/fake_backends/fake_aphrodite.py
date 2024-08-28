@@ -19,6 +19,7 @@ from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFa
 
 def IQMFakeAphrodite() -> IQMFakeBackend:
     """Return IQMFakeBackend instance representing IQM's Aphrodite architecture."""
+    # pylint: disable=duplicate-code
     qubits = [
         "QB1",
         "QB2",
