@@ -28,8 +28,8 @@ from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 import requests
 
 from iqm.iqm_client import (
-    CircuitExecutionError,
     CircuitCompilationOptions,
+    CircuitExecutionError,
     HeraldingMode,
     IQMClient,
     QuantumArchitecture,
@@ -38,7 +38,7 @@ from iqm.iqm_client import (
     RunStatus,
 )
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMJob, IQMProvider
-from tests.utils import MockJsonResponse, get_mock_ok_response
+from tests.utils import get_mock_ok_response
 
 
 @pytest.fixture
