@@ -7,7 +7,7 @@ Version 13.11
 
 * Adjustments needed to support Qiskit V1 that are backwards compatible with ``qiskit < 1.0``. `#114 <https://github.com/iqm-finland/qiskit-on-iqm/pull/114>`_
 * Updated Qiskit dependencies and testing to support ``qiskit >= 0.45.3 < 1.2`` and ``qiskit-aer >= 0.13 < 0.15``. 
-* Adjusted documentation to recommend the use to :meth:`qiskit.transpile()` or :meth:`transpile_to_IQM()` in combination with :meth:`backend.run()` instead of using :meth:`execute()`.
+* Adjusted documentation to recommend the use of :meth:`qiskit.transpile()` or :meth:`transpile_to_IQM()` in combination with :meth:`backend.run()` instead of using :meth:`execute()`.
 * Added a DeprecationWarning for use of ``qiskit < 1.0``. Users are encouraged to read the `Qiskit migration guide <https://docs.quantum.ibm.com/migration-guides>`_ to see how they need to change their code. 
 
 Version 13.10

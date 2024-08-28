@@ -133,9 +133,6 @@ def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, line
     client = IQMClient(url='http://some_url')
     client._token_manager = None  # Do not use authentication
     when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
-    expect(requests, times=1).post(client._base_url, ANY).thenReturn(
-        MockJsonResponse(201, {'id': str(uuid.UUID('3c3fcda3-e860-46bf-92a4-bcc59fa76ce9'))})
-    )
     backend = IQMBackend(client)
     circuit = QuantumCircuit(3)
     circuit.cz(0, 2)
@@ -543,7 +540,7 @@ def test_create_run_request(backend, circuit, create_run_request_default_kwargs,
     ).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(uuid.uuid4())
 
-    assert backend.create_run_request(circuit_transpiled, **options) == run_request
+    assert backend.create_run_request(circuit_transpiled) == run_request
     backend.run(circuit_transpiled)
 
     verifyNoUnwantedInteractions()

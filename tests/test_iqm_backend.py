@@ -65,7 +65,6 @@ def test_transpile(backend):
 
     circuit_transpiled = transpile(circuit, backend=backend)
     cmap = backend.coupling_map.get_edges()
-    print(circuit_transpiled.data)
     for instr in circuit_transpiled.data:
         instruction = instr.operation
         qubits = instr.qubits
