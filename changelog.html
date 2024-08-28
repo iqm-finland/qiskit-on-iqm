@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; Qiskit on IQM 13.12 documentation</title>
+    <title>Changelog &#8212; Qiskit on IQM 13.13 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1c45bb88"></script>
+    <script src="_static/documentation_options.js?v=a7b93995"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -137,8 +137,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.12 documentation - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.12 documentation - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.13 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.13 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -373,6 +373,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-13">Version 13.13</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-12">Version 13.12</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-11">Version 13.11</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-10">Version 13.10</a></li>
@@ -468,6 +469,15 @@ document.write(`
                   
   <section id="changelog">
 <span id="changes"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
+<section id="version-13-13">
+<h2>Version 13.13<a class="headerlink" href="#version-13-13" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Adjustments needed to support Qiskit V1 that are backwards compatible with <code class="docutils literal notranslate"><span class="pre">qiskit</span> <span class="pre">&lt;</span> <span class="pre">1.0</span></code>. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/114">#114</a></p></li>
+<li><p>Updated Qiskit dependencies and testing to support <code class="docutils literal notranslate"><span class="pre">qiskit</span> <span class="pre">&gt;=</span> <span class="pre">0.45.3</span> <span class="pre">&lt;</span> <span class="pre">1.2</span></code> and <code class="docutils literal notranslate"><span class="pre">qiskit-aer</span> <span class="pre">&gt;=</span> <span class="pre">0.13</span> <span class="pre">&lt;</span> <span class="pre">0.15</span></code>.</p></li>
+<li><p>Adjusted documentation to recommend the use of <code class="xref py py-meth docutils literal notranslate"><span class="pre">qiskit.transpile()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> in combination with <code class="xref py py-meth docutils literal notranslate"><span class="pre">backend.run()</span></code> instead of using <code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code>.</p></li>
+<li><p>Added a DeprecationWarning for use of <code class="docutils literal notranslate"><span class="pre">qiskit</span> <span class="pre">&lt;</span> <span class="pre">1.0</span></code>. Users are encouraged to read the <a class="reference external" href="https://docs.quantum.ibm.com/migration-guides">Qiskit migration guide</a> to see how they need to change their code.</p></li>
+</ul>
+</section>
 <section id="version-13-12">
 <h2>Version 13.12<a class="headerlink" href="#version-13-12" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -1033,6 +1043,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-13">Version 13.13</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-12">Version 13.12</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-11">Version 13.11</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-13-10">Version 13.10</a></li>

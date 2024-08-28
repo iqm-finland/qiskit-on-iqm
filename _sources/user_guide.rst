@@ -16,7 +16,7 @@ code snippets and check the output yourself.
 Hello, world!
 -------------
 
-Here's the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
+Here's the quickest and easiest way to run a small computation on an IQM quantum computer and check that
 things are set up correctly:
 
 1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py>`_ (Save Page As...)
@@ -78,39 +78,40 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
                                0  1  2
 
 
-To execute this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider` instance
+To run this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider` instance
 with the IQM server URL, use it to retrieve an :class:`.IQMBackend` instance representing the
-quantum computer, and use Qiskit's ``execute`` function as usual:
+quantum computer, and use Qiskit's :meth:`transpile` function followed by :meth:`backend.run` as usual:
 
 .. code-block:: python
 
-    from qiskit import execute
+    from qiskit import transpile
     from iqm.qiskit_iqm import IQMProvider
 
     iqm_server_url = "https://demo.qc.iqm.fi/cocos/"  # Replace this with the correct URL
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
 
-    job = execute(qc, backend, shots=1000)
+    transpiled_circuit = transpile(qc, backend=backend)
+    job = backend.run(transpiled_circuit, shots=1000)
 
     print(job.result().get_counts())
 
 .. note::
 
-   Qiskit's :meth:`qiskit.execute` method performs transpilation by default. If you want to inspect the transpiled
-   circuits, refer to `circuit_callback` option in the execution options table below. See also
+   If you want to inspect the circuits that are sent to the device, refer to `circuit_callback` option in the execution options table below. See also
    `Inspecting the final circuits before submitting them for execution`_ for inspecting the actual run request sent for
-   execution. If you want to execute circuits without automatic transpilation, you can use the :meth:`.IQMBackend
-   .run` method directly; in that case you have to take care of transpilation yourself. Method
-   :func:`transpile_to_IQM` can be used to transpile circuits.
+   execution. As of ``qiskit >= 1.0``, Qiskit no longer supports :meth:`execute`, but in all supported versions it is possible
+   to first transpile the ciruit and then run as shown in the code above. Alternatively, the method
+   :func:`transpile_to_IQM` can also be used to transpile circuits. In particular, when running circuits on devices with a
+   resonator, it is recommended to use :func:`transpile_to_IQM` instead of :meth:`transpile`.
 
-You can optionally set IQM backend specific options as additional keyword arguments to the ``execute`` method (which
-passes the values down to :meth:`.IQMBackend.run`). For example, if you know an ID of a specific calibration set that
+You can optionally set IQM backend specific options as additional keyword arguments to the :meth:`.IQMBackend.run` method. 
+For example, if you know an ID of a specific calibration set that
 you want to use, you can provide it as follows:
 
 .. code-block:: python
 
-    job = execute(qc, backend, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+    job = backend.run(qc, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
 
 Alternatively, you can update the values of the options directly on the backend instance using the :meth:`.IQMBackend.set_options`
@@ -238,7 +239,7 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
     Native operations of the backend: ['id', 'r', 'cz', 'measure']
     Coupling map of the backend: [[0, 2], [2, 0], [1, 2], [2, 1], [2, 3], [3, 2], [2, 4], [4, 2]]
 
-Note that for IQM backends the identiy gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
+Note that for IQM backends the identity gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
@@ -365,7 +366,7 @@ pre-populated properties and noise model.
 
 .. code-block:: python
 
-    from qiskit import execute, QuantumCircuit
+    from qiskit import transpile, QuantumCircuit
     from iqm.qiskit_iqm import IQMFakeAdonis
 
     circuit = QuantumCircuit(2)
@@ -374,7 +375,8 @@ pre-populated properties and noise model.
     circuit.measure_all()
 
     backend = IQMFakeAdonis()
-    job = execute(circuit, backend, shots=1000)
+    transpiled_circuit = transpile(circuit, backend=backend)
+    job = backend.run(transpiled_circuit, shots=1000)
     job.result().get_counts()
 
 
@@ -404,7 +406,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
 
 .. code-block:: python
 
-    from qiskit import execute, QuantumCircuit
+    from qiskit import transpile, QuantumCircuit
     from iqm.qiskit_iqm import IQMProvider
 
     circuit = QuantumCircuit(2)
@@ -415,7 +417,8 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
     iqm_server_url = "https://demo.qc.iqm.fi/cocos/"  # Replace this with the correct URL
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend('facade_adonis')
-    job = execute(circuit, backend, shots=1000)
+    transpiled_circuit = transpile(circuit, backend=backend)
+    job = backend.run(transpiled_circuit, shots=1000)
     job.result().get_counts()
 
 .. note::
@@ -471,11 +474,12 @@ let's construct two circuits preparing and measuring different Bell states:
     qc_2.cx(0, 1)
     qc_2.measure_all()
 
-Now, we can execute them together in a batch:
+Now, we can run them together in a batch:
 
 .. code-block:: python
 
-    job = execute([qc_1, qc_2], backend, initial_layout=[0, 2], shots=1000)
+    transpiled_qcs = transpile([qc_1, qc_2], backend=backend)
+    job = backend.run(transpiled_qcs, backend, initial_layout=[0, 2], shots=1000)
     print(job.result().get_counts())
 
 The batch execution functionality can be used to run a parameterized circuit for various concrete values of parameters:
@@ -500,7 +504,7 @@ The batch execution functionality can be used to run a parameterized circuit for
     qc_transpiled = transpile(qc, backend=backend, layout_method='sabre', optimization_level=3)
 
     circuits = [qc_transpiled.assign_parameters({theta: n}) for n in theta_range]
-    job = execute(circuits, backend, shots=1000, optimization_level=0)
+    job = backend.run(circuits, shots=1000)
 
     print(job.result().get_counts())
 

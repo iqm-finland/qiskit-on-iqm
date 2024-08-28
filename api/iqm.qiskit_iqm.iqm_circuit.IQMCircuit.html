@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.iqm_circuit.IQMCircuit &#8212; Qiskit on IQM 13.12 documentation</title>
+    <title>iqm.qiskit_iqm.iqm_circuit.IQMCircuit &#8212; Qiskit on IQM 13.13 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=1c45bb88"></script>
+    <script src="../_static/documentation_options.js?v=a7b93995"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -138,8 +138,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.12 documentation - Home"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.12 documentation - Home"/>`);</script>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.13 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.13 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -393,12 +393,94 @@ document.write(`
 <h1>iqm.qiskit_iqm.iqm_circuit.IQMCircuit<a class="headerlink" href="#iqm-qiskit-iqm-iqm-circuit-iqmcircuit" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_circuit.IQMCircuit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_circuit.</span></span><span class="sig-name descname"><span class="pre">IQMCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">regs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_circuit.IQMCircuit" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_circuit.</span></span><span class="sig-name descname"><span class="pre">IQMCircuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">regs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">captures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_circuit.IQMCircuit" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code></a></p>
 <p>Extends the QuantumCircuit class, adding a shortcut for applying the MOVE gate.</p>
+<p>Default constructor of <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regs</strong> (<em>Register</em><em> | </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> | </em><em>Sequence</em><em>[</em><em>Bit</em><em>]</em>) – <p>The registers to be included in the circuit.</p>
+<ul>
+<li><p>If a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Register</span></code> objects, represents the <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumRegister</span></code>
+and/or <code class="xref py py-class docutils literal notranslate"><span class="pre">ClassicalRegister</span></code> objects to include in the circuit.</p>
+<p>For example:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">QuantumCircuit(QuantumRegister(4))</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QuantumCircuit(QuantumRegister(4),</span> <span class="pre">ClassicalRegister(3))</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QuantumCircuit(QuantumRegister(4,</span> <span class="pre">'qr0'),</span> <span class="pre">QuantumRegister(2,</span> <span class="pre">'qr1'))</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>If a list of <code class="docutils literal notranslate"><span class="pre">int</span></code>, the amount of qubits and/or classical bits to include in
+the circuit. It can either be a single int for just the number of quantum bits,
+or 2 ints for the number of quantum bits and classical bits, respectively.</p>
+<p>For example:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">QuantumCircuit(4)</span> <span class="pre">#</span> <span class="pre">A</span> <span class="pre">QuantumCircuit</span> <span class="pre">with</span> <span class="pre">4</span> <span class="pre">qubits</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QuantumCircuit(4,</span> <span class="pre">3)</span> <span class="pre">#</span> <span class="pre">A</span> <span class="pre">QuantumCircuit</span> <span class="pre">with</span> <span class="pre">4</span> <span class="pre">qubits</span> <span class="pre">and</span> <span class="pre">3</span> <span class="pre">classical</span> <span class="pre">bits</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>If a list of python lists containing <code class="xref py py-class docutils literal notranslate"><span class="pre">Bit</span></code> objects, a collection of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Bit</span></code> s to be added to the circuit.</p></li>
+</ul>
+</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> | </em><em>None</em>) – the name of the quantum circuit. If not set, an automatically generated string
+will be assigned.</p></li>
+<li><p><strong>global_phase</strong> (<em>ParameterValueType</em>) – The global phase of the circuit in radians.</p></li>
+<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> | </em><em>None</em>) – Arbitrary key value metadata to associate with the circuit. This gets
+stored as free-form data in a dict in the
+<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit#metadata" title="(in Qiskit v1.2)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a> attribute. It will not be directly
+used in the circuit.</p></li>
+<li><p><strong>inputs</strong> (<em>Iterable</em><em>[</em><em>expr.Var</em><em>]</em>) – any variables to declare as <code class="docutils literal notranslate"><span class="pre">input</span></code> runtime variables for this circuit.  These
+should already be existing <code class="xref py py-class docutils literal notranslate"><span class="pre">expr.Var</span></code> nodes that you build from somewhere
+else; if you need to create the inputs as well, use
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">QuantumCircuit.add_input()</span></code>.  The variables given in this argument will be
+passed directly to <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_input()</span></code>.  A circuit cannot have both <code class="docutils literal notranslate"><span class="pre">inputs</span></code> and
+<code class="docutils literal notranslate"><span class="pre">captures</span></code>.</p></li>
+<li><p><strong>captures</strong> (<em>Iterable</em><em>[</em><em>expr.Var</em><em>]</em>) – any variables that that this circuit scope should capture from a containing
+scope.  The variables given here will be passed directly to <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_capture()</span></code>.  A
+circuit cannot have both <code class="docutils literal notranslate"><span class="pre">inputs</span></code> and <code class="docutils literal notranslate"><span class="pre">captures</span></code>.</p></li>
+<li><p><strong>declarations</strong> (<em>Mapping</em><em>[</em><em>expr.Var</em><em>, </em><em>expr.Expr</em><em>] </em><em>| </em><em>Iterable</em><em>[</em><em>Tuple</em><em>[</em><em>expr.Var</em><em>, </em><em>expr.Expr</em><em>]</em><em>]</em>) – <p>any variables that this circuit should declare and initialize immediately.
+You can order this input so that later declarations depend on earlier ones
+(including inputs or captures). If you need to depend on values that will be
+computed later at runtime, use <code class="xref py py-meth docutils literal notranslate"><span class="pre">add_var()</span></code> at an appropriate point in the
+circuit execution.</p>
+<p>This argument is intended for convenient circuit initialization when you already
+have a set of created variables.  The variables used here will be directly passed to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_var()</span></code>, which you can use directly if this is the first time you are
+creating the variable.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>CircuitError</strong> – if the circuit name, if given, is not valid.</p></li>
+<li><p><strong>CircuitError</strong> – if both <code class="docutils literal notranslate"><span class="pre">inputs</span></code> and <code class="docutils literal notranslate"><span class="pre">captures</span></code> are given.</p></li>
+</ul>
+</dd>
+</dl>
 <p class="rubric">Attributes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>A human-readable name for the circuit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">qregs</span></code></p></td>
+<td><p>A list of the <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumRegister</span></code>s in this circuit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cregs</span></code></p></td>
+<td><p>A list of the <code class="xref py py-class docutils literal notranslate"><span class="pre">ClassicalRegister</span></code>s in this circuit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">duration</span></code></p></td>
+<td><p>The total duration of the circuit, set by a scheduling transpiler pass.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unit</span></code></p></td>
+<td><p>The unit that <code class="xref py py-attr docutils literal notranslate"><span class="pre">duration</span></code> is specified in.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -411,16 +493,6 @@ document.write(`
 </tbody>
 </table>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>regs</strong> (<em>Register</em><em> | </em><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> | </em><em>Sequence</em><em>[</em><em>Bit</em><em>]</em>) – </p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> | </em><em>None</em>) – </p></li>
-<li><p><strong>global_phase</strong> (<em>ParameterValueType</em>) – </p></li>
-<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> | </em><em>None</em>) – </p></li>
-</ul>
-</dd>
-</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_circuit.IQMCircuit.move">
 <span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qubit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resonator</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_circuit.IQMCircuit.move" title="Link to this definition">#</a></dt>

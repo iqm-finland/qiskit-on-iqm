@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 13.12 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 13.13 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1c45bb88"></script>
+    <script src="_static/documentation_options.js?v=a7b93995"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -140,8 +140,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.12 documentation - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.12 documentation - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.13 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.13 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -409,7 +409,7 @@ computer.</p>
 </div>
 <section id="hello-world">
 <h2>Hello, world!<a class="headerlink" href="#hello-world" title="Link to this heading">#</a></h2>
-<p>Here’s the quickest and easiest way to execute a small computation on an IQM quantum computer and check that
+<p>Here’s the quickest and easiest way to run a small computation on an IQM quantum computer and check that
 things are set up correctly:</p>
 <ol class="arabic simple">
 <li><p>Download the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py">bell_measure.py example file</a> (Save Page As…)</p></li>
@@ -459,34 +459,35 @@ meas: 3/═══════════════════╩══╩═
                            0  1  2
 </pre></div>
 </div>
-<p>To execute this circuit on an IQM quantum computer you need to initialize an <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a> instance
+<p>To run this circuit on an IQM quantum computer you need to initialize an <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a> instance
 with the IQM server URL, use it to retrieve an <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="iqm.qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a> instance representing the
-quantum computer, and use Qiskit’s <code class="docutils literal notranslate"><span class="pre">execute</span></code> function as usual:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span>
+quantum computer, and use Qiskit’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">transpile()</span></code> function followed by <code class="xref py py-meth docutils literal notranslate"><span class="pre">backend.run()</span></code> as usual:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span>
 <span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
 <span class="n">iqm_server_url</span> <span class="o">=</span> <span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span>  <span class="c1"># Replace this with the correct URL</span>
 <span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span>
 
-<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Qiskit’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">qiskit.execute()</span></code> method performs transpilation by default. If you want to inspect the transpiled
-circuits, refer to <cite>circuit_callback</cite> option in the execution options table below. See also
+<p>If you want to inspect the circuits that are sent to the device, refer to <cite>circuit_callback</cite> option in the execution options table below. See also
 <a class="reference internal" href="#inspecting-the-final-circuits-before-submitting-them-for-execution">Inspecting the final circuits before submitting them for execution</a> for inspecting the actual run request sent for
-execution. If you want to execute circuits without automatic transpilation, you can use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend</span>
-<span class="pre">.run()</span></code> method directly; in that case you have to take care of transpilation yourself. Method
-<code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> can be used to transpile circuits.</p>
+execution. As of <code class="docutils literal notranslate"><span class="pre">qiskit</span> <span class="pre">&gt;=</span> <span class="pre">1.0</span></code>, Qiskit no longer supports <code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code>, but in all supported versions it is possible
+to first transpile the ciruit and then run as shown in the code above. Alternatively, the method
+<code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> can also be used to transpile circuits. In particular, when running circuits on devices with a
+resonator, it is recommended to use <code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> instead of <code class="xref py py-meth docutils literal notranslate"><span class="pre">transpile()</span></code>.</p>
 </div>
-<p>You can optionally set IQM backend specific options as additional keyword arguments to the <code class="docutils literal notranslate"><span class="pre">execute</span></code> method (which
-passes the values down to <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>). For example, if you know an ID of a specific calibration set that
+<p>You can optionally set IQM backend specific options as additional keyword arguments to the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> method.
+For example, if you know an ID of a specific calibration set that
 you want to use, you can provide it as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">calibration_set_id</span><span class="o">=</span><span class="s2">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">calibration_set_id</span><span class="o">=</span><span class="s2">&quot;f7d9642e-b0ca-4f2d-af2a-30195bd7a76d&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Alternatively, you can update the values of the options directly on the backend instance using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.set_options()</span></code>
@@ -606,7 +607,7 @@ connectivity:</p>
 <span class="n">Coupling</span> <span class="nb">map</span> <span class="n">of</span> <span class="n">the</span> <span class="n">backend</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
 </pre></div>
 </div>
-<p>Note that for IQM backends the identiy gate <code class="docutils literal notranslate"><span class="pre">id</span></code> is not actually a gate that is executed on the device and is simply omitted.
+<p>Note that for IQM backends the identity gate <code class="docutils literal notranslate"><span class="pre">id</span></code> is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. ‘QB1’, ‘QB2’, etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
@@ -713,7 +714,7 @@ It is also possible for the user to provide <code class="xref py py-meth docutil
 To this end, Qiskit on IQM provides the class  <a class="reference internal" href="api/iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.html#iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend" title="iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeBackend</span></code></a> that can be instantiated with properties of a
 certain QPU, or subclasses of it such as <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMFakeAdonis</span></code> that represent certain quantum architectures with
 pre-populated properties and noise model.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
 <span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMFakeAdonis</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -722,7 +723,8 @@ pre-populated properties and noise model.</p>
 <span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">IQMFakeAdonis</span><span class="p">()</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -745,7 +747,7 @@ noisy quantum circuit simulation. This way you can both validate your integratio
 <p>To run a circuit this way, use the <cite>facade_adonis</cite> backend retrieved from the provider. Note that the provider must be
 initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
 connectivity, and the native gateset should match the 5-qubit Adonis architecture).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">execute</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
 <span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -756,7 +758,8 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
 <span class="n">iqm_server_url</span> <span class="o">=</span> <span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span>  <span class="c1"># Replace this with the correct URL</span>
 <span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;facade_adonis&#39;</span><span class="p">)</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -807,8 +810,9 @@ let’s construct two circuits preparing and measuring different Bell states:</p
 <span class="n">qc_2</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Now, we can execute them together in a batch:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">([</span><span class="n">qc_1</span><span class="p">,</span> <span class="n">qc_2</span><span class="p">],</span> <span class="n">backend</span><span class="p">,</span> <span class="n">initial_layout</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<p>Now, we can run them together in a batch:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">transpiled_qcs</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">([</span><span class="n">qc_1</span><span class="p">,</span> <span class="n">qc_2</span><span class="p">],</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_qcs</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">initial_layout</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -831,7 +835,7 @@ let’s construct two circuits preparing and measuring different Bell states:</p
 <span class="n">qc_transpiled</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
 <span class="n">circuits</span> <span class="o">=</span> <span class="p">[</span><span class="n">qc_transpiled</span><span class="o">.</span><span class="n">assign_parameters</span><span class="p">({</span><span class="n">theta</span><span class="p">:</span> <span class="n">n</span><span class="p">})</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">theta_range</span><span class="p">]</span>
-<span class="n">job</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">circuits</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">circuits</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
