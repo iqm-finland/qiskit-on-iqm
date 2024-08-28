@@ -158,7 +158,7 @@ def test_transpile_to_IQM_for_ghz_with_fake_deneb_noise_model():
         assert count[0] in ["000000", "111111"]
 
 
-def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
+def test_transpiling_works_but_backend_run_doesnt_with_unsupported_gates():
     backend = IQMFakeDeneb()
     num_qb = 6
     qc_list = []
