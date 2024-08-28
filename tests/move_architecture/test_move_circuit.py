@@ -112,7 +112,7 @@ def test_transpiled_circuit(new_architecture):
     qc.move(6, 0)
     qc.measure(6, 0)
     qc.measure(3, 1)
-    submitted_circuit = get_transpiled_circuit_json(qc, new_architecture, seed_transpiler=1)
+    submitted_circuit = get_transpiled_circuit_json(qc, new_architecture, seed_transpiler=1, optimization_level=0)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
         # h(4) is moved before the move gate
         'prx:4',

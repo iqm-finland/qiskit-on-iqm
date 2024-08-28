@@ -14,8 +14,10 @@
 
 """Testing fake Deneb backend.
 """
+import re
+
 import pytest
-from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, execute
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit_aer.noise.noise_model import NoiseModel
 
 from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
@@ -52,9 +54,12 @@ def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
     qc.measure(q, c)
 
     with pytest.raises(
-        ValueError, match=r"Operations to qubits '{'QB\d+'}' while their states are moved to a resonator."
+        ValueError,
+        match=re.escape(
+            "Operations to qubits Qubit(QuantumRegister(7, 'q'), 1) while their states are moved to a resonator."
+        ),
     ):
-        execute(qc, backend, shots=1000)
+        backend.run(transpile(qc, backend=backend), shots=1000)
 
 
 def test_move_gate_sandwich_interrupted_with_second_move_gate():
@@ -71,9 +76,13 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
     qc.measure(q, c)
 
     with pytest.raises(
-        ValueError, match=r"Cannot apply MOVE on 'QB\d+' because COMP_R already holds the state of 'QB\d+'."
+        ValueError,
+        match=re.escape(
+            "Cannot apply MOVE on Qubit(QuantumRegister(6, 'q'), 1) because COMP_R already holds the state of "
+            + "Qubit(QuantumRegister(6, 'q'), 0)."
+        ),
     ):
-        execute(qc, backend, shots=1000)
+        backend.run(qc, shots=1000)
 
 
 def test_move_gate_not_closed():
@@ -89,7 +98,10 @@ def test_move_gate_not_closed():
 
     with pytest.raises(
         ValueError,
-        match=r"The following resonators are still holding qubit states at the end of the circuit: {'COMP_R': 'QB1'}.",
+        match=re.escape(
+            "The following resonators are still holding qubit states at the end of the circuit: "
+            + "Qubit(QuantumRegister(6, 'q'), 0)."
+        ),
     ):
         backend.run(qc, shots=1000)
 
@@ -112,7 +124,7 @@ def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model_():
     qc.barrier()
     qc.measure(q, c)
 
-    job = execute(qc, backend, shots=1000)
+    job = backend.run(transpile(qc, backend=backend), shots=1000)
 
     res = job.result()
     counts = res.get_counts()
@@ -146,7 +158,7 @@ def test_transpile_to_IQM_for_ghz_with_fake_deneb_noise_model():
         assert count[0] in ["000000", "111111"]
 
 
-def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
+def test_transpiling_works_but_backend_run_doesnt_with_unsupported_gates():
     backend = IQMFakeDeneb()
     num_qb = 6
     qc_list = []
@@ -159,7 +171,7 @@ def test_execute_works_but_backend_run_doesnt_with_unsupported_gates():
     qc_list[3].z(4)
 
     for qc in qc_list:
-        execute(qc, backend, shots=1000)
+        backend.run(transpile_to_IQM(qc, backend=backend), shots=1000)
 
         with pytest.raises(ValueError, match=r"^Operation '[A-Za-z]' is not supported by the backend."):
             backend.run(qc, shots=1000)

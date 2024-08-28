@@ -65,7 +65,9 @@ def test_transpile(backend):
 
     circuit_transpiled = transpile(circuit, backend=backend)
     cmap = backend.coupling_map.get_edges()
-    for instruction, qubits, _ in circuit_transpiled.data:
+    for instr in circuit_transpiled.data:
+        instruction = instr.operation
+        qubits = instr.qubits
         assert instruction.name in ('r', 'cz')
         if instruction.name == 'cz':
             idx1 = circuit_transpiled.find_bit(qubits[0]).index

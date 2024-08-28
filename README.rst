@@ -18,7 +18,7 @@ With Qiskit on IQM, you can for example:
 
 * Transpile arbitrary quantum circuits for IQM quantum architectures
 * Simulate execution with an IQM-specific noise model
-* Execute quantum circuits on an IQM quantum computer
+* Run quantum circuits on an IQM quantum computer
 
 
 Installation

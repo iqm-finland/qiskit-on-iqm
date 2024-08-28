@@ -72,7 +72,7 @@ class IQMBackend(IQMBackendBase):
         tasks into multiple baches/jobs.
 
         The default value is ``None``, meaning there is no limit. You can set it to a specific integer
-        value to force these libraries to execute at most that many circuits in a single batch.
+        value to force these libraries to run at most that many circuits in a single batch.
         """
         return self._max_circuits
 
@@ -202,13 +202,11 @@ class IQMBackend(IQMBackendBase):
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
         # pylint: disable=too-many-branches
-        if len(circuit.qregs) != 1 or len(circuit.qregs[0]) != self.num_qubits:
-            raise ValueError(
-                f"The circuit '{circuit.name}' does not contain a single quantum register of length {self.num_qubits}, "
-                f'which indicates that it has not been transpiled against the current backend.'
-            )
         instructions = []
-        for instruction, qubits, clbits in circuit.data:
+        for operation in circuit.data:
+            instruction = operation.operation
+            qubits = operation.qubits
+            clbits = operation.clbits
             qubit_names = [str(circuit.find_bit(qubit).index) for qubit in qubits]
             if instruction.name == 'r':
                 angle_t = float(instruction.params[0] / (2 * np.pi))

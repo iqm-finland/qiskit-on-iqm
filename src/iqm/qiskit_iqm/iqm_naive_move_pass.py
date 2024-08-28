@@ -92,9 +92,11 @@ class IQMNaiveResonatorMoving(TransformationPass):
 
             if len(qubits) == 1:  # Single qubit gate
                 # Check if the qubit is not in the resonator
-                if self.current_resonator_state_location == qubits[0].index:
+                if self.current_resonator_state_location == dag.qubits.index(qubits[0]):
                     # Unload the current qubit from the resonator
-                    new_dag.compose(self._move_resonator(qubits[0].index, canonical_register, current_layout))
+                    new_dag.compose(
+                        self._move_resonator(dag.qubits.index(qubits[0]), canonical_register, current_layout)
+                    )
                 new_dag.compose(subdag)
             elif len(qubits) == 2:  # Two qubit gate
                 physical_q0 = current_layout[qubits[0]]
@@ -256,7 +258,7 @@ def build_IQM_star_pass_manager_config(
     allowed_moves = allowed_ops["move"]
 
     iqm_registers = backend.architecture.qubits
-    classical_registers = [bit.index for bit in circuit.clbits]
+    classical_registers = list(range(len(circuit.clbits)))
     resonator_registers = [r for r in iqm_registers if r.startswith("COMP_R")]
     move_qubits = {r: [q for pair in allowed_moves for q in pair if r in pair and q != r] for r in resonator_registers}
     qubit_registers = [q for q in iqm_registers if q not in resonator_registers]

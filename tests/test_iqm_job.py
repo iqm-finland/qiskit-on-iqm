@@ -20,11 +20,11 @@ import uuid
 import mockito
 from mockito import mock, unstub, verify, when
 import pytest
+import qiskit
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
 from qiskit.result import Counts
 from qiskit.result import Result as QiskitResult
-from qiskit.tools.monitor import job_monitor
 
 from iqm.iqm_client import (
     HeraldingMode,
@@ -261,17 +261,25 @@ def test_result_with_timestamps(job, iqm_result_two_registers, iqm_metadata_with
 
 
 def test_job_monitor(job, iqm_metadata):
-    client_result = RunResult(status=Status.READY, metadata=iqm_metadata)
-    run_responses = [
-        [RunStatus(status=Status.PENDING_COMPILATION), RunStatus(status=Status.ABORTED)],
-        [RunStatus(status=Status.PENDING_COMPILATION)] * 2 + [RunStatus(status=Status.FAILED)],
-        [RunStatus(status=Status.PENDING_COMPILATION)] * 2
-        + [RunStatus(status=Status.PENDING_EXECUTION), client_result],
-        [RunStatus(status=s.value) for s in Status],
-    ]
-    sep = '---'
-    for responses in run_responses:
-        when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(*responses)
-        monitor_string = io.StringIO()
-        job_monitor(job, output=monitor_string, line_discipline=sep, interval=0)
-        monitor_string.close()
+    # pylint: disable=import-error
+    # pylint: disable=import-outside-toplevel
+    # pylint: disable=no-name-in-module
+    if qiskit.__version__ >= '1.0.0':
+        pytest.skip('Job monitoring support has been removed from Qiskit v1.0.0 onwards.')
+    else:
+        from qiskit.tools.monitor import job_monitor
+
+        client_result = RunResult(status=Status.READY, metadata=iqm_metadata)
+        run_responses = [
+            [RunStatus(status=Status.PENDING_COMPILATION), RunStatus(status=Status.ABORTED)],
+            [RunStatus(status=Status.PENDING_COMPILATION)] * 2 + [RunStatus(status=Status.FAILED)],
+            [RunStatus(status=Status.PENDING_COMPILATION)] * 2
+            + [RunStatus(status=Status.PENDING_EXECUTION), client_result],
+            [RunStatus(status=s.value) for s in Status],
+        ]
+        sep = '---'
+        for responses in run_responses:
+            when(job._client).get_run_status(uuid.UUID(job.job_id())).thenReturn(*responses)
+            monitor_string = io.StringIO()
+            job_monitor(job, output=monitor_string, line_discipline=sep, interval=0)
+            monitor_string.close()

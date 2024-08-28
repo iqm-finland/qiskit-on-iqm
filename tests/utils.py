@@ -14,12 +14,13 @@
 """Testing and mocking utility functions.
 """
 from functools import partial
-from typing import Any, Callable, Literal, TypedDict, cast, get_type_hints
+import json
+from typing import Any, Callable, Literal, Optional, TypedDict, cast, get_type_hints
 from unittest.mock import Mock
 from uuid import UUID
 
 from mockito import matchers, when
-from qiskit import execute
+from qiskit import transpile
 from qiskit.circuit import QuantumCircuit, Qubit
 from qiskit.circuit.quantumcircuitdata import CircuitInstruction
 from qiskit.transpiler.exceptions import TranspilerError
@@ -29,6 +30,24 @@ from requests import Response
 from iqm.iqm_client import Circuit, Instruction, IQMClient, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
+
+
+class MockJsonResponse:
+    def __init__(self, status_code: int, json_data: dict, history: Optional[list[Response]] = None):
+        self.status_code = status_code
+        self.json_data = json_data
+        self.history = history
+
+    @property
+    def text(self):
+        return json.dumps(self.json_data)
+
+    def json(self):
+        return self.json_data
+
+    def raise_for_status(self):
+        if 400 <= self.status_code < 600:
+            raise requests.HTTPError(f'{self.status_code}', response=self)
 
 
 class AllowedOps(TypedDict):
@@ -103,14 +122,14 @@ def get_transpiled_circuit_json(
 
     if create_move_layout:
         initial_layout = generate_initial_layout(backend, circuit)
-    job = execute(
+    transpiled_circuit = transpile(
         circuit,
         backend,
-        shots=1000,
         seed_transpiler=seed_transpiler,
         optimization_level=optimization_level,
         initial_layout=initial_layout,
     )
+    job = backend.run(transpiled_circuit, shots=1000)
     assert job.job_id() == '00000001-0002-0003-0004-000000000005'
     assert len(submitted_circuits_batch.all_values) == 1
     assert len(submitted_circuits_batch.value['circuits']) == 1

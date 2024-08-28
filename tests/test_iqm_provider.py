@@ -19,17 +19,17 @@ from importlib.metadata import version
 import re
 import uuid
 
-from mockito import ANY, expect, matchers, mock, patch, unstub, verifyNoUnwantedInteractions, when
+from mockito import ANY, expect, matchers, mock, unstub, verifyNoUnwantedInteractions, when
 import numpy as np
 import pytest
-from qiskit import QuantumCircuit, execute
+from qiskit import QuantumCircuit, transpile
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
-from qiskit.compiler import transpile
 import requests
 
 from iqm.iqm_client import (
     CircuitCompilationOptions,
+    CircuitExecutionError,
     HeraldingMode,
     IQMClient,
     QuantumArchitecture,
@@ -45,6 +45,7 @@ from tests.utils import get_mock_ok_response
 def backend(linear_architecture_3q):
     client = mock(IQMClient)
     when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    client._base_url = 'http://some_url'
     return IQMBackend(client)
 
 
@@ -124,10 +125,17 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     assert backend.qubit_name_to_index('Alice') is None
 
 
-def test_serialize_circuit_raises_error_for_non_transpiled_circuit(backend, circuit):
-    circuit = QuantumCircuit(2, 2)
-    with pytest.raises(ValueError, match='has not been transpiled against the current backend'):
-        backend.serialize_circuit(circuit)
+def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_architecture_3q):
+    client = IQMClient(url='http://some_url')
+    client._token_manager = None  # Do not use authentication
+    when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    backend = IQMBackend(client)
+    circuit = QuantumCircuit(3)
+    circuit.cz(0, 2)
+    with pytest.raises(
+        CircuitExecutionError, match=re.escape("'0', '2') = ('QB1', 'QB3') not allowed as locus for cz")
+    ):
+        backend.run(circuit)
 
 
 def test_serialize_circuit_raises_error_for_unsupported_instruction(backend, circuit):
@@ -253,7 +261,9 @@ def test_transpile(backend, circuit):
 
     circuit_transpiled = transpile(circuit, backend=backend)
     cmap = backend.coupling_map.get_edges()
-    for instruction, qubits, _ in circuit_transpiled.data:
+    for instr in circuit_transpiled.data:
+        instruction = instr.operation
+        qubits = instr.qubits
         assert instruction.name in ('r', 'cz')
         if instruction.name == 'cz':
             idx1 = circuit_transpiled.find_bit(qubits[0]).index
@@ -261,34 +271,17 @@ def test_transpile(backend, circuit):
             assert ((idx1, idx2) in cmap) or ((idx2, idx1) in cmap)
 
 
-def test_run_non_native_circuit_with_the_execute_function(backend, circuit, job_id, run_request):
+def test_run_non_native_circuit(backend, circuit, job_id, run_request):
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.cx(0, 2)
 
     when(backend.client).create_run_request(...).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
-    job = execute(circuit, backend=backend, optimization_level=0)
+    transpiled_circuit = transpile(circuit, backend, optimization_level=0)
+    job = backend.run(transpiled_circuit)
     assert isinstance(job, IQMJob)
     assert job.job_id() == str(job_id)
-
-
-def test_run_gets_options_from_execute_function(backend, circuit):
-    """Test that any additional keyword arguments to the `execute` function are passed to `IQMBackend.run`. This is more
-    of a test for Qiskit's `execute` function itself, but still good to have it here to know that the use case works.
-    """
-
-    def run_mock(qc, **kwargs):
-        assert isinstance(qc, QuantumCircuit)
-        assert 'calibration_set_id' in kwargs
-        assert kwargs['calibration_set_id'] == '92d8dd9a-2678-467e-a20b-ef9c1a594d1f'
-        assert 'something_else' in kwargs
-        assert kwargs['something_else'] == [1, 2, 3]
-
-    patch(backend.run, run_mock)
-    execute(
-        circuit, backend, shots=10, calibration_set_id='92d8dd9a-2678-467e-a20b-ef9c1a594d1f', something_else=[1, 2, 3]
-    )
 
 
 def test_run_single_circuit(backend, circuit, create_run_request_default_kwargs, job_id, run_request):
@@ -551,8 +544,8 @@ def test_create_run_request(backend, circuit, create_run_request_default_kwargs,
     ).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(uuid.uuid4())
 
-    assert backend.create_run_request(circuit_transpiled, **options) == run_request
-    backend.run(circuit_transpiled, **options)
+    assert backend.create_run_request(circuit_transpiled) == run_request
+    backend.run(circuit_transpiled)
 
     verifyNoUnwantedInteractions()
     unstub()
