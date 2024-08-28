@@ -24,7 +24,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import Circuit, HeraldingMode, Instruction, IQMClient
+from iqm.iqm_client import Circuit, CircuitCompilationOptions, Instruction, IQMClient, RunRequest
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
@@ -59,8 +59,7 @@ class IQMBackend(IQMBackendBase):
         return Options(
             shots=1024,
             calibration_set_id=None,
-            max_circuit_duration_over_t2=None,
-            heralding_mode=HeraldingMode.NONE,
+            circuit_compilation_options=CircuitCompilationOptions(),
             circuit_callback=None,
         )
 
@@ -82,6 +81,43 @@ class IQMBackend(IQMBackendBase):
         self._max_circuits = value
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
+        """Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented with this class.
+
+        Args:
+            run_input (Union[QuantumCircuit, list[QuantumCircuit]]): The circuits to run.
+            options: A dictionary of options for the run. The following options are supported:
+
+                shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
+                calibration_set_id (str or UUID): ID of the calibration set to use for the run. Default is None.
+                circuit_compilation_options (CircuitCompilationOptions): Compilation options for the circuits as
+                documented in ``iqm-client``.
+                circuit_callback (Callable): Any callback function that will be called for each circuit before sending
+                the circuits to the device.
+                timeout_seconds Optional(float): Optional timeout passed to the :class:`IQMJob` in seconds.
+
+        Returns:
+            IQMJob: The Job from which the results can be obtained once the circuits are executed.
+        """
+
+        timeout_seconds = options.pop('timeout_seconds', None)
+        run_request = self.create_run_request(run_input, **options)
+        job_id = self.client.submit_run_request(run_request)
+        job = IQMJob(self, str(job_id), shots=run_request.shots, timeout_seconds=timeout_seconds)
+        job.circuit_metadata = [c.metadata for c in run_request.circuits]
+        return job
+
+    def create_run_request(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> RunRequest:
+        """Creates a run request without submitting it for execution.
+
+        This can be used to check what would be submitted for execution by an equivalent call to :meth:`run`.
+
+        Args:
+            run_input: same as ``run_input`` for :meth:`run`
+            options: same as ``options`` for :meth:`run` without ``timeout_seconds``
+
+        Returns:
+            the created run request object
+        """
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
 
@@ -91,6 +127,16 @@ class IQMBackend(IQMBackendBase):
             raise ValueError('Empty list of circuits submitted for execution.')
 
         unknown_options = set(options.keys()) - set(self.options.keys())
+        # Catch old iqm-client options
+        if 'max_circuit_duration_over_t2' in unknown_options and 'circuit_compilation_options' not in options:
+            self.options['circuit_compilation_options'].max_circuit_duration_over_t2 = options.pop(
+                'max_circuit_duration_over_t2'
+            )
+            unknown_options.remove('max_circuit_duration_over_t2')
+        if 'heralding_mode' in unknown_options and 'circuit_compilation_options' not in options:
+            self.options['circuit_compilation_options'].heralding_mode = options.pop('heralding_mode')
+            unknown_options.remove('heralding_mode')
+
         if unknown_options:
             warnings.warn(f'Unknown backend option(s): {unknown_options}')
 
@@ -101,8 +147,6 @@ class IQMBackend(IQMBackendBase):
         calibration_set_id = merged_options['calibration_set_id']
         if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
             calibration_set_id = UUID(calibration_set_id)
-        max_circuit_duration_over_t2 = merged_options['max_circuit_duration_over_t2']
-        heralding_mode = merged_options['heralding_mode']
 
         circuit_callback = merged_options['circuit_callback']
         if circuit_callback:
@@ -113,17 +157,14 @@ class IQMBackend(IQMBackendBase):
             lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
-        job_id = self.client.submit_circuits(
+
+        return self.client.create_run_request(
             circuits_serialized,
             qubit_mapping=qubit_mapping,
             calibration_set_id=calibration_set_id if calibration_set_id else None,
             shots=shots,
-            max_circuit_duration_over_t2=max_circuit_duration_over_t2,
-            heralding_mode=heralding_mode,
+            options=merged_options['circuit_compilation_options'],
         )
-        job = IQMJob(self, str(job_id), shots=shots)
-        job.circuit_metadata = [c.metadata for c in circuits]
-        return job
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""

@@ -2,10 +2,23 @@
 Changelog
 =========
 
-Version 13.10
-============
+Version 13.12
+=============
 
 * Add IQMFakeAphrodite backend `#113 <https://github.com/iqm-finland/qiskit-on-iqm/pull/113>`_
+
+Version 13.11
+=============
+
+* Added the option to change the timeout between waiting for results when a job is submitted. `Github issue #108 <https://github.com/iqm-finland/qiskit-on-iqm/issues/108>`_
+* Added support for optional MOVE gate validation bypassing for advanced users. `#112 <https://github.com/iqm-finland/qiskit-on-iqm/pull/112>`_
+* Require ``iqm-client >= 18.0``. `iqm-client PR #124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
+
+Version 13.10
+=============
+
+* Allow inspecting a run request before submitting it for execution. `#115 <https://github.com/iqm-finland/qiskit-on-iqm/pull/115>`_
+* Require ``iqm-client >= 17.8``. `#115 <https://github.com/iqm-finland/qiskit-on-iqm/pull/115>`_
 
 Version 13.9
 ============
