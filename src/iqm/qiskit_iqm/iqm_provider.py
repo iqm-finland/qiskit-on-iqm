@@ -86,17 +86,19 @@ class IQMBackend(IQMBackendBase):
         Args:
             run_input (Union[QuantumCircuit, list[QuantumCircuit]]): The circuits to run.
             options: A dictionary of options for the run. The following options are supported:
+
                 shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
                 calibration_set_id (str or UUID): ID of the calibration set to use for the run. Default is None.
                 circuit_compilation_options (CircuitCompilationOptions): Compilation options for the circuits as
-                    documented in ``iqm-client``.
+                documented in ``iqm-client``.
                 circuit_callback (Callable): Any callback function that will be called for each circuit before sending
-                    the circuits to the device.
+                the circuits to the device.
                 timeout_seconds Optional(float): Optional timeout passed to the :class:`IQMJob` in seconds.
 
         Returns:
             IQMJob: The Job from which the results can be obtained once the circuits are executed.
         """
+
         timeout_seconds = options.pop('timeout_seconds', None)
         run_request = self.create_run_request(run_input, **options)
         job_id = self.client.submit_run_request(run_request)
