@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.iqm_provider.IQMBackend &#8212; Qiskit on IQM 13.10 documentation</title>
+    <title>iqm.qiskit_iqm.iqm_provider.IQMBackend &#8212; Qiskit on IQM 13.11 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=b0cdb9f3"></script>
+    <script src="../_static/documentation_options.js?v=0b313bee"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -138,8 +138,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.10 documentation - Home"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.10 documentation - Home"/>`);</script>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.11 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.11 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -403,7 +403,7 @@ document.write(`
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v17.8)"><em>IQMClient</em></a>) – client instance for communicating with an IQM server</p></li>
+<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v18.0)"><em>IQMClient</em></a>) – client instance for communicating with an IQM server</p></li>
 <li><p><strong>**kwargs</strong> – optional arguments to be passed to the parent Backend initializer</p></li>
 </ul>
 </dd>
@@ -426,7 +426,7 @@ version of the object while <code class="docutils literal notranslate"><span cla
 versioning the backend itself.</p></li>
 <li><p><strong>fields</strong> – kwargs for the values to use to override the default
 options.</p></li>
-<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v17.8)"><em>IQMClient</em></a>) – </p></li>
+<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v18.0)"><em>IQMClient</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -474,7 +474,7 @@ options.</p></li>
 <td><p>Create and return an IQMJob instance associated with this backend with given job id.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, **options)</p></td>
-<td><p>Run on the backend.</p></td>
+<td><p>Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented with this class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize_circuit</span></code></a>(circuit)</p></td>
 <td><p>Serialize a quantum circuit into the IQM data transfer format.</p></td>
@@ -496,31 +496,27 @@ value to force these libraries to execute at most that many circuits in a single
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="Link to this definition">#</a></dt>
-<dd><p>Run on the backend.</p>
-<p>This method returns a <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.providers.Job" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code></a> object
-that runs circuits. Depending on the backend this may be either an async
-or sync call. It is at the discretion of the provider to decide whether
-running should block until the execution is finished or not: the Job
-class can handle either situation.</p>
+<dd><p>Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented with this class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>run_input</strong> (<em>QuantumCircuit</em><em> or </em><em>Schedule</em><em> or </em><em>ScheduleBlock</em><em> or </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – An
-individual or a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">QuantumCircuit</span></code>,
-<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.pulse.ScheduleBlock" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScheduleBlock</span></code></a>, or <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.pulse.Schedule" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Schedule</span></code></a> objects to
-run on the backend.</p></li>
-<li><p><strong>options</strong> – Any kwarg options to pass to the backend for running the
-config. If a key is also present in the options
-attribute/object then the expectation is that the value
-specified will be used instead of what’s set in the options
-object.</p></li>
+<li><p><strong>run_input</strong> (<em>Union</em><em>[</em><em>QuantumCircuit</em><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><em>QuantumCircuit</em><em>]</em><em>]</em>) – The circuits to run.</p></li>
+<li><p><strong>options</strong> – <p>A dictionary of options for the run. The following options are supported:</p>
+<p>shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
+calibration_set_id (str or UUID): ID of the calibration set to use for the run. Default is None.
+circuit_compilation_options (CircuitCompilationOptions): Compilation options for the circuits as
+documented in <code class="docutils literal notranslate"><span class="pre">iqm-client</span></code>.
+circuit_callback (Callable): Any callback function that will be called for each circuit before sending
+the circuits to the device.
+timeout_seconds Optional(float): Optional timeout passed to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMJob</span></code> in seconds.</p>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The job object for the run</p>
+<dd class="field-even"><p>The Job from which the results can be obtained once the circuits are executed.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Job</p>
+<dd class="field-odd"><p><a class="reference internal" href="iqm.qiskit_iqm.iqm_job.IQMJob.html#iqm.qiskit_iqm.iqm_job.IQMJob" title="iqm.qiskit_iqm.iqm_job.IQMJob">IQMJob</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -534,14 +530,14 @@ object.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>run_input</strong> (<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em>]</em>) – same as <code class="docutils literal notranslate"><span class="pre">run_input</span></code> for <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a></p></li>
-<li><p><strong>options</strong> – same as <code class="docutils literal notranslate"><span class="pre">options</span></code> for <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a></p></li>
+<li><p><strong>options</strong> – same as <code class="docutils literal notranslate"><span class="pre">options</span></code> for <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> without <code class="docutils literal notranslate"><span class="pre">timeout_seconds</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the created run request object</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v17.8)"><em>RunRequest</em></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v18.0)"><em>RunRequest</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -592,7 +588,7 @@ documentation for more details).</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – circuit contains an unsupported instruction or is not transpiled in general</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.Circuit.html#iqm.iqm_client.models.Circuit" title="(in IQM client v17.8)"><em>Circuit</em></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.Circuit.html#iqm.iqm_client.models.Circuit" title="(in IQM client v18.0)"><em>Circuit</em></a></p>
 </dd>
 </dl>
 </dd></dl>
