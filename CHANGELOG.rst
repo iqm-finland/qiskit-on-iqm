@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 13.13
+Version 13.14
 =============
 
 * Refactored :meth:`IQMBackend.create_run_request` to improve user experience when using IQM specific run options.
