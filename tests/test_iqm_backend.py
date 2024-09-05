@@ -52,8 +52,10 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
     assert all(backend.qubit_name_to_index(name) == idx for idx, name in correct_idx_name_associations)
 
-    assert backend.index_to_qubit_name(7) is None
-    assert backend.qubit_name_to_index('Alice') is None
+    with pytest.raises(ValueError, match="Qubit index '7' is not part of the backend."):
+        backend.index_to_qubit_name(7)
+    with pytest.raises(ValueError, match="Qubit name 'Alice' is not part of the backend."):
+        backend.qubit_name_to_index('Alice')
 
 
 def test_transpile(backend):

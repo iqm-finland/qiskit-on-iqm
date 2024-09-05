@@ -114,48 +114,10 @@ you want to use, you can provide it as follows:
     job = backend.run(qc, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
 
-Alternatively, you can update the values of the options directly on the backend instance using the :meth:`.IQMBackend.set_options`
-and then call execution methods without specifying additional keyword arguments. You can view all available options and
-their current values using `backend.options`. Below table summarizes currently available options:
-
-.. list-table::
-   :widths: 25 100
-   :header-rows: 1
-
-   * - Name
-     - Description
-   * - `shots`
-     - Type: ``int``, Example value: ``1207``.
-
-       Number of shots.
-   * - `calibration_set_id`
-     - Type: ``str``, Example value ``"f7d9642e-b0ca-4f2d-af2a-30195bd7a76d"``.
-
-       Indicates the calibration set to use. Defaults to `None`, which means the IQM server will use the best
-       available calibration set automatically.
-   * - `max_circuit_duration_over_t2`
-     - Type: ``float``, Example value: ``1.0``.
-
-       Set server-side circuit disqualification threshold. If any circuit in a job is estimated to take longer than the
-       shortest T2 time of any qubit used in the circuit multiplied by this value, the server will reject the job.
-       Setting this value to ``0.0`` will disable circuit duration check.
-       The default value ``None`` means the server default value will be used.
-   * - `heralding_mode`
-     - Type: :class:`~iqm.iqm_client.models.HeraldingMode`, Example value: ``"zeros"``.
-
-       Heralding mode to use during execution. The default value is "none".
-   * - `circuit_callback`
-     - Type: :class:`collections.abc.Callable`, Example value: ``None``.
-
-       A function that accepts a list of :class:`qiskit.QuantumCircuit` instances and does not return anything.
-       When the backend receives circuits for execution, it will call this function (if provided) and pass those
-       circuits as argument. This may be useful in situations when you do not have explicit control over transpilation,
-       but need some information on how it was done. This can happen, for example, when you use pre-implemented
-       algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
-       delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
-       those transpiled circuits, extract any info you need. As a side effect, you can also use this callback to modify
-       the transpiled circuits in-place, just before execution, however we do not recommend to use it for this purpose.
-
+Alternatively, you can update the values of the options directly in the backend instance using the :meth:`.IQMBackend.set_options`
+and then call execution methods without specifying additional keyword arguments. 
+As the `.backend.options` attribute is used to store additional keyword arguments for :meth:`.IQMBackend.run`, you can find the 
+an up-to-date list of available options and their current values in the documentation of the :meth:`.IQMBackend.run` method.
 
 If the IQM server you are connecting to requires authentication, you will also have to use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
