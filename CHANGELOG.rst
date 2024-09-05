@@ -5,6 +5,16 @@ Changelog
 Version 13.13
 =============
 
+* Refactored :meth:`IQMBackend.create_run_request` to improve user experience when using IQM specific run options.
+* Updated the documentation for using additional run options with IQM backends.
+* :meth:`IQMBackendBase.qubit_name_to_index` and :meth:`IQMBackendBase.index_to_qubit_name` now raises an error when using an invalid qubit name or index, rather than returning None.
+* Unified `IQMBackendBase.architecture` and `IQMBackendBase._quantum_architecture` to refer to the same object.
+* Introduction of `IQMBackendBase.physical_target` and `IQMBackendBase.fake_target` to represent the physical quantum architectures and a Qiskit-compatible version, respectively.        
+* Added support for ``qiskit == 1.2`` and ``qiskit-aer == 1.5``.
+
+Version 13.13
+=============
+
 * Adjustments needed to support Qiskit V1 that are backwards compatible with ``qiskit < 1.0``. `#114 <https://github.com/iqm-finland/qiskit-on-iqm/pull/114>`_
 * Updated Qiskit dependencies and testing to support ``qiskit >= 0.45.3 < 1.2`` and ``qiskit-aer >= 0.13 < 0.15``. 
 * Adjusted documentation to recommend the use of :meth:`qiskit.transpile()` or :meth:`transpile_to_IQM()` in combination with :meth:`backend.run()` instead of using :meth:`execute()`.
