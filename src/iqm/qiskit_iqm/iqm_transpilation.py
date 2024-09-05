@@ -21,7 +21,6 @@ from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition, RemoveBarriers
 from qiskit.transpiler.passmanager import PassManager
-from qiskit.transpiler.preset_passmanagers.plugin import PassManagerStagePlugin
 
 
 class IQMOptimizeSingleQubitGates(TransformationPass):
