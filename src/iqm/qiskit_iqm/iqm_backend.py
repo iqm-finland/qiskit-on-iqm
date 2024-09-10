@@ -98,13 +98,27 @@ class IQMBackendBase(BackendV2, ABC):
         return self._target
 
     def qubit_name_to_index(self, name: str) -> Optional[int]:
-        """Given an IQM-style qubit name ('QB1', 'QB2', etc.) return the corresponding index in the register. Returns
-        None is the given name does not belong to the backend."""
+        """Given an IQM-style qubit name, return the corresponding index in the register.
+
+        Args:
+            name: IQM-style qubit name ('QB1', 'QB2', etc.)
+
+        Returns:
+            Index of the given qubit in the quantum register,
+            or ``None`` if the given qubit is not found on the backend.
+        """
         return self._qb_to_idx.get(name)
 
     def index_to_qubit_name(self, index: int) -> Optional[str]:
-        """Given an index in the backend register return the corresponding IQM-style qubit name ('QB1', 'QB2', etc.).
-        Returns None if the given index does not correspond to any qubit in the backend."""
+        """Given a quantum register index, return the corresponding IQM-style qubit name.
+
+        Args:
+            index: Qubit index in the quantum register.
+
+        Returns:
+            Corresponding IQM-style qubit name ('QB1', 'QB2', etc.), or ``None`` if
+            the given index does not correspond to any qubit on the backend.
+        """
         return self._idx_to_qb.get(index)
 
     def validate_compatible_architecture(self, architecture: QuantumArchitectureSpecification) -> bool:

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Move gate to be used with Qiskit Quantum Circuits."""
+"""MOVE gate to be used on the IQM Star architecture."""
 
 from qiskit.circuit import Gate
 from qiskit.circuit.quantumcircuit import QuantumCircuit, QuantumRegister
