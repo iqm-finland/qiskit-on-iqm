@@ -62,7 +62,15 @@ class IQMJob(JobV1):
         self._timeout_seconds: float = timeout_seconds if timeout_seconds is not None else DEFAULT_TIMEOUT_SECONDS
 
     def _format_iqm_results(self, iqm_result: RunResult) -> list[tuple[str, list[str]]]:
-        """Convert the measurement results from a batch of circuits into the Qiskit format."""
+        """Convert the measurement results for a batch of circuits into the Qiskit format.
+
+        Args:
+            iqm_result: measurement results for the circuit batch
+        Returns:
+            A list of (circuit_name, measurements) tuples, one tuple for each circuit in the batch.
+            The measurements are a list of bitstrings, one per shot, representing the state of the classical
+            registers after the shot.
+        """
         if iqm_result.measurements is None:
             raise ValueError(
                 f'Cannot format IQM result without measurements. Job status is "{iqm_result.status.value.upper()}"'
@@ -81,12 +89,24 @@ class IQMJob(JobV1):
     def _format_measurement_results(
         measurement_results: CircuitMeasurementResults, requested_shots: int, expect_exact_shots: bool = True
     ) -> list[str]:
-        """Convert the measurement results from a circuit into the Qiskit format."""
+        """Convert the measurement results from a circuit into the Qiskit format.
+
+        Args:
+            measurement_results: measurement results for a single circuit
+            requested_shots: number of shots requested
+            expect_exact_shots: iff True, we must get exactly as many shots as requested
+        Returns:
+            For each shot, a bitstring representing the state of the classical registers after the
+            shot, in little-endian order.
+        """
+        # Mapping from creg index (in the circuit) to an array with shape (shots, len(creg)) with the results.
         formatted_results: dict[int, np.ndarray] = {}
         for k, v in measurement_results.items():
+            # measurement keys encode data about the classical registers in the original Qiskit circuit
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
-            if len(v) == 0 and not expect_exact_shots:
+            shots = len(res)
+            if shots == 0 and not expect_exact_shots:
                 warnings.warn(
                     'Received measurement results containing zero shots. '
                     'In case you are using non-default heralding mode, this could be because of bad calibration.'
@@ -99,7 +119,6 @@ class IQMJob(JobV1):
                     raise ValueError(f'Measurement result {mk} has the wrong shape {res.shape}, expected (*, 1)')
                 res = res[:, 0]
 
-            shots = len(res)
             if expect_exact_shots and shots != requested_shots:
                 raise ValueError(f'Expected {requested_shots} shots but got {shots} for measurement result {mk}')
 
@@ -107,11 +126,15 @@ class IQMJob(JobV1):
             creg = formatted_results.setdefault(mk.creg_idx, np.zeros((shots, mk.creg_len), dtype=int))
             creg[:, mk.clbit_idx] = res
 
-        # 1. Loop over the registers in the reverse order they were added to the circuit.
-        # 2. Within each register the highest index is the most significant, so it goes to the leftmost position.
+        # TODO If the original circuit has a creg that is not used at all we won't know about it here,
+        # and thus cannot include it (containing only zeros) in the result strings.
+
+        # Number of shots is the same for all measurement keys.
+        # Qiskit uses the little-endian convention in presenting the result bitstrings
+        # (both between and within registers), hence the [::-1]
         return [
-            ' '.join(''.join(map(str, res[s, ::-1])) for _, res in sorted(formatted_results.items(), reverse=True))
-            for s in range(len(res))
+            ' '.join(''.join(map(str, res[s, :])) for _, res in sorted(formatted_results.items()))[::-1]
+            for s in range(shots)
         ]
 
     def submit(self):
