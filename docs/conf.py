@@ -80,7 +80,7 @@ autodoc_member_order = 'bysource'
 autodoc_typehints = 'both'
 # autodoc_typehints = 'description' puts the __init__ annotations into its docstring,
 # which we thus have to include in the class documentation.
-autoclass_content = 'both'
+autoclass_content = 'class'
 
 # Sphinx 3.3+: manually clean up type alias rendering in the docs
 # autodoc_type_aliases = {'TypeAlias': 'exa.experiment.somemodule.TypeAlias'}
