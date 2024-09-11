@@ -120,10 +120,11 @@ circuit(s) are sampled:
 
 .. note::
 
-   As of ``qiskit >= 1.0``, Qiskit no longer supports :meth:`execute`, but in all supported versions it is possible
+   As of ``qiskit >= 1.0``, Qiskit no longer supports :func:`execute`, but in all supported versions it is possible
    to first transpile the circuit and then run as shown in the code above. Alternatively, the function
-   :func:`.transpile_to_IQM` can also be used to transpile circuits. In particular, when running circuits on devices with a
-   resonator, it is recommended to use :func:`.transpile_to_IQM` instead of :func:`transpile`.
+   :func:`.transpile_to_IQM` can also be used to transpile circuits. In particular, when running
+   circuits on devices with computational resonators (the IQM Star architecture),
+   it is recommended to use :func:`.transpile_to_IQM` instead of :func:`transpile`.
 
 .. note::
 

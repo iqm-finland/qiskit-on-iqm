@@ -94,7 +94,7 @@ class IQMBackend(IQMBackendBase):
         Args:
             run_input: The circuits to run.
             timeout_seconds: Maximum time to wait for the job to finish, in seconds. If ``None``, use
-                the :class:`~iqm.iqm_client.IQMClient` default.
+                the :class:`~iqm.iqm_client.iqm_client.IQMClient` default.
             options: Keyword arguments passed on to :meth:`create_run_request`, and documented there.
 
         Returns:
@@ -121,19 +121,23 @@ class IQMBackend(IQMBackendBase):
             calibration_set_id (Union[str, UUID, None]): ID of the calibration set to use for the run.
                 Default is ``None``, which means the IQM server will use the current default
                 calibration set.
-            circuit_compilation_options (:external:class:`~iqm.iqm_client.models.CircuitCompilationOptions`):
+            circuit_compilation_options (iqm.iqm_client.models.CircuitCompilationOptions):
                 Compilation options for the circuits, passed on to :mod:`iqm-client`.
-            circuit_callback (:class:`~collections.abc.Callable[[list[QuantumCircuit]], Any]`):
-                Callback function that, if provided, will be called for the circuits before sending them to the device.
-                This may be useful in situations when you do not have explicit control over transpilation,
-                but need some information on how it was done. This can happen, for example, when you use pre-implemented
-                algorithms and experiments in Qiskit, where the implementation of the said algorithm or experiment takes care of
-                delivering correctly transpiled circuits to the backend. This callback method gives you a chance to look into
-                those transpiled circuits, extract any info you need. As a side effect, you can also use this callback to modify
-                the transpiled circuits in-place, just before execution, however we do not recommend to use it for this purpose.
+            circuit_callback (collections.abc.Callable[[list[QuantumCircuit]], Any]):
+                Callback function that, if provided, will be called for the circuits before sending
+                them to the device.  This may be useful in situations when you do not have explicit
+                control over transpilation, but need some information on how it was done. This can
+                happen, for example, when you use pre-implemented algorithms and experiments in
+                Qiskit, where the implementation of the said algorithm or experiment takes care of
+                delivering correctly transpiled circuits to the backend. This callback method gives
+                you a chance to look into those transpiled circuits, and extract any info you need.
+                As a side effect, you can also use this callback to modify the transpiled circuits
+                in-place, just before execution; however, we do not recommend to use it for this
+                purpose.
 
         Returns:
             created run request object
+
         """
         if self.client is None:
             raise RuntimeError('Session to IQM client has been closed.')
@@ -188,10 +192,9 @@ class IQMBackend(IQMBackendBase):
         return IQMJob(self, job_id)
 
     def close_client(self) -> None:
-        """Close IQMClient's session with the authentication server. Discard the client."""
+        """Close IQMClient's session with the authentication server."""
         if self.client is not None:
             self.client.close_auth_session()
-        self.client = None
 
     def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
