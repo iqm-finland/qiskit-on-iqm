@@ -139,9 +139,6 @@ class IQMBackend(IQMBackendBase):
             created run request object
 
         """
-        if self.client is None:
-            raise RuntimeError('Session to IQM client has been closed.')
-
         circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
         if len(circuits) == 0:
@@ -193,8 +190,7 @@ class IQMBackend(IQMBackendBase):
 
     def close_client(self) -> None:
         """Close IQMClient's session with the authentication server."""
-        if self.client is not None:
-            self.client.close_auth_session()
+        self.client.close_auth_session()
 
     def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
@@ -294,7 +290,6 @@ class IQMFacadeBackend(IQMBackend):
             raise ValueError('Quantum architecture of the remote quantum computer does not match Adonis.')
 
         super().__init__(client, **kwargs)
-        self.client = client
         self.name = f'IQMFacade{target_architecture.name}Backend'
 
     def _validate_no_empty_cregs(self, circuit: QuantumCircuit) -> bool:
