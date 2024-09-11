@@ -53,13 +53,13 @@ If the IQM server you are connecting to requires authentication, you may use
 then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
 See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme.html>`__ for details.
 
-If you are using ``IQM Resonance``, authentication is handled differently.
-Use the :envvar:`IQM_TOKEN` environment variable to provide the API Token obtained
-from the server dashboard.
-
-Finally, you may authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
+You may also authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
 :envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
 arguments to :class:`.IQMProvider`, however this approach is less secure and considered deprecated.
+
+Finally, if you are using ``IQM Resonance``, authentication is handled differently.
+Use the :envvar:`IQM_TOKEN` environment variable to provide the API Token obtained
+from the server dashboard.
 
 
 Running quantum circuits on an IQM quantum computer
