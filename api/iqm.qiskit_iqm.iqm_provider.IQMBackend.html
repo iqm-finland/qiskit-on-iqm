@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.iqm_provider.IQMBackend &#8212; Qiskit on IQM 13.13 documentation</title>
+    <title>iqm.qiskit_iqm.iqm_provider.IQMBackend &#8212; Qiskit on IQM 13.14 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=a7b93995"></script>
+    <script src="../_static/documentation_options.js?v=32acbb44"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -138,8 +138,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.13 documentation - Home"/>
-    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.13 documentation - Home"/>`);</script>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.14 documentation - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.14 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -398,41 +398,15 @@ document.write(`
 <h1>iqm.qiskit_iqm.iqm_provider.IQMBackend<a class="headerlink" href="#iqm-qiskit-iqm-iqm-provider-iqmbackend" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_provider.</span></span><span class="sig-name descname"><span class="pre">IQMBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_provider.</span></span><span class="sig-name descname"><span class="pre">IQMBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v18.0)"><span class="pre">IQMClient</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackendBase</span></code></a></p>
 <p>Backend for executing quantum circuits on IQM quantum computers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v18.0)"><em>IQMClient</em></a>) – client instance for communicating with an IQM server</p></li>
+<li><p><strong>client</strong> (<em>IQMClient</em>) – client instance for communicating with an IQM server</p></li>
 <li><p><strong>**kwargs</strong> – optional arguments to be passed to the parent Backend initializer</p></li>
 </ul>
-</dd>
-</dl>
-<p>Initialize a BackendV2 based backend</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>provider</strong> – An optional backwards reference to the
-<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.providers.Provider" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Provider</span></code></a> object that the backend
-is from</p></li>
-<li><p><strong>name</strong> – An optional name for the backend</p></li>
-<li><p><strong>description</strong> – An optional description of the backend</p></li>
-<li><p><strong>online_date</strong> – An optional datetime the backend was brought online</p></li>
-<li><p><strong>backend_version</strong> – An optional backend version string. This differs
-from the <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.providers.BackendV2#version" title="(in Qiskit v1.2)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> attribute
-as <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.providers.BackendV2#version" title="(in Qiskit v1.2)"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> is for the
-abstract <code class="xref py py-attr docutils literal notranslate"><span class="pre">Backend</span></code> abstract interface
-version of the object while <code class="docutils literal notranslate"><span class="pre">backend_version</span></code> is for
-versioning the backend itself.</p></li>
-<li><p><strong>fields</strong> – kwargs for the values to use to override the default
-options.</p></li>
-<li><p><strong>client</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v18.0)"><em>IQMClient</em></a>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#AttributeError" title="(in Python v3.9)"><strong>AttributeError</strong></a> – If a field is specified that’s outside the backend’s
-    options</p>
 </dd>
 </dl>
 <p class="rubric">Attributes</p>
@@ -474,8 +448,8 @@ options.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.retrieve_job" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.retrieve_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_job</span></code></a>(job_id)</p></td>
 <td><p>Create and return an IQMJob instance associated with this backend with given job id.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, **options)</p></td>
-<td><p>Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented with this class.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(run_input, *[, timeout_seconds])</p></td>
+<td><p>Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented by this backend.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize_circuit</span></code></a>(circuit)</p></td>
 <td><p>Serialize a quantum circuit into the IQM data transfer format.</p></td>
@@ -496,56 +470,66 @@ value to force these libraries to run at most that many circuits in a single bat
 
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="Link to this definition">#</a></dt>
-<dd><p>Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented with this class.</p>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><span class="pre">QuantumCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><span class="pre">QuantumCircuit</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="iqm.qiskit_iqm.iqm_job.IQMJob.html#iqm.qiskit_iqm.iqm_job.IQMJob" title="iqm.qiskit_iqm.iqm_job.IQMJob"><span class="pre">IQMJob</span></a></span></span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="Link to this definition">#</a></dt>
+<dd><p>Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented by this backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>run_input</strong> (<em>Union</em><em>[</em><em>QuantumCircuit</em><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><em>QuantumCircuit</em><em>]</em><em>]</em>) – The circuits to run.</p></li>
-<li><p><strong>options</strong> – <p>A dictionary of options for the run. The following options are supported:</p>
-<p>shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
-calibration_set_id (str or UUID): ID of the calibration set to use for the run. Default is None.
-circuit_compilation_options (CircuitCompilationOptions): Compilation options for the circuits as
-documented in <code class="docutils literal notranslate"><span class="pre">iqm-client</span></code>.
-circuit_callback (Callable): Any callback function that will be called for each circuit before sending
-the circuits to the device.
-timeout_seconds Optional(float): Optional timeout passed to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IQMJob</span></code> in seconds.</p>
-</p></li>
+<li><p><strong>run_input</strong> (<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em>]</em>) – The circuits to run.</p></li>
+<li><p><strong>timeout_seconds</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> | </em><em>None</em>) – Maximum time to wait for the job to finish, in seconds. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, use
+the <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v18.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMClient</span></code></a> default.</p></li>
+<li><p><strong>options</strong> – Keyword arguments passed on to <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_run_request()</span></code></a>, and documented there.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The Job from which the results can be obtained once the circuits are executed.</p>
+<dd class="field-even"><p>Job object from which the results can be obtained once the execution has finished.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="iqm.qiskit_iqm.iqm_job.IQMJob.html#iqm.qiskit_iqm.iqm_job.IQMJob" title="iqm.qiskit_iqm.iqm_job.IQMJob">IQMJob</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="iqm.qiskit_iqm.iqm_job.IQMJob.html#iqm.qiskit_iqm.iqm_job.IQMJob" title="iqm.qiskit_iqm.iqm_job.IQMJob"><em>IQMJob</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request">
-<span class="sig-name descname"><span class="pre">create_run_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">create_run_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><span class="pre">QuantumCircuit</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><span class="pre">QuantumCircuit</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v18.0)"><span class="pre">RunRequest</span></a></span></span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="Link to this definition">#</a></dt>
 <dd><p>Creates a run request without submitting it for execution.</p>
 <p>This can be used to check what would be submitted for execution by an equivalent call to <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>run_input</strong> (<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em>]</em>) – same as <code class="docutils literal notranslate"><span class="pre">run_input</span></code> for <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a></p></li>
-<li><p><strong>options</strong> – same as <code class="docutils literal notranslate"><span class="pre">options</span></code> for <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> without <code class="docutils literal notranslate"><span class="pre">timeout_seconds</span></code></p></li>
+<dd class="field-odd"><p><strong>run_input</strong> (<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><em>QuantumCircuit</em></a><em>]</em>) – Same as in <a class="reference internal" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>shots</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Number of repetitions of each circuit, for sampling. Default is 1024.</p></li>
+<li><p><strong>calibration_set_id</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>UUID</em><em>, </em><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>]</em>) – ID of the calibration set to use for the run.
+Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means the IQM server will use the current default
+calibration set.</p></li>
+<li><p><strong>circuit_compilation_options</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.CircuitCompilationOptions.html#iqm.iqm_client.models.CircuitCompilationOptions" title="(in IQM client v18.0)"><em>iqm.iqm_client.models.CircuitCompilationOptions</em></a>) – Compilation options for the circuits, passed on to <code class="xref py py-mod docutils literal notranslate"><span class="pre">iqm-client</span></code>.</p></li>
+<li><p><strong>circuit_callback</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.9)"><em>collections.abc.Callable</em></a><em>[</em><em>[</em><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>[</em><em>QuantumCircuit</em><em>]</em><em>]</em><em>, </em><em>Any</em><em>]</em>) – Callback function that, if provided, will be called for the circuits before sending
+them to the device.  This may be useful in situations when you do not have explicit
+control over transpilation, but need some information on how it was done. This can
+happen, for example, when you use pre-implemented algorithms and experiments in
+Qiskit, where the implementation of the said algorithm or experiment takes care of
+delivering correctly transpiled circuits to the backend. This callback method gives
+you a chance to look into those transpiled circuits, and extract any info you need.
+As a side effect, you can also use this callback to modify the transpiled circuits
+in-place, just before execution; however, we do not recommend to use it for this
+purpose.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the created run request object</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>created run request object</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v18.0)"><em>RunRequest</em></a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v18.0)"><em>RunRequest</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.retrieve_job">
-<span class="sig-name descname"><span class="pre">retrieve_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.retrieve_job" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">retrieve_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="iqm.qiskit_iqm.iqm_job.IQMJob.html#iqm.qiskit_iqm.iqm_job.IQMJob" title="iqm.qiskit_iqm.iqm_job.IQMJob"><span class="pre">IQMJob</span></a></span></span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.retrieve_job" title="Link to this definition">#</a></dt>
 <dd><p>Create and return an IQMJob instance associated with this backend with given job id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -559,13 +543,18 @@ timeout_seconds Optional(float): Optional timeout passed to the <code class="xre
 
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.close_client">
-<span class="sig-name descname"><span class="pre">close_client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.close_client" title="Link to this definition">#</a></dt>
-<dd><p>Close IQMClient’s session with the authentication server. Discard the client.</p>
+<span class="sig-name descname"><span class="pre">close_client</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.close_client" title="Link to this definition">#</a></dt>
+<dd><p>Close IQMClient’s session with the authentication server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit">
-<span class="sig-name descname"><span class="pre">serialize_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">serialize_circuit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit" title="(in Qiskit v1.2)"><span class="pre">QuantumCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.Circuit.html#iqm.iqm_client.models.Circuit" title="(in IQM client v18.0)"><span class="pre">Circuit</span></a></span></span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_provider.IQMBackend.serialize_circuit" title="Link to this definition">#</a></dt>
 <dd><p>Serialize a quantum circuit into the IQM data transfer format.</p>
 <p>Serializing is not strictly bound to the native gateset, i.e. some gates that are not explicitly mentioned in
 the native gateset of the backend can still be serialized. For example, the native single qubit gate for IQM
