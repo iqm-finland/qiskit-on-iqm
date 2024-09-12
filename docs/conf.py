@@ -77,16 +77,16 @@ show_authors = True
 autodoc_member_order = 'bysource'
 
 # where should signature annotations appear in the docs, function signature or parameter description?
-autodoc_typehints = 'description'
+autodoc_typehints = 'both'
 # autodoc_typehints = 'description' puts the __init__ annotations into its docstring,
 # which we thus have to include in the class documentation.
-autoclass_content = 'both'
+autoclass_content = 'class'
 
 # Sphinx 3.3+: manually clean up type alias rendering in the docs
 # autodoc_type_aliases = {'TypeAlias': 'exa.experiment.somemodule.TypeAlias'}
 
 # This is required to make docs build work after the client packages were moved to iqm namespace.
-autodoc_mock_imports = ["iqm_client"]
+autodoc_mock_imports = []
 
 # -- Autosummary ------------------------------------------------------------
 
@@ -146,7 +146,7 @@ intersphinx_mapping = {
     'matplotlib': ('https://matplotlib.org/stable', None),
     'numpy': ('https://numpy.org/doc/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy', None),
-    'qiskit': ('https://qiskit.org/documentation', None),
+    'qiskit': ('https://docs.quantum.ibm.com/api/qiskit', None),
     'iqm_client': ('https://iqm-finland.github.io/iqm-client', None),
 }
 
