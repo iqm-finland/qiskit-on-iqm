@@ -127,3 +127,22 @@ def test_submitted_circuit(adonis_architecture):
         'measure:2',
         'measure:4',
     ]
+
+
+def test_optimize_single_qubit_gates_preserves_layout():
+    circuit = QuantumCircuit(3)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.x(2)
+
+    transpiled_circuit = transpile(circuit, basis_gates=['r', 'cz'], initial_layout=[0, 1, 2])
+    optimized_circuit = optimize_single_qubit_gates(transpiled_circuit)
+
+    # Check if the layout is preserved
+    assert optimized_circuit.layout is not None
+    assert optimized_circuit.layout.initial_layout is not None
+
+    expected_layout = {0: 0, 1: 1, 2: 2}
+    actual_layout = {qubit.index: optimized_circuit.layout.initial_layout[qubit] for qubit in optimized_circuit.qubits}
+
+    assert actual_layout == expected_layout
