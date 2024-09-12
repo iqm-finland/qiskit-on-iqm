@@ -9,7 +9,7 @@ code snippets and check the output yourself.
 .. note::
 
    At the moment IQM does not provide a quantum computing service open to the general public.
-   Please contact our `sales team <https://www.meetiqm.com/contact/>`_ to set up your access to an IQM quantum
+   Please contact our `sales team <https://www.meetiqm.com/contact-us/>`_ to set up your access to an IQM quantum
    computer.
 
 

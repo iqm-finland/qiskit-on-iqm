@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.15
+=============
+
+* User guide updated. `#118 <https://github.com/iqm-finland/qiskit-on-iqm/pull/118>`_
+
 Version 13.14
 =============
 
