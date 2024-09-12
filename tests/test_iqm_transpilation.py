@@ -143,6 +143,6 @@ def test_optimize_single_qubit_gates_preserves_layout():
     assert optimized_circuit.layout.initial_layout is not None
 
     expected_layout = {0: 0, 1: 1, 2: 2}
-    actual_layout = {qubit.index: optimized_circuit.layout.initial_layout[qubit] for qubit in optimized_circuit.qubits}
+    actual_layout = {qubit._index: optimized_circuit.layout.initial_layout[qubit] for qubit in optimized_circuit.qubits}
 
     assert actual_layout == expected_layout
