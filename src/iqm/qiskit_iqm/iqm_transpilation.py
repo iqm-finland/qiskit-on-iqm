@@ -55,7 +55,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
     def run(self, dag: DAGCircuit) -> DAGCircuit:
         self._validate_ops(dag)
         layout = Layout.generate_trivial_layout(*dag.qregs.values())
-        self.property_set["layout"] = layout
+        self.property_set['layout'] = layout
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
         if self._ignore_barriers:
