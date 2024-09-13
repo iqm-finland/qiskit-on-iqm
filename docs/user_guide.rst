@@ -429,10 +429,8 @@ The batch execution functionality can be used to run a parameterized circuit for
 
 
     transpiled_circuit = transpile(circuit, backend=backend, layout_method='sabre', optimization_level=3)
-
     circuits = [transpiled_circuit.assign_parameters({theta: n}) for n in theta_range]
     job = backend.run(circuits, shots=1000)
-
     print(job.result().get_counts())
 
 Note that it is important to transpile the parameterized circuit before binding the values to ensure a consistent qubit
