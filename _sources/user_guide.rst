@@ -9,7 +9,7 @@ code snippets and check the output yourself.
 .. note::
 
    At the moment IQM does not provide a quantum computing service open to the general public.
-   Please contact our `sales team <https://www.meetiqm.com/contact/>`_ to set up your access to an IQM quantum
+   Please contact our `sales team <https://www.meetiqm.com/contact-us/>`_ to set up your access to an IQM quantum
    computer.
 
 
@@ -78,13 +78,13 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
 
     from qiskit import QuantumCircuit
 
-    qc = QuantumCircuit(3)
-    qc.h(0)
-    qc.cx(0, 1)
-    qc.cx(0, 2)
-    qc.measure_all()
+    circuit = QuantumCircuit(3)
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.cx(0, 2)
+    circuit.measure_all()
 
-    print(qc.draw(output='text'))
+    print(circuit.draw(output='text'))
 
 ::
 
@@ -114,7 +114,7 @@ circuit(s) are sampled:
     provider = IQMProvider(iqm_server_url)
     backend = provider.get_backend()
 
-    transpiled_circuit = transpile(qc, backend=backend)
+    transpiled_circuit = transpile(circuit, backend=backend)
     job = backend.run(transpiled_circuit, shots=1000)
 
 
@@ -140,7 +140,7 @@ to use, you can provide it as follows:
 
 .. code-block:: python
 
-    job = backend.run(qc, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+    job = backend.run(transpiled_circuit, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
 
 Alternatively, you can update the values of the options directly in the backend instance using :meth:`.IQMBackend.set_options`
 and then call :meth:`.IQMBackend.run` without specifying additional keyword arguments.
@@ -244,11 +244,11 @@ parameters as :meth:`.IQMBackend.run`.
 .. code-block:: python
 
     # inspect the run_request without submitting it for execution
-    run_request = backend.create_run_request(circuit, shots=10)
+    run_request = backend.create_run_request(transpiled_circuit, shots=10)
     print(run_request)
 
     # the following two calls submit exactly the same run request for execution on the server
-    backend.run(circuit, shots=10)
+    backend.run(transpiled_circuit, shots=10)
     backend.client.submit_run_request(run_request)
 
 It is also possible to print a run request when it is actually submitted by setting the environment variable
@@ -271,9 +271,8 @@ On IQM quantum computers without computational resonators
 
     from qiskit.compiler import transpile
 
-    qc_transpiled = transpile(qc, backend=backend, layout_method='sabre', optimization_level=3)
-
-    print(qc_transpiled.draw(output='text', idle_wires=False))
+    transpiled_circuit = transpile(circuit, backend=backend, layout_method='sabre', optimization_level=3)
+    print(transpiled_circuit.draw(output='text', idle_wires=False))
 
 ::
 
@@ -296,9 +295,8 @@ of single-qubit gates. This optimization expects an already transpiled circuit. 
 
     from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
 
-    qc_optimized = optimize_single_qubit_gates(qc_transpiled)
-
-    print(qc_optimized.draw(output='text', idle_wires=False))
+    optimized_circuit = optimize_single_qubit_gates(transpiled_circuit)
+    print(optimized_circuit.draw(output='text', idle_wires=False))
 
 ::
 
@@ -382,6 +380,63 @@ for the user to provide :func:`.transpile_to_IQM` with an ``optimization_level``
 as the Qiskit :func:`transpile` function.
 
 
+Batch execution of circuits
+---------------------------
+
+It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
+time efficient than running the circuits one by one. Batch execution has some restrictions: all the
+circuits must measure the same qubits, and be executed for the same number of shots. For starters,
+let's construct two circuits preparing and measuring different Bell states:
+
+.. code-block:: python
+
+    qc_1 = QuantumCircuit(2)
+    qc_1.h(0)
+    qc_1.cx(0, 1)
+    qc_1.measure_all()
+
+    qc_2 = QuantumCircuit(2)
+    qc_2.h(0)
+    qc_2.x(1)
+    qc_2.cx(0, 1)
+    qc_2.measure_all()
+
+Now, we can run them together in a batch:
+
+.. code-block:: python
+
+    transpiled_qcs = transpile([qc_1, qc_2], backend=backend, initial_layout=[0, 2])
+    job = backend.run(transpiled_qcs, shots=1000)
+    print(job.result().get_counts())
+
+The batch execution functionality can be used to run a parameterized circuit for various concrete values of parameters:
+
+.. code-block:: python
+
+    import numpy as np
+    from qiskit.circuit import Parameter
+
+    circuit = QuantumCircuit(2)
+    theta = Parameter('theta')
+    theta_range = np.linspace(0, np.pi / 2, 3)
+
+    circuit.h(0)
+    circuit.cx(0, 1)
+    circuit.rz(theta, [0, 1])
+    circuit.cx(0, 1)
+    circuit.h(0)
+    circuit.measure_all()
+
+
+    transpiled_circuit = transpile(circuit, backend=backend, layout_method='sabre', optimization_level=3)
+    circuits = [transpiled_circuit.assign_parameters({theta: n}) for n in theta_range]
+    job = backend.run(circuits, shots=1000)
+    print(job.result().get_counts())
+
+Note that it is important to transpile the parameterized circuit before binding the values to ensure a consistent qubit
+measurements across circuits in the batch.
+
+
 Simulation
 ----------
 
@@ -414,7 +469,7 @@ that represent specific IQM quantum architectures with pre-defined, representati
     backend = IQMFakeAdonis()
     transpiled_circuit = transpile(circuit, backend=backend)
     job = backend.run(transpiled_circuit, shots=1000)
-    job.result().get_counts()
+    print(job.result().get_counts())
 
 
 Above, we use an :func:`.IQMFakeAdonis` instance to run a noisy simulation of ``circuit`` on a simulated 5-qubit Adonis chip.
@@ -466,63 +521,5 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
    :meth:`.IQMFacadeBackend.run` checks for the presence of unused classical registers, and fails with an error if there
    are any.
 
-
-Batch execution of circuits
----------------------------
-
-It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
-time efficient than running the circuits one by one. Batch execution has some restrictions: all the
-circuits must measure the same qubits, and be executed for the same number of shots. For starters,
-let's construct two circuits preparing and measuring different Bell states:
-
-.. code-block:: python
-
-    qc_1 = QuantumCircuit(2)
-    qc_1.h(0)
-    qc_1.cx(0, 1)
-    qc_1.measure_all()
-
-    qc_2 = QuantumCircuit(2)
-    qc_2.h(0)
-    qc_2.x(1)
-    qc_2.cx(0, 1)
-    qc_2.measure_all()
-
-Now, we can run them together in a batch:
-
-.. code-block:: python
-
-    transpiled_qcs = transpile([qc_1, qc_2], backend=backend)
-    job = backend.run(transpiled_qcs, backend, initial_layout=[0, 2], shots=1000)
-    print(job.result().get_counts())
-
-The batch execution functionality can be used to run a parameterized circuit for various concrete values of parameters:
-
-.. code-block:: python
-
-    import numpy as np
-    from qiskit.circuit import Parameter
-
-    qc = QuantumCircuit(2)
-    theta = Parameter('theta')
-    theta_range = np.linspace(0, 2*np.pi, 3)
-
-    qc.h(0)
-    qc.cx(0, 1)
-    qc.rz(theta, [0, 1])
-    qc.cx(0, 1)
-    qc.h(0)
-    qc.measure_all()
-
-
-    qc_transpiled = transpile(qc, backend=backend, layout_method='sabre', optimization_level=3)
-
-    circuits = [qc_transpiled.assign_parameters({theta: n}) for n in theta_range]
-    job = backend.run(circuits, shots=1000)
-
-    print(job.result().get_counts())
-
-Note that it is important to transpile the parameterized circuit before binding the values to ensure a consistent qubit
-measurements across circuits in the batch.
 
 .. include:: ../CONTRIBUTING.rst
