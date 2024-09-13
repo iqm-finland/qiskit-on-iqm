@@ -244,11 +244,11 @@ parameters as :meth:`.IQMBackend.run`.
 .. code-block:: python
 
     # inspect the run_request without submitting it for execution
-    run_request = backend.create_run_request(circuit, shots=10)
+    run_request = backend.create_run_request(transpiled_circuit, shots=10)
     print(run_request)
 
     # the following two calls submit exactly the same run request for execution on the server
-    backend.run(circuit, shots=10)
+    backend.run(transpiled_circuit, shots=10)
     backend.client.submit_run_request(run_request)
 
 It is also possible to print a run request when it is actually submitted by setting the environment variable
