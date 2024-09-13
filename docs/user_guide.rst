@@ -492,8 +492,8 @@ Now, we can run them together in a batch:
 
 .. code-block:: python
 
-    transpiled_qcs = transpile([qc_1, qc_2], backend=backend)
-    job = backend.run(transpiled_qcs, backend, initial_layout=[0, 2], shots=1000)
+    transpiled_qcs = transpile([qc_1, qc_2], initial_layout=[0, 2], backend=backend)
+    job = backend.run(transpiled_qcs, shots=1000)
     print(job.result().get_counts())
 
 The batch execution functionality can be used to run a parameterized circuit for various concrete values of parameters:
