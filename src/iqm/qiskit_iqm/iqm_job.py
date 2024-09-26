@@ -76,13 +76,13 @@ class IQMJob(JobV1):
                 f'Cannot format IQM result without measurements. Job status is "{iqm_result.status.value.upper()}"'
             )
 
-        requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
+        requested_shots = self.metadata.get('shots', iqm_result.metadata.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
-        expect_exact_shots = iqm_result.metadata.request.heralding_mode == HeraldingMode.NONE
+        expect_exact_shots = iqm_result.metadata.heralding_mode == HeraldingMode.NONE
 
         return [
             (circuit.name, self._format_measurement_results(measurements, requested_shots, expect_exact_shots))
-            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.request.circuits)
+            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
         ]
 
     @staticmethod
