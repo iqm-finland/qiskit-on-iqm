@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 13.15 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 13.16 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89503959"></script>
+    <script src="_static/documentation_options.js?v=9e24b93f"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -140,8 +140,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.15 documentation - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.15 documentation - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 13.16 documentation - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Qiskit on IQM 13.16 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -602,7 +602,7 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 <h3>Inspecting circuits before submitting them for execution<a class="headerlink" href="#inspecting-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h3>
 <p>It is possible to inspect the final circuits that would be submitted for execution before actually submitting them,
 which can be useful for debugging purposes. This can be done using <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, which returns
-a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v18.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
+a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v18.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
 parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect the run_request without submitting it for execution</span>
 <span class="n">run_request</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_run_request</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
