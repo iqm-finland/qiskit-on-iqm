@@ -69,6 +69,8 @@ jobs:
         run: |
           tox -e docs
           touch build/sphinx/html/.nojekyll  # allow underscores in URL path
+          # remove unnecessary build files
+          sudo rm -rf build/sphinx/html/.doctrees
       - name: Publish to gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
