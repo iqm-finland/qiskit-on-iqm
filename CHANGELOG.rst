@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.16
+=============
+
+* Remove unnecessary build files when publishing documentation. `#122 <https://github.com/iqm-finland/iqm-client/pull/122>`_
+
 Version 13.15
 =============
 
