@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 13.17
+=============
+
+* Added support for classically controlled R, RX, RY, X, and Y gates.
+  `#123 <https://github.com/iqm-finland/iqm-client/pull/123>`_
+
 Version 13.16
 =============
 

@@ -221,7 +221,8 @@ def test_serialize_circuit_maps_individual_measurements(circuit, backend):
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
-        assert instruction.args == {'key': f'c_3_0_{i}'}
+        key = f'c_3_0_{i}'
+        assert instruction.args == {'key': key, 'feedback_key': key}
 
 
 def test_serialize_circuit_batch_measurement(circuit, backend):
@@ -231,7 +232,8 @@ def test_serialize_circuit_batch_measurement(circuit, backend):
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
-        assert instruction.args == {'key': f'c_3_0_{i}'}
+        key = f'c_3_0_{i}'
+        assert instruction.args == {'key': key, 'feedback_key': key}
 
 
 def test_serialize_circuit_barrier(circuit, backend):

@@ -16,15 +16,16 @@
 from __future__ import annotations
 
 from abc import ABC
+import itertools
 import re
 from typing import Final, Optional
 
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
-from qiskit.transpiler import Target
+from qiskit.transpiler import InstructionProperties, Target
 
-from iqm.iqm_client import QuantumArchitectureSpecification, is_directed_instruction, is_multi_qubit_instruction
+from iqm.iqm_client import QuantumArchitectureSpecification
 from iqm.qiskit_iqm.move_gate import MoveGate
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
@@ -50,41 +51,39 @@ class IQMBackendBase(BackendV2, ABC):
         qb_to_idx = {qb: idx for idx, qb in enumerate(sorted(architecture.qubits, key=get_num_or_zero))}
         operations = architecture.operations
 
+        # Construct the Qiskit instruction properties from the quantum architecture.
         target = Target()
 
-        # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
-        # Such info is automatically deduced once all instruction properties are set. Currently, we do not retrieve
-        # any properties from the server, and we are interested only in letting the target know what is the native gate
-        # set and the connectivity of the device under use. Thus, we populate the target with None properties.
-        def _create_connections(name: str):
-            """Creates the connection map of allowed loci for this instruction, mapped to None."""
-            if is_multi_qubit_instruction(name):
-                if is_directed_instruction(name):
-                    return {(qb_to_idx[qb1], qb_to_idx[qb2]): None for [qb1, qb2] in operations[name]}
-                return {
-                    (qb_to_idx[qb1], qb_to_idx[qb2]): None
-                    for pair in operations['cz']
-                    for qb1, qb2 in (pair, pair[::-1])
-                }
-            return {(qb_to_idx[qb],): None for [qb] in operations[name]}
+        def _create_properties(
+            op_name: str, symmetric: bool = False
+        ) -> dict[tuple[int, ...], InstructionProperties | None]:
+            """Creates the Qiskit instruction properties dictionary for the given IQM native operation.
 
+            Currently we do not provide any actual properties for the operation other than the
+            allowed loci.
+            """
+            loci = operations[op_name]
+            if symmetric:
+                # For symmetric gates, construct all the valid loci for Qiskit.
+                # Coupling maps in Qiskit are directed graphs, and gate symmetry is provided explicitly.
+                loci = [permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus)]
+            return {tuple(qb_to_idx[qb] for qb in locus): None for locus in loci}
+
+        if 'measure' in operations or 'measurement' in operations:
+            target.add_instruction(
+                Measure(),
+                _create_properties('measure' if 'measure' in operations else 'measurement'),
+            )
+        target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
         if 'prx' in operations or 'phased_rx' in operations:
             target.add_instruction(
                 RGate(Parameter('theta'), Parameter('phi')),
-                _create_connections('prx' if 'prx' in operations else 'phased_rx'),
+                _create_properties('prx' if 'prx' in operations else 'phased_rx'),
             )
-        target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
-        # Even though CZ is a symmetric gate, we still need to add properties for both directions. This is because
-        # coupling maps in Qiskit are directed graphs and the gate symmetry is not implicitly planted there. It should
-        # be explicitly supplied. This allows Qiskit to have coupling maps with non-symmetric gates like cx.
         if 'cz' in operations:
-            target.add_instruction(CZGate(), _create_connections('cz'))
-        if 'measure' in operations:
-            target.add_instruction(Measure(), _create_connections('measure'))
-        if 'measurement' in operations:
-            target.add_instruction(Measure(), _create_connections('measurement'))
+            target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
         if 'move' in operations:
-            target.add_instruction(MoveGate(), _create_connections('move'))
+            target.add_instruction(MoveGate(), _create_properties('move'))
 
         self._target = target
         self._qb_to_idx = qb_to_idx

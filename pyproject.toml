@@ -22,7 +22,7 @@ dependencies = [
     "numpy",
     "qiskit >= 0.45, < 1.2",
     "qiskit-aer >= 0.13.1, < 0.15",
-    "iqm-client >= 18.0, < 19.0"
+    "iqm-client >= 19.0, < 20.0"
 ]
 
 [project.urls]
