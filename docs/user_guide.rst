@@ -243,7 +243,7 @@ Some IQM backends support classically controlled gates, but this support current
   apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
 * The availability of the controlled gates depends on the instrumentation of the backend.
 
-This is how the
+The classical control can be applied on a circuit instruction using :meth:`~qiskit.circuit.Instruction.c_if`:
 
 .. code-block:: python
 
