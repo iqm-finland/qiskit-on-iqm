@@ -69,17 +69,11 @@ class IQMBackendBase(BackendV2, ABC):
                 loci = [permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus)]
             return {tuple(qb_to_idx[qb] for qb in locus): None for locus in loci}
 
-        if 'measure' in operations or 'measurement' in operations:
-            target.add_instruction(
-                Measure(),
-                _create_properties('measure' if 'measure' in operations else 'measurement'),
-            )
+        if 'measure' in operations:
+            target.add_instruction(Measure(), _create_properties('measure'))
         target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
-        if 'prx' in operations or 'phased_rx' in operations:
-            target.add_instruction(
-                RGate(Parameter('theta'), Parameter('phi')),
-                _create_properties('prx' if 'prx' in operations else 'phased_rx'),
-            )
+        if 'prx' in operations:
+            target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
         if 'cz' in operations:
             target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
         if 'move' in operations:

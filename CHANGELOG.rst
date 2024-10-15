@@ -2,11 +2,13 @@
 Changelog
 =========
 
-Version 13.17
-=============
+Version 14.0
+============
 
 * Added support for classically controlled R, RX, RY, X, and Y gates.
-  `#123 <https://github.com/iqm-finland/iqm-client/pull/123>`_
+  `#123 <https://github.com/iqm-finland/qiskit-on-iqm/pull/123>`_
+* Remove the deprecated native operation names ``phased_rx`` and ``measurement``.
+  `#123 <https://github.com/iqm-finland/qiskit-on-iqm/pull/123>`_
 
 Version 13.16
 =============
