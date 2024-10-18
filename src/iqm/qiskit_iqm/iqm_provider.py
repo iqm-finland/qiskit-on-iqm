@@ -224,7 +224,7 @@ class IQMBackend(IQMBackendBase):
         Raises:
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-branches,too-many-statements
         instructions = []
         # maps clbits to the feedback label of the last measurement result stored there
         clbit_to_feedback_label: dict[Clbit, str] = {}
@@ -270,16 +270,16 @@ class IQMBackend(IQMBackendBase):
             if condition is not None:
                 if native_inst.name != 'prx':
                     raise ValueError(
-                        "This backend only supports conditionals on r, x, y, rx and ry gates,"
-                        f" not on {instruction.name}"
+                        'This backend only supports conditionals on r, x, y, rx and ry gates,'
+                        f' not on {instruction.name}'
                     )
                 native_inst.name = 'cc_prx'
                 # add a feedback label to the instruction
                 creg, value = condition
                 if len(creg) != 1:
-                    raise ValueError(f"{instruction} is conditioned on multiple bits, this is not supported.")
+                    raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
                 if value != 1:
-                    raise ValueError(f"{instruction} is conditioned on integer value {value}, only 1 is supported.")
+                    raise ValueError(f'{instruction} is conditioned on integer value {value}, only 1 is supported.')
                 native_inst.args['feedback_label'] = clbit_to_feedback_label[creg[0]]
 
             instructions.append(native_inst)

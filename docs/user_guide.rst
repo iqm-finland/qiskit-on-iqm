@@ -561,7 +561,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
     backend = provider.get_backend('facade_adonis')
     transpiled_circuit = transpile(circuit, backend=backend)
     job = backend.run(transpiled_circuit, shots=1000)
-    job.result().get_counts()
+    print(job.result().get_counts())
 
 .. note::
 

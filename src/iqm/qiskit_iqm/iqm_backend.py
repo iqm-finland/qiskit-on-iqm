@@ -48,6 +48,7 @@ class IQMBackendBase(BackendV2, ABC):
             match = re.search(r'(\d+)', name)
             return int(match.group(1)) if match else 0
 
+        # qiskit uses zero-based integer indices to refer to qubits
         qb_to_idx = {qb: idx for idx, qb in enumerate(sorted(architecture.qubits, key=get_num_or_zero))}
         operations = architecture.operations
 
@@ -66,7 +67,7 @@ class IQMBackendBase(BackendV2, ABC):
             if symmetric:
                 # For symmetric gates, construct all the valid loci for Qiskit.
                 # Coupling maps in Qiskit are directed graphs, and gate symmetry is provided explicitly.
-                loci = [permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus)]
+                loci = [list(permuted_locus) for locus in loci for permuted_locus in itertools.permutations(locus)]
             return {tuple(qb_to_idx[qb] for qb in locus): None for locus in loci}
 
         if 'measure' in operations:
