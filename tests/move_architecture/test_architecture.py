@@ -64,10 +64,10 @@ def test_backend_configuration_new(new_architecture):
     assert backend.target.physical_qubits == [0, 1, 2, 3, 4, 5, 6]
     assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure', 'move'}
     assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
-        'r:1',
-        'id:1',
-        'cz:2',
         'measure:1',
+        'id:1',
+        'r:1',
+        'cz:2',
         'move:2',
     ]
     check_instruction(backend.instructions, 'r', [(1,), (2,), (3,), (4,), (5,), (6,)])
@@ -86,10 +86,10 @@ def test_backend_configuration_adonis(adonis_architecture):
     assert backend.target.physical_qubits == [0, 1, 2, 3, 4]
     assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure'}
     assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
-        'r:1',
-        'id:1',
-        'cz:2',
         'measure:1',
+        'id:1',
+        'r:1',
+        'cz:2',
     ]
     check_instruction(backend.instructions, 'r', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'measure', [(0,), (1,), (2,), (3,), (4,)])

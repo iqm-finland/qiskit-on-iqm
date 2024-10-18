@@ -108,7 +108,7 @@ def test_submitted_circuit(adonis_architecture):
     circuit.measure_all()
 
     # This transpilation seed maps virtual qubit 0 to physical qubit 2, and virtual qubit 1 to physical qubit 4
-    # Other seeds will switch the mapping, and may also reorder the first phased_rx instructions
+    # Other seeds will switch the mapping, and may also reorder the first prx instructions
     submitted_circuit = get_transpiled_circuit_json(circuit, adonis_architecture, seed_transpiler=123)
 
     instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]
