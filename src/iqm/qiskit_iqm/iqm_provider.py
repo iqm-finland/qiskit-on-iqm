@@ -52,6 +52,12 @@ class IQMBackend(IQMBackendBase):
 
     def __init__(self, client: IQMClient, **kwargs):
         architecture = client.get_quantum_architecture()
+        # HACK monkeypatch add cc_prx to the client, TODO remove when DQA works
+        prx_loci = architecture.operations.get('prx')
+        if prx_loci is not None:
+            architecture.operations['cc_prx'] = prx_loci
+            client._architecture = architecture
+
         super().__init__(architecture, **kwargs)
         self.client: IQMClient = client
         self._max_circuits: Optional[int] = None
@@ -274,12 +280,7 @@ class IQMBackend(IQMBackendBase):
                     raise ValueError(f"{instruction} is conditioned on multiple bits, this is not supported.")
                 if value != 1:
                     raise ValueError(f"{instruction} is conditioned on integer value {value}, only 1 is supported.")
-                native_inst.args = {
-                    'feedback_label': clbit_to_feedback_label[creg[0]],
-                    # TODO HACK iqm.cpc needs argument conversion for cc_prx too (angle_t to angle etc)
-                    'angle': 2 * np.pi * native_inst.args['angle_t'],
-                    'phase': 2 * np.pi * native_inst.args['phase_t'],
-                }
+                native_inst.args['feedback_label'] = clbit_to_feedback_label[creg[0]]
 
             instructions.append(native_inst)
 
