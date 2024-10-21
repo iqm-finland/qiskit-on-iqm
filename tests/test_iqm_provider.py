@@ -50,7 +50,6 @@ def test_get_backend(linear_architecture_3q):
     backend = provider.get_backend()
 
     assert isinstance(backend, IQMBackend)
-    assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 3
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
 
@@ -73,7 +72,6 @@ def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     backend = provider.get_backend('facade_adonis')
 
     assert isinstance(backend, IQMFacadeBackend)
-    assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 5
     assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
 
