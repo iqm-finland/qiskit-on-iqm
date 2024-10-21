@@ -227,7 +227,7 @@ class IQMBackend(IQMBackendBase):
         # pylint: disable=too-many-branches,too-many-statements
         instructions = []
         # maps clbits to the latest "measure" instruction to store its result there
-        clbit_to_measure: dict[Clbit, tuple[str, Instruction]] = {}
+        clbit_to_measure: dict[Clbit, Instruction] = {}
 
         for circuit_instruction in circuit.data:
             instruction = circuit_instruction.operation
