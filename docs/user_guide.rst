@@ -239,7 +239,7 @@ Classically controlled gates
 Some IQM backends support classically controlled gates, but this support currently has several limitations:
 
 * Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
-* The gates can only conditioned on one classical bit, and the only control available is to
+* The gates can only be conditioned on one classical bit, and the only control available is to
   apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
 * The availability of the controlled gates depends on the instrumentation of the backend.
 
