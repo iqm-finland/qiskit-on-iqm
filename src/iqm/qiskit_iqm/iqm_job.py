@@ -202,7 +202,7 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
-        if result.status == Status.PENDING_COMPILATION:
+        if result.status in [Status.PENDING_COMPILATION, Status.RECEIVED, Status.PROCESSING, Status.ACCEPTED]:
             return JobStatus.QUEUED
         if result.status == Status.PENDING_EXECUTION:
             return JobStatus.RUNNING
