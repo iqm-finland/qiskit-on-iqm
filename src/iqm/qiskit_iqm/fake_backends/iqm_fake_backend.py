@@ -315,7 +315,7 @@ class IQMFakeBackend(IQMBackendBase):
             def run(self, dag):
                 qubits_involved_in_last_move = None  # Store which qubit was last used for MOVE IN
                 for node in dag.op_nodes():
-                    if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure", "measurement"]:
+                    if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure"]:
                         raise ValueError("Operation '" + node.op.name + "' is not supported by the backend.")
                     if qubits_involved_in_last_move is not None:
                         # Verify that no single qubit gate is performed on the qubit between MOVE IN and MOVE OUT

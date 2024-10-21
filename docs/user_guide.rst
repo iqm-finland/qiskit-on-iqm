@@ -233,6 +233,56 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 :meth:`~.IQMBackendBase.qubit_name_to_index` and :meth:`~.IQMBackendBase.index_to_qubit_name` can become handy.
 
 
+Classically controlled gates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some IQM backends support classically controlled gates, but this support currently has several limitations:
+
+* Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
+* The gates can only be conditioned on one classical bit, and the only control available is to
+  apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
+* The availability of the controlled gates depends on the instrumentation of the backend.
+
+The classical control can be applied on a circuit instruction using :meth:`~qiskit.circuit.Instruction.c_if`:
+
+.. code-block:: python
+
+    from qiskit import QuantumCircuit
+
+    qr = QuantumRegister(2, 'q')
+    cr = ClassicalRegister(1, 'c')
+    circuit = QuantumCircuit(qr, cr)
+
+    circuit.h(0)
+    circuit.measure(0, cr[0])
+    circuit.x(1).c_if(cr, 1)
+    circuit.measure_all()
+
+    print(circuit.draw(output='text'))
+
+::
+
+            ┌───┐┌─┐        ░ ┌─┐
+       q_0: ┤ H ├┤M├────────░─┤M├───
+            └───┘└╥┘ ┌───┐  ░ └╥┘┌─┐
+       q_1: ──────╫──┤ X ├──░──╫─┤M├
+                  ║  └─╥─┘  ░  ║ └╥┘
+                  ║ ┌──╨──┐    ║  ║
+       c: 1/══════╩═╡ 0x1 ╞════╬══╬═
+                  0 └─────┘    ║  ║
+    meas: 2/═══════════════════╩══╩═
+                               0  1
+
+
+Executing the above circuit should result in the counts being approximately 50/50 split
+between the '00 0' and '11 1' bins of the histogram (even though the state itself is never entangled).
+
+.. note::
+
+   Because the gates can only take feedback from one classical bit you must place the measurement result
+   in a 1-bit classical register, ``c`` in the above example.
+
+
 Inspecting circuits before submitting them for execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -511,7 +561,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
     backend = provider.get_backend('facade_adonis')
     transpiled_circuit = transpile(circuit, backend=backend)
     job = backend.run(transpiled_circuit, shots=1000)
-    job.result().get_counts()
+    print(job.result().get_counts())
 
 .. note::
 
