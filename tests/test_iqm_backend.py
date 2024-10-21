@@ -202,7 +202,7 @@ def test_serialize_circuit_maps_individual_measurements(circuit, backend):
         assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
         key = f'c_3_0_{i}'
-        assert instruction.args == {'key': key, 'feedback_key': key}
+        assert instruction.args == {'key': key}
 
 
 def test_serialize_circuit_batch_measurement(circuit, backend):
@@ -213,7 +213,7 @@ def test_serialize_circuit_batch_measurement(circuit, backend):
         assert instruction.name == 'measure'
         assert instruction.qubits == (f'{i}',)
         key = f'c_3_0_{i}'
-        assert instruction.args == {'key': key, 'feedback_key': key}
+        assert instruction.args == {'key': key}
 
 
 def test_serialize_circuit_barrier(circuit, backend):
@@ -293,13 +293,6 @@ def test_serialize_circuit_c_if_same_qubit(backend, gate):
     qc.append(gate.c_if(control, 1), [0])
     # final measurement
     qc.measure(q, result)
-
-    def check_measure_cc_prx_pair(measure, cc_prx):
-        assert measure.name == 'measure'
-        assert cc_prx.name == 'cc_prx'
-        key = measure.args['key']
-        assert measure.args['feedback_key'] == key
-        assert cc_prx.args['feedback_label'] == f'QB1__{key}'
 
     circuit_ser = backend.serialize_circuit(qc)
     assert len(circuit_ser.instructions) == 4

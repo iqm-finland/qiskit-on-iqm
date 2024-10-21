@@ -226,8 +226,9 @@ class IQMBackend(IQMBackendBase):
         """
         # pylint: disable=too-many-branches,too-many-statements
         instructions = []
-        # maps clbits to the feedback label of the last measurement result stored there
-        clbit_to_feedback_label: dict[Clbit, str] = {}
+        # maps clbits to the latest "measure" instruction to store its result there
+        clbit_to_measure: dict[Clbit, tuple[str, Instruction]] = {}
+
         for circuit_instruction in circuit.data:
             instruction = circuit_instruction.operation
             qubit_names = [str(circuit.find_bit(qubit).index) for qubit in circuit_instruction.qubits]
@@ -254,10 +255,8 @@ class IQMBackend(IQMBackendBase):
             elif instruction.name == 'measure':
                 clbit = circuit_instruction.clbits[0]  # always a single-qubit measurement
                 mk = str(MeasurementKey.from_clbit(clbit, circuit))
-                # TODO we should use physical qubit names in native circuits, not integer strings
-                physical_qubit_name = self._idx_to_qb[int(qubit_names[0])]
-                clbit_to_feedback_label[clbit] = f'{physical_qubit_name}__{mk}'
-                native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk, 'feedback_key': mk})
+                native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk})
+                clbit_to_measure[clbit] = native_inst
             elif instruction.name == 'id':
                 continue
             else:
@@ -274,13 +273,22 @@ class IQMBackend(IQMBackendBase):
                         f' not on {instruction.name}'
                     )
                 native_inst.name = 'cc_prx'
-                # add a feedback label to the instruction
                 creg, value = condition
                 if len(creg) != 1:
                     raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
                 if value != 1:
                     raise ValueError(f'{instruction} is conditioned on integer value {value}, only 1 is supported.')
-                native_inst.args['feedback_label'] = clbit_to_feedback_label[creg[0]]
+                # Add a feedback_label to the instruction.
+                # The latest "measure" instruction to write to that classical bit is modified, it is
+                # given an explicit feedback_key equal to its measurement key.
+                # The feedback_label given to the controlled instruction consists of this feedback_key,
+                # and the name of the measured qubit.
+                measure_inst = clbit_to_measure[creg[0]]
+                feedback_key = measure_inst.args['key']
+                measure_inst.args['feedback_key'] = feedback_key  # this measure is used to provide feedback
+                # TODO we should use physical qubit names in native circuits, not integer strings
+                physical_qubit_name = self._idx_to_qb[int(measure_inst.qubits[0])]  # single-qubit measurement
+                native_inst.args['feedback_label'] = f'{physical_qubit_name}__{feedback_key}'
 
             instructions.append(native_inst)
 
