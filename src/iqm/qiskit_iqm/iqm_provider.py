@@ -257,6 +257,30 @@ class IQMBackend(IQMBackendBase):
                 mk = str(MeasurementKey.from_clbit(clbit, circuit))
                 native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk})
                 clbit_to_measure[clbit] = native_inst
+            elif instruction.name == 'reset':
+                # implemented using a measure instruction to measure the qubits, and
+                # one cc_prx per qubit to conditionally flip it to |0>
+                feedback_key = '_reset'
+                instructions.append(
+                    Instruction(
+                        name='measure',
+                        qubits=qubit_names,
+                        args={
+                            'key': f'_reset_{len(instructions)}',  # HACK to get something unique, remove when key can be omitted
+                            'feedback_key': feedback_key,
+                        },
+                    )
+                )
+                for q in qubit_names:
+                    physical_qubit_name = self._idx_to_qb[int(q)]
+                    instructions.append(
+                        Instruction(
+                            name='cc_prx',
+                            qubits=[q],
+                            args={'angle_t': 0.5, 'phase_t': 0.0, 'feedback_label': f'{physical_qubit_name}__{feedback_key}'},
+                        )
+                    )
+                continue
             elif instruction.name == 'id':
                 continue
             else:
@@ -264,7 +288,7 @@ class IQMBackend(IQMBackendBase):
                     f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
                     f'You need to transpile the circuit before execution.'
                 )
-            # classically controlled gates
+            # classically controlled gates (using the c_if method)
             condition = instruction.condition
             if condition is not None:
                 if native_inst.name != 'prx':

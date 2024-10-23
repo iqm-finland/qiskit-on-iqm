@@ -20,7 +20,7 @@ import itertools
 import re
 from typing import Final, Optional
 
-from qiskit.circuit import Parameter
+from qiskit.circuit import Parameter, Reset
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import InstructionProperties, Target
@@ -75,6 +75,8 @@ class IQMBackendBase(BackendV2, ABC):
         target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
         if 'prx' in operations:
             target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
+            # HACK reset gate shares prx loci for now
+            target.add_instruction(Reset(), _create_properties('prx'))
         if 'cz' in operations:
             target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
         if 'move' in operations:
