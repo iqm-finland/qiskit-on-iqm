@@ -43,7 +43,7 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend
 @pytest.fixture()
 def job(adonis_architecture):
     client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
     backend = IQMBackend(client)
     return IQMJob(backend, str(uuid.uuid4()))
 

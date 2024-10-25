@@ -65,5 +65,5 @@ def test_coerce_to_allowed_ops():
 
 def test_map_operators_to_indices(ndonis_architecture):
     backend, _client = get_mocked_backend(ndonis_architecture)
-    as_indices = _map_operators_to_indices(backend.architecture.operations, backend.architecture.qubits)
+    as_indices = _map_operators_to_indices(backend.architecture.gates, backend.architecture.components)
     assert ALLOWED_OPS_AS_NESTED_LISTS == as_indices

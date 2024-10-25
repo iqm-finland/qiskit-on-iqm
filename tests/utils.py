@@ -14,8 +14,7 @@
 """Testing and mocking utility functions.
 """
 from functools import partial
-import json
-from typing import Any, Callable, Literal, Optional, TypedDict, cast, get_type_hints
+from typing import Any, Callable, Literal, TypedDict, cast, get_type_hints
 from unittest.mock import Mock
 from uuid import UUID
 
@@ -27,27 +26,9 @@ from qiskit.transpiler.exceptions import TranspilerError
 import requests
 from requests import Response
 
-from iqm.iqm_client import Circuit, Instruction, IQMClient, QuantumArchitectureSpecification
+from iqm.iqm_client import Circuit, DynamicQuantumArchitecture, GateInfo, Instruction, IQMClient
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
-
-
-class MockJsonResponse:
-    def __init__(self, status_code: int, json_data: dict, history: Optional[list[Response]] = None):
-        self.status_code = status_code
-        self.json_data = json_data
-        self.history = history
-
-    @property
-    def text(self):
-        return json.dumps(self.json_data)
-
-    def json(self):
-        return self.json_data
-
-    def raise_for_status(self):
-        if 400 <= self.status_code < 600:
-            raise requests.HTTPError(f'{self.status_code}', response=self)
 
 
 class AllowedOps(TypedDict):
@@ -60,12 +41,11 @@ class AllowedOps(TypedDict):
 ALLOWED_OP_NAMES = get_type_hints(AllowedOps).keys()
 
 
-def get_mocked_backend(
-    architecture: QuantumArchitectureSpecification,
-) -> tuple[IQMBackend, IQMClient]:
+def get_mocked_backend(architecture: DynamicQuantumArchitecture) -> tuple[IQMBackend, IQMClient]:
     """Returns an IQM backend running on a mocked IQM client that returns the given architecture."""
     client = IQMClient(url='http://localhost')
-    when(client).get_quantum_architecture().thenReturn(architecture)
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(architecture)
+    when(client).get_dynamic_quantum_architecture(architecture.calibration_set_id).thenReturn(architecture)
     backend = IQMBackend(client)
     return backend, client
 
@@ -105,7 +85,7 @@ def get_mock_ok_response(json: dict) -> Response:
 # pylint: disable=too-many-arguments
 def get_transpiled_circuit_json(
     circuit: QuantumCircuit,
-    architecture: QuantumArchitectureSpecification,
+    architecture: DynamicQuantumArchitecture,
     seed_transpiler=None,
     optimization_level=None,
     create_move_layout: bool = False,
@@ -142,13 +122,13 @@ def describe_instruction(instruction: Instruction) -> str:
 
 
 def _get_allowed_ops(backend: IQMBackend) -> AllowedOps:
-    ops_with_indices = _map_operators_to_indices(backend.architecture.operations, backend.architecture.qubits)
+    ops_with_indices = _map_operators_to_indices(backend.architecture.gates, backend.architecture.components)
     return _coerce_to_allowed_ops(ops_with_indices)
 
 
-def _map_operators_to_indices(ops: dict[str, list[list[str]]], qubits: list[str]) -> dict[str, list[list[int]]]:
+def _map_operators_to_indices(ops: dict[str, GateInfo], components: list[str]) -> dict[str, list[list[int]]]:
     return {
-        op_name: [[qubits.index(q) for q in valid_operands] for valid_operands in ops[op_name]]
+        op_name: [[components.index(q) for q in valid_operands] for valid_operands in ops[op_name].loci]
         for op_name in ALLOWED_OP_NAMES
         if op_name in ops
     }
