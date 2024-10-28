@@ -89,10 +89,7 @@ class IQMBackendBase(BackendV2, ABC):
         self.architecture = arch
 
         qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}
-        operations = {
-            gate_name: [list(locus) for locus in gate_info.loci] for gate_name, gate_info in arch.gates.items()
-        }
-
+        operations = {gate_name: gate_info.loci for gate_name, gate_info in arch.gates.items()}
         target = Target()
 
         def _create_properties(
