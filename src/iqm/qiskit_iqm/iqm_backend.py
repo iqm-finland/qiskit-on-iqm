@@ -25,12 +25,7 @@ from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import InstructionProperties, Target
 
-from iqm.iqm_client import (
-    DynamicQuantumArchitecture,
-    GateImplementationInfo,
-    GateInfo,
-    QuantumArchitectureSpecification,
-)
+from iqm.iqm_client import DynamicQuantumArchitecture, Locus, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.move_gate import MoveGate
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
@@ -45,7 +40,7 @@ class QuantumArchitecture:
 
     qubits: list[str]
     computational_resonators: list[str]
-    gates: dict[str, GateInfo]
+    gate_loci: dict[str, tuple[Locus, ...]]
 
     components = DynamicQuantumArchitecture.components
 
@@ -54,18 +49,14 @@ class QuantumArchitecture:
         """Returns QuantumArchitecture created from the given static architecture."""
         qubits = [qb for qb in static_architecture.qubits if qb.startswith('QB')]
         computational_resonators = [qb for qb in static_architecture.qubits if qb.startswith('COMP')]
-        gates = {
-            gate_name: GateInfo(
-                implementations={'default': GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
-                default_implementation='default',
-                override_default_implementation={},
-            )
+        gate_loci = {
+            gate_name: tuple(tuple(locus) for locus in gate_loci)
             for gate_name, gate_loci in static_architecture.operations.items()
         }
         return QuantumArchitecture(
             qubits=qubits,
             computational_resonators=computational_resonators,
-            gates=gates,
+            gate_loci=gate_loci,
         )
 
     @classmethod
@@ -74,7 +65,7 @@ class QuantumArchitecture:
         return QuantumArchitecture(
             qubits=dynamic_architecture.qubits,
             computational_resonators=dynamic_architecture.computational_resonators,
-            gates=dynamic_architecture.gates,
+            gate_loci={gate_name: gate_info.loci for gate_name, gate_info in dynamic_architecture.gates.items()},
         )
 
 
@@ -101,7 +92,7 @@ class IQMBackendBase(BackendV2, ABC):
 
         qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}  # type: ignore
         operations = {
-            gate_name: [list(locus) for locus in gate_info.loci] for gate_name, gate_info in arch.gates.items()
+            gate_name: [list(locus) for locus in gate_loci] for gate_name, gate_loci in arch.gate_loci.items()
         }
 
         target = Target()
