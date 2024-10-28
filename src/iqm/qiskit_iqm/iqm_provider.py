@@ -75,7 +75,6 @@ class IQMBackend(IQMBackendBase):
     def _default_options(cls) -> Options:
         return Options(
             shots=1024,
-            calibration_set_id=None,
             circuit_compilation_options=CircuitCompilationOptions(),
             circuit_callback=None,
         )

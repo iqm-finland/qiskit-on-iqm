@@ -275,7 +275,7 @@ class IQMFakeBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, calibration_set_id=None)
+        return Options(shots=1024)
 
     @property
     def max_circuits(self) -> Optional[int]:
