@@ -46,15 +46,18 @@ def backend(linear_3q_architecture):
     client._api = APIConfig(APIVariant.V1, 'http://some_url')
     return IQMBackend(client)
 
+
 @pytest.fixture
 def circuit():
     return QuantumCircuit(3, 3)
+
 
 @pytest.fixture
 def circuit_2() -> QuantumCircuit:
     circuit = QuantumCircuit(5)
     circuit.cz(0, 1)
     return circuit
+
 
 @pytest.fixture
 def create_run_request_default_kwargs(linear_3q_architecture) -> dict:
@@ -412,10 +415,11 @@ def test_run_with_custom_number_of_shots(
 
 
 @pytest.mark.parametrize(
-    'calibration_set_id', [
+    'calibration_set_id',
+    [
         '67e77465-d90e-4839-986e-9270f952b743',
         uuid.UUID('67e77465-d90e-4839-986e-9270f952b743'),
-    ]
+    ],
 )
 def test_backend_run_with_custom_calibration_set_id(
     linear_3q_architecture, circuit, create_run_request_default_kwargs, job_id, calibration_set_id, run_request

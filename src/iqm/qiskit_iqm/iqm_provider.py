@@ -242,7 +242,7 @@ class IQMBackend(IQMBackendBase):
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
         # pylint: disable=too-many-branches,too-many-statements
-        instructions = []
+        instructions: list[Instruction] = []
         # maps clbits to the latest "measure" instruction to store its result there
         clbit_to_measure: dict[Clbit, Instruction] = {}
 
