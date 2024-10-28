@@ -36,17 +36,28 @@ from iqm.qiskit_iqm.move_gate import MoveGate
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
 
 
-def dqa_from_static_architecture(static_architecture: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
-    """Returns a dynamic quantum architecture created from the given static architecture."""
-    qubits = [qb for qb in static_architecture.qubits if qb.startswith('QB')]
-    computational_resonators = [qb for qb in static_architecture.qubits if qb.startswith('COMP')]
+def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
+    """Create a dynamic quantum architecture from the given static quantum architecture.
+
+    Since the DQA contains some attributes that are not present in an SQA, they are filled with mock data:
+
+    * Each gate type is given a single mock implementation.
+    * Calibration set ID is set to the all-zeros UUID.
+
+    Args:
+        sqa: static quantum architecture to replicate
+    Returns:
+        DQA replicating the properties of ``sqa``
+    """
+    qubits = [qb for qb in sqa.qubits if qb.startswith('QB')]
+    computational_resonators = [qb for qb in sqa.qubits if qb.startswith('COMP')]
     gates = {
         gate_name: GateInfo(
             implementations={'__fake': GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
             default_implementation='__fake',
             override_default_implementation={},
         )
-        for gate_name, gate_loci in static_architecture.operations.items()
+        for gate_name, gate_loci in sqa.operations.items()
     }
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('00000000-0000-0000-0000-000000000000'),
@@ -72,7 +83,7 @@ class IQMBackendBase(BackendV2, ABC):
     ):
         super().__init__(**kwargs)
         if isinstance(architecture, QuantumArchitectureSpecification):
-            arch = dqa_from_static_architecture(architecture)
+            arch = _dqa_from_static_architecture(architecture)
         else:
             arch = architecture
         self.architecture = arch
@@ -95,15 +106,15 @@ class IQMBackendBase(BackendV2, ABC):
             if symmetric:
                 # For symmetric gates, construct all the valid loci for Qiskit.
                 # Coupling maps in Qiskit are directed graphs, and gate symmetry is provided explicitly.
-                loci = [list(permuted_locus) for locus in loci for permuted_locus in itertools.permutations(locus)]
+                loci = [permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus)]
             return {tuple(qb_to_idx[qb] for qb in locus): None for locus in loci}
 
-        if 'measure' in operations:
-            target.add_instruction(Measure(), _create_properties('measure'))
         target.add_instruction(
             IGate(),
             {(qb_to_idx[qb],): None for qb in arch.components},
         )
+        if 'measure' in operations:
+            target.add_instruction(Measure(), _create_properties('measure'))
         if 'prx' in operations:
             target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
         if 'cz' in operations:

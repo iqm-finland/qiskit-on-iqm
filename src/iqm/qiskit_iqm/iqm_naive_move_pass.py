@@ -361,7 +361,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         config = user_config.get_config()
         optimization_level = config.get("transpile_optimization_level", 1)
 
-    if "move" not in backend.architecture.gates.keys():
+    if "move" not in backend.architecture.gates:
         pass_manager = generate_preset_pass_manager(backend=backend, optimization_level=optimization_level)
         simple_transpile = pass_manager.run(circuit)
         if passes:
