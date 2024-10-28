@@ -229,12 +229,11 @@ def _qubit_to_index_without_resonator(
 
 def _generate_coupling_map_without_resonator(backend: Union[IQMBackend, IQMFakeBackend]) -> CouplingMap:
     # Grab qubits from backend operations
-    allowed_ops = backend.architecture.operations
-    allowed_czs = allowed_ops["cz"]
-    allowed_moves = allowed_ops["move"]
+    allowed_ops = backend.architecture.gates
+    allowed_czs = allowed_ops["cz"].loci
+    allowed_moves = allowed_ops["move"].loci
 
-    iqm_registers = backend.architecture.qubits
-    resonator_registers = [r for r in iqm_registers if r.startswith("COMP_R")]
+    resonator_registers = backend.architecture.computational_resonators
 
     move_qubits = {r: [q for pair in allowed_moves for q in pair if r in pair and q != r] for r in resonator_registers}
 
@@ -266,14 +265,13 @@ def build_IQM_star_pass_manager_config(
     We need to pass precomputed values to be used in transpiler passes via backend_properties.
     This function performs precomputation for the backend and packages the values to the config object."""
     coupling_map = _generate_coupling_map_without_resonator(backend)
-    allowed_ops = backend.architecture.operations
-    allowed_moves = allowed_ops["move"]
+    allowed_ops = backend.architecture.gates
+    allowed_moves = allowed_ops["move"].loci
 
-    iqm_registers = backend.architecture.qubits
     classical_registers = list(range(len(circuit.clbits)))
-    resonator_registers = [r for r in iqm_registers if r.startswith("COMP_R")]
+    resonator_registers = backend.architecture.computational_resonators
     move_qubits = {r: [q for pair in allowed_moves for q in pair if r in pair and q != r] for r in resonator_registers}
-    qubit_registers = [q for q in iqm_registers if q not in resonator_registers]
+    qubit_registers = backend.architecture.qubits
 
     qubit_indices = [backend.qubit_name_to_index(qb) for qb in qubit_registers]
     bit_indices = [_qubit_to_index_without_resonator(backend, resonator_registers, qb) for qb in qubit_registers]
@@ -363,7 +361,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         config = user_config.get_config()
         optimization_level = config.get("transpile_optimization_level", 1)
 
-    if "move" not in backend.architecture.operations.keys():
+    if "move" not in backend.architecture.gates:
         pass_manager = generate_preset_pass_manager(backend=backend, optimization_level=optimization_level)
         simple_transpile = pass_manager.run(circuit)
         if passes:

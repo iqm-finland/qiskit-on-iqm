@@ -28,7 +28,7 @@ from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
-from iqm.iqm_client import QuantumArchitectureSpecification
+from iqm.iqm_client import DynamicQuantumArchitecture, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 
@@ -370,3 +370,20 @@ class IQMFakeBackend(IQMBackendBase):
         job = sim_noise.run(circuits, shots=shots)
 
         return job
+
+    def validate_compatible_architecture(self, architecture: DynamicQuantumArchitecture) -> bool:
+        """Given a dynamic quantum architecture returns true if its number of components, names of components and
+        component connectivity matches the architecture of this backend."""
+        components_match = set(architecture.components) == set(self.__architecture.qubits)
+        ops = {
+            gate_name: list(list(locus) for locus in gate_info.loci)
+            for gate_name, gate_info in architecture.gates.items()
+        }
+        ops.update({"barrier": []})
+        ops_match = self.__architecture.compare_operations(self.__architecture.operations, ops)
+
+        self_connectivity = set(map(frozenset, self.__architecture.qubit_connectivity))
+        target_connectivity = set(frozenset(locus) for loci in ops.values() for locus in loci if len(locus) > 1)
+        connectivity_match = self_connectivity == target_connectivity
+
+        return components_match and ops_match and connectivity_match

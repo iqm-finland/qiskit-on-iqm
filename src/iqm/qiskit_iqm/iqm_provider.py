@@ -27,7 +27,14 @@ from qiskit import QuantumCircuit
 from qiskit.circuit import Clbit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import Circuit, CircuitCompilationOptions, Instruction, IQMClient, RunRequest
+from iqm.iqm_client import (
+    Circuit,
+    CircuitCompilationOptions,
+    CircuitValidationError,
+    Instruction,
+    IQMClient,
+    RunRequest,
+)
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
@@ -47,21 +54,22 @@ class IQMBackend(IQMBackendBase):
 
     Args:
         client: client instance for communicating with an IQM server
-        **kwargs: optional arguments to be passed to the parent Backend initializer
+        calibration_set_id: ID of the calibration set the backend will use.
+            ``None`` means the IQM server will be queried for the current default
+            calibration set.
+        kwargs: optional arguments to be passed to the parent Backend initializer
     """
 
-    def __init__(self, client: IQMClient, **kwargs):
-        architecture = client.get_quantum_architecture()
-        # HACK monkeypatch add cc_prx to the client, TODO remove when DQA works
-        prx_loci = architecture.operations.get('prx')
-        if prx_loci is not None:
-            architecture.operations['cc_prx'] = prx_loci
-            client._architecture = architecture
-
+    def __init__(self, client: IQMClient, *, calibration_set_id: Union[str, UUID, None] = None, **kwargs):
+        if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
+            calibration_set_id = UUID(calibration_set_id)
+        self._use_default_calibration_set = calibration_set_id is None
+        architecture = client.get_dynamic_quantum_architecture(calibration_set_id)
         super().__init__(architecture, **kwargs)
         self.client: IQMClient = client
         self._max_circuits: Optional[int] = None
-        self.name = f'IQM{architecture.name}Backend'
+        self.name = 'IQM Backend'
+        self._calibration_set_id: UUID = architecture.calibration_set_id
 
     @classmethod
     def _default_options(cls) -> Options:
@@ -125,9 +133,6 @@ class IQMBackend(IQMBackendBase):
 
         Keyword Args:
             shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
-            calibration_set_id (Union[str, UUID, None]): ID of the calibration set to use for the run.
-                Default is ``None``, which means the IQM server will use the current default
-                calibration set.
             circuit_compilation_options (iqm.iqm_client.models.CircuitCompilationOptions):
                 Compilation options for the circuits, passed on to :mod:`iqm-client`.
             circuit_callback (collections.abc.Callable[[list[QuantumCircuit]], Any]):
@@ -169,9 +174,6 @@ class IQMBackend(IQMBackendBase):
         merged_options = copy(self.options)
         merged_options.update_options(**dict(options))
         shots = merged_options['shots']
-        calibration_set_id = merged_options['calibration_set_id']
-        if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
-            calibration_set_id = UUID(calibration_set_id)
 
         circuit_callback = merged_options['circuit_callback']
         if circuit_callback:
@@ -183,13 +185,28 @@ class IQMBackend(IQMBackendBase):
         )
         qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_physical_qubit_indices}
 
-        return self.client.create_run_request(
-            circuits_serialized,
-            qubit_mapping=qubit_mapping,
-            calibration_set_id=calibration_set_id if calibration_set_id else None,
-            shots=shots,
-            options=merged_options['circuit_compilation_options'],
-        )
+        if self._use_default_calibration_set:
+            default_calset_id = self.client.get_dynamic_quantum_architecture(None).calibration_set_id
+            if self._calibration_set_id != default_calset_id:
+                warnings.warn(
+                    f'Server default calibration set has changed from {self._calibration_set_id} '
+                    f'to {default_calset_id}. Use a new IQMBackend to transpile the circuits using '
+                    f'the new calibration set.'
+                )
+        try:
+            run_request = self.client.create_run_request(
+                circuits_serialized,
+                qubit_mapping=qubit_mapping,
+                calibration_set_id=self._calibration_set_id,
+                shots=shots,
+                options=merged_options['circuit_compilation_options'],
+            )
+        except CircuitValidationError as e:
+            raise CircuitValidationError(
+                f'{e}\nMake sure you use the same backend for transpiling and executing the circuits.'
+            ) from e
+
+        return run_request
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""
@@ -345,13 +362,13 @@ class IQMFacadeBackend(IQMBackend):
 
     def __init__(self, client: IQMClient, **kwargs):
         self.fake_adonis = IQMFakeAdonis()
-        target_architecture = client.get_quantum_architecture()
+        target_architecture = client.get_dynamic_quantum_architecture(kwargs.get('calibration_set_id', None))
 
         if not self.fake_adonis.validate_compatible_architecture(target_architecture):
             raise ValueError('Quantum architecture of the remote quantum computer does not match Adonis.')
 
         super().__init__(client, **kwargs)
-        self.name = f'IQMFacade{target_architecture.name}Backend'
+        self.name = 'IQMFacadeBackend'
 
     def _validate_no_empty_cregs(self, circuit: QuantumCircuit) -> bool:
         """Returns True if given circuit has no empty (unused) classical registers, False otherwise."""
@@ -399,13 +416,17 @@ class IQMProvider:
         self.url = url
         self.user_auth_args = user_auth_args
 
-    def get_backend(self, name: Optional[str] = None) -> Union[IQMBackend, IQMFacadeBackend]:
+    def get_backend(
+        self, name: Optional[str] = None, calibration_set_id: Optional[UUID] = None
+    ) -> Union[IQMBackend, IQMFacadeBackend]:
         """An IQMBackend instance associated with this provider.
 
         Args:
             name: optional name of a custom facade backend
+            calibration_set_id: ID of the calibration set used to create the transpilation target of the backend.
+                If None, the server default calibration set will be used.
         """
         client = IQMClient(self.url, client_signature=f'qiskit-iqm {__version__}', **self.user_auth_args)
         if name == 'facade_adonis':
             return IQMFacadeBackend(client)
-        return IQMBackend(client)
+        return IQMBackend(client, calibration_set_id=calibration_set_id)

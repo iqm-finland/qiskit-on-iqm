@@ -22,17 +22,22 @@ import pytest
 from qiskit import QuantumCircuit
 import requests
 
-from iqm.iqm_client import IQMClient, QuantumArchitecture, RunRequest, RunResult, RunStatus
+from iqm.iqm_client import (
+    DynamicQuantumArchitecture,
+    IQMClient,
+    RunRequest,
+    RunResult,
+    RunStatus,
+)
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMProvider
 from tests.utils import get_mock_ok_response
 
 
 @pytest.fixture
-def circuit_2() -> QuantumCircuit:
+def circuit() -> QuantumCircuit:
     circuit = QuantumCircuit(5)
     circuit.cz(0, 1)
     return circuit
-
 
 @pytest.fixture
 def run_request():
@@ -42,51 +47,54 @@ def run_request():
     return run_request
 
 
-def test_get_backend(linear_architecture_3q):
+def test_get_backend(linear_3q_architecture):
     url = 'http://some_url'
-    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
 
     provider = IQMProvider(url)
     backend = provider.get_backend()
 
     assert isinstance(backend, IQMBackend)
+    assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 3
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
+    assert backend._calibration_set_id == linear_3q_architecture.calibration_set_id
 
 
 def test_client_signature(adonis_architecture):
     url = 'http://some_url'
     provider = IQMProvider(url)
-    when(requests).get('http://some_url/quantum-architecture', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
-        get_mock_ok_response(QuantumArchitecture(quantum_architecture=adonis_architecture).model_dump())
-    )
+    when(requests).get(
+        'http://some_url/api/v1/calibration/default/gates', headers=matchers.ANY, timeout=matchers.ANY
+    ).thenReturn(get_mock_ok_response(adonis_architecture.model_dump()))
     backend = provider.get_backend()
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
 
 
 def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     url = 'http://some_url'
-    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
 
     provider = IQMProvider(url)
     backend = provider.get_backend('facade_adonis')
 
     assert isinstance(backend, IQMFacadeBackend)
+    assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 5
     assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
 
 
-def test_get_facade_backend_raises_error_non_matching_architecture(linear_architecture_3q):
+def test_get_facade_backend_raises_error_non_matching_architecture(linear_3q_architecture):
     url = 'http://some_url'
 
-    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
 
     provider = IQMProvider(url)
     with pytest.raises(ValueError, match='Quantum architecture of the remote quantum computer does not match Adonis.'):
         provider.get_backend('facade_adonis')
 
 
-def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architecture, circuit_2, run_request):
+def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architecture, circuit, run_request):
     url = 'http://some_url'
     result = {
         'status': 'failed',
@@ -96,7 +104,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
                 'shots': 1024,
                 'circuits': [
                     {
-                        'name': 'circuit_2',
+                        'name': 'circuit',
                         'instructions': [{'name': 'measure', 'qubits': ['0'], 'args': {'key': 'm1'}}],
                     }
                 ],
@@ -105,7 +113,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     }
     result_status = {'status': 'failed'}
 
-    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
     when(IQMClient).create_run_request(...).thenReturn(run_request)
     when(IQMClient).submit_run_request(...).thenReturn(uuid.uuid4())
     when(IQMClient).get_run(ANY(uuid.UUID)).thenReturn(RunResult.from_dict(result))
@@ -115,4 +123,4 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     backend = provider.get_backend('facade_adonis')
 
     with pytest.raises(RuntimeError, match='Remote execution did not succeed'):
-        backend.run(circuit_2)
+        backend.run(circuit)

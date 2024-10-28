@@ -11,6 +11,8 @@ Version 14.0
   `#123 <https://github.com/iqm-finland/qiskit-on-iqm/pull/123>`_
 * Add support for the Reset instruction.
   `#123 <https://github.com/iqm-finland/qiskit-on-iqm/pull/123>`_
+* Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
+* Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 
 Version 13.16
 =============
