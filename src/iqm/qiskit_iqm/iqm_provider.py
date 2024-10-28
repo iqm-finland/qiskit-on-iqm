@@ -266,7 +266,8 @@ class IQMBackend(IQMBackendBase):
                         name='measure',
                         qubits=qubit_names,
                         args={
-                            'key': f'_reset_{len(instructions)}',  # HACK to get something unique, remove when key can be omitted
+                            # HACK to get something unique, remove when key can be omitted
+                            'key': f'_reset_{len(instructions)}',
                             'feedback_key': feedback_key,
                         },
                     )
@@ -277,7 +278,12 @@ class IQMBackend(IQMBackendBase):
                         Instruction(
                             name='cc_prx',
                             qubits=[q],
-                            args={'angle_t': 0.5, 'phase_t': 0.0, 'feedback_label': f'{physical_qubit_name}__{feedback_key}'},
+                            args={
+                                'angle_t': 0.5,
+                                'phase_t': 0.0,
+                                'feedback_key': feedback_key,
+                                'feedback_qubit': physical_qubit_name,
+                            },
                         )
                     )
                 continue
@@ -302,17 +308,17 @@ class IQMBackend(IQMBackendBase):
                     raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
                 if value != 1:
                     raise ValueError(f'{instruction} is conditioned on integer value {value}, only 1 is supported.')
-                # Add a feedback_label to the instruction.
+                # Set up feedback routing.
                 # The latest "measure" instruction to write to that classical bit is modified, it is
                 # given an explicit feedback_key equal to its measurement key.
-                # The feedback_label given to the controlled instruction consists of this feedback_key,
-                # and the name of the measured qubit.
+                # The same feedback_key is given to the controlled instruction, along with the feedback qubit.
                 measure_inst = clbit_to_measure[creg[0]]
                 feedback_key = measure_inst.args['key']
                 measure_inst.args['feedback_key'] = feedback_key  # this measure is used to provide feedback
                 # TODO we should use physical qubit names in native circuits, not integer strings
                 physical_qubit_name = self._idx_to_qb[int(measure_inst.qubits[0])]  # single-qubit measurement
-                native_inst.args['feedback_label'] = f'{physical_qubit_name}__{feedback_key}'
+                native_inst.args['feedback_key'] = feedback_key
+                native_inst.args['feedback_qubit'] = physical_qubit_name
 
             instructions.append(native_inst)
 

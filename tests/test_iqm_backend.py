@@ -240,7 +240,8 @@ def check_measure_cc_prx_pair(measure, cc_prx):
     assert cc_prx.name == 'cc_prx'
     key = measure.args['key']
     assert measure.args['feedback_key'] == key
-    assert cc_prx.args['feedback_label'] == f'QB1__{key}'
+    assert cc_prx.args['feedback_key'] == key
+    assert cc_prx.args['feedback_qubit'] == 'QB1'
 
 
 @pytest.mark.parametrize(

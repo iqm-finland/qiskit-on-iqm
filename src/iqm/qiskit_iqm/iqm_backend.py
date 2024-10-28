@@ -75,12 +75,13 @@ class IQMBackendBase(BackendV2, ABC):
         target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
         if 'prx' in operations:
             target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
-            # HACK reset gate shares prx loci for now
-            target.add_instruction(Reset(), _create_properties('prx'))
         if 'cz' in operations:
             target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
         if 'move' in operations:
             target.add_instruction(MoveGate(), _create_properties('move'))
+        if 'cc_prx' in operations:
+            # HACK reset gate shares cc_prx loci for now
+            target.add_instruction(Reset(), _create_properties('cc_prx'))
 
         self._target = target
         self._qb_to_idx = qb_to_idx
