@@ -26,7 +26,7 @@ from qiskit.transpiler.exceptions import TranspilerError
 import requests
 from requests import Response
 
-from iqm.iqm_client import Circuit, DynamicQuantumArchitecture, Instruction, IQMClient, Locus
+from iqm.iqm_client import Circuit, DynamicQuantumArchitecture, GateInfo, Instruction, IQMClient
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
@@ -122,15 +122,13 @@ def describe_instruction(instruction: Instruction) -> str:
 
 
 def _get_allowed_ops(backend: IQMBackend) -> AllowedOps:
-    ops_with_indices = _map_operations_to_indices(
-        backend.architecture.gate_loci, backend.architecture.components  # type: ignore
-    )
+    ops_with_indices = _map_operations_to_indices(backend.architecture.gates, backend.architecture.components)
     return _coerce_to_allowed_ops(ops_with_indices)
 
 
-def _map_operations_to_indices(ops: dict[str, tuple[Locus, ...]], components: list[str]) -> dict[str, list[list[int]]]:
+def _map_operations_to_indices(ops: dict[str, GateInfo], components: tuple[str, ...]) -> dict[str, list[list[int]]]:
     return {
-        op_name: [[components.index(q) for q in valid_operands] for valid_operands in ops[op_name]]
+        op_name: [[components.index(q) for q in valid_operands] for valid_operands in ops[op_name].loci]
         for op_name in ALLOWED_OP_NAMES
         if op_name in ops
     }

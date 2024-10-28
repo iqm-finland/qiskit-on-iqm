@@ -63,7 +63,7 @@ def test_moves_with_zero_state(ndonis_architecture):
 def _get_qubit_registers(backend: IQMBackend) -> list[int]:
     return [
         q
-        for r in backend.architecture.components  # type: ignore
+        for r in backend.architecture.components
         for q in [backend.qubit_name_to_index(r)]
         if not r in backend.architecture.computational_resonators
         if q is not None

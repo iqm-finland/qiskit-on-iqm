@@ -16,57 +16,44 @@
 from __future__ import annotations
 
 from abc import ABC
-from dataclasses import dataclass
 import itertools
 from typing import Final, Optional, Union
+from uuid import UUID
 
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import InstructionProperties, Target
 
-from iqm.iqm_client import DynamicQuantumArchitecture, Locus, QuantumArchitectureSpecification
+from iqm.iqm_client import (
+    DynamicQuantumArchitecture,
+    GateImplementationInfo,
+    GateInfo,
+    QuantumArchitectureSpecification,
+)
 from iqm.qiskit_iqm.move_gate import MoveGate
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
 
 
-@dataclass
-class QuantumArchitecture:
-    """A representation of the quantum computer architecture.
-
-    Used to represent data from a DynamicQuantumArchitecture or a QuantumArchitectureSpecification in a unified way.
-    """
-
-    qubits: list[str]
-    computational_resonators: list[str]
-    gate_loci: dict[str, tuple[Locus, ...]]
-
-    components = DynamicQuantumArchitecture.components
-
-    @classmethod
-    def from_static_architecture(cls, static_architecture: QuantumArchitectureSpecification) -> QuantumArchitecture:
-        """Returns QuantumArchitecture created from the given static architecture."""
-        qubits = [qb for qb in static_architecture.qubits if qb.startswith('QB')]
-        computational_resonators = [qb for qb in static_architecture.qubits if qb.startswith('COMP')]
-        gate_loci = {
-            gate_name: tuple(tuple(locus) for locus in gate_loci)
-            for gate_name, gate_loci in static_architecture.operations.items()
-        }
-        return QuantumArchitecture(
-            qubits=qubits,
-            computational_resonators=computational_resonators,
-            gate_loci=gate_loci,
+def dqa_from_static_architecture(static_architecture: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
+    """Returns a dynamic quantum architecture created from the given static architecture."""
+    qubits = [qb for qb in static_architecture.qubits if qb.startswith('QB')]
+    computational_resonators = [qb for qb in static_architecture.qubits if qb.startswith('COMP')]
+    gates = {
+        gate_name: GateInfo(
+            implementations={'__fake': GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
+            default_implementation='__fake',
+            override_default_implementation={},
         )
-
-    @classmethod
-    def from_dynamic_architecture(cls, dynamic_architecture: DynamicQuantumArchitecture) -> QuantumArchitecture:
-        """Returns QuantumArchitecture created from the given dynamic architecture."""
-        return QuantumArchitecture(
-            qubits=dynamic_architecture.qubits,
-            computational_resonators=dynamic_architecture.computational_resonators,
-            gate_loci={gate_name: gate_info.loci for gate_name, gate_info in dynamic_architecture.gates.items()},
-        )
+        for gate_name, gate_loci in static_architecture.operations.items()
+    }
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('00000000-0000-0000-0000-000000000000'),
+        qubits=qubits,
+        computational_resonators=computational_resonators,
+        gates=gates,
+    )
 
 
 class IQMBackendBase(BackendV2, ABC):
@@ -76,7 +63,7 @@ class IQMBackendBase(BackendV2, ABC):
         architecture: Description of the quantum architecture associated with the backend instance.
     """
 
-    architecture: QuantumArchitecture
+    architecture: DynamicQuantumArchitecture
 
     def __init__(
         self,
@@ -85,14 +72,14 @@ class IQMBackendBase(BackendV2, ABC):
     ):
         super().__init__(**kwargs)
         if isinstance(architecture, QuantumArchitectureSpecification):
-            arch = QuantumArchitecture.from_static_architecture(architecture)
+            arch = dqa_from_static_architecture(architecture)
         else:
-            arch = QuantumArchitecture.from_dynamic_architecture(architecture)
+            arch = architecture
         self.architecture = arch
 
-        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}  # type: ignore
+        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}
         operations = {
-            gate_name: [list(locus) for locus in gate_loci] for gate_name, gate_loci in arch.gate_loci.items()
+            gate_name: [list(locus) for locus in gate_info.loci] for gate_name, gate_info in arch.gates.items()
         }
 
         target = Target()
@@ -115,7 +102,7 @@ class IQMBackendBase(BackendV2, ABC):
             target.add_instruction(Measure(), _create_properties('measure'))
         target.add_instruction(
             IGate(),
-            {(qb_to_idx[qb],): None for qb in arch.components},  # type: ignore
+            {(qb_to_idx[qb],): None for qb in arch.components},
         )
         if 'prx' in operations:
             target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
