@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 13.17
+=============
+
+* Fixed Deneb Readout errors to closer resemble reality. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/iqm-client/pull/125>`_
+
 Version 13.16
 =============
 
