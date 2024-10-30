@@ -312,7 +312,7 @@ class IQMFacadeBackend(IQMBackend):
             raise ValueError('Quantum architecture of the remote quantum computer does not match Adonis.')
 
         super().__init__(client, **kwargs)
-        self.name = 'IQMFacadeBackend'
+        self.name = 'facade_adonis'
 
     def _validate_no_empty_cregs(self, circuit: QuantumCircuit) -> bool:
         """Returns True if given circuit has no empty (unused) classical registers, False otherwise."""
