@@ -88,7 +88,6 @@ def run_request():
 
 def test_default_options(backend):
     assert backend.options.shots == 1024
-    assert backend.options.calibration_set_id is None
     for k, v in backend.options.circuit_compilation_options.__dict__.items():
         assert v == CircuitCompilationOptions().__dict__[k]
     assert backend.options.circuit_compilation_options
@@ -352,7 +351,9 @@ def test_run_with_custom_calibration_set_id(
         gates=linear_3q_architecture.gates,
     )
     client = mock(IQMClient)
-    when(client).get_dynamic_quantum_architecture(calibration_set_id).thenReturn(architecture)
+    when(client).get_dynamic_quantum_architecture(
+        uuid.UUID(calibration_set_id) if not isinstance(calibration_set_id, uuid.UUID) else calibration_set_id
+    ).thenReturn(architecture)
 
     backend = IQMBackend(client, calibration_set_id=calibration_set_id)
     circuit.measure(0, 0)

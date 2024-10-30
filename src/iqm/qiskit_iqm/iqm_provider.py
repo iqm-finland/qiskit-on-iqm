@@ -53,15 +53,17 @@ class IQMBackend(IQMBackendBase):
 
     Args:
         client: client instance for communicating with an IQM server
-        **kwargs: optional arguments to be passed to the parent Backend initializer
+        calibration_set_id: ID of the calibration set the backend will use.
+            ``None`` means the IQM server will be queried for the current default
+            calibration set.
+        kwargs: optional arguments to be passed to the parent Backend initializer
     """
 
-    def __init__(self, client: IQMClient, **kwargs):
-        # TODO: using pop() instead of get() because passing non-empty kwargs to BackendV2 leads to an error
-        #  which looks like a Qiskit bug.
-        calset_id = kwargs.pop('calibration_set_id', None)
-        self._use_default_calibration_set = calset_id is None
-        architecture = client.get_dynamic_quantum_architecture(calset_id)
+    def __init__(self, client: IQMClient, *, calibration_set_id: Union[str, UUID, None] = None, **kwargs):
+        if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
+            calibration_set_id = UUID(calibration_set_id)
+        self._use_default_calibration_set = calibration_set_id is None
+        architecture = client.get_dynamic_quantum_architecture(calibration_set_id)
         super().__init__(architecture, **kwargs)
         self.client: IQMClient = client
         self._max_circuits: Optional[int] = None
@@ -72,7 +74,6 @@ class IQMBackend(IQMBackendBase):
     def _default_options(cls) -> Options:
         return Options(
             shots=1024,
-            calibration_set_id=None,
             circuit_compilation_options=CircuitCompilationOptions(),
             circuit_callback=None,
         )
