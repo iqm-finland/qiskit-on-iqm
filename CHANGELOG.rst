@@ -7,6 +7,7 @@ Version 14.0
 
 * Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 * Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
+* Disable attestations on ``gh-action-pypi-publish`` to fix failing PyPI publishing. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 
 Version 13.16
 =============
