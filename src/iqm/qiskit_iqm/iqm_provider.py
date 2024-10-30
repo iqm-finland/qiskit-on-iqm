@@ -201,7 +201,8 @@ class IQMBackend(IQMBackendBase):
             )
         except CircuitValidationError as e:
             raise CircuitValidationError(
-                f'{e}\nMake sure you use the same backend for transpiling and executing the circuits.'
+                f'{e}\nMake sure the circuits have been transpiled using the same backend that you used to submit '
+                f'the circuits.'
             ) from e
 
         return run_request
