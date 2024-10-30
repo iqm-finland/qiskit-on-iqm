@@ -20,6 +20,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from itertools import permutations
 from typing import Any, Optional, Union
+from uuid import UUID
 
 from qiskit import QuantumCircuit
 from qiskit.providers import JobV1, Options
@@ -28,7 +29,12 @@ from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
-from iqm.iqm_client import DynamicQuantumArchitecture, QuantumArchitectureSpecification
+from iqm.iqm_client import (
+    DynamicQuantumArchitecture,
+    GateImplementationInfo,
+    GateInfo,
+    QuantumArchitectureSpecification,
+)
 from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 
@@ -106,7 +112,7 @@ class IQMFakeBackend(IQMBackendBase):
         name: str = "IQMFakeBackend",
         **kwargs,
     ):
-        super().__init__(architecture, **kwargs)
+        super().__init__(self._dqa_from_static_architecture(architecture), **kwargs)
 
         self._validate_architecture_and_error_profile(architecture, error_profile)
         self.__architecture, self.__error_profile = architecture, error_profile
@@ -387,3 +393,34 @@ class IQMFakeBackend(IQMBackendBase):
         connectivity_match = self_connectivity == target_connectivity
 
         return components_match and ops_match and connectivity_match
+
+    @staticmethod
+    def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
+        """Create a dynamic quantum architecture from the given static quantum architecture.
+
+        Since the DQA contains some attributes that are not present in an SQA, they are filled with mock data:
+
+        * Each gate type is given a single mock implementation.
+        * Calibration set ID is set to the all-zeros UUID.
+
+        Args:
+            sqa: static quantum architecture to replicate
+        Returns:
+            DQA replicating the properties of ``sqa``
+        """
+        qubits = [qb for qb in sqa.qubits if qb.startswith("QB")]
+        computational_resonators = [qb for qb in sqa.qubits if qb.startswith("COMP")]
+        gates = {
+            gate_name: GateInfo(
+                implementations={"__fake": GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
+                default_implementation="__fake",
+                override_default_implementation={},
+            )
+            for gate_name, gate_loci in sqa.operations.items()
+        }
+        return DynamicQuantumArchitecture(
+            calibration_set_id=UUID("00000000-0000-0000-0000-000000000000"),
+            qubits=qubits,
+            computational_resonators=computational_resonators,
+            gates=gates,
+        )
