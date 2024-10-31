@@ -136,8 +136,11 @@ circuit(s) are sampled:
 The calibration data for an IQM quantum computer is stored in a calibration set. An :class:`.IQMBackend` instance
 always corresponds to a specific calibration set, so that its transpilation target uses only those QPU components
 (qubits and computational resonators) and gates which are available in that calibration set. The server default
-calibration set will be used by default, but one can also use a different calibration set by specifying the
-``calibration_set_id`` parameter for :meth:`.IQMProvider.get_backend` or :class:`.IQMBackend`.
+calibration set will be used by default, but you can also use a different calibration set by specifying the
+``calibration_set_id`` parameter for :meth:`.IQMProvider.get_backend` or :class:`.IQMBackend`. If the server default
+calibration set has changed after you have created the backend, the backend will still use the original default calibration
+set when submitting circuits for execution. When this happens you will get a warning.
+You will need to create a new backend if you want to use the new default calibration set instead.
 
 You can optionally set IQM backend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.

@@ -44,4 +44,4 @@ def test_backend_name(adonis_architecture):
     client = mock(IQMClient)
     when(client).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
     backend = IQMFacadeBackend(client)
-    assert re.match(r'IQMFacade(.*)Backend', backend.name)
+    assert re.match(r'facade_adonis', backend.name)

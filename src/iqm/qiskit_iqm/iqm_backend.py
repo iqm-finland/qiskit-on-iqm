@@ -104,12 +104,15 @@ class IQMBackendBase(BackendV2, ABC):
             if symmetric:
                 # For symmetric gates, construct all the valid loci for Qiskit.
                 # Coupling maps in Qiskit are directed graphs, and gate symmetry is provided explicitly.
-                loci = [permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus)]
+                loci = tuple(permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus))
             return {tuple(qb_to_idx[qb] for qb in locus): None for locus in loci}
 
         if 'measure' in operations:
             target.add_instruction(Measure(), _create_properties('measure'))
-        target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in arch.components})
+        target.add_instruction(
+            IGate(),
+            {(qb_to_idx[qb],): None for qb in arch.components},
+        )
         if 'prx' in operations:
             target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
         if 'cz' in operations:

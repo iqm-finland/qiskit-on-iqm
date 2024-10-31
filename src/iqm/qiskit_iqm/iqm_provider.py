@@ -69,7 +69,7 @@ class IQMBackend(IQMBackendBase):
         self.client: IQMClient = client
         self._max_circuits: Optional[int] = None
         self.name = 'IQM Backend'
-        self._calibration_set_id: UUID = architecture.calibration_set_id
+        self._calibration_set_id = architecture.calibration_set_id
 
     @classmethod
     def _default_options(cls) -> Options:
@@ -202,7 +202,8 @@ class IQMBackend(IQMBackendBase):
             )
         except CircuitValidationError as e:
             raise CircuitValidationError(
-                f'{e}\nMake sure you use the same backend for transpiling and executing the circuits.'
+                f'{e}\nMake sure the circuits have been transpiled using the same backend that you used to submit '
+                f'the circuits.'
             ) from e
 
         return run_request
@@ -367,7 +368,7 @@ class IQMFacadeBackend(IQMBackend):
             raise ValueError('Quantum architecture of the remote quantum computer does not match Adonis.')
 
         super().__init__(client, **kwargs)
-        self.name = 'IQMFacadeBackend'
+        self.name = 'facade_adonis'
 
     def _validate_no_empty_cregs(self, circuit: QuantumCircuit) -> bool:
         """Returns True if given circuit has no empty (unused) classical registers, False otherwise."""

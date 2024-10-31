@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 14.0
+Version 15.0
 ============
 
 * Add support for classically controlled R, RX, RY, X, and Y gates.
@@ -11,8 +11,13 @@ Version 14.0
   `#123 <https://github.com/iqm-finland/qiskit-on-iqm/pull/123>`_
 * Add support for the Reset instruction.
   `#123 <https://github.com/iqm-finland/qiskit-on-iqm/pull/123>`_
+
+Version 14.0
+============
+
 * Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 * Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
+* Disable attestations on ``gh-action-pypi-publish`` to fix failing PyPI publishing. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
 
 Version 13.16
 =============
@@ -33,9 +38,9 @@ Version 13.13
 =============
 
 * Adjustments needed to support Qiskit V1 that are backwards compatible with ``qiskit < 1.0``. `#114 <https://github.com/iqm-finland/qiskit-on-iqm/pull/114>`_
-* Updated Qiskit dependencies and testing to support ``qiskit >= 0.45.3 < 1.2`` and ``qiskit-aer >= 0.13 < 0.15``. 
+* Updated Qiskit dependencies and testing to support ``qiskit >= 0.45.3 < 1.2`` and ``qiskit-aer >= 0.13 < 0.15``.
 * Adjusted documentation to recommend the use of :meth:`qiskit.transpile()` or :meth:`transpile_to_IQM()` in combination with :meth:`backend.run()` instead of using :meth:`execute()`.
-* Added a DeprecationWarning for use of ``qiskit < 1.0``. Users are encouraged to read the `Qiskit migration guide <https://docs.quantum.ibm.com/migration-guides>`_ to see how they need to change their code. 
+* Added a DeprecationWarning for use of ``qiskit < 1.0``. Users are encouraged to read the `Qiskit migration guide <https://docs.quantum.ibm.com/migration-guides>`_ to see how they need to change their code.
 
 Version 13.12
 =============
