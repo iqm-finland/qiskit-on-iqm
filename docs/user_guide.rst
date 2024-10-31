@@ -246,12 +246,12 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 Classically controlled gates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some IQM backends support classically controlled gates, but this support currently has several limitations:
+Some IQM quantum computers support classically controlled gates, that is, gates that are executed conditionally depending on the result of a measurement preceding them in the quantum circuit. This support currently has several limitations:
 
 * Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
 * The gates can only be conditioned on one classical bit, and the only control available is to
   apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
-* The availability of the controlled gates depends on the instrumentation of the backend.
+* The availability of the controlled gates depends on the instrumentation of the quantum computer.
 
 The classical control can be applied on a circuit instruction using :meth:`~qiskit.circuit.Instruction.c_if`:
 
@@ -283,6 +283,8 @@ The classical control can be applied on a circuit instruction using :meth:`~qisk
     meas: 2/═══════════════════╩══╩═
                                0  1
 
+
+The first measurement operation stores its result in the 1-bit classical register ``c``. If the result is 1, the ``X`` gate will be applied. If it is zero, an identity gate of corresponding duration is applied instead.
 
 Executing the above circuit should result in the counts being approximately 50/50 split
 between the '00 0' and '11 1' bins of the histogram (even though the state itself is never entangled).
