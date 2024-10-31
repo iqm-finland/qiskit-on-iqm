@@ -372,8 +372,15 @@ class IQMFakeBackend(IQMBackendBase):
         return job
 
     def validate_compatible_architecture(self, architecture: DynamicQuantumArchitecture) -> bool:
-        """Given a dynamic quantum architecture returns true if its number of components, names of components and
-        component connectivity matches the architecture of this backend."""
+        """Compare a dynamic quantum architecture to the static architecture of the fake backend.
+
+        Args:
+            architecture: dynamic quantum architecture to compare to
+
+        Returns:
+            True iff the number and names of the locus components, the component connectivity, and the available operations
+            in the DQA match the static architecture of this backend.
+        """
         components_match = set(architecture.components) == set(self.__architecture.qubits)
         ops = {
             gate_name: list(list(locus) for locus in gate_info.loci)

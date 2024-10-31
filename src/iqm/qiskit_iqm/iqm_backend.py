@@ -49,6 +49,7 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
     Returns:
         DQA replicating the properties of ``sqa``
     """
+    # NOTE this prefix-based heuristic for identifying the qubits and resonators is not always guaranteed to work
     qubits = [qb for qb in sqa.qubits if qb.startswith('QB')]
     computational_resonators = [qb for qb in sqa.qubits if qb.startswith('COMP')]
     gates = {
@@ -88,6 +89,7 @@ class IQMBackendBase(BackendV2, ABC):
             arch = architecture
         self.architecture = arch
 
+        # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
         qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}
         operations = {gate_name: gate_info.loci for gate_name, gate_info in arch.gates.items()}
         target = Target()

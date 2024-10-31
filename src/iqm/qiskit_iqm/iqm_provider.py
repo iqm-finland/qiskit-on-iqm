@@ -189,8 +189,8 @@ class IQMBackend(IQMBackendBase):
             if self._calibration_set_id != default_calset_id:
                 warnings.warn(
                     f'Server default calibration set has changed from {self._calibration_set_id} '
-                    f'to {default_calset_id}. Use a new IQMBackend to transpile the circuits using '
-                    f'the new calibration set.'
+                    f'to {default_calset_id}. Create a new IQMBackend if you wish to transpile the '
+                    'circuits using the new calibration set.'
                 )
         try:
             run_request = self.client.create_run_request(

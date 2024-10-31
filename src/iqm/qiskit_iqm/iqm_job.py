@@ -165,16 +165,17 @@ class IQMJob(JobV1):
 
     def result(self) -> Result:
         if not self._result:
+            # client will raise an error if it was unable to get the results within the timeout
             results = self._client.wait_for_results(uuid.UUID(self._job_id), self._timeout_seconds)
             self._calibration_set_id = results.metadata.calibration_set_id
             self._request = results.metadata.request
             if results.metadata.timestamps is not None:
                 self.metadata['timestamps'] = results.metadata.timestamps.copy()
             self._result = self._format_iqm_results(results)
-            # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
-            # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
+            # IQMBackend.run() populates IQMJob.circuit_metadata, so it may be None if this IQMJob
+            # was created manually from a job_id. In that case retrieve circuit metadata from
+            # RunResult.metadata.request.circuits[n].metadata
             if self.circuit_metadata is None and results.metadata.request is not None:
-                self.circuit_metadata = []
                 self.circuit_metadata = [c.metadata for c in results.metadata.circuits]
 
         result_dict = {
