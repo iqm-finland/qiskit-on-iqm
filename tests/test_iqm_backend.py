@@ -337,7 +337,7 @@ def test_serialize_circuit_c_if_bad_value(backend, value):
     qc.measure(q[0], control[0])
     qc.x(q[0]).c_if(control, value)
 
-    with pytest.raises(ValueError, match='only 1 is supported'):
+    with pytest.raises(ValueError, match='only value 1 is supported'):
         backend.serialize_circuit(qc)
 
 
