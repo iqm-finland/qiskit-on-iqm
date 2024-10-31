@@ -133,14 +133,24 @@ circuit(s) are sampled:
    `Inspecting circuits before submitting them for execution`_ for inspecting the actual run request sent for
    execution.
 
+The calibration data for an IQM quantum computer is stored in a calibration set. An :class:`.IQMBackend` instance
+always corresponds to a specific calibration set, so that its transpilation target uses only those QPU components
+(qubits and computational resonators) and gates which are available in that calibration set. The server default
+calibration set will be used by default, but you can also use a different calibration set by specifying the
+``calibration_set_id`` parameter for :meth:`.IQMProvider.get_backend` or :class:`.IQMBackend`. If the server default
+calibration set has changed after you created the backend, the backend would still use the original default calibration
+set when submitting circuits. In this case, a warning will be shown to notify you about this, and you would need to
+create a new backend if you want to use the newer calibration set.
+
 You can optionally set IQM backend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.
-For example, if you know an ID of a specific calibration set that you want
-to use, you can provide it as follows:
+For example, you can enable heralding measurements by passing the appropriate circuit compilation option as follows:
 
 .. code-block:: python
 
-    job = backend.run(transpiled_circuit, shots=1000, calibration_set_id="f7d9642e-b0ca-4f2d-af2a-30195bd7a76d")
+    from iqm.iqm_client import CircuitCompilationOptions
+
+    job = backend.run(transpiled_circuit, shots=1000, circuit_compilation_options=CircuitCompilationOptions(heralding_mode=HeraldingMode.ZEROS))
 
 Alternatively, you can update the values of the options directly in the backend instance using :meth:`.IQMBackend.set_options`
 and then call :meth:`.IQMBackend.run` without specifying additional keyword arguments.

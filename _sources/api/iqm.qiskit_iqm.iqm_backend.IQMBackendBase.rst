@@ -31,6 +31,5 @@ iqm.qiskit\_iqm.iqm\_backend.IQMBackendBase
    
       ~IQMBackendBase.index_to_qubit_name
       ~IQMBackendBase.qubit_name_to_index
-      ~IQMBackendBase.validate_compatible_architecture
    
    

@@ -35,5 +35,6 @@ iqm.qiskit\_iqm.fake\_backends.iqm\_fake\_backend.IQMFakeBackend
       ~IQMFakeBackend._validate_architecture_and_error_profile
       ~IQMFakeBackend.copy_with_error_profile
       ~IQMFakeBackend.run
+      ~IQMFakeBackend.validate_compatible_architecture
    
    
