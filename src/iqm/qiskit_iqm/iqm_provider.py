@@ -328,7 +328,9 @@ class IQMBackend(IQMBackendBase):
                 if len(creg) != 1:
                     raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
                 if value != 1:
-                    raise ValueError(f'{instruction} is conditioned on integer value {value}, only value 1 is supported.')
+                    raise ValueError(
+                        f'{instruction} is conditioned on integer value {value}, only value 1 is supported.'
+                    )
                 # Set up feedback routing.
                 # The latest "measure" instruction to write to that classical bit is modified, it is
                 # given an explicit feedback_key equal to its measurement key.
