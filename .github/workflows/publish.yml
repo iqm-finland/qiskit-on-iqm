@@ -45,6 +45,8 @@ jobs:
         uses: actions/download-artifact@v4
       - name: Publish distribution packages to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: false
 
   publish_docs:
     runs-on: ubuntu-latest

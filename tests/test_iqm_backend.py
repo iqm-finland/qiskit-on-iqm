@@ -25,7 +25,7 @@ from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
 
 
 class DummyIQMBackend(IQMBackendBase):
-    """Dummy implementation for abstract methods of IQMBacked, so that instances can be created
+    """Dummy implementation for abstract methods of IQMBackend, so that instances can be created
     and the rest of functionality tested."""
 
     @classmethod
@@ -41,12 +41,12 @@ class DummyIQMBackend(IQMBackendBase):
 
 
 @pytest.fixture
-def backend(linear_architecture_3q):
-    return DummyIQMBackend(linear_architecture_3q)
+def backend(linear_3q_architecture):
+    return DummyIQMBackend(linear_3q_architecture)
 
 
-def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
-    backend = DummyIQMBackend(adonis_architecture_shuffled_names)
+def test_qubit_name_to_index_to_qubit_name(adonis_shuffled_names_architecture):
+    backend = DummyIQMBackend(adonis_shuffled_names_architecture)
 
     correct_idx_name_associations = set(enumerate(['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
     assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
@@ -73,12 +73,3 @@ def test_transpile(backend):
             idx1 = circuit_transpiled.find_bit(qubits[0]).index
             idx2 = circuit_transpiled.find_bit(qubits[1]).index
             assert ((idx1, idx2) in cmap) or ((idx2, idx1) in cmap)
-
-
-def test_validate_compatible_architecture(
-    adonis_architecture, adonis_architecture_shuffled_names, linear_architecture_3q
-):
-    backend = DummyIQMBackend(adonis_architecture)
-    assert backend.validate_compatible_architecture(adonis_architecture) is True
-    assert backend.validate_compatible_architecture(adonis_architecture_shuffled_names) is True
-    assert backend.validate_compatible_architecture(linear_architecture_3q) is False

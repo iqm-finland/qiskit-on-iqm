@@ -32,7 +32,7 @@ def test_run_fails_empty_cregs(adonis_architecture):
     circuit.measure_all()
 
     client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
     backend = IQMFacadeBackend(client)
     circuit_transpiled = transpile(circuit, backend=backend)
 
@@ -42,6 +42,6 @@ def test_run_fails_empty_cregs(adonis_architecture):
 
 def test_backend_name(adonis_architecture):
     client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
     backend = IQMFacadeBackend(client)
-    assert re.match(r'IQMFacade(.*)Backend', backend.name)
+    assert re.match(r'facade_adonis', backend.name)

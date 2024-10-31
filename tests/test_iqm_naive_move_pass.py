@@ -1,6 +1,5 @@
 """Testing IQM transpilation.
 """
-
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import QuantumVolume
 from qiskit.circuit.quantumcircuitdata import CircuitInstruction
@@ -51,7 +50,11 @@ def test_moves_with_zero_state(ndonis_architecture):
     n_qubits = len(qubit_registers)
     for i in range(2, n_qubits + 1):
         circuit = QuantumVolume(i)
-        resonator_index = next(i for i, q in enumerate(backend.architecture.qubits) if q.startswith("COMP_R"))
+        resonator_index = next(
+            j
+            for j, c in enumerate(backend.architecture.components)
+            if c in backend.architecture.computational_resonators
+        )
         transpiled_circuit = transpile_to_IQM(circuit, backend)
         moves = [instruction for instruction in transpiled_circuit.data if instruction.operation.name == "move"]
         assert _is_valid_move_sequence(resonator_index, moves, transpiled_circuit)
@@ -60,9 +63,9 @@ def test_moves_with_zero_state(ndonis_architecture):
 def _get_qubit_registers(backend: IQMBackend) -> list[int]:
     return [
         q
-        for r in backend.architecture.qubits
+        for r in backend.architecture.components
         for q in [backend.qubit_name_to_index(r)]
-        if not r.startswith("COMP_R")
+        if not r in backend.architecture.computational_resonators
         if q is not None
     ]
 

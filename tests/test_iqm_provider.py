@@ -28,11 +28,13 @@ from qiskit.circuit.library import RGate, RXGate, RYGate, XGate, YGate
 import requests
 
 from iqm.iqm_client import (
+    APIConfig,
+    APIVariant,
     CircuitCompilationOptions,
-    CircuitExecutionError,
+    CircuitValidationError,
+    DynamicQuantumArchitecture,
     HeraldingMode,
     IQMClient,
-    QuantumArchitecture,
     RunRequest,
     RunResult,
     RunStatus,
@@ -42,10 +44,10 @@ from tests.utils import get_mock_ok_response
 
 
 @pytest.fixture
-def backend(linear_architecture_3q):
+def backend(linear_3q_architecture):
     client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
-    client._base_url = 'http://some_url'
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
+    client._api = APIConfig(APIVariant.V1, 'http://some_url')
     return IQMBackend(client)
 
 
@@ -62,8 +64,13 @@ def circuit_2() -> QuantumCircuit:
 
 
 @pytest.fixture
-def create_run_request_default_kwargs() -> dict:
-    return {'qubit_mapping': None, 'calibration_set_id': None, 'shots': 1024, 'options': ANY}
+def create_run_request_default_kwargs(linear_3q_architecture) -> dict:
+    return {
+        'qubit_mapping': None,
+        'calibration_set_id': linear_3q_architecture.calibration_set_id,
+        'shots': 1024,
+        'options': ANY,
+    }
 
 
 @pytest.fixture
@@ -81,7 +88,6 @@ def run_request():
 
 def test_default_options(backend):
     assert backend.options.shots == 1024
-    assert backend.options.calibration_set_id is None
     for k, v in backend.options.circuit_compilation_options.__dict__.items():
         assert v == CircuitCompilationOptions().__dict__[k]
     assert backend.options.circuit_compilation_options
@@ -112,9 +118,9 @@ def test_set_max_circuits(backend):
     assert backend.max_circuits == 168
 
 
-def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
+def test_qubit_name_to_index_to_qubit_name(adonis_shuffled_names_architecture):
     client = mock(IQMClient)
-    when(client).get_quantum_architecture().thenReturn(adonis_architecture_shuffled_names)
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(adonis_shuffled_names_architecture)
     backend = IQMBackend(client)
 
     correct_idx_name_associations = set(enumerate(['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
@@ -125,15 +131,18 @@ def test_qubit_name_to_index_to_qubit_name(adonis_architecture_shuffled_names):
     assert backend.qubit_name_to_index('Alice') is None
 
 
-def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_architecture_3q):
+def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_3q_architecture):
     client = IQMClient(url='http://some_url')
     client._token_manager = None  # Do not use authentication
-    when(client).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
+    when(client).get_dynamic_quantum_architecture(linear_3q_architecture.calibration_set_id).thenReturn(
+        linear_3q_architecture
+    )
     backend = IQMBackend(client)
     circuit = QuantumCircuit(3)
     circuit.cz(0, 2)
     with pytest.raises(
-        CircuitExecutionError, match=re.escape("'0', '2') = ('QB1', 'QB3') not allowed as locus for cz")
+        CircuitValidationError, match=re.escape("'0', '2') = ('QB1', 'QB3') is not allowed as locus for 'cz'")
     ):
         backend.run(circuit)
 
@@ -332,9 +341,21 @@ def test_run_with_custom_number_of_shots(
     'calibration_set_id', ['67e77465-d90e-4839-986e-9270f952b743', uuid.UUID('67e77465-d90e-4839-986e-9270f952b743')]
 )
 def test_run_with_custom_calibration_set_id(
-    backend, circuit, create_run_request_default_kwargs, job_id, calibration_set_id, run_request
+    linear_3q_architecture, circuit, create_run_request_default_kwargs, job_id, calibration_set_id, run_request
 ):
     # pylint: disable=too-many-arguments
+    architecture = DynamicQuantumArchitecture(
+        calibration_set_id=calibration_set_id,
+        qubits=linear_3q_architecture.qubits,
+        computational_resonators=linear_3q_architecture.computational_resonators,
+        gates=linear_3q_architecture.gates,
+    )
+    client = mock(IQMClient)
+    when(client).get_dynamic_quantum_architecture(
+        uuid.UUID(calibration_set_id) if not isinstance(calibration_set_id, uuid.UUID) else calibration_set_id
+    ).thenReturn(architecture)
+
+    backend = IQMBackend(client, calibration_set_id=calibration_set_id)
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
     kwargs = create_run_request_default_kwargs | {
@@ -344,7 +365,7 @@ def test_run_with_custom_calibration_set_id(
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
 
-    backend.run([circuit], calibration_set_id=calibration_set_id)
+    backend.run([circuit])
 
 
 def test_run_with_duration_check_disabled(backend, circuit, create_run_request_default_kwargs, job_id, run_request):
@@ -435,6 +456,27 @@ def test_run_batch_of_circuits(backend, circuit, create_run_request_default_kwar
     assert job.job_id() == str(job_id)
 
 
+def test_run_warns_if_default_calset_changed(adonis_architecture, circuit_2, job_id, run_request):
+    client = mock(IQMClient)
+    new_calset_id = uuid.uuid4()
+    new_arch = DynamicQuantumArchitecture(
+        calibration_set_id=new_calset_id,
+        qubits=adonis_architecture.qubits,
+        computational_resonators=adonis_architecture.computational_resonators,
+        gates=adonis_architecture.gates,
+    )
+    when(client).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture).thenReturn(new_arch)
+    when(client).create_run_request(...).thenReturn(run_request)
+    when(client).submit_run_request(run_request).thenReturn(job_id)
+
+    backend = IQMBackend(client)
+    with pytest.warns(
+        UserWarning,
+        match=f'default calibration set has changed from {adonis_architecture.calibration_set_id} to {new_calset_id}',
+    ):
+        backend.run(circuit_2)
+
+
 def test_error_on_empty_circuit_list(backend):
     with pytest.raises(ValueError, match='Empty list of circuits submitted for execution.'):
         backend.run([], shots=42)
@@ -448,46 +490,47 @@ def test_close_client(backend):
         assert False, f'backend raised an exception {exc} on .close_client()'
 
 
-def test_get_backend(linear_architecture_3q):
+def test_get_backend(linear_3q_architecture):
     url = 'http://some_url'
-    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
 
     provider = IQMProvider(url)
     backend = provider.get_backend()
 
     assert isinstance(backend, IQMBackend)
-    assert backend.client._base_url == url
+    assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 3
     assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
+    assert backend._calibration_set_id == linear_3q_architecture.calibration_set_id
 
 
 def test_client_signature(adonis_architecture):
     url = 'http://some_url'
     provider = IQMProvider(url)
-    when(requests).get('http://some_url/quantum-architecture', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
-        get_mock_ok_response(QuantumArchitecture(quantum_architecture=adonis_architecture).model_dump())
-    )
+    when(requests).get(
+        'http://some_url/api/v1/calibration/default/gates', headers=matchers.ANY, timeout=matchers.ANY
+    ).thenReturn(get_mock_ok_response(adonis_architecture.model_dump()))
     backend = provider.get_backend()
     assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
 
 
 def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     url = 'http://some_url'
-    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
 
     provider = IQMProvider(url)
     backend = provider.get_backend('facade_adonis')
 
     assert isinstance(backend, IQMFacadeBackend)
-    assert backend.client._base_url == url
+    assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 5
     assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
 
 
-def test_get_facade_backend_raises_error_non_matching_architecture(linear_architecture_3q):
+def test_get_facade_backend_raises_error_non_matching_architecture(linear_3q_architecture):
     url = 'http://some_url'
 
-    when(IQMClient).get_quantum_architecture().thenReturn(linear_architecture_3q)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
 
     provider = IQMProvider(url)
     with pytest.raises(ValueError, match='Quantum architecture of the remote quantum computer does not match Adonis.'):
@@ -513,7 +556,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     }
     result_status = {'status': 'failed'}
 
-    when(IQMClient).get_quantum_architecture().thenReturn(adonis_architecture)
+    when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
     when(IQMClient).create_run_request(...).thenReturn(run_request)
     when(IQMClient).submit_run_request(...).thenReturn(uuid.uuid4())
     when(IQMClient).get_run(ANY(uuid.UUID)).thenReturn(RunResult.from_dict(result))

@@ -102,9 +102,9 @@ class IQMMoveLayout(TrivialLayout):
         """
         backend = self._backend
         qubit_types: dict[int, str] = {}
-        for instruction_name, loci in backend.architecture.operations.items():
-            if instruction_name == 'move':
-                for locus in loci:
+        for gate_name, gate_info in backend.architecture.gates.items():
+            if gate_name == 'move':
+                for locus in gate_info.loci:
                     [qubit, resonator] = [backend.qubit_name_to_index(q) for q in locus]
                     if qubit is not None:
                         qubit_types[qubit] = 'move_qubit'

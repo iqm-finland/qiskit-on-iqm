@@ -12,11 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Shared definitions for tests."""
+from uuid import UUID
+
 from mockito import unstub
 import pytest
 
-from iqm.iqm_client import QuantumArchitectureSpecification
-from tests.move_architecture.move_architecture import move_architecture_specification, ndonis_architecture_specification
+from iqm.iqm_client import (
+    DynamicQuantumArchitecture,
+    GateImplementationInfo,
+    GateInfo,
+    QuantumArchitectureSpecification,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -26,7 +32,7 @@ def reset_mocks_after_tests():
 
 
 @pytest.fixture
-def linear_architecture_3q():
+def linear_3q_architecture_static():
     return QuantumArchitectureSpecification(
         name='3q_line',
         operations={'prx': [['QB1'], ['QB2'], ['QB3']], 'cz': [['QB1', 'QB2'], ['QB2', 'QB3']]},
@@ -36,37 +42,142 @@ def linear_architecture_3q():
 
 
 @pytest.fixture
-def adonis_architecture():
-    return QuantumArchitectureSpecification(
-        name='Adonis',
-        operations={
-            'prx': [['QB1'], ['QB2'], ['QB3'], ['QB4'], ['QB5']],
-            'cz': [['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
-            'measure': [['QB1'], ['QB2'], ['QB3'], ['QB4'], ['QB5']],
-            'barrier': [],
+def linear_3q_architecture():
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('59478539-dcef-4b2e-80c8-122d7ec3fc89'),
+        qubits=['QB1', 'QB2', 'QB3'],
+        computational_resonators=[],
+        gates={
+            'prx': GateInfo(
+                implementations={'drag_gaussian': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',)))},
+                default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cz': GateInfo(
+                implementations={'tgss': GateImplementationInfo(loci=(('QB1', 'QB2'), ('QB2', 'QB3')))},
+                default_implementation='tgss',
+                override_default_implementation={},
+            ),
         },
-        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5'],
-        qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
     )
 
 
-@pytest.fixture()
-def new_architecture() -> QuantumArchitectureSpecification:
-    return QuantumArchitectureSpecification(**move_architecture_specification)
+@pytest.fixture
+def adonis_architecture():
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('59478539-dcef-4b2e-80c8-122d7ec3fc89'),
+        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5'],
+        computational_resonators=[],
+        gates={
+            'prx': GateInfo(
+                implementations={
+                    'drag_gaussian': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',)))
+                },
+                default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cz': GateInfo(
+                implementations={
+                    'tgss': GateImplementationInfo(
+                        loci=(('QB1', 'QB3'), ('QB2', 'QB3'), ('QB4', 'QB3'), ('QB5', 'QB3'))
+                    )
+                },
+                default_implementation='tgss',
+                override_default_implementation={},
+            ),
+            'measure': GateInfo(
+                implementations={
+                    'constant': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',)))
+                },
+                default_implementation='constant',
+                override_default_implementation={},
+            ),
+        },
+    )
 
 
 @pytest.fixture
-def adonis_architecture_shuffled_names():
-    return QuantumArchitectureSpecification(
-        name='Adonis',
-        operations={
-            'prx': [['QB2'], ['QB3'], ['QB1'], ['QB5'], ['QB4']],
-            'cz': [['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
-            'measure': [['QB2'], ['QB3'], ['QB1'], ['QB5'], ['QB4']],
-            'barrier': [],
-        },
+def adonis_shuffled_names_architecture():
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('59478539-dcef-4b2e-80c8-122d7ec3fc89'),
         qubits=['QB2', 'QB3', 'QB1', 'QB5', 'QB4'],
-        qubit_connectivity=[['QB1', 'QB3'], ['QB2', 'QB3'], ['QB4', 'QB3'], ['QB5', 'QB3']],
+        computational_resonators=[],
+        gates={
+            'prx': GateInfo(
+                implementations={
+                    'drag_gaussian': GateImplementationInfo(loci=(('QB2',), ('QB3',), ('QB1',), ('QB5',), ('QB4',)))
+                },
+                default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cz': GateInfo(
+                implementations={
+                    'tgss': GateImplementationInfo(
+                        loci=(('QB1', 'QB3'), ('QB2', 'QB3'), ('QB4', 'QB3'), ('QB5', 'QB3'))
+                    )
+                },
+                default_implementation='tgss',
+                override_default_implementation={},
+            ),
+            'measure': GateInfo(
+                implementations={
+                    'constant': GateImplementationInfo(loci=(('QB2',), ('QB3',), ('QB1',), ('QB5',), ('QB4',)))
+                },
+                default_implementation='constant',
+                override_default_implementation={},
+            ),
+        },
+    )
+
+
+@pytest.fixture
+def move_architecture():
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
+        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6'],
+        computational_resonators=['COMP_R'],
+        gates={
+            'prx': GateInfo(
+                implementations={
+                    'drag_gaussian': GateImplementationInfo(
+                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
+                    ),
+                },
+                default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cz': GateInfo(
+                implementations={
+                    'tgss': GateImplementationInfo(
+                        loci=(
+                            ('QB1', 'COMP_R'),
+                            ('QB2', 'COMP_R'),
+                            ('QB3', 'COMP_R'),
+                            ('QB4', 'COMP_R'),
+                            ('QB5', 'COMP_R'),
+                        )
+                    ),
+                },
+                default_implementation='tgss',
+                override_default_implementation={},
+            ),
+            'move': GateInfo(
+                implementations={
+                    'tgss_crf': GateImplementationInfo(loci=(('QB6', 'COMP_R'),)),
+                },
+                default_implementation='tgss_crf',
+                override_default_implementation={},
+            ),
+            'measure': GateInfo(
+                implementations={
+                    'constant': GateImplementationInfo(
+                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
+                    ),
+                },
+                default_implementation='constant',
+                override_default_implementation={},
+            ),
+        },
     )
 
 
@@ -81,8 +192,64 @@ def deneb_coupling_map():
 
 
 @pytest.fixture
-def ndonis_architecture() -> QuantumArchitectureSpecification:
-    return QuantumArchitectureSpecification(**ndonis_architecture_specification)
+def ndonis_architecture():
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
+        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6'],
+        computational_resonators=['COMP_R'],
+        gates={
+            'prx': GateInfo(
+                implementations={
+                    'drag_gaussian': GateImplementationInfo(
+                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
+                    ),
+                },
+                default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cz': GateInfo(
+                implementations={
+                    'tgss': GateImplementationInfo(
+                        loci=(
+                            ('QB1', 'COMP_R'),
+                            ('QB2', 'COMP_R'),
+                            ('QB3', 'COMP_R'),
+                            ('QB4', 'COMP_R'),
+                            ('QB5', 'COMP_R'),
+                            ('QB6', 'COMP_R'),
+                        )
+                    ),
+                },
+                default_implementation='tgss',
+                override_default_implementation={},
+            ),
+            'move': GateInfo(
+                implementations={
+                    'tgss_crf': GateImplementationInfo(
+                        loci=(
+                            ('QB1', 'COMP_R'),
+                            ('QB2', 'COMP_R'),
+                            ('QB3', 'COMP_R'),
+                            ('QB4', 'COMP_R'),
+                            ('QB5', 'COMP_R'),
+                            ('QB6', 'COMP_R'),
+                        )
+                    ),
+                },
+                default_implementation='tgss_crf',
+                override_default_implementation={},
+            ),
+            'measure': GateInfo(
+                implementations={
+                    'constant': GateImplementationInfo(
+                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
+                    ),
+                },
+                default_implementation='constant',
+                override_default_implementation={},
+            ),
+        },
+    )
 
 
 @pytest.fixture

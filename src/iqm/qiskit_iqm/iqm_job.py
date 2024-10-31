@@ -75,7 +75,10 @@ class IQMJob(JobV1):
             raise ValueError(
                 f'Cannot format IQM result without measurements. Job status is "{iqm_result.status.value.upper()}"'
             )
-
+        if iqm_result.metadata.request is None:
+            raise ValueError(
+                f'Cannot format IQM result without original request. Job status is "{iqm_result.status.value.upper()}"'
+            )
         requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
         expect_exact_shots = iqm_result.metadata.request.heralding_mode == HeraldingMode.NONE
@@ -167,7 +170,7 @@ class IQMJob(JobV1):
             self._result = self._format_iqm_results(results)
             # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
             # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
-            if self.circuit_metadata is None:
+            if self.circuit_metadata is None and results.metadata.request is not None:
                 self.circuit_metadata = []
                 self.circuit_metadata = [c.metadata for c in results.metadata.request.circuits]
 
@@ -202,7 +205,7 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
-        if result.status == Status.PENDING_COMPILATION:
+        if result.status in [Status.PENDING_COMPILATION, Status.RECEIVED, Status.PROCESSING, Status.ACCEPTED]:
             return JobStatus.QUEUED
         if result.status == Status.PENDING_EXECUTION:
             return JobStatus.RUNNING
