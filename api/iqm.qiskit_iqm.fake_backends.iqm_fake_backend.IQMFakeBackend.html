@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend &#8212; Qiskit on IQM 14.0 documentation</title>
+    <title>iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend &#8212; Qiskit on IQM 15.0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../_static/documentation_options.js?v=fa1aba53"></script>
+    <script src="../_static/documentation_options.js?v=06c08fbf"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile" href="iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMErrorProfile.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="14.0" />
+  <meta name="docsearch:version" content="15.0" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 14.0 documentation - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 14.0 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.0 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.0 documentation - Home"/>
   
   
 </a></div>
@@ -442,7 +442,7 @@ and dephasing (<span class="math notranslate nohighlight">\(T_2\)</span>) times,
 <td><p>Run <cite>run_input</cite> on the fake backend using a simulator.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.validate_compatible_architecture" title="iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.validate_compatible_architecture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_compatible_architecture</span></code></a>(architecture)</p></td>
-<td><p>Given a dynamic quantum architecture returns true if its number of components, names of components and component connectivity matches the architecture of this backend.</p></td>
+<td><p>Compare a dynamic quantum architecture to the static architecture of the fake backend.</p></td>
 </tr>
 </tbody>
 </table>
@@ -507,14 +507,17 @@ to the native gates so that moves are implemented as unitaries.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.validate_compatible_architecture">
 <span class="sig-name descname"><span class="pre">validate_compatible_architecture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">architecture</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.1)"><span class="pre">DynamicQuantumArchitecture</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#iqm.qiskit_iqm.fake_backends.iqm_fake_backend.IQMFakeBackend.validate_compatible_architecture" title="Link to this definition">#</a></dt>
-<dd><p>Given a dynamic quantum architecture returns true if its number of components, names of components and
-component connectivity matches the architecture of this backend.</p>
+<dd><p>Compare a dynamic quantum architecture to the static architecture of the fake backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>architecture</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.1)"><em>DynamicQuantumArchitecture</em></a>) – </p>
+<dd class="field-odd"><p><strong>architecture</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.1)"><em>DynamicQuantumArchitecture</em></a>) – dynamic quantum architecture to compare to</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True iff the number and names of the locus components, the component connectivity,
+and the available operations in the DQA match the static architecture of this backend.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>

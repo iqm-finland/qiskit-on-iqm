@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 14.0 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 15.0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=fa1aba53"></script>
+    <script src="_static/documentation_options.js?v=06c08fbf"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="Qiskit on IQM" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="14.0" />
+  <meta name="docsearch:version" content="15.0" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 14.0 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 14.0 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.0 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.0 documentation - Home"/>
   
   
 </a></div>
@@ -364,6 +364,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-a-circuit">Executing a circuit</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-results">Inspecting the results</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-properties">Backend properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classically-controlled-gates">Classically controlled gates</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-circuits-before-submitting-them-for-execution">Inspecting circuits before submitting them for execution</a></li>
 </ul>
 </li>
@@ -504,9 +505,9 @@ always corresponds to a specific calibration set, so that its transpilation targ
 (qubits and computational resonators) and gates which are available in that calibration set. The server default
 calibration set will be used by default, but you can also use a different calibration set by specifying the
 <code class="docutils literal notranslate"><span class="pre">calibration_set_id</span></code> parameter for <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider.get_backend" title="iqm.qiskit_iqm.iqm_provider.IQMProvider.get_backend"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMProvider.get_backend()</span></code></a> or <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="iqm.qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a>. If the server default
-calibration set has changed after you created the backend, the backend would still use the original default calibration
-set when submitting circuits. In this case, a warning will be shown to notify you about this, and you would need to
-create a new backend if you want to use the newer calibration set.</p>
+calibration set has changed after you have created the backend, the backend will still use the original default calibration
+set when submitting circuits for execution. When this happens you will get a warning.
+You will need to create a new backend if you want to use the new default calibration set instead.</p>
 <p>You can optionally set IQM backend specific options as additional keyword arguments to
 <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>, documented at <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>.
 For example, you can enable heralding measurements by passing the appropriate circuit compilation option as follows:</p>
@@ -587,6 +588,51 @@ At IQM we identify qubits by their names, e.g. ‘QB1’, ‘QB2’, etc. as dem
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
 <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.qubit_name_to_index" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.qubit_name_to_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">qubit_name_to_index()</span></code></a> and <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.index_to_qubit_name" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.index_to_qubit_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">index_to_qubit_name()</span></code></a> can become handy.</p>
+</section>
+<section id="classically-controlled-gates">
+<h3>Classically controlled gates<a class="headerlink" href="#classically-controlled-gates" title="Link to this heading">#</a></h3>
+<p>Some IQM quantum computers support classically controlled gates, that is, gates that are executed conditionally depending on the result of a measurement preceding them in the quantum circuit. This support currently has several limitations:</p>
+<ul class="simple">
+<li><p>Only the <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">rx</span></code>, <code class="docutils literal notranslate"><span class="pre">ry</span></code> and <code class="docutils literal notranslate"><span class="pre">r</span></code> gates can be classically controlled.</p></li>
+<li><p>The gates can only be conditioned on one classical bit, and the only control available is to
+apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.</p></li>
+<li><p>The availability of the controlled gates depends on the instrumentation of the quantum computer.</p></li>
+</ul>
+<p>The classical control can be applied on a circuit instruction using <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.Instruction#c_if" title="(in Qiskit v1.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">c_if()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+
+<span class="n">qr</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">)</span>
+<span class="n">cr</span> <span class="o">=</span> <span class="n">ClassicalRegister</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">qr</span><span class="p">,</span> <span class="n">cr</span><span class="p">)</span>
+
+<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">c_if</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        ┌───┐┌─┐        ░ ┌─┐
+   q_0: ┤ H ├┤M├────────░─┤M├───
+        └───┘└╥┘ ┌───┐  ░ └╥┘┌─┐
+   q_1: ──────╫──┤ X ├──░──╫─┤M├
+              ║  └─╥─┘  ░  ║ └╥┘
+              ║ ┌──╨──┐    ║  ║
+   c: 1/══════╩═╡ 0x1 ╞════╬══╬═
+              0 └─────┘    ║  ║
+meas: 2/═══════════════════╩══╩═
+                           0  1
+</pre></div>
+</div>
+<p>The first measurement operation stores its result in the 1-bit classical register <code class="docutils literal notranslate"><span class="pre">c</span></code>. If the result is 1, the <code class="docutils literal notranslate"><span class="pre">X</span></code> gate will be applied. If it is zero, an identity gate of corresponding duration is applied instead.</p>
+<p>Executing the above circuit should result in the counts being approximately 50/50 split
+between the ‘00 0’ and ‘11 1’ bins of the histogram (even though the state itself is never entangled).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because the gates can only take feedback from one classical bit you must place the measurement result
+in a 1-bit classical register, <code class="docutils literal notranslate"><span class="pre">c</span></code> in the above example.</p>
+</div>
 </section>
 <section id="inspecting-circuits-before-submitting-them-for-execution">
 <h3>Inspecting circuits before submitting them for execution<a class="headerlink" href="#inspecting-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h3>
@@ -823,7 +869,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;facade_adonis&#39;</span><span class="p">)</span>
 <span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 <span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -935,6 +981,7 @@ be created automatically based on the latest version definition in the CHANGELOG
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-a-circuit">Executing a circuit</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-results">Inspecting the results</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-properties">Backend properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classically-controlled-gates">Classically controlled gates</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-circuits-before-submitting-them-for-execution">Inspecting circuits before submitting them for execution</a></li>
 </ul>
 </li>
