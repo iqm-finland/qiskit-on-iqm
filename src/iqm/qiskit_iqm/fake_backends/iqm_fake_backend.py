@@ -378,8 +378,8 @@ class IQMFakeBackend(IQMBackendBase):
             architecture: dynamic quantum architecture to compare to
 
         Returns:
-            True iff the number and names of the locus components, the component connectivity, and the available operations
-            in the DQA match the static architecture of this backend.
+            True iff the number and names of the locus components, the component connectivity,
+            and the available operations in the DQA match the static architecture of this backend.
         """
         components_match = set(architecture.components) == set(self.__architecture.qubits)
         ops = {

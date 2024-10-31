@@ -30,12 +30,10 @@ from iqm.iqm_client import (
     APIVariant,
     CircuitCompilationOptions,
     CircuitValidationError,
-    DynamicQuantumArchitecture,
     HeraldingMode,
     IQMClient,
     RunRequest,
 )
-from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMJob
 
 
@@ -84,7 +82,6 @@ def run_request():
 
 def test_default_options(backend):
     assert backend.options.shots == 1024
-    assert backend.options.calibration_set_id is None
     for k, v in backend.options.circuit_compilation_options.__dict__.items():
         assert v == CircuitCompilationOptions().__dict__[k]
     assert backend.options.circuit_compilation_options

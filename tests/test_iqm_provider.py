@@ -22,7 +22,7 @@ import pytest
 from qiskit import QuantumCircuit
 import requests
 
-from iqm.iqm_client import DynamicQuantumArchitecture, IQMClient, RunRequest, RunResult, RunStatus
+from iqm.iqm_client import IQMClient, RunRequest, RunResult, RunStatus
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMProvider
 from tests.utils import get_mock_ok_response
 
