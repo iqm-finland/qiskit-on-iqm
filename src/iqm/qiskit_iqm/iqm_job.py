@@ -81,11 +81,11 @@ class IQMJob(JobV1):
             )
         requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
-        expect_exact_shots = iqm_result.metadata.request.heralding_mode == HeraldingMode.NONE
+        expect_exact_shots = iqm_result.metadata.heralding_mode == HeraldingMode.NONE
 
         return [
             (circuit.name, self._format_measurement_results(measurements, requested_shots, expect_exact_shots))
-            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.request.circuits)
+            for measurements, circuit in zip(iqm_result.measurements, iqm_result.metadata.circuits)
         ]
 
     @staticmethod
@@ -105,6 +105,9 @@ class IQMJob(JobV1):
         # Mapping from creg index (in the circuit) to an array with shape (shots, len(creg)) with the results.
         formatted_results: dict[int, np.ndarray] = {}
         for k, v in measurement_results.items():
+            if k.startswith('_reset'):
+                # HACK ignore keys associated with reset instructions
+                continue
             # measurement keys encode data about the classical registers in the original Qiskit circuit
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)
@@ -162,17 +165,18 @@ class IQMJob(JobV1):
 
     def result(self) -> Result:
         if not self._result:
+            # client will raise an error if it was unable to get the results within the timeout
             results = self._client.wait_for_results(uuid.UUID(self._job_id), self._timeout_seconds)
             self._calibration_set_id = results.metadata.calibration_set_id
             self._request = results.metadata.request
             if results.metadata.timestamps is not None:
                 self.metadata['timestamps'] = results.metadata.timestamps.copy()
             self._result = self._format_iqm_results(results)
-            # RemoteIQMBackend.run() populates circuit_metadata, so it may be None if method wasn't called in current
-            # session. In that case retrieve circuit metadata from RunResult.metadata.request.circuits[n].metadata
+            # IQMBackend.run() populates IQMJob.circuit_metadata, so it may be None if this IQMJob
+            # was created manually from a job_id. In that case retrieve circuit metadata from
+            # RunResult.metadata.request.circuits[n].metadata
             if self.circuit_metadata is None and results.metadata.request is not None:
-                self.circuit_metadata = []
-                self.circuit_metadata = [c.metadata for c in results.metadata.request.circuits]
+                self.circuit_metadata = [c.metadata for c in results.metadata.circuits]
 
         result_dict = {
             'backend_name': None,

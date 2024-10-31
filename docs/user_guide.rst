@@ -138,9 +138,9 @@ always corresponds to a specific calibration set, so that its transpilation targ
 (qubits and computational resonators) and gates which are available in that calibration set. The server default
 calibration set will be used by default, but you can also use a different calibration set by specifying the
 ``calibration_set_id`` parameter for :meth:`.IQMProvider.get_backend` or :class:`.IQMBackend`. If the server default
-calibration set has changed after you created the backend, the backend would still use the original default calibration
-set when submitting circuits. In this case, a warning will be shown to notify you about this, and you would need to
-create a new backend if you want to use the newer calibration set.
+calibration set has changed after you have created the backend, the backend will still use the original default calibration
+set when submitting circuits for execution. When this happens you will get a warning.
+You will need to create a new backend if you want to use the new default calibration set instead.
 
 You can optionally set IQM backend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.
@@ -241,6 +241,58 @@ At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrate
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
 :meth:`~.IQMBackendBase.qubit_name_to_index` and :meth:`~.IQMBackendBase.index_to_qubit_name` can become handy.
+
+
+Classically controlled gates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some IQM quantum computers support classically controlled gates, that is, gates that are executed conditionally depending on the result of a measurement preceding them in the quantum circuit. This support currently has several limitations:
+
+* Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
+* The gates can only be conditioned on one classical bit, and the only control available is to
+  apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
+* The availability of the controlled gates depends on the instrumentation of the quantum computer.
+
+The classical control can be applied on a circuit instruction using :meth:`~qiskit.circuit.Instruction.c_if`:
+
+.. code-block:: python
+
+    from qiskit import QuantumCircuit
+
+    qr = QuantumRegister(2, 'q')
+    cr = ClassicalRegister(1, 'c')
+    circuit = QuantumCircuit(qr, cr)
+
+    circuit.h(0)
+    circuit.measure(0, cr[0])
+    circuit.x(1).c_if(cr, 1)
+    circuit.measure_all()
+
+    print(circuit.draw(output='text'))
+
+::
+
+            ┌───┐┌─┐        ░ ┌─┐
+       q_0: ┤ H ├┤M├────────░─┤M├───
+            └───┘└╥┘ ┌───┐  ░ └╥┘┌─┐
+       q_1: ──────╫──┤ X ├──░──╫─┤M├
+                  ║  └─╥─┘  ░  ║ └╥┘
+                  ║ ┌──╨──┐    ║  ║
+       c: 1/══════╩═╡ 0x1 ╞════╬══╬═
+                  0 └─────┘    ║  ║
+    meas: 2/═══════════════════╩══╩═
+                               0  1
+
+
+The first measurement operation stores its result in the 1-bit classical register ``c``. If the result is 1, the ``X`` gate will be applied. If it is zero, an identity gate of corresponding duration is applied instead.
+
+Executing the above circuit should result in the counts being approximately 50/50 split
+between the '00 0' and '11 1' bins of the histogram (even though the state itself is never entangled).
+
+.. note::
+
+   Because the gates can only take feedback from one classical bit you must place the measurement result
+   in a 1-bit classical register, ``c`` in the above example.
 
 
 Inspecting circuits before submitting them for execution
@@ -521,7 +573,7 @@ connectivity, and the native gateset should match the 5-qubit Adonis architectur
     backend = provider.get_backend('facade_adonis')
     transpiled_circuit = transpile(circuit, backend=backend)
     job = backend.run(transpiled_circuit, shots=1000)
-    job.result().get_counts()
+    print(job.result().get_counts())
 
 .. note::
 

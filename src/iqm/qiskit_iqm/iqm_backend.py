@@ -20,7 +20,7 @@ import itertools
 from typing import Final, Optional, Union
 from uuid import UUID
 
-from qiskit.circuit import Parameter
+from qiskit.circuit import Parameter, Reset
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import InstructionProperties, Target
@@ -49,6 +49,7 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
     Returns:
         DQA replicating the properties of ``sqa``
     """
+    # NOTE this prefix-based heuristic for identifying the qubits and resonators is not always guaranteed to work
     qubits = [qb for qb in sqa.qubits if qb.startswith('QB')]
     computational_resonators = [qb for qb in sqa.qubits if qb.startswith('COMP')]
     gates = {
@@ -88,6 +89,7 @@ class IQMBackendBase(BackendV2, ABC):
             arch = architecture
         self.architecture = arch
 
+        # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
         qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}
         operations = {gate_name: gate_info.loci for gate_name, gate_info in arch.gates.items()}
         target = Target()
@@ -96,6 +98,7 @@ class IQMBackendBase(BackendV2, ABC):
             op_name: str, symmetric: bool = False
         ) -> dict[tuple[int, ...], InstructionProperties | None]:
             """Creates the Qiskit instruction properties dictionary for the given IQM native operation.
+
             Currently we do not provide any actual properties for the operation other than the
             allowed loci.
             """
@@ -118,6 +121,9 @@ class IQMBackendBase(BackendV2, ABC):
             target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
         if 'move' in operations:
             target.add_instruction(MoveGate(), _create_properties('move'))
+        if 'cc_prx' in operations:
+            # HACK reset gate shares cc_prx loci for now
+            target.add_instruction(Reset(), _create_properties('cc_prx'))
 
         self._target = target
         self._qb_to_idx = qb_to_idx

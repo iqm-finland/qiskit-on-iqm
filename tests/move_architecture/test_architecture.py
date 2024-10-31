@@ -47,12 +47,13 @@ def test_backend_configuration_adonis(adonis_architecture):
     assert adonis_architecture is not None
     backend, _client = get_mocked_backend(adonis_architecture)
     assert backend.target.physical_qubits == [0, 1, 2, 3, 4]
-    assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure'}
+    assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure', 'reset'}
     assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
         'measure:1',
         'id:1',
         'r:1',
         'cz:2',
+        'reset:1',
     ]
     check_instruction(backend.instructions, 'r', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'measure', [(0,), (1,), (2,), (3,), (4,)])
