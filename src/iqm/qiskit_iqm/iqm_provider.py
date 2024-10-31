@@ -270,6 +270,10 @@ class IQMBackend(IQMBackendBase):
             elif instruction.name == 'barrier':
                 native_inst = Instruction(name='barrier', qubits=qubit_names, args={})
             elif instruction.name == 'measure':
+                if len(circuit_instruction.clbits) != 1:
+                    raise ValueError(
+                        f'Unexpected: measurement instruction {circuit_instruction} uses multiple classical bits.'
+                    )
                 clbit = circuit_instruction.clbits[0]  # always a single-qubit measurement
                 mk = str(MeasurementKey.from_clbit(clbit, circuit))
                 native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk})
