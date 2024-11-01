@@ -198,7 +198,7 @@ def move_architecture():
 
 @pytest.fixture
 def adonis_coupling_map():
-    return {(0, 2), (2, 0), (1, 2), (2, 1), (2, 3), (3, 2), (2, 4), (4, 2)}
+    return {(0, 2), (1, 2), (3, 2), (4, 2), (2, 0), (2, 1), (2, 3), (2, 4)}
 
 
 @pytest.fixture

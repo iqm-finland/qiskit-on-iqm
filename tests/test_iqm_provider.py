@@ -52,7 +52,7 @@ def test_get_backend(linear_3q_architecture):
     assert isinstance(backend, IQMBackend)
     assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 3
-    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
+    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2), (1, 0), (2, 1)}
     assert backend._calibration_set_id == linear_3q_architecture.calibration_set_id
 
 
@@ -76,7 +76,7 @@ def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     assert isinstance(backend, IQMFacadeBackend)
     assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 5
-    assert set(backend.coupling_map.get_edges()) == adonis_coupling_map
+    assert set(backend.coupling_map.get_edges()) == set(adonis_coupling_map)
 
 
 def test_get_facade_backend_raises_error_non_matching_architecture(linear_3q_architecture):

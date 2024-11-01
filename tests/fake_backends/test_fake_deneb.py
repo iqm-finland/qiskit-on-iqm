@@ -32,6 +32,7 @@ def test_iqm_fake_deneb():
 
 def test_iqm_fake_deneb_connectivity(deneb_coupling_map):
     backend = IQMFakeDeneb()
+    print(backend.coupling_map)
     assert set(backend.coupling_map.get_edges()) == deneb_coupling_map
 
 

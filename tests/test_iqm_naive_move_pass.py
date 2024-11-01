@@ -1,6 +1,7 @@
 """Testing IQM transpilation.
 """
 
+import pytest
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import QuantumVolume
 from qiskit.circuit.quantumcircuitdata import CircuitInstruction
@@ -12,14 +13,16 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend
 from .utils import _get_allowed_ops, _is_valid_instruction, get_mocked_backend
 
 
-def test_transpile_to_IQM_star_semantically_preserving(ndonis_architecture):  # pylint: disable=too-many-locals
+@pytest.mark.parametrize("n_qubits", list(range(2, 6)))
+def test_transpile_to_IQM_star_semantically_preserving(
+    ndonis_architecture, n_qubits
+):  # pylint: disable=too-many-locals
     backend, _client = get_mocked_backend(ndonis_architecture)
     qubit_registers = _get_qubit_registers(backend)
-    n_qubits = len(qubit_registers)
-    for i in range(2, n_qubits + 1):
-        circuit = QuantumVolume(i, i)
+    if len(qubit_registers) >= n_qubits:
+        circuit = QuantumVolume(n_qubits, n_qubits)
         # Use optimization_level=0 to avoid that the qubits get remapped.
-        transpiled_circuit = transpile_to_IQM(circuit, backend, optimization_level=0)
+        transpiled_circuit = transpile_to_IQM(circuit, backend, optimization_level=0, remove_final_rzs=False)
         transpiled_operator = Operator(transpiled_circuit)
 
         # Update the original circuit to have the correct number of qubits and resonators.

@@ -152,8 +152,10 @@ For example, you can enable heralding measurements by passing the appropriate ci
 
     job = backend.run(transpiled_circuit, shots=1000, circuit_compilation_options=CircuitCompilationOptions(heralding_mode=HeraldingMode.ZEROS))
 
-Alternatively, you can update the values of the options directly in the backend instance using :meth:`.IQMBackend.set_options`
-and then call :meth:`.IQMBackend.run` without specifying additional keyword arguments.
+Alternatively, you can update the values of the options directly on the backend instance using the :meth:`.IQMBackend.set_options`
+and then call :meth:`.IQMBackend.run` without specifying additional keyword arguments. 
+As the `.backend.options` attribute is used to store additional keyword arguments for :meth:`.IQMBackend.run`, you can find the 
+an up-to-date list of available options and their current values in the documentation of the :meth:`.IQMBackend.run` method.
 
 
 Inspecting the results
@@ -170,6 +172,7 @@ The results of a job that was executed on the IQM quantum computer, represented 
 
 The result also contains the original request with e.g. the qubit mapping that was used in execution. You
 can check this mapping as follows:
+
 
 .. code-block:: python
 
