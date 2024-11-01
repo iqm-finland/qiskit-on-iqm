@@ -257,7 +257,7 @@ class IQMBackend(IQMBackendBase):
 def serialize_instructions(
     circuit: QuantumCircuit, index_to_qubit_mapping: dict[int, str], ignore_nonnative_gates: bool
 ) -> list[Instruction]:
-    """Serialize a quantum circuit into Instructions in the IQM data transfer format.
+    """Serialize a quantum circuit into the IQM data transfer format.
 
     This is an internal helper for :meth:`.IQMBackend.serialize_circuit` that gives slightly more control.
     See :meth:`.IQMBackend.serialize_circuit` for details.
@@ -265,7 +265,7 @@ def serialize_instructions(
 
     Args:
         circuit: quantum circuit to serialize
-        index_to_qubit_mapping: Mapping from logical to physical qubit names.
+        qubit_idx_to_name: Mapping from qubit indices to the corresponding qubit names.
         ignore_nonnative_gates: If False (default), any instruction that cannot be serailizaed into the native
             gate set will raise an error. If True, such instructions are converted as-is without validation,
             and the caller must edit the result to be valid and executable.
