@@ -348,8 +348,8 @@ def serialize_instructions(
             continue
         else:
             if ignore_nonnative_gates:
-                args = {f"p{i}": param for i, param in enumerate(instruction.params)}
-                native_inst = Instruction.construct(name=instruction.name, qubits=qubit_names, args=args)
+                args = {f'p{i}': param for i, param in enumerate(instruction.params)}
+                native_inst = Instruction.model_construct(name=instruction.name, qubits=qubit_names, args=args)
             else:
                 raise ValueError(
                     f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
