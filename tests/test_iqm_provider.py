@@ -134,4 +134,4 @@ def test_serialize_instructions_can_allow_nonnative_gates():
     instructions = _serialize_instructions(
         circuit, {i: f'QB{i+1}' for i in range(5)}, allowed_nonnative_gates={'nonnative'}
     )
-    assert instructions[0] == Instruction.model_construct(name='nonnative', qubits=['1', '2', '4'], args={})
+    assert instructions[0] == Instruction.model_construct(name='nonnative', qubits=('1', '2', '4'), args={})
