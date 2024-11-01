@@ -253,10 +253,14 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         optimize_pass = IQMOptimizeSingleQubitGates(remove_final_rzs, ignore_barriers)
         passes.append(optimize_pass)
 
-    if "move" in backend.architecture.operations.keys():
+    if "move" in backend.architecture.gates.keys():
         move_pass = IQMNaiveResonatorMoving(
-            backend.architecture.qubits.index("COMP_R"),
-            [backend.qubit_name_to_index(q) for q, r in backend.architecture.operations["move"] if r == "COMP_R"],
+            backend.qubit_name_to_index(backend.architecture.computational_resonators[0]),
+            [
+                backend.qubit_name_to_index(q)
+                for q, r in backend.architecture.gates["move"]
+                if r == backend.architecture.computational_resonators[0]
+            ],
             backend._physical_target.operation_names,
         )
         passes.append(move_pass)

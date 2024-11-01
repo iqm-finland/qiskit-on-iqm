@@ -16,7 +16,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from copy import copy
 from importlib.metadata import PackageNotFoundError, version
 from functools import reduce
 from typing import Optional, Union
@@ -74,12 +73,10 @@ class IQMBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(
-            shots=1024,
-            circuit_compilation_options=CircuitCompilationOptions(),
-            circuit_callback=None,
-            timeout_seconds=None,
-        )
+        """Qiskit method for defining the default options for running the backend. We don't use them since they would
+        not be documented here. Instead, we use the keyword arguments of the run method to pass options.
+        """
+        return Options()
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -117,7 +114,7 @@ class IQMBackend(IQMBackendBase):
             Job object from which the results can be obtained once the execution has finished.
         """
 
-        timeout_seconds = options.pop('timeout_seconds', self.options.timeout_seconds)
+        timeout_seconds = options.pop('timeout_seconds', None)
         run_request = self.create_run_request(run_input, **options)
         job_id = self.client.submit_run_request(run_request)
         job = IQMJob(self, str(job_id), shots=run_request.shots, timeout_seconds=timeout_seconds)
@@ -127,7 +124,7 @@ class IQMBackend(IQMBackendBase):
     def create_run_request(
         self,
         run_input: Union[QuantumCircuit, list[QuantumCircuit]],
-        shots: Optional[int] = None,
+        shots: int = 1024,
         circuit_compilation_options: Optional[CircuitCompilationOptions] = None,
         circuit_callback: Optional[Callable] = None,
         **unknown_options,
@@ -142,7 +139,8 @@ class IQMBackend(IQMBackendBase):
         Keyword Args:
             shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
             circuit_compilation_options (iqm.iqm_client.models.CircuitCompilationOptions):
-                Compilation options for the circuits, passed on to :mod:`iqm-client`.
+                Compilation options for the circuits, passed on to :mod:`iqm-client`. If not provided, the default is
+                the ``CircuitCompilationOptions`` default.
             circuit_callback (collections.abc.Callable[[list[QuantumCircuit]], Any]):
                 Callback function that, if provided, will be called for the circuits before sending
                 them to the device.  This may be useful in situations when you do not have explicit
@@ -164,9 +162,6 @@ class IQMBackend(IQMBackendBase):
         if len(circuits) == 0:
             raise ValueError('Empty list of circuits submitted for execution.')
 
-        if shots is None:
-            shots = self.options.shots
-
         # Catch old iqm-client options
         if 'max_circuit_duration_over_t2' in unknown_options or 'heralding_mode' in unknown_options:
             warnings.warn(
@@ -176,28 +171,18 @@ class IQMBackend(IQMBackendBase):
                 )
             )
         if circuit_compilation_options is None:
-            circuit_compilation_options = CircuitCompilationOptions(
-                max_circuit_duration_over_t2=unknown_options.pop(
-                    'max_circuit_duration_over_t2',
-                    self.options.circuit_compilation_options.max_circuit_duration_over_t2,
-                ),
-                heralding_mode=unknown_options.pop(
-                    'heralding_mode', self.options.circuit_compilation_options.heralding_mode
-                ),
-            )
+            cc_options_kwargs = {}
+            if 'max_circuit_duration_over_t2' in unknown_options:
+                cc_options_kwargs['max_circuit_duration_over_t2'] = unknown_options.pop('max_circuit_duration_over_t2')
+            if 'heralding_mode' in unknown_options:
+                cc_options_kwargs['heralding_mode'] = unknown_options.pop('heralding_mode')
+            circuit_compilation_options = CircuitCompilationOptions(**cc_options_kwargs)
 
         if unknown_options:
             warnings.warn(f'Unknown backend option(s): {unknown_options}')
 
-        # merge given options with default options and get resulting values
-        merged_options = copy(self.options)
-        merged_options.update_options(**dict(unknown_options))
-        shots = merged_options['shots']
-
         if circuit_callback:
             circuit_callback(circuits)
-        elif self.options.circuit_callback:
-            self.options.circuit_callback(circuits)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
         used_physical_qubit_indices: set[int] = reduce(
@@ -219,7 +204,7 @@ class IQMBackend(IQMBackendBase):
                 qubit_mapping=qubit_mapping,
                 calibration_set_id=self._calibration_set_id,
                 shots=shots,
-                options=merged_options['circuit_compilation_options'],
+                options=circuit_compilation_options,
             )
         except CircuitValidationError as e:
             raise CircuitValidationError(

@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from copy import copy
 import itertools
 import re
 from typing import Final, Union
@@ -82,21 +83,24 @@ def _DQA_to_qiskit_target(
     """
     # pylint: disable=unreachable
     target = Target()
-    fake_target = Target()
-    raise NotImplementedError('This function is not yet implemented.')
 
     def get_num_or_zero(name: str) -> int:
         match = re.search(r'(\d+)', name)
         return int(match.group(1)) if match else 0
 
-    qb_to_idx = {qb: idx for idx, qb in enumerate(sorted(architecture.qubits, key=get_num_or_zero))}
-    operations = architecture.operations
+    component_to_idx = {
+        qb: idx
+        for idx, qb in enumerate(
+            sorted(architecture.computational_resonators + architecture.qubits, key=get_num_or_zero)
+        )
+    }
+    operations = architecture.gates
 
     # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
     # Such info is automatically deduced once all instruction properties are set. Currently, we do not retrieve
     # any properties from the server, and we are interested only in letting the target know what is the native gate
     # set and the connectivity of the device under use. Thus, we populate the target with None properties.
-    def _create_connections(name: str):
+    def _create_connections(name: str, is_symmetric: bool = False) -> dict[tuple[int, ...], None]:
         """Creates the connection map of allowed loci for this instruction, mapped to None."""
         # if is_multi_qubit_instruction(name):
         #    if is_directed_instruction(name):
@@ -104,46 +108,54 @@ def _DQA_to_qiskit_target(
         #    return {
         #        (qb_to_idx[qb1], qb_to_idx[qb2]): None for pair in operations[name] for qb1, qb2 in (pair, pair[::-1])
         #    }
-        return {(qb_to_idx[qb],): None for [qb] in operations[name]}
+        gate_info = operations[name]
+        all_loci = gate_info.implementations[gate_info.default_implementation].loci
+        connections = {tuple(component_to_idx[locus] for locus in loci): None for loci in all_loci}
+        if is_symmetric:
+            # If the gate is symmetric, we need to add the reverse connections as well.
+            connections.update({tuple(reversed(loci)): None for loci in connections})
+        return connections
 
     if 'prx' in operations or 'phased_rx' in operations:
         target.add_instruction(
             RGate(Parameter('theta'), Parameter('phi')),
-            _create_connections('prx' if 'prx' in operations else 'phased_rx'),
+            _create_connections('prx'),
         )
-        fake_target.add_instruction(
-            RGate(Parameter('theta'), Parameter('phi')),
-            _create_connections('prx' if 'prx' in operations else 'phased_rx'),
-        )
-    target.add_instruction(IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits})
-    fake_target.add_instruction(
-        IGate(), {(qb_to_idx[qb],): None for qb in architecture.qubits if not qb.startswith('COMP_R')}
+    if 'cc_prx' in operations:
+        # HACK reset gate shares cc_prx loci for now
+        target.add_instruction(Reset(), _create_connections('cc_prx'))
+
+    target.add_instruction(
+        IGate(), {(component_to_idx[qb],): None for qb in architecture.computational_resonators + architecture.qubits}
     )
     # Even though CZ is a symmetric gate, we still need to add properties for both directions. This is because
     # coupling maps in Qiskit are directed graphs and the gate symmetry is not implicitly planted there. It should
     # be explicitly supplied. This allows Qiskit to have coupling maps with non-symmetric gates like cx.
     if 'measure' in operations:
         target.add_instruction(Measure(), _create_connections('measure'))
-        fake_target.add_instruction(Measure(), _create_connections('measure'))
-    if 'measurement' in operations:
-        target.add_instruction(Measure(), _create_connections('measurement'))
-        fake_target.add_instruction(Measure(), _create_connections('measurement'))
+
+    # Special work for devices with a MoveGate.
+    fake_target = copy(target)
+    if 'cz' in operations:
+        target.add_instruction(CZGate(), _create_connections('cz', True))
     if 'move' in operations:
         target.add_instruction(MoveGate(), _create_connections('move'))
         if 'cz' in operations:
-            target.add_instruction(CZGate(), _create_connections('cz'))
             fake_cz_connections: dict[tuple[int, int], None] = {}
+            cz_loci = operations['cz'].implementations[operations['cz'].default_implementation].loci
+            for qb1, qb2 in cz_loci:
+                if (
+                    qb1 not in architecture.computational_resonators
+                    and qb2 not in architecture.computational_resonators
+                ):
+                    fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
+                    fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
             for qb1, res in operations['move']:
                 for qb2 in [q for q in architecture.qubits if q not in [qb1, res]]:
-                    if [qb2, res] in operations['cz'] or [res, qb2] in operations['cz']:
-                        fake_cz_connections[(qb_to_idx[qb1], qb_to_idx[qb2])] = None
-                        fake_cz_connections[(qb_to_idx[qb2], qb_to_idx[qb1])] = None
-            fake_target.add_instruction(CZGate(), fake_cz_connections)
-    else:
-        if 'cz' in operations:
-            target.add_instruction(CZGate(), _create_connections('cz'))
-            fake_target.add_instruction(CZGate(), _create_connections('cz'))
-    return target, fake_target, qb_to_idx
+                    if [qb2, res] in cz_loci or [res, qb2] in cz_loci:
+                        fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
+                        fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
+    return target, fake_target, component_to_idx
 
 
 class IQMBackendBase(BackendV2, ABC):

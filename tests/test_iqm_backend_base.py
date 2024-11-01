@@ -36,8 +36,7 @@ class DummyIQMBackend(IQMBackendBase):
     def max_circuits(self) -> Optional[int]:
         return None
 
-    def run(self, run_input, **options):
-        ...
+    def run(self, run_input, **options): ...
 
 
 @pytest.fixture
@@ -52,8 +51,10 @@ def test_qubit_name_to_index_to_qubit_name(adonis_shuffled_names_architecture):
     assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
     assert all(backend.qubit_name_to_index(name) == idx for idx, name in correct_idx_name_associations)
 
-    assert backend.index_to_qubit_name(7) is None
-    assert backend.qubit_name_to_index('Alice') is None
+    with pytest.raises(ValueError, match="Qubit index '7' is not part of the backend."):
+        backend.index_to_qubit_name(7)
+    with pytest.raises(ValueError, match="Qubit name 'Alice' is not part of the backend."):
+        backend.qubit_name_to_index('Alice')
 
 
 def test_transpile(backend):
@@ -64,7 +65,11 @@ def test_transpile(backend):
     circuit.cx(2, 0)
 
     circuit_transpiled = transpile(circuit, backend=backend)
-    cmap = backend.coupling_map.get_edges()
+    print(backend.target)
+    assert backend.target is not None
+    cmap = backend.target.build_coupling_map()
+    assert cmap is not None
+    cmap = cmap.get_edges()
     for instr in circuit_transpiled.data:
         instruction = instr.operation
         qubits = instr.qubits

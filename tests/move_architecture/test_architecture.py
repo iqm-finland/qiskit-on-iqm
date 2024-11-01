@@ -24,15 +24,15 @@ def test_backend_configuration_new(move_architecture):
     """Check that the extended architecture is configured correctly to the Qiskit backend."""
     assert move_architecture is not None
     backend, _client = get_mocked_backend(move_architecture)
-    assert backend.target.physical_qubits == [0, 1, 2, 3, 4, 5, 6]
+    assert set(backend.target.physical_qubits) == {0, 1, 2, 3, 4, 5, 6}
     assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure', 'move'}
-    assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
+    assert {f'{o.name}:{o.num_qubits}' for o in backend.target.operations} == {
         'measure:1',
         'id:1',
         'r:1',
         'cz:2',
         'move:2',
-    ]
+    }
 
     check_instruction(backend.instructions, 'r', [(1,), (2,), (3,), (4,), (5,), (6,)])
     check_instruction(backend.instructions, 'measure', [(1,), (2,), (3,), (4,), (5,), (6,)])
@@ -49,13 +49,13 @@ def test_backend_configuration_adonis(adonis_architecture):
     backend, _client = get_mocked_backend(adonis_architecture)
     assert backend.target.physical_qubits == [0, 1, 2, 3, 4]
     assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure', 'reset'}
-    assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
+    assert {f'{o.name}:{o.num_qubits}' for o in backend.target.operations} == {
         'measure:1',
         'id:1',
         'r:1',
         'cz:2',
         'reset:1',
-    ]
+    }
     check_instruction(backend.instructions, 'r', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'measure', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'id', [(0,), (1,), (2,), (3,), (4,)])
@@ -68,5 +68,5 @@ def check_instruction(
     expected_connections: list[Union[tuple[int], tuple[int, int]]],
 ):
     """Checks that the given instruction is defined for the expected qubits (directed)."""
-    target_qubits = [k for (i, k) in instructions if i.name == name]
-    assert target_qubits == expected_connections
+    target_qubits = {k for (i, k) in instructions if i.name == name}
+    assert target_qubits == set(expected_connections)

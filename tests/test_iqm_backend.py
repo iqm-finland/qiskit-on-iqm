@@ -81,11 +81,8 @@ def run_request():
 
 
 def test_default_options(backend):
-    assert backend.options.shots == 1024
-    for k, v in backend.options.circuit_compilation_options.__dict__.items():
-        assert v == CircuitCompilationOptions().__dict__[k]
-    assert backend.options.circuit_compilation_options
-    assert backend.options.circuit_callback is None
+    """Test that there are no default options set. The user specifies defaults through the function calls."""
+    assert len(backend.options) == 0
 
 
 def test_backend_name(backend):
@@ -460,8 +457,9 @@ def test_run_uses_heralding_mode_none_by_default(
 ):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
+    default_compilation_options = CircuitCompilationOptions()
     kwargs = create_run_request_default_kwargs | {
-        'options': backend.options.circuit_compilation_options,
+        'options': default_compilation_options,
         'qubit_mapping': {'0': 'QB1'},
     }
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
