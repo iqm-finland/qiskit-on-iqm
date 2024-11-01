@@ -17,57 +17,20 @@ from typing import Union
 
 from qiskit.circuit import Instruction
 
-from iqm.iqm_client import QuantumArchitecture, QuantumArchitectureSpecification
-from tests.move_architecture.move_architecture import move_architecture_json, move_architecture_specification
 from tests.utils import get_mocked_backend
 
 
-def test_parse_move_architecture_specification():
-    """Tests that the extended architecture specification can be parsed."""
-    arch = QuantumArchitectureSpecification(**move_architecture_specification)
-    check_arch(arch)
-
-
-def test_parse_move_architecture():
-    """Tests that the quantum architecture model can be parsed."""
-    arch = QuantumArchitecture(**move_architecture_json)
-    check_arch(arch.quantum_architecture)
-
-
-def check_arch(arch: QuantumArchitectureSpecification):
-    """Verifies architecture is as expected."""
-    assert arch.name == 'Custom arch'
-    assert arch.qubits == ['COMP_R', 'QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6']
-    assert arch.qubit_connectivity == [
-        ['QB1', 'COMP_R'],
-        ['QB2', 'COMP_R'],
-        ['QB3', 'COMP_R'],
-        ['QB4', 'COMP_R'],
-        ['QB5', 'COMP_R'],
-        ['QB6', 'COMP_R'],
-    ]
-    assert arch.operations['prx'] == [['QB1'], ['QB2'], ['QB3'], ['QB4'], ['QB5'], ['QB6']]
-    assert arch.operations['cz'] == [
-        ['QB1', 'COMP_R'],
-        ['QB2', 'COMP_R'],
-        ['QB3', 'COMP_R'],
-        ['QB4', 'COMP_R'],
-        ['QB5', 'COMP_R'],
-    ]
-    assert arch.operations['move'] == [['QB6', 'COMP_R']]
-
-
-def test_backend_configuration_new(new_architecture):
+def test_backend_configuration_new(move_architecture):
     """Check that the extended architecture is configured correctly to the Qiskit backend."""
-    assert new_architecture is not None
-    backend, _client = get_mocked_backend(new_architecture)
+    assert move_architecture is not None
+    backend, _client = get_mocked_backend(move_architecture)
     assert backend.target.physical_qubits == [0, 1, 2, 3, 4, 5, 6]
     assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure', 'move'}
-    assert {f'{o.name}:{o.num_qubits}' for o in backend.target.operations} == {
-        'r:1',
-        'id:1',
-        'cz:2',
+    assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
         'measure:1',
+        'id:1',
+        'r:1',
+        'cz:2',
         'move:2',
     }
 
@@ -85,13 +48,14 @@ def test_backend_configuration_adonis(adonis_architecture):
     assert adonis_architecture is not None
     backend, _client = get_mocked_backend(adonis_architecture)
     assert backend.target.physical_qubits == [0, 1, 2, 3, 4]
-    assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure'}
-    assert {f'{o.name}:{o.num_qubits}' for o in backend.target.operations} == {
-        'r:1',
-        'id:1',
-        'cz:2',
+    assert set(backend.target.operation_names) == {'r', 'id', 'cz', 'measure', 'reset'}
+    assert [f'{o.name}:{o.num_qubits}' for o in backend.target.operations] == [
         'measure:1',
-    }
+        'id:1',
+        'r:1',
+        'cz:2',
+        'reset:1',
+    ]
     check_instruction(backend.instructions, 'r', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'measure', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'id', [(0,), (1,), (2,), (3,), (4,)])

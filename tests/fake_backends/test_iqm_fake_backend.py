@@ -18,30 +18,31 @@ from qiskit import QuantumCircuit
 from qiskit.providers import JobV1
 from qiskit_aer.noise.noise_model import NoiseModel
 
+from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 
 
 @pytest.fixture
-def backend(linear_architecture_3q, create_3q_error_profile):
-    return IQMFakeBackend(linear_architecture_3q, create_3q_error_profile())
+def backend(linear_3q_architecture_static, create_3q_error_profile):
+    return IQMFakeBackend(linear_3q_architecture_static, create_3q_error_profile())
 
 
-def test_fake_backend_with_incomplete_t1s(linear_architecture_3q, create_3q_error_profile):
+def test_fake_backend_with_incomplete_t1s(linear_3q_architecture_static, create_3q_error_profile):
     """Test that IQMFakeBackend construction fails if T1 times are not provided for all qubits"""
     with pytest.raises(ValueError, match="Length of t1s"):
         error_profile = create_3q_error_profile(t1s={"QB1": 2000, "QB3": 2000})
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
-def test_fake_backend_with_incomplete_t2s(linear_architecture_3q, create_3q_error_profile):
+def test_fake_backend_with_incomplete_t2s(linear_3q_architecture_static, create_3q_error_profile):
     """Test that IQMFakeBackend construction fails if T2 times are not provided for all qubits"""
     with pytest.raises(ValueError, match="Length of t2s"):
         error_profile = create_3q_error_profile(t2s={"QB1": 2000, "QB3": 2000})
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
 def test_fake_backend_with_single_qubit_gate_depolarizing_errors_qubits_not_matching_quantum_architecture(
-    linear_architecture_3q,
+    linear_3q_architecture_static,
     create_3q_error_profile,
 ):
     """Test that IQMFakeBackend construction fails if depolarizing rates are not provided for all qubits"""
@@ -49,11 +50,11 @@ def test_fake_backend_with_single_qubit_gate_depolarizing_errors_qubits_not_matc
         error_profile = create_3q_error_profile(
             single_qubit_gate_depolarizing_error_parameters={"prx": {"QB1": 0.0001, "QB2": 0.0001}},
         )
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
 def test_fake_backend_with_single_qubit_gate_depolarizing_errors_more_qubits_than_in_quantum_architecture(
-    linear_architecture_3q,
+    linear_3q_architecture_static,
     create_3q_error_profile,
 ):
     """Test that IQMFakeBackend construction fails if depolarizing rates are provided for
@@ -64,11 +65,11 @@ def test_fake_backend_with_single_qubit_gate_depolarizing_errors_more_qubits_tha
                 "prx": {"QB1": 0.0001, "QB2": 0.0001, "QB3": 0.0001, "QB4": 0.0001}
             },
         )
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
 def test_fake_backend_with_two_qubit_gate_depolarizing_errors_couplings_not_matching_quantum_architecture(
-    linear_architecture_3q,
+    linear_3q_architecture_static,
     create_3q_error_profile,
 ):
     """Test that IQMFakeBackend construction fails if depolarizing rates are
@@ -77,11 +78,11 @@ def test_fake_backend_with_two_qubit_gate_depolarizing_errors_couplings_not_matc
         error_profile = create_3q_error_profile(
             two_qubit_gate_depolarizing_error_parameters={"cz": {("QB1", "QB2"): 0.001}},
         )
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
 def test_fake_backend_with_two_qubit_gate_depolarizing_errors_more_couplings_than_in_quantum_architecture(
-    linear_architecture_3q,
+    linear_3q_architecture_static,
     create_3q_error_profile,
 ):
     """Test that IQMFakeBackend construction fails if depolarizing rates are provided for
@@ -92,7 +93,7 @@ def test_fake_backend_with_two_qubit_gate_depolarizing_errors_more_couplings_tha
                 "cz": {("QB1", "QB2"): 0.001, ("QB2", "QB3"): 0.001, ("QB1", "QB3"): 0.001}
             },
         )
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
 @pytest.mark.parametrize(
@@ -109,7 +110,7 @@ def test_fake_backend_with_two_qubit_gate_depolarizing_errors_more_couplings_tha
     ],
 )
 def test_fake_backend_not_matching_quantum_architecture(
-    linear_architecture_3q,
+    linear_3q_architecture_static,
     create_3q_error_profile,
     param_name: str,
     param_value: dict,
@@ -121,12 +122,12 @@ def test_fake_backend_not_matching_quantum_architecture(
         match=f"Gate `wrong` in `{param_name}` is not supported",
     ):
         error_profile = create_3q_error_profile(**{param_name: param_value})
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
-def test_error_profile(linear_architecture_3q, create_3q_error_profile):
+def test_error_profile(linear_3q_architecture_static, create_3q_error_profile):
     err_profile = create_3q_error_profile()
-    backend = IQMFakeBackend(linear_architecture_3q, err_profile)
+    backend = IQMFakeBackend(linear_3q_architecture_static, err_profile)
 
     assert backend.error_profile == err_profile
 
@@ -140,9 +141,9 @@ def test_set_error_profile(backend, create_3q_error_profile):
         backend.error_profile = create_3q_error_profile()
 
 
-def test_copy_with_error_profile(linear_architecture_3q, create_3q_error_profile):
+def test_copy_with_error_profile(linear_3q_architecture_static, create_3q_error_profile):
     err_profile = create_3q_error_profile()
-    backend = IQMFakeBackend(linear_architecture_3q, err_profile)
+    backend = IQMFakeBackend(linear_3q_architecture_static, err_profile)
 
     new_t1s = err_profile.t1s
     new_t1s["QB1"] = new_t1s["QB1"] + 128
@@ -206,7 +207,7 @@ def test_noise_model_has_noise_terms(backend):
 
 
 def test_fake_backend_with_readout_errors_more_qubits_than_in_quantum_architecture(
-    linear_architecture_3q,
+    linear_3q_architecture_static,
     create_3q_error_profile,
 ):
     """Test that IQMFakeBackend construction fails if readout errors are provided for
@@ -219,7 +220,7 @@ def test_fake_backend_with_readout_errors_more_qubits_than_in_quantum_architectu
                 "QB4": {"0": 0.02, "1": 0.03},
             },
         )
-        IQMFakeBackend(linear_architecture_3q, error_profile)
+        IQMFakeBackend(linear_3q_architecture_static, error_profile)
 
 
 def test_noise_model_contains_all_errors(backend):
@@ -230,3 +231,12 @@ def test_noise_model_contains_all_errors(backend):
 
     # Assert that CZ gate error is applied independent of argument order in gate specification
     assert set(backend.noise_model._local_quantum_errors["cz"].keys()) == set([(0, 1), (1, 0), (1, 2), (2, 1)])
+
+
+def test_validate_compatible_architecture(
+    adonis_architecture, adonis_shuffled_names_architecture, linear_3q_architecture
+):
+    backend = IQMFakeAdonis()
+    assert backend.validate_compatible_architecture(adonis_architecture) is True
+    assert backend.validate_compatible_architecture(adonis_shuffled_names_architecture) is True
+    assert backend.validate_compatible_architecture(linear_3q_architecture) is False

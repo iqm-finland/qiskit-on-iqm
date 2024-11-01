@@ -11,9 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Qiskit Backend Provider for IQM backends.
+"""Qiskit backend provider for IQM backends.
 """
+from __future__ import annotations
+
 from collections.abc import Callable
+from copy import copy
 from importlib.metadata import PackageNotFoundError, version
 from functools import reduce
 from typing import Optional, Union
@@ -22,9 +25,17 @@ import warnings
 
 import numpy as np
 from qiskit import QuantumCircuit
+from qiskit.circuit import Clbit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import Circuit, CircuitCompilationOptions, Instruction, IQMClient, RunRequest
+from iqm.iqm_client import (
+    Circuit,
+    CircuitCompilationOptions,
+    CircuitValidationError,
+    Instruction,
+    IQMClient,
+    RunRequest,
+)
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
@@ -44,21 +55,27 @@ class IQMBackend(IQMBackendBase):
 
     Args:
         client: client instance for communicating with an IQM server
-        **kwargs: optional arguments to be passed to the parent Backend initializer
+        calibration_set_id: ID of the calibration set the backend will use.
+            ``None`` means the IQM server will be queried for the current default
+            calibration set.
+        kwargs: optional arguments to be passed to the parent Backend initializer
     """
 
-    def __init__(self, client: IQMClient, **kwargs):
-        architecture = client.get_quantum_architecture()
+    def __init__(self, client: IQMClient, *, calibration_set_id: Union[str, UUID, None] = None, **kwargs):
+        if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
+            calibration_set_id = UUID(calibration_set_id)
+        self._use_default_calibration_set = calibration_set_id is None
+        architecture = client.get_dynamic_quantum_architecture(calibration_set_id)
         super().__init__(architecture, **kwargs)
         self.client: IQMClient = client
         self._max_circuits: Optional[int] = None
-        self.name = f'IQM{architecture.name}Backend'
+        self.name = 'IQM Backend'
+        self._calibration_set_id = architecture.calibration_set_id
 
     @classmethod
     def _default_options(cls) -> Options:
         return Options(
             shots=1024,
-            calibration_set_id=None,
             circuit_compilation_options=CircuitCompilationOptions(),
             circuit_callback=None,
             timeout_seconds=None,
@@ -81,17 +98,23 @@ class IQMBackend(IQMBackendBase):
     def max_circuits(self, value: Optional[int]) -> None:
         self._max_circuits = value
 
-    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> IQMJob:
-        """Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented with this class.
+    def run(
+        self,
+        run_input: Union[QuantumCircuit, list[QuantumCircuit]],
+        *,
+        timeout_seconds: Optional[float] = None,
+        **options,
+    ) -> IQMJob:
+        """Run a quantum circuit or a list of quantum circuits on the IQM quantum computer represented by this backend.
 
         Args:
-            run_input (Union[QuantumCircuit, list[QuantumCircuit]]): The circuits to run.
-            options: A dictionary of options for the run. The following options are supported:
-                timeout_seconds Optional(float): Optional timeout passed to the :class:`IQMJob` in seconds.
-                other options: Additional options to be passed to :meth:`create_run_request`.
+            run_input: The circuits to run.
+            timeout_seconds: Maximum time to wait for the job to finish, in seconds. If ``None``, use
+                the :class:`~iqm.iqm_client.iqm_client.IQMClient` default.
+            options: Keyword arguments passed on to :meth:`create_run_request`, and documented there.
 
         Returns:
-            IQMJob: The Job from which the results can be obtained once the circuits are executed.
+            Job object from which the results can be obtained once the execution has finished.
         """
 
         timeout_seconds = options.pop('timeout_seconds', self.options.timeout_seconds)
@@ -115,22 +138,28 @@ class IQMBackend(IQMBackendBase):
         This can be used to check what would be submitted for execution by an equivalent call to :meth:`run`.
 
         Args:
-            run_input: same as ``run_input`` for :meth:`run`
-            shots: The number of shots for each circuit. If not set, it will use the default from `IQMBackend.options`.
-            calibration_set_id: ID of the calibration set to use for the run. If not set, it will use the default from
-            `IQMBackend.options`.
-            circuit_compilation_options: Compilation options for the circuits as documented in ``iqm-client``.
-            If not set, it will use the default from `IQMBackend.options`.
-            circuit_callback (Callable): Any callback function that will be called for each circuit before sending
-            the circuits to the device. If not set, it will use the default from `IQMBackend.options`.
+            run_input: Same as in :meth:`run`.
+
+        Keyword Args:
+            shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
+            circuit_compilation_options (iqm.iqm_client.models.CircuitCompilationOptions):
+                Compilation options for the circuits, passed on to :mod:`iqm-client`.
+            circuit_callback (collections.abc.Callable[[list[QuantumCircuit]], Any]):
+                Callback function that, if provided, will be called for the circuits before sending
+                them to the device.  This may be useful in situations when you do not have explicit
+                control over transpilation, but need some information on how it was done. This can
+                happen, for example, when you use pre-implemented algorithms and experiments in
+                Qiskit, where the implementation of the said algorithm or experiment takes care of
+                delivering correctly transpiled circuits to the backend. This callback method gives
+                you a chance to look into those transpiled circuits, and extract any info you need.
+                As a side effect, you can also use this callback to modify the transpiled circuits
+                in-place, just before execution; however, we do not recommend to use it for this
+                purpose.
 
         Returns:
             The created run request object
-        """
-        # pylint: disable=too-many-arguments
-        if self.client is None:
-            raise RuntimeError('Session to IQM client has been closed.')
 
+        """
         circuits = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
         if len(circuits) == 0:
@@ -161,11 +190,10 @@ class IQMBackend(IQMBackendBase):
         if unknown_options:
             warnings.warn(f'Unknown backend option(s): {unknown_options}')
 
-        if calibration_set_id is None:
-            calibration_set_id = self.options.calibration_set_id
-
-        if calibration_set_id is not None and not isinstance(calibration_set_id, UUID):
-            calibration_set_id = UUID(calibration_set_id)
+        # merge given options with default options and get resulting values
+        merged_options = copy(self.options)
+        merged_options.update_options(**dict(unknown_options))
+        shots = merged_options['shots']
 
         if circuit_callback:
             circuit_callback(circuits)
@@ -173,28 +201,42 @@ class IQMBackend(IQMBackendBase):
             self.options.circuit_callback(circuits)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
-        used_indices: set[int] = reduce(
+        used_physical_qubit_indices: set[int] = reduce(
             lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
         )
-        qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_indices}
+        qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_physical_qubit_indices}
 
-        return self.client.create_run_request(
-            circuits_serialized,
-            qubit_mapping=qubit_mapping,
-            calibration_set_id=calibration_set_id,
-            shots=shots,
-            options=circuit_compilation_options,
-        )
+        if self._use_default_calibration_set:
+            default_calset_id = self.client.get_dynamic_quantum_architecture(None).calibration_set_id
+            if self._calibration_set_id != default_calset_id:
+                warnings.warn(
+                    f'Server default calibration set has changed from {self._calibration_set_id} '
+                    f'to {default_calset_id}. Create a new IQMBackend if you wish to transpile the '
+                    'circuits using the new calibration set.'
+                )
+        try:
+            run_request = self.client.create_run_request(
+                circuits_serialized,
+                qubit_mapping=qubit_mapping,
+                calibration_set_id=self._calibration_set_id,
+                shots=shots,
+                options=merged_options['circuit_compilation_options'],
+            )
+        except CircuitValidationError as e:
+            raise CircuitValidationError(
+                f'{e}\nMake sure the circuits have been transpiled using the same backend that you used to submit '
+                f'the circuits.'
+            ) from e
+
+        return run_request
 
     def retrieve_job(self, job_id: str) -> IQMJob:
         """Create and return an IQMJob instance associated with this backend with given job id."""
         return IQMJob(self, job_id)
 
-    def close_client(self):
-        """Close IQMClient's session with the authentication server. Discard the client."""
-        if self.client is not None:
-            self.client.close_auth_session()
-        self.client = None
+    def close_client(self) -> None:
+        """Close IQMClient's session with the authentication server."""
+        self.client.close_auth_session()
 
     def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
@@ -209,7 +251,7 @@ class IQMBackend(IQMBackendBase):
 
         Qiskit uses one measurement instruction per qubit (i.e. there is no measurement grouping concept). While
         serializing we do not group any measurements together but rather associate a unique measurement key with each
-        measurement instruction, so that the results can later be reconstructed correctly (see :class:`MeasurementKey`
+        measurement instruction, so that the results can later be reconstructed correctly (see :class:`.MeasurementKey`
         documentation for more details).
 
         Args:
@@ -221,49 +263,109 @@ class IQMBackend(IQMBackendBase):
         Raises:
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
-        # pylint: disable=too-many-branches
-        instructions = []
-        for operation in circuit.data:
-            instruction = operation.operation
-            qubits = operation.qubits
-            clbits = operation.clbits
-            qubit_names = [str(circuit.find_bit(qubit).index) for qubit in qubits]
+        # pylint: disable=too-many-branches,too-many-statements
+        instructions: list[Instruction] = []
+        # maps clbits to the latest "measure" instruction to store its result there
+        clbit_to_measure: dict[Clbit, Instruction] = {}
+
+        for circuit_instruction in circuit.data:
+            instruction = circuit_instruction.operation
+            qubit_names = [str(circuit.find_bit(qubit).index) for qubit in circuit_instruction.qubits]
             if instruction.name == 'r':
                 angle_t = float(instruction.params[0] / (2 * np.pi))
                 phase_t = float(instruction.params[1] / (2 * np.pi))
-                instructions.append(
-                    Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
-                )
+                native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
             elif instruction.name == 'x':
-                instructions.append(Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.0}))
+                native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.0})
             elif instruction.name == 'rx':
                 angle_t = float(instruction.params[0] / (2 * np.pi))
-                instructions.append(
-                    Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.0})
-                )
+                native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.0})
             elif instruction.name == 'y':
-                instructions.append(Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.25}))
+                native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.25})
             elif instruction.name == 'ry':
                 angle_t = float(instruction.params[0] / (2 * np.pi))
-                instructions.append(
-                    Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.25})
-                )
+                native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.25})
             elif instruction.name == 'cz':
-                instructions.append(Instruction(name='cz', qubits=qubit_names, args={}))
+                native_inst = Instruction(name='cz', qubits=qubit_names, args={})
             elif instruction.name == 'move':
-                instructions.append(Instruction(name='move', qubits=qubit_names, args={}))
+                native_inst = Instruction(name='move', qubits=qubit_names, args={})
             elif instruction.name == 'barrier':
-                instructions.append(Instruction(name='barrier', qubits=qubit_names, args={}))
+                native_inst = Instruction(name='barrier', qubits=qubit_names, args={})
             elif instruction.name == 'measure':
-                mk = MeasurementKey.from_clbit(clbits[0], circuit)
-                instructions.append(Instruction(name='measure', qubits=qubit_names, args={'key': str(mk)}))
+                if len(circuit_instruction.clbits) != 1:
+                    raise ValueError(
+                        f'Unexpected: measurement instruction {circuit_instruction} uses multiple classical bits.'
+                    )
+                clbit = circuit_instruction.clbits[0]  # always a single-qubit measurement
+                mk = str(MeasurementKey.from_clbit(clbit, circuit))
+                native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk})
+                clbit_to_measure[clbit] = native_inst
+            elif instruction.name == 'reset':
+                # implemented using a measure instruction to measure the qubits, and
+                # one cc_prx per qubit to conditionally flip it to |0>
+                feedback_key = '_reset'
+                instructions.append(
+                    Instruction(
+                        name='measure',
+                        qubits=qubit_names,
+                        args={
+                            # HACK to get something unique, remove when key can be omitted
+                            'key': f'_reset_{len(instructions)}',
+                            'feedback_key': feedback_key,
+                        },
+                    )
+                )
+                for q in qubit_names:
+                    physical_qubit_name = self._idx_to_qb[int(q)]
+                    instructions.append(
+                        Instruction(
+                            name='cc_prx',
+                            qubits=[q],
+                            args={
+                                'angle_t': 0.5,
+                                'phase_t': 0.0,
+                                'feedback_key': feedback_key,
+                                'feedback_qubit': physical_qubit_name,
+                            },
+                        )
+                    )
+                continue
             elif instruction.name == 'id':
-                pass
+                continue
             else:
                 raise ValueError(
                     f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
                     f'You need to transpile the circuit before execution.'
                 )
+            # classically controlled gates (using the c_if method)
+            condition = instruction.condition
+            if condition is not None:
+                if native_inst.name != 'prx':
+                    raise ValueError(
+                        'This backend only supports conditionals on r, x, y, rx and ry gates,'
+                        f' not on {instruction.name}'
+                    )
+                native_inst.name = 'cc_prx'
+                creg, value = condition
+                if len(creg) != 1:
+                    raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
+                if value != 1:
+                    raise ValueError(
+                        f'{instruction} is conditioned on integer value {value}, only value 1 is supported.'
+                    )
+                # Set up feedback routing.
+                # The latest "measure" instruction to write to that classical bit is modified, it is
+                # given an explicit feedback_key equal to its measurement key.
+                # The same feedback_key is given to the controlled instruction, along with the feedback qubit.
+                measure_inst = clbit_to_measure[creg[0]]
+                feedback_key = measure_inst.args['key']
+                measure_inst.args['feedback_key'] = feedback_key  # this measure is used to provide feedback
+                # TODO we should use physical qubit names in native circuits, not integer strings
+                physical_qubit_name = self._idx_to_qb[int(measure_inst.qubits[0])]  # single-qubit measurement
+                native_inst.args['feedback_key'] = feedback_key
+                native_inst.args['feedback_qubit'] = physical_qubit_name
+
+            instructions.append(native_inst)
 
         try:
             metadata = to_json_dict(circuit.metadata)
@@ -288,16 +390,15 @@ class IQMFacadeBackend(IQMBackend):
 
     def __init__(self, client: IQMClient, **kwargs):
         self.fake_adonis = IQMFakeAdonis()
-        target_architecture = client.get_quantum_architecture()
+        target_architecture = client.get_dynamic_quantum_architecture(kwargs.get('calibration_set_id', None))
 
         if not self.fake_adonis.validate_compatible_architecture(target_architecture):
             raise ValueError('Quantum architecture of the remote quantum computer does not match Adonis.')
 
         super().__init__(client, **kwargs)
-        self.client = client
-        self.name = f'IQMFacade{target_architecture.name}Backend'
+        self.name = 'facade_adonis'
 
-    def _validate_no_empty_cregs(self, circuit):
+    def _validate_no_empty_cregs(self, circuit: QuantumCircuit) -> bool:
         """Returns True if given circuit has no empty (unused) classical registers, False otherwise."""
         cregs_utilization = dict.fromkeys(circuit.cregs, 0)
         used_cregs = [circuit.find_bit(i.clbits[0]).registers[0][0] for i in circuit.data if len(i.clbits) > 0]
@@ -343,13 +444,17 @@ class IQMProvider:
         self.url = url
         self.user_auth_args = user_auth_args
 
-    def get_backend(self, name=None) -> Union[IQMBackend, IQMFacadeBackend]:
+    def get_backend(
+        self, name: Optional[str] = None, calibration_set_id: Optional[UUID] = None
+    ) -> Union[IQMBackend, IQMFacadeBackend]:
         """An IQMBackend instance associated with this provider.
 
         Args:
             name: optional name of a custom facade backend
+            calibration_set_id: ID of the calibration set used to create the transpilation target of the backend.
+                If None, the server default calibration set will be used.
         """
         client = IQMClient(self.url, client_signature=f'qiskit-iqm {__version__}', **self.user_auth_args)
         if name == 'facade_adonis':
             return IQMFacadeBackend(client)
-        return IQMBackend(client)
+        return IQMBackend(client, calibration_set_id=calibration_set_id)

@@ -60,13 +60,16 @@ def test_optimize_single_qubit_gates_drops_final_rz():
     optimized_circuit = optimize_single_qubit_gates(transpiled_circuit, drop_final_rz=False)
 
     simulator = AerSimulator(method='statevector')
-    shots = 1000
+    shots = 100000
+
     transpiled_counts = simulator.run(transpiled_circuit, shots=shots).result().get_counts()
     optimized_counts = simulator.run(optimized_circuit, shots=shots).result().get_counts()
     optimized_dropped_rz_counts = simulator.run(optimized_circuit_dropped_rz, shots=shots).result().get_counts()
 
     for counts in [transpiled_counts, optimized_counts, optimized_dropped_rz_counts]:
         for key in counts:
+            # rounding to one decimal to make stochastic failures unlikely
+            # TODO should think of a better test
             counts[key] = np.round(counts[key] / shots, 1)
 
     assert transpiled_counts == optimized_counts == optimized_dropped_rz_counts
@@ -105,7 +108,7 @@ def test_submitted_circuit(adonis_architecture):
     circuit.measure_all()
 
     # This transpilation seed maps virtual qubit 0 to physical qubit 2, and virtual qubit 1 to physical qubit 4
-    # Other seeds will switch the mapping, and may also reorder the first phased_rx instructions
+    # Other seeds will switch the mapping, and may also reorder the first prx instructions
     submitted_circuit = get_transpiled_circuit_json(circuit, adonis_architecture, seed_transpiler=123)
 
     instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]

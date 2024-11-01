@@ -28,7 +28,7 @@ from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
-from iqm.iqm_client import QuantumArchitectureSpecification
+from iqm.iqm_client import DynamicQuantumArchitecture, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 
@@ -275,7 +275,7 @@ class IQMFakeBackend(IQMBackendBase):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=1024, calibration_set_id=None)
+        return Options(shots=1024)
 
     @property
     def max_circuits(self) -> Optional[int]:
@@ -315,7 +315,7 @@ class IQMFakeBackend(IQMBackendBase):
             def run(self, dag):
                 qubits_involved_in_last_move = None  # Store which qubit was last used for MOVE IN
                 for node in dag.op_nodes():
-                    if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure", "measurement"]:
+                    if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure"]:
                         raise ValueError("Operation '" + node.op.name + "' is not supported by the backend.")
                     if qubits_involved_in_last_move is not None:
                         # Verify that no single qubit gate is performed on the qubit between MOVE IN and MOVE OUT
@@ -370,3 +370,27 @@ class IQMFakeBackend(IQMBackendBase):
         job = sim_noise.run(circuits, shots=shots)
 
         return job
+
+    def validate_compatible_architecture(self, architecture: DynamicQuantumArchitecture) -> bool:
+        """Compare a dynamic quantum architecture to the static architecture of the fake backend.
+
+        Args:
+            architecture: dynamic quantum architecture to compare to
+
+        Returns:
+            True iff the number and names of the locus components, the component connectivity,
+            and the available operations in the DQA match the static architecture of this backend.
+        """
+        components_match = set(architecture.components) == set(self.__architecture.qubits)
+        ops = {
+            gate_name: list(list(locus) for locus in gate_info.loci)
+            for gate_name, gate_info in architecture.gates.items()
+        }
+        ops.update({"barrier": []})
+        ops_match = self.__architecture.compare_operations(self.__architecture.operations, ops)
+
+        self_connectivity = set(map(frozenset, self.__architecture.qubit_connectivity))
+        target_connectivity = set(frozenset(locus) for loci in ops.values() for locus in loci if len(locus) > 1)
+        connectivity_match = self_connectivity == target_connectivity
+
+        return components_match and ops_match and connectivity_match

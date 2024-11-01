@@ -16,22 +16,61 @@
 from __future__ import annotations
 
 from abc import ABC
+import itertools
 import re
-from typing import Final
+from typing import Final, Optional, Union
+from uuid import UUID
 
-from qiskit.circuit import Parameter
+from qiskit.circuit import Parameter, Reset
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
-from qiskit.transpiler import Target
+from qiskit.transpiler import InstructionProperties, Target
 
-from iqm.iqm_client import QuantumArchitectureSpecification, is_directed_instruction, is_multi_qubit_instruction
+from iqm.iqm_client import (
+    DynamicQuantumArchitecture,
+    GateImplementationInfo,
+    GateInfo,
+    QuantumArchitectureSpecification,
+)
 from iqm.qiskit_iqm.move_gate import MoveGate
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
 
 
-def _QuantumArchitectureSpecification_to_qiskit_target(
-    architecture: QuantumArchitectureSpecification,
+def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
+    """Create a dynamic quantum architecture from the given static quantum architecture.
+
+    Since the DQA contains some attributes that are not present in an SQA, they are filled with mock data:
+
+    * Each gate type is given a single mock implementation.
+    * Calibration set ID is set to the all-zeros UUID.
+
+    Args:
+        sqa: static quantum architecture to replicate
+    Returns:
+        DQA replicating the properties of ``sqa``
+    """
+    # NOTE this prefix-based heuristic for identifying the qubits and resonators is not always guaranteed to work
+    qubits = [qb for qb in sqa.qubits if qb.startswith('QB')]
+    computational_resonators = [qb for qb in sqa.qubits if qb.startswith('COMP')]
+    gates = {
+        gate_name: GateInfo(
+            implementations={'__fake': GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
+            default_implementation='__fake',
+            override_default_implementation={},
+        )
+        for gate_name, gate_loci in sqa.operations.items()
+    }
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('00000000-0000-0000-0000-000000000000'),
+        qubits=qubits,
+        computational_resonators=computational_resonators,
+        gates=gates,
+    )
+
+
+def _DQA_to_qiskit_target(
+    architecture: DynamicQuantumArchitecture,
 ) -> tuple[Target, Target, dict[str, int]]:
     """Converts a QuantumArchitectureSpecification object to a Qiskit Target object.
 
@@ -43,6 +82,7 @@ def _QuantumArchitectureSpecification_to_qiskit_target(
     """
     target = Target()
     fake_target = Target()
+    raise NotImplementedError("This function is not yet implemented.")
 
     def get_num_or_zero(name: str) -> int:
         match = re.search(r'(\d+)', name)
@@ -112,15 +152,59 @@ class IQMBackendBase(BackendV2, ABC):
         architecture: Description of the quantum architecture associated with the backend instance.
     """
 
-    def __init__(self, architecture: QuantumArchitectureSpecification, **kwargs):
+    architecture: DynamicQuantumArchitecture
+
+    def __init__(
+        self,
+        architecture: Union[QuantumArchitectureSpecification, DynamicQuantumArchitecture],
+        **kwargs,
+    ):
         super().__init__(**kwargs)
+        if isinstance(architecture, QuantumArchitectureSpecification):
+            arch = _dqa_from_static_architecture(architecture)
+        else:
+            arch = architecture
+        self.architecture = arch
 
-        self._physical_target, self._fake_target, self._qb_to_idx = _QuantumArchitectureSpecification_to_qiskit_target(
-            architecture
+        # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
+        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}
+        operations = {gate_name: gate_info.loci for gate_name, gate_info in arch.gates.items()}
+        target = Target()
+
+        def _create_properties(
+            op_name: str, symmetric: bool = False
+        ) -> dict[tuple[int, ...], InstructionProperties | None]:
+            """Creates the Qiskit instruction properties dictionary for the given IQM native operation.
+
+            Currently we do not provide any actual properties for the operation other than the
+            allowed loci.
+            """
+            loci = operations[op_name]
+            if symmetric:
+                # For symmetric gates, construct all the valid loci for Qiskit.
+                # Coupling maps in Qiskit are directed graphs, and gate symmetry is provided explicitly.
+                loci = tuple(permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus))
+            return {tuple(qb_to_idx[qb] for qb in locus): None for locus in loci}
+
+        if 'measure' in operations:
+            target.add_instruction(Measure(), _create_properties('measure'))
+        target.add_instruction(
+            IGate(),
+            {(qb_to_idx[qb],): None for qb in arch.components},
         )
-        self._idx_to_qb = {v: k for k, v in self._qb_to_idx.items()}
+        if 'prx' in operations:
+            target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
+        if 'cz' in operations:
+            target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
+        if 'move' in operations:
+            target.add_instruction(MoveGate(), _create_properties('move'))
+        if 'cc_prx' in operations:
+            # HACK reset gate shares cc_prx loci for now
+            target.add_instruction(Reset(), _create_properties('cc_prx'))
 
-        self._quantum_architecture = architecture
+        self._physical_target, self._fake_target, self._qb_to_idx = _DQA_to_qiskit_target(arch)
+        self._qb_to_idx = qb_to_idx
+        self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
         self.name = 'IQMBackend'
 
     @property
@@ -144,37 +228,36 @@ class IQMBackendBase(BackendV2, ABC):
         """Return the list of physical qubits in the backend."""
         return list(self._qb_to_idx)
 
-    @property
-    def architecture(self) -> QuantumArchitectureSpecification:
-        """Description of the quantum architecture associated with the backend instance."""
-        return self._quantum_architecture
-
     def qubit_name_to_index(self, name: str) -> int:
-        """Given an IQM-style qubit name ('QB1', 'QB2', etc.) return the corresponding index in the register. Returns
-        None is the given name does not belong to the backend."""
+        """Given an IQM-style qubit name, return the corresponding index in the register.
+
+        Args:
+            name: IQM-style qubit name ('QB1', 'QB2', etc.)
+
+        Returns:
+            Index of the given qubit in the quantum register.
+
+        Raises:
+            ValueError if qubit name cannot be found.
+        """
         if name not in self._qb_to_idx:
             raise ValueError(f"Qubit name '{name}' is not part of the backend.")
         return self._qb_to_idx[name]
 
     def index_to_qubit_name(self, index: int) -> str:
-        """Given an index in the backend register return the corresponding IQM-style qubit name ('QB1', 'QB2', etc.).
-        Returns None if the given index does not correspond to any qubit in the backend."""
+        """Given a quantum register index, return the corresponding IQM-style qubit name.
+
+        Args:
+            index: Qubit index in the quantum register.
+
+        Returns:
+            Corresponding IQM-style qubit name ('QB1', 'QB2', etc.), or ``None`` if
+            the given index does not correspond to any qubit on the backend.
+        """
         if index not in self._idx_to_qb:
             raise ValueError(f"Qubit index '{index}' is not part of the backend.")
         return self._idx_to_qb[index]
 
-    def validate_compatible_architecture(self, architecture: QuantumArchitectureSpecification) -> bool:
-        """Given a quantum architecture specification returns true if its number of qubits, names of qubits and qubit
-        connectivity matches the architecture of this backend."""
-        qubits_match = set(architecture.qubits) == set(self._quantum_architecture.qubits)
-        ops_match = architecture.has_equivalent_operations(self._quantum_architecture)
-
-        self_connectivity = set(map(frozenset, self._quantum_architecture.qubit_connectivity))  # type: ignore
-        target_connectivity = set(map(frozenset, architecture.qubit_connectivity))  # type: ignore
-        connectivity_match = self_connectivity == target_connectivity
-
-        return qubits_match and ops_match and connectivity_match
-
-    # def get_scheduling_stage_plugin(self):
-    #    """Return the plugin that should be used for scheduling the circuits on this backend."""
-    #    raise NotImplementedError
+    def get_scheduling_stage_plugin(self) -> str:
+        """Return the plugin that should be used for scheduling the circuits on this backend."""
+        return "default"

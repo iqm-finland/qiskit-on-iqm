@@ -23,6 +23,7 @@ def IQMFakeAdonis() -> IQMFakeBackend:
         name="Adonis",
         operations={
             "prx": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"]],
+            "cc_prx": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"]],
             "cz": [["QB1", "QB3"], ["QB2", "QB3"], ["QB4", "QB3"], ["QB5", "QB3"]],
             "measure": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"]],
             "barrier": [],
