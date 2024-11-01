@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 15.1
+============
+
+* Move a part of circuit serialization into :func:`iqm.qiskit_iqm.iqm_provider._serialize_instructions`.
+  `#126 <https://github.com/iqm-finland/qiskit-on-iqm/pull/126>`_
+
 Version 15.0
 ============
 
