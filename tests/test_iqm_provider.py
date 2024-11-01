@@ -23,7 +23,7 @@ from qiskit import QuantumCircuit
 import requests
 
 from iqm.iqm_client import Instruction, IQMClient, RunRequest, RunResult, RunStatus
-from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMProvider, serialize_instructions
+from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMProvider, _serialize_instructions
 from tests.utils import get_mock_ok_response
 
 
@@ -129,7 +129,9 @@ def test_serialize_instructions_can_allow_nonnative_gates():
     circuit.measure_all()
 
     with pytest.raises(ValueError, match='is not natively supported. You need to transpile'):
-        serialize_instructions(circuit, {i: f'QB{i+1}' for i in range(5)}, ignore_nonnative_gates=False)
+        _serialize_instructions(circuit, {i: f'QB{i+1}' for i in range(5)})
 
-    instructions = serialize_instructions(circuit, {i: f'QB{i+1}' for i in range(5)}, ignore_nonnative_gates=True)
+    instructions = _serialize_instructions(
+        circuit, {i: f'QB{i+1}' for i in range(5)}, allowed_nonnative_gates={'nonnative'}
+    )
     assert instructions[0] == Instruction.model_construct(name='nonnative', qubits=['1', '2', '4'], args={})

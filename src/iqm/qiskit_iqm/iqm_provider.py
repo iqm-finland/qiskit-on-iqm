@@ -18,7 +18,7 @@ from __future__ import annotations
 from copy import copy
 from importlib.metadata import PackageNotFoundError, version
 from functools import reduce
-from typing import Optional, Union
+from typing import Collection, Optional, Union
 from uuid import UUID
 import warnings
 
@@ -241,7 +241,7 @@ class IQMBackend(IQMBackendBase):
         Raises:
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
-        instructions = serialize_instructions(circuit, self._idx_to_qb, ignore_nonnative_gates=False)
+        instructions = _serialize_instructions(circuit, self._idx_to_qb)
 
         try:
             metadata = to_json_dict(circuit.metadata)
@@ -254,21 +254,20 @@ class IQMBackend(IQMBackendBase):
         return Circuit(name=circuit.name, instructions=instructions, metadata=metadata)
 
 
-def serialize_instructions(
-    circuit: QuantumCircuit, index_to_qubit_mapping: dict[int, str], ignore_nonnative_gates: bool
+def _serialize_instructions(
+    circuit: QuantumCircuit, index_to_qubit_mapping: dict[int, str], allowed_nonnative_gates: Collection[str] = ()
 ) -> list[Instruction]:
     """Serialize a quantum circuit into the IQM data transfer format.
 
-    This is an internal helper for :meth:`.IQMBackend.serialize_circuit` that gives slightly more control.
+    This is IQM's internal helper for :meth:`.IQMBackend.serialize_circuit` that gives slightly more control.
     See :meth:`.IQMBackend.serialize_circuit` for details.
-    There is usually no need to use this function directly.
 
     Args:
         circuit: quantum circuit to serialize
-        qubit_idx_to_name: Mapping from qubit indices to the corresponding qubit names.
-        ignore_nonnative_gates: If False (default), any instruction that cannot be serailizaed into the native
-            gate set will raise an error. If True, such instructions are converted as-is without validation,
-            and the caller must edit the result to be valid and executable.
+        index_to_qubit_mapping: Mapping from qubit indices to the corresponding qubit names.
+        allowed_nonnative_gates: Names of gates that are converted as-is without validation.
+            By default, any gate that can't be converted will raise an error.
+            If such gates are present in the circuit, the caller must edit the result to be valid and executable.
             Notably, since IQM transfer format requires named parameters and qiskit parameters don't have names, the
             `i` th parameter of an unrecognized instruction is given the name ``"p<i>"``.
 
@@ -347,7 +346,7 @@ def serialize_instructions(
         elif instruction.name == 'id':
             continue
         else:
-            if ignore_nonnative_gates:
+            if instruction.name in allowed_nonnative_gates:
                 args = {f'p{i}': param for i, param in enumerate(instruction.params)}
                 native_inst = Instruction.model_construct(name=instruction.name, qubits=qubit_names, args=args)
             else:
