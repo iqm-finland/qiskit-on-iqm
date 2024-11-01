@@ -32,7 +32,7 @@ def test_backend_configuration_new(move_architecture):
         'r:1',
         'cz:2',
         'move:2',
-    }
+    ]
 
     check_instruction(backend.instructions, 'r', [(1,), (2,), (3,), (4,), (5,), (6,)])
     check_instruction(backend.instructions, 'measure', [(1,), (2,), (3,), (4,), (5,), (6,)])
