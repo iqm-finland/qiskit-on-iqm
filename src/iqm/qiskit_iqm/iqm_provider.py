@@ -270,7 +270,7 @@ def serialize_instructions(
             gate set will raise an error. If True, such instructions are converted as-is without validation,
             and the caller must edit the result to be valid and executable.
             Notably, since IQM transfer format requires named parameters and qiskit parameters don't have names, the
-            `i` th parameter of an unrecognized instruction is given the name ``"param<i>"``.
+            `i` th parameter of an unrecognized instruction is given the name ``"p<i>"``.
 
     Returns:
         list of instructions representing the circuit
@@ -348,7 +348,7 @@ def serialize_instructions(
             continue
         else:
             if ignore_nonnative_gates:
-                args = {f"param{i}": param for i, param in enumerate(instruction.params)}
+                args = {f"p{i}": param for i, param in enumerate(instruction.params)}
                 native_inst = Instruction.construct(name=instruction.name, qubits=qubit_names, args=args)
             else:
                 raise ValueError(
