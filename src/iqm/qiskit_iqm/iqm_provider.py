@@ -255,7 +255,7 @@ class IQMBackend(IQMBackendBase):
 
 
 def _serialize_instructions(
-    circuit: QuantumCircuit, index_to_qubit_mapping: dict[int, str], allowed_nonnative_gates: Collection[str] = ()
+    circuit: QuantumCircuit, qubit_index_to_name: dict[int, str], allowed_nonnative_gates: Collection[str] = ()
 ) -> list[Instruction]:
     """Serialize a quantum circuit into the IQM data transfer format.
 
@@ -264,7 +264,7 @@ def _serialize_instructions(
 
     Args:
         circuit: quantum circuit to serialize
-        index_to_qubit_mapping: Mapping from qubit indices to the corresponding qubit names.
+        qubit_index_to_name: Mapping from qubit indices to the corresponding qubit names.
         allowed_nonnative_gates: Names of gates that are converted as-is without validation.
             By default, any gate that can't be converted will raise an error.
             If such gates are present in the circuit, the caller must edit the result to be valid and executable.
@@ -329,7 +329,7 @@ def _serialize_instructions(
                 )
             )
             for q in qubit_names:
-                physical_qubit_name = index_to_qubit_mapping[int(q)]
+                physical_qubit_name = qubit_index_to_name[int(q)]
                 instructions.append(
                     Instruction(
                         name='cc_prx',
@@ -375,7 +375,7 @@ def _serialize_instructions(
             feedback_key = measure_inst.args['key']
             measure_inst.args['feedback_key'] = feedback_key  # this measure is used to provide feedback
             # TODO we should use physical qubit names in native circuits, not integer strings
-            physical_qubit_name = index_to_qubit_mapping[int(measure_inst.qubits[0])]  # single-qubit measurement
+            physical_qubit_name = qubit_index_to_name[int(measure_inst.qubits[0])]  # single-qubit measurement
             native_inst.args['feedback_key'] = feedback_key
             native_inst.args['feedback_qubit'] = physical_qubit_name
 

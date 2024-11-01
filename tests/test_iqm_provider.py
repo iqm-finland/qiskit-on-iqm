@@ -127,11 +127,10 @@ def test_serialize_instructions_can_allow_nonnative_gates():
     circuit = QuantumCircuit(5)
     circuit.append(nonnative_gate, [1, 2, 4])
     circuit.measure_all()
+    mapping = {i: f'QB{i + 1}' for i in range(5)}
 
     with pytest.raises(ValueError, match='is not natively supported. You need to transpile'):
-        _serialize_instructions(circuit, {i: f'QB{i+1}' for i in range(5)})
+        _serialize_instructions(circuit, mapping)
 
-    instructions = _serialize_instructions(
-        circuit, {i: f'QB{i+1}' for i in range(5)}, allowed_nonnative_gates={'nonnative'}
-    )
+    instructions = _serialize_instructions(circuit, mapping, allowed_nonnative_gates={'nonnative'})
     assert instructions[0] == Instruction.model_construct(name='nonnative', qubits=('1', '2', '4'), args={})
