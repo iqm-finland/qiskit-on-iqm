@@ -46,8 +46,8 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
 
     def __init__(self, drop_final_rz: bool = False, ignore_barriers: bool = False):
         super().__init__()
-        self._basis = ['r', 'cz']
-        self._intermediate_basis = ['u', 'cz']
+        self._basis = ['r', 'cz', 'move']
+        self._intermediate_basis = ['u', 'cz', 'move']
         self._drop_final_rz = drop_final_rz
         self._ignore_barriers = ignore_barriers
 

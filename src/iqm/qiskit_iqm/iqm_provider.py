@@ -389,6 +389,13 @@ def _serialize_instructions(
     return instructions
 
 
+def _deserialize_instructions(instructions: list[Instruction], qubit_name_to_index: dict[str, int]) -> QuantumCircuit:
+    circuit = QuantumCircuit(max(qubit_name_to_index.values()) + 1)
+    for _ in instructions:
+        pass  # TODO implement deserialization
+    return circuit
+
+
 class IQMFacadeBackend(IQMBackend):
     """Facade backend for mimicking the execution of quantum circuits on IQM quantum computers. Allows to submit a
      circuit to the IQM server, and if the execution was successful, performs a simulation with a respective IQM noise

@@ -12,19 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Naive transpilation for the IQM Star architecture."""
+from typing import Optional
 
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit import QuantumRegister, Qubit
-from qiskit.dagcircuit import DAGCircuit, DAGOpNode
+from qiskit.converters import circuit_to_dag, dag_to_circuit
+from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler import Layout, TranspileLayout
 from qiskit.transpiler.basepasses import TransformationPass
-from qiskit.transpiler.exceptions import TranspilerError
 from qiskit.transpiler.passmanager import PassManager
 
-from .iqm_backend import IQMBackendBase
+from iqm.iqm_client import Circuit as IQMClientCircuit
+from iqm.iqm_client.transpile import ExistingMoveHandlingOptions, transpile_insert_moves
+
+from .iqm_backend import IQMBackendBase, IQMStarTarget
 from .iqm_circuit import IQMCircuit
+from .iqm_provider import _deserialize_instructions, _serialize_instructions
 from .iqm_transpilation import IQMOptimizeSingleQubitGates
-from .move_gate import MoveGate
 
 
 class IQMNaiveResonatorMoving(TransformationPass):
@@ -39,7 +43,12 @@ class IQMNaiveResonatorMoving(TransformationPass):
     Additionally, it assumes that no single qubit gates are allowed on the resonator.
     """
 
-    def __init__(self, resonator_register: int, move_qubits: list[int], gate_set: list[str]):
+    def __init__(
+        self,
+        target: IQMStarTarget,
+        gate_set: list[str],
+        existing_moves_handling: Optional[ExistingMoveHandlingOptions] = None,
+    ):
         """WIP Naive transpilation pass for resonator moving
 
         Args:
@@ -48,10 +57,9 @@ class IQMNaiveResonatorMoving(TransformationPass):
             gate_set (list[str]): Which gates are allowed by the target backend.
         """
         super().__init__()
-        self.resonator_register = resonator_register
-        self.current_resonator_state_location = resonator_register
-        self.move_qubits = move_qubits
+        self.target = target
         self.gate_set = gate_set
+        self.existing_moves_handling = existing_moves_handling
 
     def run(self, dag: DAGCircuit):  # pylint: disable=too-many-branches
         """Run the IQMNaiveResonatorMoving pass on `dag`.
@@ -65,145 +73,17 @@ class IQMNaiveResonatorMoving(TransformationPass):
         Raises:
             TranspilerError: if the layout are not compatible with the DAG, or if the input gate set is incorrect.
         """
-        new_dag = dag.copy_empty_like()
-        # Check for sensible inputs
-        if len(dag.qregs) != 1 or dag.qregs.get("q", None) is None:
-            raise TranspilerError("IQMNaiveResonatorMoving runs on physical circuits only")
-
-        # Create a trivial layout
-        canonical_register = dag.qregs["q"]
-        trivial_layout = Layout.generate_trivial_layout(canonical_register)
-        current_layout = trivial_layout.copy()
-
-        for layer in dag.serial_layers():
-            subdag = layer["graph"]
-            if len(layer["partition"]) > 0:
-                qubits = layer["partition"][0]
-            else:
-                new_dag.compose(subdag)
-                continue  # No qubit gate (e.g. Barrier)
-
-            if sum(subdag.count_ops().values()) > 1:
-                raise TranspilerError(
-                    """The DAGCircuit is not flattened enough for this transpiler pass.
-                    It needs to be processed by another pass first."""
-                )
-            if list(subdag.count_ops().keys())[0] not in self.gate_set:
-                raise TranspilerError(
-                    """Encountered an incompatible gate in the DAGCircuit.
-                    Please transpile to the correct gate set first."""
-                )
-
-            if len(qubits) == 1:  # Single qubit gate
-                # Check if the qubit is not in the resonator
-                if self.current_resonator_state_location == dag.qubits.index(qubits[0]):
-                    # Unload the current qubit from the resonator
-                    new_dag.compose(
-                        self._move_resonator(dag.qubits.index(qubits[0]), canonical_register, current_layout)
-                    )
-                new_dag.compose(subdag)
-            elif len(qubits) == 2:  # Two qubit gate
-                physical_q0 = current_layout[qubits[0]]
-                physical_q1 = current_layout[qubits[1]]
-                if self.current_resonator_state_location in (physical_q0, physical_q1):
-                    # The resonator is already loaded with the correct qubit data
-                    pass
-                else:
-                    swap_layer = DAGCircuit()
-                    swap_layer.add_qreg(canonical_register)
-                    if self.current_resonator_state_location != self.resonator_register:
-                        # Unload the current qubit from the resonator
-                        new_dag.compose(
-                            self._move_resonator(
-                                self.current_resonator_state_location, canonical_register, current_layout
-                            )
-                        )
-                    # Load the new qubit to the resonator
-                    if physical_q0 in self.move_qubits and physical_q1 in self.move_qubits:
-                        # We can choose, let's select the better one by seeing which one is used most.
-                        chosen_qubit = self._lookahead_first_qubit_used(dag, subdag)
-                        new_qubit_to_load = current_layout[chosen_qubit]
-                    elif physical_q0 in self.move_qubits:
-                        new_qubit_to_load = physical_q0
-                    elif physical_q1 in self.move_qubits:
-                        new_qubit_to_load = physical_q1
-                    else:
-                        raise TranspilerError(
-                            """Two qubit gate between qubits that are not allowed to move.
-                            Please route the circuit first."""
-                        )
-                    new_dag.compose(self._move_resonator(new_qubit_to_load, canonical_register, current_layout))
-                # Add the gate to the circuit
-                order = list(range(len(canonical_register)))
-                order[self.resonator_register] = self.current_resonator_state_location
-                order[self.current_resonator_state_location] = self.resonator_register
-                new_dag.compose(subdag, qubits=order)
-            else:
-                raise TranspilerError(
-                    """Three qubit gates are not allowed as input for this pass.
-                    Please use a different transpiler pass to decompose first."""
-                )
-
-        new_dag.compose(
-            self._move_resonator(
-                self.current_resonator_state_location,
-                canonical_register,
-                current_layout,
-            )
+        circuit = dag_to_circuit(dag)
+        iqm_json = IQMClientCircuit(
+            name="Transpiling Circuit",
+            instructions=tuple(_serialize_instructions(circuit, self.target.iqm_idx_to_component)),
         )
+        routed_json = transpile_insert_moves(
+            iqm_json, self.target.iqm_dynamic_architecture, self.existing_moves_handling
+        )
+        routed_circuit = _deserialize_instructions(list(routed_json.instructions), self.target.iqm_component_to_idx)
+        new_dag = circuit_to_dag(routed_circuit)
         return new_dag
-
-    def _lookahead_first_qubit_used(self, full_dag: DAGCircuit, current_layer: DAGCircuit) -> Qubit:
-        """Lookahead function to see which qubit will be used first again for a CZ gate.
-
-        Args:
-            full_dag (DAGCircuit): The DAG representing the circuit
-            current_layer (DAGCircuit): The DAG representing the current operator
-
-        Returns:
-            Qubit: Which qubit is recommended to move because it will be used first.
-        """
-        nodes = [n for n in current_layer.nodes() if isinstance(n, DAGOpNode)]
-        current_opnode = nodes[0]
-        qb1, qb2 = current_opnode.qargs
-        next_ops = [
-            n for n, _ in full_dag.bfs_successors(current_opnode) if isinstance(n, DAGOpNode) and n.name == "cz"
-        ]
-        # Check which qubit will be used next first
-        for qb1_used, qb2_used in zip([qb1 in n.qargs for n in next_ops], [qb2 in n.qargs for n in next_ops]):
-            if qb1_used and not qb2_used:
-                return qb1
-            if qb2_used and not qb1_used:
-                return qb2
-        return qb1
-
-    def _move_resonator(self, qubit: int, canonical_register: QuantumRegister, current_layout: Layout):
-        """Logic for creating the DAG for swapping a qubit in and out of the resonator.
-
-        Args:
-            qubit (int): The qubit to swap in or out. The returning DAG is empty if the qubit is the resonator.
-            canonical_register (QuantumRegister): The qubit register to initialize the DAG
-            current_layout (Layout): The current qubit layout to map the qubit index to a Qiskit Qubit object.
-
-        Returns:
-            DAGCircuit: A DAG storing the MoveGate logic to be added into the circuit by this TranspilerPass.
-        """
-        swap_layer = DAGCircuit()
-        swap_layer.add_qreg(canonical_register)
-        if qubit != self.resonator_register:
-            swap_layer.apply_operation_back(
-                MoveGate(),
-                qargs=(current_layout[qubit], current_layout[self.resonator_register]),
-                cargs=(),
-                check=False,
-            )
-            if self.current_resonator_state_location == self.resonator_register:
-                # We just loaded the qubit into the register
-                self.current_resonator_state_location = qubit
-            else:
-                # We just unloaded the qubit from the register
-                self.current_resonator_state_location = self.resonator_register
-        return swap_layer
 
 
 def transpile_to_IQM(  # pylint: disable=too-many-arguments
@@ -230,7 +110,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     Returns:
         QuantumCircuit: The transpiled circuit ready for running on the backend.
     """
-    circuit_with_resonator = IQMCircuit(backend.fake_target.num_qubits)
+    circuit_with_resonator = IQMCircuit(backend.target.num_qubits)
     circuit_with_resonator.add_bits(circuit.clbits)
     qubit_indices = [backend.qubit_name_to_index(qb) for qb in backend.physical_qubits if not qb.startswith("COMP_R")]
     circuit_with_resonator.append(
@@ -242,8 +122,8 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     # Transpile the circuit using the fake target without resonators
     simple_transpile = transpile(
         circuit_with_resonator,
-        target=backend.fake_target,
-        basis_gates=backend.fake_target.operation_names,
+        target=backend.target,
+        basis_gates=backend.target.operation_names,
         **qiskit_transpiler_qwargs,
     )
 
@@ -254,15 +134,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         passes.append(optimize_pass)
 
     if "move" in backend.architecture.gates.keys():
-        move_pass = IQMNaiveResonatorMoving(
-            backend.qubit_name_to_index(backend.architecture.computational_resonators[0]),
-            [
-                backend.qubit_name_to_index(q)
-                for q, r in backend.architecture.gates["move"]
-                if r == backend.architecture.computational_resonators[0]
-            ],
-            backend._physical_target.operation_names,
-        )
+        move_pass = IQMNaiveResonatorMoving(backend.target, backend.target.operation_names)
         passes.append(move_pass)
 
     #    circuit_with_resonator = add_resonators_to_circuit(simple_transpile, backend)

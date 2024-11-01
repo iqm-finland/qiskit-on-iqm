@@ -158,3 +158,6 @@ ignore-imports = true
 
 [tool.pylint.string]
 check-quote-consistency = true
+
+[project.entry-points."qiskit.transpiler.scheduling"] 
+move_routing = "iqm.qiskit_iqm:MoveGateRoutingPlugin"
