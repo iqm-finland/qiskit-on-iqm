@@ -18,7 +18,7 @@ from __future__ import annotations
 from abc import ABC
 import itertools
 import re
-from typing import Final, Optional, Union
+from typing import Final, Union
 from uuid import UUID
 
 from qiskit.circuit import Parameter, Reset
@@ -80,9 +80,10 @@ def _DQA_to_qiskit_target(
     Returns:
         A Qiskit Target object representing the given quantum architecture specification.
     """
+    # pylint: disable=unreachable
     target = Target()
     fake_target = Target()
-    raise NotImplementedError("This function is not yet implemented.")
+    raise NotImplementedError('This function is not yet implemented.')
 
     def get_num_or_zero(name: str) -> int:
         match = re.search(r'(\d+)', name)
@@ -97,12 +98,12 @@ def _DQA_to_qiskit_target(
     # set and the connectivity of the device under use. Thus, we populate the target with None properties.
     def _create_connections(name: str):
         """Creates the connection map of allowed loci for this instruction, mapped to None."""
-        if is_multi_qubit_instruction(name):
-            if is_directed_instruction(name):
-                return {(qb_to_idx[qb1], qb_to_idx[qb2]): None for [qb1, qb2] in operations[name]}
-            return {
-                (qb_to_idx[qb1], qb_to_idx[qb2]): None for pair in operations[name] for qb1, qb2 in (pair, pair[::-1])
-            }
+        # if is_multi_qubit_instruction(name):
+        #    if is_directed_instruction(name):
+        #        return {(qb_to_idx[qb1], qb_to_idx[qb2]): None for [qb1, qb2] in operations[name]}
+        #    return {
+        #        (qb_to_idx[qb1], qb_to_idx[qb2]): None for pair in operations[name] for qb1, qb2 in (pair, pair[::-1])
+        #    }
         return {(qb_to_idx[qb],): None for [qb] in operations[name]}
 
     if 'prx' in operations or 'phased_rx' in operations:
@@ -260,4 +261,4 @@ class IQMBackendBase(BackendV2, ABC):
 
     def get_scheduling_stage_plugin(self) -> str:
         """Return the plugin that should be used for scheduling the circuits on this backend."""
-        return "default"
+        return 'default'

@@ -128,7 +128,6 @@ class IQMBackend(IQMBackendBase):
         self,
         run_input: Union[QuantumCircuit, list[QuantumCircuit]],
         shots: Optional[int] = None,
-        calibration_set_id: Optional[Union[str, UUID]] = None,
         circuit_compilation_options: Optional[CircuitCompilationOptions] = None,
         circuit_callback: Optional[Callable] = None,
         **unknown_options,
