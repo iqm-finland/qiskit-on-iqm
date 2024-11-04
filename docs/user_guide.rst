@@ -295,6 +295,14 @@ between the '00 0' and '11 1' bins of the histogram (even though the state itsel
    in a 1-bit classical register, ``c`` in the above example.
 
 
+Resetting qubits
+~~~~~~~~~~~~~~~~
+
+The :class:`qiskit.circuit.Reset` operation can be used to reset qubits to the :math`|0\rangle` state.
+It is implemented as a (projective) measurement followed by a classically controlled X gate conditioned
+on the result.
+
+
 Inspecting circuits before submitting them for execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

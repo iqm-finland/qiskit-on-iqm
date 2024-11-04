@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 15.2
+============
+
+* User guide updated.
+
 Version 15.1
 ============
 
