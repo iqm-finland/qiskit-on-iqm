@@ -55,6 +55,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         self._validate_ops(dag)
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
+
         if self._ignore_barriers:
             dag = RemoveBarriers().run(dag)
         # convert all gates in the circuit to U and CZ gates
@@ -70,9 +71,22 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 phase = node.op.params[1] + node.op.params[2]
                 dag.global_phase += phase / 2
                 rz_angles[qubit_index] += phase
-            elif node.name == 'measure':
+            elif node.name in {'measure', 'reset'}:
+                # measure and reset destroy phase information. The local phases before and after such
+                # an operation are in principle independent, and the local computational frame phases
+                # are arbitrary so we could set rz_angles to any values here, but zeroing the
+                # angles results in fewest changes to the circuit.
                 for qubit in node.qargs:
                     rz_angles[dag.find_bit(qubit)[0]] = 0
+            elif node.name == 'barrier':
+                # TODO barriers are meant to restrict circuit optimization, so strictly speaking
+                # we should output any accumulated ``rz_angles`` here as explicit z rotations (like
+                # the final rz:s). However, ``rz_angles`` simply represents a choice phases for the
+                # local computational frames for the rest of the circuit (the initial part has already
+                # been transformed). This choice of local phases is in principle arbitrary, so maybe it
+                # makes no sense to convert it into active z rotations if we hit a barrier?
+                pass
+
         if not self._drop_final_rz:
             for qubit_index, rz_angle in enumerate(rz_angles):
                 if rz_angle != 0:

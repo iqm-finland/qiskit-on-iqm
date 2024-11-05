@@ -244,13 +244,14 @@ def test_serialize_circuit_id(circuit, backend):
     assert circuit_ser.instructions[0].name == 'prx'
 
 
-def check_measure_cc_prx_pair(measure, cc_prx):
+def check_measure_cc_prx_pair(measure, cc_prx, check_key: bool = True):
     """Makes sure the given measure instruction provides control to the given cc_prx instruction."""
     assert measure.name == 'measure'
     assert cc_prx.name == 'cc_prx'
-    key = measure.args['key']
-    assert measure.args['feedback_key'] == key
-    assert cc_prx.args['feedback_key'] == key
+    feedback_key = cc_prx.args['feedback_key']
+    assert measure.args['feedback_key'] == feedback_key
+    if check_key:
+        assert measure.args['key'] == feedback_key
     assert cc_prx.args['feedback_qubit'] == 'QB1'
 
 
@@ -352,6 +353,21 @@ def test_serialize_circuit_c_if_multiple_cbits(backend, cbits):
 
     with pytest.raises(ValueError, match='conditioned on multiple bits'):
         backend.serialize_circuit(qc)
+
+
+def test_serialize_circuit_reset(backend):
+    """Test that the reset operation is accepted."""
+    qc = QuantumCircuit(2, 2)
+    qc.ry(np.pi / 2, 0)
+    qc.ry(np.pi / 2, 0)
+    qc.cz(0, 1)
+    qc.ry(-np.pi / 2, 0)
+    qc.reset(0)
+    # final measurement
+    qc.measure_all()
+    circuit_ser = backend.serialize_circuit(qc)
+    assert len(circuit_ser.instructions) == 9
+    check_measure_cc_prx_pair(circuit_ser.instructions[4], circuit_ser.instructions[5], False)
 
 
 def test_run_non_native_circuit(backend, circuit, job_id, run_request):
