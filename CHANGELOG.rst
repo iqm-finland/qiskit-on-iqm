@@ -5,7 +5,7 @@ Changelog
 Version 15.2
 ============
 
-* User guide updated.
+* ``reset`` operation explained in the user guide.
 
 Version 15.1
 ============
