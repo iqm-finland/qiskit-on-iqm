@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 15.1 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 15.2 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=bd3c0da2"></script>
+    <script src="_static/documentation_options.js?v=aa488dc4"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="Qiskit on IQM" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="15.1" />
+  <meta name="docsearch:version" content="15.2" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.1 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.1 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.2 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.2 documentation - Home"/>
   
   
 </a></div>
@@ -365,6 +365,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-results">Inspecting the results</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-properties">Backend properties</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classically-controlled-gates">Classically controlled gates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resetting-qubits">Resetting qubits</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-circuits-before-submitting-them-for-execution">Inspecting circuits before submitting them for execution</a></li>
 </ul>
 </li>
@@ -445,7 +446,7 @@ from the server dashboard.</p>
 <p>In this section we demonstrate the practicalities of using Qiskit on IQM to execute
 quantum circuits on an IQM quantum computer.</p>
 <section id="executing-a-circuit">
-<h3>Executing a circuit<a class="headerlink" href="#executing-a-circuit" title="Link to this heading">#</a></h3>
+<span id="ghz-circuit"></span><h3>Executing a circuit<a class="headerlink" href="#executing-a-circuit" title="Link to this heading">#</a></h3>
 <p>Let’s consider the following quantum circuit which prepares and measures a GHZ state:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
@@ -591,7 +592,9 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 </section>
 <section id="classically-controlled-gates">
 <h3>Classically controlled gates<a class="headerlink" href="#classically-controlled-gates" title="Link to this heading">#</a></h3>
-<p>Some IQM quantum computers support classically controlled gates, that is, gates that are executed conditionally depending on the result of a measurement preceding them in the quantum circuit. This support currently has several limitations:</p>
+<p>Some IQM quantum computers support classically controlled gates, that is, gates that are executed
+conditionally depending on the result of a measurement preceding them in the quantum circuit. This
+support currently has several limitations:</p>
 <ul class="simple">
 <li><p>Only the <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">rx</span></code>, <code class="docutils literal notranslate"><span class="pre">ry</span></code> and <code class="docutils literal notranslate"><span class="pre">r</span></code> gates can be classically controlled.</p></li>
 <li><p>The gates can only be conditioned on one classical bit, and the only control available is to
@@ -625,7 +628,9 @@ meas: 2/═══════════════════╩══╩═
                            0  1
 </pre></div>
 </div>
-<p>The first measurement operation stores its result in the 1-bit classical register <code class="docutils literal notranslate"><span class="pre">c</span></code>. If the result is 1, the <code class="docutils literal notranslate"><span class="pre">X</span></code> gate will be applied. If it is zero, an identity gate of corresponding duration is applied instead.</p>
+<p>The first measurement operation stores its result in the 1-bit classical register <code class="docutils literal notranslate"><span class="pre">c</span></code>. If the
+result is 1, the <code class="docutils literal notranslate"><span class="pre">X</span></code> gate will be applied. If it is zero, an identity gate of corresponding
+duration is applied instead.</p>
 <p>Executing the above circuit should result in the counts being approximately 50/50 split
 between the ‘00 0’ and ‘11 1’ bins of the histogram (even though the state itself is never entangled).</p>
 <div class="admonition note">
@@ -633,6 +638,32 @@ between the ‘00 0’ and ‘11 1’ bins of the histogram (even though the sta
 <p>Because the gates can only take feedback from one classical bit you must place the measurement result
 in a 1-bit classical register, <code class="docutils literal notranslate"><span class="pre">c</span></code> in the above example.</p>
 </div>
+</section>
+<section id="resetting-qubits">
+<h3>Resetting qubits<a class="headerlink" href="#resetting-qubits" title="Link to this heading">#</a></h3>
+<p>The <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/circuit#qiskit.circuit.Reset" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.circuit.Reset</span></code></a> operation can be used to reset qubits to the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state.
+It is currently implemented as a (projective) measurement followed by a classically controlled X gate conditioned
+on the result.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>     ┌───┐     ┌─┐
+  q: ┤ H ├─|0&gt;─┤M├
+     └───┘     └╥┘
+c: 1/═══════════╩═
+                0
+</pre></div>
+</div>
+<p>In the above example, the Hadamard gate prepares a uniform superposition of the <span class="math notranslate nohighlight">\(|0\rangle\)</span> and
+<span class="math notranslate nohighlight">\(|1\rangle\)</span> states, and the reset then collapses it back into the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state.
+Executing the circuit should result in (mostly) zeros being measured.</p>
 </section>
 <section id="inspecting-circuits-before-submitting-them-for-execution">
 <h3>Inspecting circuits before submitting them for execution<a class="headerlink" href="#inspecting-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h3>
@@ -659,7 +690,8 @@ parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provide
 <section id="basic-transpilation">
 <h3>Basic transpilation<a class="headerlink" href="#basic-transpilation" title="Link to this heading">#</a></h3>
 <p>On IQM quantum computers without computational resonators
-(the IQM Crystal architecture), we can use the default Qiskit transpiler:</p>
+(the IQM Crystal architecture), we can use the default Qiskit transpiler.
+Starting from the <a class="reference internal" href="#ghz-circuit"><span class="std std-ref">GHZ circuit</span></a> we created above:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.compiler</span> <span class="kn">import</span> <span class="n">transpile</span>
 
 <span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -764,7 +796,7 @@ as the Qiskit <code class="xref py py-func docutils literal notranslate"><span c
 <h2>Batch execution of circuits<a class="headerlink" href="#batch-execution-of-circuits" title="Link to this heading">#</a></h2>
 <p>It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
 time efficient than running the circuits one by one. Batch execution has some restrictions: all the
-circuits must measure the same qubits, and be executed for the same number of shots. For starters,
+circuits must be executed for the same number of shots. For starters,
 let’s construct two circuits preparing and measuring different Bell states:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">qc_1</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">qc_1</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -982,6 +1014,7 @@ be created automatically based on the latest version definition in the CHANGELOG
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-results">Inspecting the results</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-properties">Backend properties</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classically-controlled-gates">Classically controlled gates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resetting-qubits">Resetting qubits</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-circuits-before-submitting-them-for-execution">Inspecting circuits before submitting them for execution</a></li>
 </ul>
 </li>
