@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 15.2
+============
+
+* ``reset`` operation explained in the user guide. `#127 <https://github.com/iqm-finland/qiskit-on-iqm/pull/127>`_
+
 Version 15.1
 ============
 
@@ -21,14 +26,14 @@ Version 15.0
 Version 14.0
 ============
 
-* Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
-* Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
-* Disable attestations on ``gh-action-pypi-publish`` to fix failing PyPI publishing. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
+* Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/qiskit-on-iqm/pull/124>`_
+* Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/qiskit-on-iqm/pull/124>`_
+* Disable attestations on ``gh-action-pypi-publish`` to fix failing PyPI publishing. `#124 <https://github.com/iqm-finland/qiskit-on-iqm/pull/124>`_
 
 Version 13.16
 =============
 
-* Remove unnecessary build files when publishing documentation. `#122 <https://github.com/iqm-finland/iqm-client/pull/122>`_
+* Remove unnecessary build files when publishing documentation. `#122 <https://github.com/iqm-finland/qiskit-on-iqm/pull/122>`_
 
 Version 13.15
 =============

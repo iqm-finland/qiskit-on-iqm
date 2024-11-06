@@ -68,6 +68,7 @@ Running quantum circuits on an IQM quantum computer
 In this section we demonstrate the practicalities of using Qiskit on IQM to execute
 quantum circuits on an IQM quantum computer.
 
+.. _GHZ_circuit:
 
 Executing a circuit
 ~~~~~~~~~~~~~~~~~~~
@@ -246,7 +247,9 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 Classically controlled gates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some IQM quantum computers support classically controlled gates, that is, gates that are executed conditionally depending on the result of a measurement preceding them in the quantum circuit. This support currently has several limitations:
+Some IQM quantum computers support classically controlled gates, that is, gates that are executed
+conditionally depending on the result of a measurement preceding them in the quantum circuit. This
+support currently has several limitations:
 
 * Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
 * The gates can only be conditioned on one classical bit, and the only control available is to
@@ -284,7 +287,9 @@ The classical control can be applied on a circuit instruction using :meth:`~qisk
                                0  1
 
 
-The first measurement operation stores its result in the 1-bit classical register ``c``. If the result is 1, the ``X`` gate will be applied. If it is zero, an identity gate of corresponding duration is applied instead.
+The first measurement operation stores its result in the 1-bit classical register ``c``. If the
+result is 1, the ``X`` gate will be applied. If it is zero, an identity gate of corresponding
+duration is applied instead.
 
 Executing the above circuit should result in the counts being approximately 50/50 split
 between the '00 0' and '11 1' bins of the histogram (even though the state itself is never entangled).
@@ -293,6 +298,37 @@ between the '00 0' and '11 1' bins of the histogram (even though the state itsel
 
    Because the gates can only take feedback from one classical bit you must place the measurement result
    in a 1-bit classical register, ``c`` in the above example.
+
+
+Resetting qubits
+~~~~~~~~~~~~~~~~
+
+The :class:`qiskit.circuit.Reset` operation can be used to reset qubits to the :math:`|0\rangle` state.
+It is currently implemented as a (projective) measurement followed by a classically controlled X gate conditioned
+on the result.
+
+.. code-block:: python
+
+    from qiskit import QuantumCircuit
+
+    circuit = QuantumCircuit(1, 1)
+    circuit.h(0)
+    circuit.reset(0)
+    circuit.measure(0, 0)
+
+    print(circuit.draw(output='text'))
+
+::
+
+         ┌───┐     ┌─┐
+      q: ┤ H ├─|0>─┤M├
+         └───┘     └╥┘
+    c: 1/═══════════╩═
+                    0
+
+In the above example, the Hadamard gate prepares a uniform superposition of the :math:`|0\rangle` and
+:math:`|1\rangle` states, and the reset then collapses it back into the :math:`|0\rangle` state.
+Executing the circuit should result in (mostly) zeros being measured.
 
 
 Inspecting circuits before submitting them for execution
@@ -327,7 +363,8 @@ Basic transpilation
 ~~~~~~~~~~~~~~~~~~~
 
 On IQM quantum computers without computational resonators
-(the IQM Crystal architecture), we can use the default Qiskit transpiler:
+(the IQM Crystal architecture), we can use the default Qiskit transpiler.
+Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 .. code-block:: python
 
@@ -447,7 +484,7 @@ Batch execution of circuits
 
 It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
 time efficient than running the circuits one by one. Batch execution has some restrictions: all the
-circuits must measure the same qubits, and be executed for the same number of shots. For starters,
+circuits must be executed for the same number of shots. For starters,
 let's construct two circuits preparing and measuring different Bell states:
 
 .. code-block:: python
