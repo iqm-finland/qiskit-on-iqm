@@ -81,7 +81,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
             elif node.name == 'barrier':
                 # TODO barriers are meant to restrict circuit optimization, so strictly speaking
                 # we should output any accumulated ``rz_angles`` here as explicit z rotations (like
-                # the final rz:s). However, ``rz_angles`` simply represents a choice phases for the
+                # the final rz:s). However, ``rz_angles`` simply represents a choice of phases for the
                 # local computational frames for the rest of the circuit (the initial part has already
                 # been transformed). This choice of local phases is in principle arbitrary, so maybe it
                 # makes no sense to convert it into active z rotations if we hit a barrier?
