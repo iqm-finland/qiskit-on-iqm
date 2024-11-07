@@ -23,7 +23,7 @@ things are set up correctly:
 3. Download one of the demo notebooks on `IQM Academy <https://www.iqmacademy.com/tutorials/>` or the `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_ (Save Page As...)
 4. Install Qiskit on IQM as instructed below
 5. Add your API token to the example (this can be done as a parameter `token` to the `IQMProvider` constructor or by setting the environment variable `IQM_TOKEN`)
-5. Run the Jupyter notebook (or run ``$ python resonance_example.py`` if you decided to go for the Python script)
+5. Run the Jupyter notebook (or run ``python resonance_example.py`` if you decided to go for the Python script)
 6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00000' and almost half in '11111' – if this is the case, things are set up correctly!
 
 You can find a video guide on how to set things up, `here <https://www.iqmacademy.com/tutorials/resonance/>`.
