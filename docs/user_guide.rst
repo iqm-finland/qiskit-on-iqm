@@ -8,12 +8,29 @@ code snippets and check the output yourself.
 
 .. note::
 
-   At the moment IQM does not provide a quantum computing service open to the general public.
-   Please contact our `sales team <https://www.meetiqm.com/contact-us/>`_ to set up your access to an IQM quantum
-   computer.
+   IQM provides access to its quantum computers via IQM Resonance – IQM's quantum cloud service.
+   Please head over `to our website <https://www.meetiqm.com/products/iqm-resonance/>`_ to learn more.
 
 
-Hello, world!
+Hello, world! (IQM Resonance)
+-------------
+
+Here's the quickest and easiest way to run a small computation on an IQM quantum computer and check that
+things are set up correctly:
+
+1. Login to `IQM Resonance <https://resonance.meetiqm.com>` with your credentials
+2. Generate an API token using the dashboard
+3. Download one of the demo notebooks on `IQM Academy <https://www.iqmacademy.com/tutorials/>` or the `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_ (Save Page As...)
+4. Install Qiskit on IQM as instructed below
+5. Add your API token to the example (this can be done as a parameter `token` to the `IQMProvider` constructor or by setting the environment variable `IQM_TOKEN`)
+5. Run the Jupyter notebook (or run ``$ python resonance_example.py`` if you decided to go for the Python script)
+6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00000' and almost half in '11111' – if this is the case, things are set up correctly!
+
+You can find a video guide on how to set things up, `here <https://www.iqmacademy.com/tutorials/resonance/>`.
+More ready-to-run examples can also be found on `IQM Academy <https://www.iqmacademy.com/tutorials/>` .
+
+
+Hello, world! (On-prem devices)
 -------------
 
 Here's the quickest and easiest way to run a small computation on an IQM quantum computer and check that
