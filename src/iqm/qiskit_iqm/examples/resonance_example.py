@@ -17,11 +17,11 @@ See the Qiskit on IQM user guide for instructions:
 https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 """
 
+from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
+
+from qiskit import QuantumCircuit
 
 def resonance_example(quantum_computer: str, api_token: str) -> dict[str, int]:
-    from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
-    from qiskit import QuantumCircuit
-
     server_url = (
         "https://cocos.resonance.meetiqm.com/" + quantum_computer
     )  # For example https://cocos.resonance.meetiqm.com/garnet
