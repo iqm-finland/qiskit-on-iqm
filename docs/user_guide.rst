@@ -566,6 +566,35 @@ Note that it is important to transpile the parameterized circuit before binding 
 measurements across circuits in the batch.
 
 
+Multiplexed measurements
+------------------------
+
+When multiple measurement instructions are present in a circuit, the measurements may be multiplexed, meaning the
+measurement pulses would be simultaneously executed on the quantum hardware, if possible. Multiplexing requires the
+measurement instructions to be grouped continuously, i.e. not have other instructions between them acting on the same
+qubits.
+
+You don't have to do anything special to enable multiplexing, it is automatically attempted by the circuit-to-pulse
+compiler on the server side. However, if you want to ensure multiplexing is applied (whenever possible on the hardware
+level), you have to put a ``barrier`` instruction in front of and after a group of measurements instructions.
+This prevents the transpiler to put other instructions between the measurements.
+There is no concept of multiplexed or simultaneous measurements in Qiskit, so the drawings of the circuits still would
+not indicate multiplexing.
+
+::
+
+          ░ ┌─┐       ░
+    q_0: ─░─┤M├───────░─
+          ░ └╥┘┌─┐    ░
+    q_1: ─░──╫─┤M├────░─
+          ░  ║ └╥┘┌─┐ ░
+    q_2: ─░──╫──╫─┤M├─░─
+          ░  ║  ║ └╥┘ ░
+    meas: 3/════╩══╩══╩═══
+                0  1  2
+
+
+
 Simulation
 ----------
 

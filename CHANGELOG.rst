@@ -2,10 +2,17 @@
 Changelog
 =========
 
-Version 15.3
+Version 15.4
 ============
 
 * Update user guide to incorporate IQM Resonance. `#129 <https://github.com/iqm-finland/qiskit-on-iqm/pull/129>`_
+
+
+Version 15.3
+============
+
+* Multiplexed measurements explained in the user guide. `#130 <https://github.com/iqm-finland/qiskit-on-iqm/pull/130>`_
+
 
 Version 15.2
 ============
