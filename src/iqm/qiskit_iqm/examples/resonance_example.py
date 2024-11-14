@@ -17,31 +17,40 @@ See the Qiskit on IQM user guide for instructions:
 https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 """
 
-from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
-from qiskit import QuantumCircuit
 
-server_url = "https://cocos.resonance.meetiqm.com/<QUANTUM COMPUTER>"  # For example https://cocos.resonance.meetiqm.com/garnet
-api_token = "<INSERT YOUR TOKEN>"
+def resonance_example(quantum_computer: str, api_token: str) -> dict[str, int]:
+    from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
+    from qiskit import QuantumCircuit
 
-SHOTS = 1000
+    server_url = (
+        "https://cocos.resonance.meetiqm.com/" + quantum_computer
+    )  # For example https://cocos.resonance.meetiqm.com/garnet
 
-# Define a quantum circuit
-num_qb = 5
-qc = QuantumCircuit(num_qb)
+    SHOTS = 1000
 
-qc.h(0)
-for qb in range(1, num_qb):
-    qc.cx(0, qb)
-qc.barrier()
-qc.measure_all()
+    # Define a quantum circuit
+    num_qb = 5
+    qc = QuantumCircuit(num_qb)
 
-# Initialize a backend
-backend = IQMProvider(server_url, token=api_token).get_backend()
+    qc.h(0)
+    for qb in range(1, num_qb):
+        qc.cx(0, qb)
+    qc.barrier()
+    qc.measure_all()
 
-# Transpile the circuit
-qc_transpiled = transpile_to_IQM(qc, backend)
-print(qc_transpiled.draw(output="text"))
+    # Initialize a backend
+    backend = IQMProvider(server_url, token=api_token).get_backend()
 
-# Run the circuit
-job = backend.run(qc_transpiled, shots=SHOTS)
-print(job.result().get_counts())
+    # Transpile the circuit
+    qc_transpiled = transpile_to_IQM(qc, backend)
+    print(qc_transpiled.draw(output="text"))
+
+    # Run the circuit
+    job = backend.run(qc_transpiled, shots=SHOTS)
+    print(job.result().get_counts())
+
+
+if __name__ == '__main__':
+    api_token = "<INSERT YOUR TOKEN>"
+    quantum_computer = "garnet"
+    resonance_example(quantum_computer, api_token)
