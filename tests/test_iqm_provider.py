@@ -45,6 +45,9 @@ def run_request():
 def test_get_backend(linear_3q_architecture):
     url = 'http://some_url'
     when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
 
     provider = IQMProvider(url)
     backend = provider.get_backend()
@@ -59,6 +62,9 @@ def test_get_backend(linear_3q_architecture):
 def test_client_signature(adonis_architecture):
     url = 'http://some_url'
     provider = IQMProvider(url)
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
     when(requests).get(
         'http://some_url/api/v1/calibration/default/gates', headers=matchers.ANY, timeout=matchers.ANY
     ).thenReturn(get_mock_ok_response(adonis_architecture.model_dump()))
@@ -69,6 +75,9 @@ def test_client_signature(adonis_architecture):
 def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
     url = 'http://some_url'
     when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(adonis_architecture)
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
 
     provider = IQMProvider(url)
     backend = provider.get_backend('facade_adonis')
@@ -83,6 +92,9 @@ def test_get_facade_backend_raises_error_non_matching_architecture(linear_3q_arc
     url = 'http://some_url'
 
     when(IQMClient).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
 
     provider = IQMProvider(url)
     with pytest.raises(ValueError, match='Quantum architecture of the remote quantum computer does not match Adonis.'):
@@ -113,6 +125,9 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     when(IQMClient).submit_run_request(...).thenReturn(uuid.uuid4())
     when(IQMClient).get_run(ANY(uuid.UUID)).thenReturn(RunResult.from_dict(result))
     when(IQMClient).get_run_status(ANY(uuid.UUID)).thenReturn(RunStatus.from_dict(result_status))
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
 
     provider = IQMProvider(url)
     backend = provider.get_backend('facade_adonis')
