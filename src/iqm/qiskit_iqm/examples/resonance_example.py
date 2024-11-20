@@ -17,31 +17,64 @@ See the Qiskit on IQM user guide for instructions:
 https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 """
 
-from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
+import argparse
+from typing import Optional
+
 from qiskit import QuantumCircuit
 
-server_url = "https://cocos.resonance.meetiqm.com/<QUANTUM COMPUTER>"  # For example https://cocos.resonance.meetiqm.com/garnet
-api_token = "<INSERT YOUR TOKEN>"
+from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
 
-SHOTS = 1000
 
-# Define a quantum circuit
-num_qb = 5
-qc = QuantumCircuit(num_qb)
+def resonance_example(server_url: str, api_token: Optional[str]) -> dict[str, int]:
+    """Run a circuit via IQM Resonance.
 
-qc.h(0)
-for qb in range(1, num_qb):
-    qc.cx(0, qb)
-qc.barrier()
-qc.measure_all()
+    Args:
+        server_url: URL of the IQM Resonance QC used for execution
+        api_token: IQM Resonance API token for authentication
 
-# Initialize a backend
-backend = IQMProvider(server_url, token=api_token).get_backend()
+    Returns:
+        a mapping of bitstrings representing qubit measurement results to counts for each result
+    """
+    SHOTS = 1000
 
-# Transpile the circuit
-qc_transpiled = transpile_to_IQM(qc, backend)
-print(qc_transpiled.draw(output="text"))
+    # Define a quantum circuit
+    num_qb = 5
+    qc = QuantumCircuit(num_qb)
 
-# Run the circuit
-job = backend.run(qc_transpiled, shots=SHOTS)
-print(job.result().get_counts())
+    qc.h(0)
+    for qb in range(1, num_qb):
+        qc.cx(0, qb)
+    qc.barrier()
+    qc.measure_all()
+
+    # Initialize a backend
+    backend = IQMProvider(server_url, token=api_token).get_backend()
+
+    # Transpile the circuit
+    qc_transpiled = transpile_to_IQM(qc, backend)
+    print(qc_transpiled.draw(output='text'))
+
+    # Run the circuit
+    job = backend.run(qc_transpiled, shots=SHOTS)
+    return job.result().get_counts()
+
+
+if __name__ == '__main__':
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument(
+        '--url',
+        help='URL of the IQM Resonance QC',
+        # For example https://cocos.resonance.meetiqm.com/garnet
+        default='https://cocos.resonance.meetiqm.com/<QUANTUM COMPUTER>',
+    )
+    argparser.add_argument(
+        '--token',
+        help='IQM Resonance access token',
+        # Provide the API token explicitly or set it as an environment variable
+        # following the https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html#authentication
+        default='<INSERT YOUR TOKEN>',
+    )
+
+    args = argparser.parse_args()
+    results = resonance_example(args.url, args.token)
+    print(results)
