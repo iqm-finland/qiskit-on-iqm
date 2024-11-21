@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 15.3 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 15.5 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="_static/documentation_options.js?v=11b40fd9"></script>
+    <script src="_static/documentation_options.js?v=3f5d0f15"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="Qiskit on IQM" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="15.3" />
+  <meta name="docsearch:version" content="15.5" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.3 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.3 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.5 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.5 documentation - Home"/>
   
   
 </a></div>
@@ -153,6 +153,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.html">iqm.qiskit_iqm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.examples.html">iqm.qiskit_iqm.examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.examples.bell_measure.html">iqm.qiskit_iqm.examples.bell_measure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.examples.resonance_example.html">iqm.qiskit_iqm.examples.resonance_example</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.examples.transpile_example.html">iqm.qiskit_iqm.examples.transpile_example</a></li>
 </ul>
 </details></li>
@@ -357,7 +358,11 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hello-world">Hello, world!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hello-world">Hello, world!</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm-resonance">IQM Resonance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-premises-device">On-premises device</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authentication">Authentication</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-quantum-circuits-on-an-iqm-quantum-computer">Running quantum circuits on an IQM quantum computer</a><ul class="nav section-nav flex-column">
@@ -400,22 +405,51 @@
 code snippets and check the output yourself.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>At the moment IQM does not provide a quantum computing service open to the general public.
-Please contact our <a class="reference external" href="https://www.meetiqm.com/contact-us/">sales team</a> to set up your access to an IQM quantum
-computer.</p>
+<p>IQM provides access to its quantum computers via IQM Resonance – IQM’s quantum cloud service.
+Please head over <a class="reference external" href="https://www.meetiqm.com/products/iqm-resonance/">to our website</a> to learn more.</p>
 </div>
 <section id="hello-world">
 <h2>Hello, world!<a class="headerlink" href="#hello-world" title="Link to this heading">#</a></h2>
-<p>Here’s the quickest and easiest way to run a small computation on an IQM quantum computer and check that
-things are set up correctly:</p>
+<p>Here’s a quick and easy way to run a small computation on an IQM quantum computer to check that
+things are set up correctly, either
+through the IQM cloud service Resonance, or using an on-premises quantum computer.</p>
+<section id="iqm-resonance">
+<h3>IQM Resonance<a class="headerlink" href="#iqm-resonance" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>Download the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py">bell_measure.py example file</a> (Save Page As…)</p></li>
-<li><p>Install Qiskit on IQM as instructed below (feel free to skip the import statement)</p></li>
-<li><p>Install Cortex CLI and log in as instructed in the <a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli">documentation</a></p></li>
-<li><p>Set the environment variable as instructed by Cortex CLI after logging in</p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">python</span> <span class="pre">bell_measure.py</span> <span class="pre">--cortex_server_url</span> <span class="pre">https://demo.qc.iqm.fi/cocos</span></code> – replace the example URL with the correct one</p></li>
-<li><p>If you’re connecting to a real quantum computer, the output should show almost half of the measurements resulting in ‘00’ and almost half in ‘11’ – if this is the case, things are set up correctly!</p></li>
+<li><p>Login to <cite>IQM Resonance &lt;https://resonance.meetiqm.com&gt;</cite> with your credentials.</p></li>
+<li><p>Upon your first visit to IQM Resonance, you can generate your unique, non-recoverable API token
+directly from the Dashboard page by selecting <code class="docutils literal notranslate"><span class="pre">Generate</span> <span class="pre">token</span></code>. It’s important to copy the token
+immediately from the window, as you won’t be able to do so once the window is closed. If you lose
+your token, you have the option to regenerate it at any time. However, be aware that regenerating
+your API token will invalidate any previously generated token.</p></li>
+<li><p>Download one of the demo notebooks from <cite>IQM Academy &lt;https://www.iqmacademy.com/tutorials/&gt;</cite> or the
+<a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py">resonance_example.py example file</a>
+(Save Page As…)</p></li>
+<li><p>Install Qiskit on IQM as instructed below.</p></li>
+<li><p>Add your API token to the example (either as the parameter <code class="docutils literal notranslate"><span class="pre">token</span></code> to the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>
+constructor, or by setting the environment variable <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKEN</span></code>)</p></li>
+<li><p>Run the Jupyter notebook (or run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">resonance_example.py</span></code> if you decided to go for the Python script).</p></li>
+<li><p>If you’re connecting to a real quantum computer, the output should show almost half of the
+measurements resulting in ‘00000’ and almost half in ‘11111’ - if this is the case, things are
+set up correctly!</p></li>
 </ol>
+<p>You can find a video guide on how to set things up <cite>here &lt;https://www.iqmacademy.com/tutorials/resonance/&gt;</cite>.
+More ready-to-run examples can also be found at <cite>IQM Academy &lt;https://www.iqmacademy.com/tutorials/&gt;</cite>.</p>
+</section>
+<section id="on-premises-device">
+<h3>On-premises device<a class="headerlink" href="#on-premises-device" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Download the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py">bell_measure.py example file</a> (Save Page As…).</p></li>
+<li><p>Install Qiskit on IQM as instructed below.</p></li>
+<li><p>Install Cortex CLI and log in as instructed in the
+<a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli">documentation</a></p></li>
+<li><p>Set the environment variable as instructed by Cortex CLI after logging in.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">python</span> <span class="pre">bell_measure.py</span> <span class="pre">--cortex_server_url</span> <span class="pre">https://demo.qc.iqm.fi/cocos</span></code> - replace the example URL with the correct one.</p></li>
+<li><p>If you’re connecting to a real quantum computer, the output should show almost half of the
+measurements resulting in ‘00’ and almost half in ‘11’ - if this is the case, things are set up
+correctly!</p></li>
+</ol>
+</section>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
@@ -433,13 +467,13 @@ Python Package Index (PyPI):</p>
 <h2>Authentication<a class="headerlink" href="#authentication" title="Link to this heading">#</a></h2>
 <p>If the IQM server you are connecting to requires authentication, you may use
 <a class="reference external" href="https://github.com/iqm-finland/cortex-cli">Cortex CLI</a> to retrieve and automatically refresh access tokens,
-then set the <span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable, as instructed, to point to the tokens file.
+then set the <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKENS_FILE</span></code> environment variable, as instructed, to point to the tokens file.
 See Cortex CLI’s <a class="reference external" href="https://iqm-finland.github.io/cortex-cli/readme.html">documentation</a> for details.</p>
-<p>You may also authenticate yourself using the <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_SERVER</span></code>,
-<span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_USERNAME</span></code> and <span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_PASSWORD</span></code> environment variables, or pass them as
+<p>You may also authenticate yourself using the <span class="target" id="index-2"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_SERVER</span></code>,
+<span class="target" id="index-3"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_USERNAME</span></code> and <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_AUTH_PASSWORD</span></code> environment variables, or pass them as
 arguments to <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>, however this approach is less secure and considered deprecated.</p>
 <p>Finally, if you are using <code class="docutils literal notranslate"><span class="pre">IQM</span> <span class="pre">Resonance</span></code>, authentication is handled differently.
-Use the <span class="target" id="index-4"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKEN</span></code> environment variable to provide the API Token obtained
+Use the <span class="target" id="index-5"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKEN</span></code> environment variable to provide the API Token obtained
 from the server dashboard.</p>
 </section>
 <section id="running-quantum-circuits-on-an-iqm-quantum-computer">
@@ -670,7 +704,7 @@ Executing the circuit should result in (mostly) zeros being measured.</p>
 <h3>Inspecting circuits before submitting them for execution<a class="headerlink" href="#inspecting-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h3>
 <p>It is possible to inspect the final circuits that would be submitted for execution before actually submitting them,
 which can be useful for debugging purposes. This can be done using <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, which returns
-a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v20.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
+a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v20.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
 parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect the run_request without submitting it for execution</span>
 <span class="n">run_request</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_run_request</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -1031,7 +1065,11 @@ be created automatically based on the latest version definition in the CHANGELOG
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hello-world">Hello, world!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hello-world">Hello, world!</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iqm-resonance">IQM Resonance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-premises-device">On-premises device</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#authentication">Authentication</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-quantum-circuits-on-an-iqm-quantum-computer">Running quantum circuits on an IQM quantum computer</a><ul class="nav section-nav flex-column">

@@ -8,23 +8,53 @@ code snippets and check the output yourself.
 
 .. note::
 
-   At the moment IQM does not provide a quantum computing service open to the general public.
-   Please contact our `sales team <https://www.meetiqm.com/contact-us/>`_ to set up your access to an IQM quantum
-   computer.
+   IQM provides access to its quantum computers via IQM Resonance – IQM's quantum cloud service.
+   Please head over `to our website <https://www.meetiqm.com/products/iqm-resonance/>`_ to learn more.
 
 
 Hello, world!
 -------------
 
-Here's the quickest and easiest way to run a small computation on an IQM quantum computer and check that
-things are set up correctly:
+Here's a quick and easy way to run a small computation on an IQM quantum computer to check that
+things are set up correctly, either
+through the IQM cloud service Resonance, or using an on-premises quantum computer.
 
-1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py>`_ (Save Page As...)
-2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
-3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
-4. Set the environment variable as instructed by Cortex CLI after logging in
-5. Run ``$ python bell_measure.py --cortex_server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
-6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00' and almost half in '11' – if this is the case, things are set up correctly!
+IQM Resonance
+~~~~~~~~~~~~~
+
+1. Login to `IQM Resonance <https://resonance.meetiqm.com>` with your credentials.
+2. Upon your first visit to IQM Resonance, you can generate your unique, non-recoverable API token
+   directly from the Dashboard page by selecting ``Generate token``. It's important to copy the token
+   immediately from the window, as you won't be able to do so once the window is closed. If you lose
+   your token, you have the option to regenerate it at any time. However, be aware that regenerating
+   your API token will invalidate any previously generated token.
+3. Download one of the demo notebooks from `IQM Academy <https://www.iqmacademy.com/tutorials/>` or the
+   `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
+   (Save Page As...)
+4. Install Qiskit on IQM as instructed below.
+5. Add your API token to the example (either as the parameter ``token`` to the :class:`.IQMProvider`
+   constructor, or by setting the environment variable :envvar:`IQM_TOKEN`)
+6. Run the Jupyter notebook (or run ``python resonance_example.py`` if you decided to go for the Python script).
+7. If you're connecting to a real quantum computer, the output should show almost half of the
+   measurements resulting in '00000' and almost half in '11111' - if this is the case, things are
+   set up correctly!
+
+You can find a video guide on how to set things up `here <https://www.iqmacademy.com/tutorials/resonance/>`.
+More ready-to-run examples can also be found at `IQM Academy <https://www.iqmacademy.com/tutorials/>`.
+
+
+On-premises device
+~~~~~~~~~~~~~~~~~~
+
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py>`_ (Save Page As...).
+2. Install Qiskit on IQM as instructed below.
+3. Install Cortex CLI and log in as instructed in the
+   `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
+4. Set the environment variable as instructed by Cortex CLI after logging in.
+5. Run ``$ python bell_measure.py --cortex_server_url https://demo.qc.iqm.fi/cocos`` - replace the example URL with the correct one.
+6. If you're connecting to a real quantum computer, the output should show almost half of the
+   measurements resulting in '00' and almost half in '11' - if this is the case, things are set up
+   correctly!
 
 
 Installation

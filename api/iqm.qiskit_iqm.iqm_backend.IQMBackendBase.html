@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>iqm.qiskit_iqm.iqm_backend.IQMBackendBase &#8212; Qiskit on IQM 15.3 documentation</title>
+    <title>iqm.qiskit_iqm.iqm_backend.IQMBackendBase &#8212; Qiskit on IQM 15.5 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
-    <script src="../_static/documentation_options.js?v=11b40fd9"></script>
+    <script src="../_static/documentation_options.js?v=3f5d0f15"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -52,7 +52,7 @@
     <link rel="prev" title="iqm.qiskit_iqm.iqm_backend" href="iqm.qiskit_iqm.iqm_backend.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="15.3" />
+  <meta name="docsearch:version" content="15.5" />
   </head>
   
   
@@ -131,8 +131,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.3 documentation - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.3 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.5 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.5 documentation - Home"/>
   
   
 </a></div>
@@ -151,6 +151,7 @@
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="iqm.qiskit_iqm.html">iqm.qiskit_iqm</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="iqm.qiskit_iqm.examples.html">iqm.qiskit_iqm.examples</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="iqm.qiskit_iqm.examples.bell_measure.html">iqm.qiskit_iqm.examples.bell_measure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="iqm.qiskit_iqm.examples.resonance_example.html">iqm.qiskit_iqm.examples.resonance_example</a></li>
 <li class="toctree-l4"><a class="reference internal" href="iqm.qiskit_iqm.examples.transpile_example.html">iqm.qiskit_iqm.examples.transpile_example</a></li>
 </ul>
 </details></li>
@@ -376,12 +377,12 @@
 <h1>iqm.qiskit_iqm.iqm_backend.IQMBackendBase<a class="headerlink" href="#iqm-qiskit-iqm-iqm-backend-iqmbackendbase" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="iqm.qiskit_iqm.iqm_backend.IQMBackendBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_backend.</span></span><span class="sig-name descname"><span class="pre">IQMBackendBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">architecture</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.QuantumArchitectureSpecification.html#iqm.iqm_client.models.QuantumArchitectureSpecification" title="(in IQM client v20.1)"><span class="pre">QuantumArchitectureSpecification</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.1)"><span class="pre">DynamicQuantumArchitecture</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_backend.IQMBackendBase" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">iqm.qiskit_iqm.iqm_backend.</span></span><span class="sig-name descname"><span class="pre">IQMBackendBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">architecture</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.QuantumArchitectureSpecification.html#iqm.iqm_client.models.QuantumArchitectureSpecification" title="(in IQM client v20.5)"><span class="pre">QuantumArchitectureSpecification</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.5)"><span class="pre">DynamicQuantumArchitecture</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#iqm.qiskit_iqm.iqm_backend.IQMBackendBase" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.providers.BackendV2" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendV2</span></code></a>, <a class="reference external" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>Abstract base class for various IQM-specific backends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>architecture</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.1)"><em>DynamicQuantumArchitecture</em></a>) – Description of the quantum architecture associated with the backend instance.</p>
+<dd class="field-odd"><p><strong>architecture</strong> (<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.DynamicQuantumArchitecture.html#iqm.iqm_client.models.DynamicQuantumArchitecture" title="(in IQM client v20.5)"><em>DynamicQuantumArchitecture</em></a>) – Description of the quantum architecture associated with the backend instance.</p>
 </dd>
 </dl>
 <p class="rubric">Attributes</p>
