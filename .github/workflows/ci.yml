@@ -27,6 +27,10 @@ jobs:
           python -m pip install tox-gh-actions==2.12.0
       - name: Run tests
         run: tox
+      - name: Run Resonance example integration test
+        run: tox -e test_resonance_example
+        env:
+          RESONANCE_API_KEY: ${{ secrets.RESONANCE_API_KEY }}
   test_docs:
     runs-on: ubuntu-latest
     steps:
