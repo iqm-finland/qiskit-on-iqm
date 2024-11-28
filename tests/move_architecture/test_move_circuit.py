@@ -15,11 +15,13 @@
 """
 import pytest
 from qiskit import QuantumCircuit
+from qiskit.compiler import transpile
 from qiskit.transpiler import TranspilerError
 
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
+from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.move_gate import MoveGate
-from tests.utils import describe_instruction, get_transpiled_circuit_json
+from tests.utils import describe_instruction, get_mocked_backend, get_transpiled_circuit_json
 
 
 def test_move_gate_trivial_layout(move_architecture):
@@ -31,22 +33,25 @@ def test_move_gate_trivial_layout(move_architecture):
     qc.append(MoveGate(), [6, 0])
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
-        'move:6,0',
-        'cz:0,3',
-        'cz:2,0',
-        'move:6,0',
+        'move:QB6,COMP_R',
+        'cz:COMP_R,QB4',
+        'cz:QB3,COMP_R',
+        'move:QB6,COMP_R',
     ]
 
 
 def test_move_gate_nontrivial_layout(move_architecture):
     """
-    For now only trivial layouts (1-to-1 mapping between virtual and physical qubits) are supported
-    if there are qubit connections that don't have all operations specified.
+    Test whether the transpiler can find a layout for a nontrivial circuit.
     """
     qc = QuantumCircuit(7)
-    qc.append(MoveGate(), [3, 0])
-    with pytest.raises(TranspilerError):
-        get_transpiled_circuit_json(qc, move_architecture)
+    qc.append(MoveGate(), [3, 4])
+    qc.append(MoveGate(), [3, 4])
+    submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
+    assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
+        'move:QB6,COMP_R',
+        'move:QB6,COMP_R',
+    ]
 
 
 def test_mapped_move_qubit(move_architecture):
@@ -58,8 +63,12 @@ def test_mapped_move_qubit(move_architecture):
     qc.append(MoveGate(), [3, 0])
     qc.cz(0, 2)
     qc.append(MoveGate(), [3, 0])
-    submitted_circuit = get_transpiled_circuit_json(qc, move_architecture, create_move_layout=True)
-    assert [describe_instruction(i) for i in submitted_circuit.instructions] == ['move:6,0', 'cz:0,2', 'move:6,0']
+    submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
+    assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
+        'move:QB6,COMP_R',
+        'cz:COMP_R,QB3',
+        'move:QB6,COMP_R',
+    ]
 
 
 def test_mapped_move_qubit_and_resonator(move_architecture):
@@ -71,15 +80,14 @@ def test_mapped_move_qubit_and_resonator(move_architecture):
     qc.cz(2, 0)
     qc.move(5, 2)
     qc.h(5)
-    submitted_circuit = get_transpiled_circuit_json(qc, move_architecture, create_move_layout=True)
+    submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
-        'cz:0,4',
-        'move:6,0',
-        'cz:0,1',
-        'cz:0,2',
-        'move:6,0',
-        'prx:6',
-        'prx:6',
+        'cz:COMP_R,QB5',
+        'move:QB6,COMP_R',
+        'cz:COMP_R,QB2',
+        'cz:COMP_R,QB1',
+        'move:QB6,COMP_R',
+        'prx:QB6',
     ]
 
 
@@ -88,7 +96,7 @@ def test_cant_layout_two_resonators(move_architecture):
     qc.append(MoveGate(), [0, 6])
     qc.append(MoveGate(), [3, 6])
     with pytest.raises(TranspilerError):
-        get_transpiled_circuit_json(qc, move_architecture, create_move_layout=True)
+        get_transpiled_circuit_json(qc, move_architecture)
 
 
 def test_cant_layout_two_move_qubits(move_architecture):
@@ -96,7 +104,7 @@ def test_cant_layout_two_move_qubits(move_architecture):
     qc.append(MoveGate(), [0, 6])
     qc.append(MoveGate(), [0, 4])
     with pytest.raises(TranspilerError):
-        get_transpiled_circuit_json(qc, move_architecture, create_move_layout=True)
+        get_transpiled_circuit_json(qc, move_architecture)
 
 
 def test_transpiled_circuit(move_architecture):
@@ -114,21 +122,23 @@ def test_transpiled_circuit(move_architecture):
     qc.measure(3, 1)
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture, seed_transpiler=1, optimization_level=0)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
-        # h(4) is moved before the move gate
-        'prx:4',
-        'prx:4',
-        # move(6, 0)
-        'move:6,0',
-        # cz(0, 3)
-        'cz:0,3',
-        # cz(4, 0) is optimized before h(6)
-        'cz:4,0',
-        # h(6)
-        # barrier()
-        'barrier:0,1,2,3,4,5,6',
-        # move (6, 0)
-        'move:6,0',
-        # measurements
-        'measure:6',
-        'measure:3',
+        'prx:QB5',
+        'move:QB6,COMP_R',
+        'cz:COMP_R,QB4',
+        'cz:QB5,COMP_R',
+        'barrier:COMP_R,QB2,QB3,QB4,QB5,QB1,QB6',
+        'move:QB6,COMP_R',
+        'measure:QB6',
+        'measure:QB4',
     ]
+
+
+@pytest.mark.parametrize('optimization_level', list(range(4)))
+def test_qiskit_native_transpiler(move_architecture, optimization_level):
+    backend, _ = get_mocked_backend(move_architecture)
+    qc = QuantumCircuit(2)
+    qc.h(0)
+    qc.cx(0, 1)
+    qc.measure_all()
+    transpiled_circuit = transpile(qc, backend=backend, optimization_level=optimization_level)
+    validate_circuit(transpiled_circuit, backend)

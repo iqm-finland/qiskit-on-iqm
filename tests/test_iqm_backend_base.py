@@ -49,8 +49,13 @@ def test_qubit_name_to_index_to_qubit_name(adonis_shuffled_names_architecture):
     backend = DummyIQMBackend(adonis_shuffled_names_architecture)
 
     correct_idx_name_associations = set(enumerate(['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
-    assert all(backend.index_to_qubit_name(idx) == name for idx, name in correct_idx_name_associations)
-    assert all(backend.qubit_name_to_index(name) == idx for idx, name in correct_idx_name_associations)
+
+    print(backend._idx_to_qb)
+    print(backend._qb_to_idx)
+    # Unrolled for debugging purposes
+    for idx, name in correct_idx_name_associations:
+        assert backend.index_to_qubit_name(idx) == name
+        assert backend.qubit_name_to_index(name) == idx
 
     with pytest.raises(ValueError, match="Qubit index '7' is not part of the backend."):
         backend.index_to_qubit_name(7)

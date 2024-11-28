@@ -17,29 +17,19 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from importlib.metadata import PackageNotFoundError, version
-from functools import reduce
-from typing import Collection, Optional, Union
+from typing import Optional, Union
 from uuid import UUID
 import warnings
 
-import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.circuit import Clbit
 from qiskit.providers import JobStatus, JobV1, Options
 
-from iqm.iqm_client import (
-    Circuit,
-    CircuitCompilationOptions,
-    CircuitValidationError,
-    Instruction,
-    IQMClient,
-    RunRequest,
-)
+from iqm.iqm_client import Circuit, CircuitCompilationOptions, CircuitValidationError, IQMClient, RunRequest
 from iqm.iqm_client.util import to_json_dict
 from iqm.qiskit_iqm.fake_backends import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
 from iqm.qiskit_iqm.iqm_job import IQMJob
-from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
+from iqm.qiskit_iqm.qiskit_to_iqm import serialize_instructions
 
 try:
     __version__ = version('qiskit-iqm')
@@ -185,10 +175,6 @@ class IQMBackend(IQMBackendBase):
             circuit_callback(circuits)
 
         circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
-        used_physical_qubit_indices: set[int] = reduce(
-            lambda qubits, circuit: qubits.union(set(int(q) for q in circuit.all_qubits())), circuits_serialized, set()
-        )
-        qubit_mapping = {str(idx): qb for idx, qb in self._idx_to_qb.items() if idx in used_physical_qubit_indices}
 
         if self._use_default_calibration_set:
             default_calset_id = self.client.get_dynamic_quantum_architecture(None).calibration_set_id
@@ -201,7 +187,6 @@ class IQMBackend(IQMBackendBase):
         try:
             run_request = self.client.create_run_request(
                 circuits_serialized,
-                qubit_mapping=qubit_mapping,
                 calibration_set_id=self._calibration_set_id,
                 shots=shots,
                 options=circuit_compilation_options,
@@ -247,7 +232,7 @@ class IQMBackend(IQMBackendBase):
         Raises:
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
-        instructions = _serialize_instructions(circuit, self._idx_to_qb)
+        instructions = serialize_instructions(circuit, self._idx_to_qb)
 
         try:
             metadata = to_json_dict(circuit.metadata)
@@ -258,142 +243,6 @@ class IQMBackend(IQMBackendBase):
             metadata = None
 
         return Circuit(name=circuit.name, instructions=instructions, metadata=metadata)
-
-
-def _serialize_instructions(
-    circuit: QuantumCircuit, qubit_index_to_name: dict[int, str], allowed_nonnative_gates: Collection[str] = ()
-) -> list[Instruction]:
-    """Serialize a quantum circuit into the IQM data transfer format.
-
-    This is IQM's internal helper for :meth:`.IQMBackend.serialize_circuit` that gives slightly more control.
-    See :meth:`.IQMBackend.serialize_circuit` for details.
-
-    Args:
-        circuit: quantum circuit to serialize
-        qubit_index_to_name: Mapping from qubit indices to the corresponding qubit names.
-        allowed_nonnative_gates: Names of gates that are converted as-is without validation.
-            By default, any gate that can't be converted will raise an error.
-            If such gates are present in the circuit, the caller must edit the result to be valid and executable.
-            Notably, since IQM transfer format requires named parameters and qiskit parameters don't have names, the
-            `i` th parameter of an unrecognized instruction is given the name ``"p<i>"``.
-
-    Returns:
-        list of instructions representing the circuit
-
-    Raises:
-        ValueError: circuit contains an unsupported instruction or is not transpiled in general
-    """
-    # pylint: disable=too-many-branches,too-many-statements
-    instructions: list[Instruction] = []
-    # maps clbits to the latest "measure" instruction to store its result there
-    clbit_to_measure: dict[Clbit, Instruction] = {}
-    for circuit_instruction in circuit.data:
-        instruction = circuit_instruction.operation
-        qubit_names = [str(circuit.find_bit(qubit).index) for qubit in circuit_instruction.qubits]
-        if instruction.name == 'r':
-            angle_t = float(instruction.params[0] / (2 * np.pi))
-            phase_t = float(instruction.params[1] / (2 * np.pi))
-            native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': phase_t})
-        elif instruction.name == 'x':
-            native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.0})
-        elif instruction.name == 'rx':
-            angle_t = float(instruction.params[0] / (2 * np.pi))
-            native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.0})
-        elif instruction.name == 'y':
-            native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': 0.5, 'phase_t': 0.25})
-        elif instruction.name == 'ry':
-            angle_t = float(instruction.params[0] / (2 * np.pi))
-            native_inst = Instruction(name='prx', qubits=qubit_names, args={'angle_t': angle_t, 'phase_t': 0.25})
-        elif instruction.name == 'cz':
-            native_inst = Instruction(name='cz', qubits=qubit_names, args={})
-        elif instruction.name == 'move':
-            native_inst = Instruction(name='move', qubits=qubit_names, args={})
-        elif instruction.name == 'barrier':
-            native_inst = Instruction(name='barrier', qubits=qubit_names, args={})
-        elif instruction.name == 'measure':
-            if len(circuit_instruction.clbits) != 1:
-                raise ValueError(
-                    f'Unexpected: measurement instruction {circuit_instruction} uses multiple classical bits.'
-                )
-            clbit = circuit_instruction.clbits[0]  # always a single-qubit measurement
-            mk = str(MeasurementKey.from_clbit(clbit, circuit))
-            native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk})
-            clbit_to_measure[clbit] = native_inst
-        elif instruction.name == 'reset':
-            # implemented using a measure instruction to measure the qubits, and
-            # one cc_prx per qubit to conditionally flip it to |0>
-            feedback_key = '_reset'
-            instructions.append(
-                Instruction(
-                    name='measure',
-                    qubits=qubit_names,
-                    args={
-                        # HACK to get something unique, remove when key can be omitted
-                        'key': f'_reset_{len(instructions)}',
-                        'feedback_key': feedback_key,
-                    },
-                )
-            )
-            for q in qubit_names:
-                physical_qubit_name = qubit_index_to_name[int(q)]
-                instructions.append(
-                    Instruction(
-                        name='cc_prx',
-                        qubits=[q],
-                        args={
-                            'angle_t': 0.5,
-                            'phase_t': 0.0,
-                            'feedback_key': feedback_key,
-                            'feedback_qubit': physical_qubit_name,
-                        },
-                    )
-                )
-            continue
-        elif instruction.name == 'id':
-            continue
-        elif instruction.name in allowed_nonnative_gates:
-            args = {f'p{i}': param for i, param in enumerate(instruction.params)}
-            native_inst = Instruction.model_construct(name=instruction.name, qubits=tuple(qubit_names), args=args)
-        else:
-            raise ValueError(
-                f"Instruction '{instruction.name}' in the circuit '{circuit.name}' is not natively supported. "
-                f'You need to transpile the circuit before execution.'
-            )
-
-        # classically controlled gates (using the c_if method)
-        condition = instruction.condition
-        if condition is not None:
-            if native_inst.name != 'prx':
-                raise ValueError(
-                    'This backend only supports conditionals on r, x, y, rx and ry gates,' f' not on {instruction.name}'
-                )
-            native_inst.name = 'cc_prx'
-            creg, value = condition
-            if len(creg) != 1:
-                raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
-            if value != 1:
-                raise ValueError(f'{instruction} is conditioned on integer value {value}, only value 1 is supported.')
-            # Set up feedback routing.
-            # The latest "measure" instruction to write to that classical bit is modified, it is
-            # given an explicit feedback_key equal to its measurement key.
-            # The same feedback_key is given to the controlled instruction, along with the feedback qubit.
-            measure_inst = clbit_to_measure[creg[0]]
-            feedback_key = measure_inst.args['key']
-            measure_inst.args['feedback_key'] = feedback_key  # this measure is used to provide feedback
-            # TODO we should use physical qubit names in native circuits, not integer strings
-            physical_qubit_name = qubit_index_to_name[int(measure_inst.qubits[0])]  # single-qubit measurement
-            native_inst.args['feedback_key'] = feedback_key
-            native_inst.args['feedback_qubit'] = physical_qubit_name
-
-        instructions.append(native_inst)
-    return instructions
-
-
-def _deserialize_instructions(instructions: list[Instruction], qubit_name_to_index: dict[str, int]) -> QuantumCircuit:
-    circuit = QuantumCircuit(max(qubit_name_to_index.values()) + 1)
-    for _ in instructions:
-        pass  # TODO implement deserialization
-    return circuit
 
 
 class IQMFacadeBackend(IQMBackend):

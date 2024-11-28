@@ -203,7 +203,7 @@ def adonis_coupling_map():
 
 @pytest.fixture
 def deneb_coupling_map():
-    return {(1, 0), (0, 1), (2, 0), (0, 2), (3, 0), (0, 3), (4, 0), (0, 4), (5, 0), (0, 5), (6, 0), (0, 6)}
+    return {(1, 6), (6, 1), (2, 6), (6, 2), (3, 6), (6, 3), (4, 6), (6, 4), (5, 6), (6, 5), (6, 0), (0, 6)}
 
 
 @pytest.fixture

@@ -26,7 +26,7 @@ from iqm.qiskit_iqm.iqm_naive_move_pass import IQMNaiveResonatorMoving, transpil
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
 from iqm.qiskit_iqm.iqm_transpilation import IQMOptimizeSingleQubitGates, optimize_single_qubit_gates
 from iqm.qiskit_iqm.move_gate import MoveGate
-from iqm.qiskit_iqm.transpiler_plugins import MoveGateRoutingPlugin
+from iqm.qiskit_iqm.transpiler_plugins import *
 
 if qiskit_version < "1.0.0":
     warn(

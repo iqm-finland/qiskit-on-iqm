@@ -159,5 +159,19 @@ ignore-imports = true
 [tool.pylint.string]
 check-quote-consistency = true
 
+# Expose the different custom transpiler passes to the Qiskit transpiler using their plugin system.
 [project.entry-points."qiskit.transpiler.scheduling"] 
 move_routing = "iqm.qiskit_iqm:MoveGateRoutingPlugin"
+move_routing_keep = "iqm.qiskit_iqm:MoveGateRoutingKeepExistingMovesPlugin"
+move_routing_remove = "iqm.qiskit_iqm:MoveGateRoutingRemoveExistingMovesPlugin"
+move_routing_trust = "iqm.qiskit_iqm:MoveGateRoutingTrustExistingMovesPlugin"
+only_move_routing = "iqm.qiskit_iqm:MoveGateRoutingOnlyPlugin"
+only_move_routing_keep = "iqm.qiskit_iqm:MoveGateRoutingOnlyKeepExistingMovesPlugin"
+only_move_routing_remove = "iqm.qiskit_iqm:MoveGateRoutingOnlyRemoveExistingMovesPlugin"
+only_move_routing_trust = "iqm.qiskit_iqm:MoveGateRoutingOnlyTrustExistingMovesPlugin"
+move_routing_exact_global_phase = "iqm.qiskit_iqm:MoveGateRoutingWithExactRzPlugin"
+move_routing_Rz_optimization_ignores_barriers = "iqm.qiskit_iqm:MoveGateRoutingWithRzOptimizationIgnoreBarriersPlugin"
+only_Rz_optimization = "iqm.qiskit_iqm:OnlyRzOptimizationPlugin"
+only_Rz_optimization_exact_global_phase = "iqm.qiskit_iqm:OnlyRzOptimizationExactPlugin"
+only_Rz_optimization_ignore_barriers = "iqm.qiskit_iqm:OnlyRzOptimizationIgnoreBarriersPlugin"
+

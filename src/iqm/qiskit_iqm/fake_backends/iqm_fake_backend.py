@@ -23,14 +23,19 @@ from typing import Any, Optional, Union
 
 from qiskit import QuantumCircuit
 from qiskit.providers import JobV1, Options
-from qiskit.transpiler import TransformationPass
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel
 from qiskit_aer.noise.errors import depolarizing_error, thermal_relaxation_error
 
 from iqm.iqm_client import DynamicQuantumArchitecture, QuantumArchitectureSpecification
 from iqm.qiskit_iqm.iqm_backend import IQM_TO_QISKIT_GATE_NAME, IQMBackendBase
-from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
+from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
+from iqm.qiskit_iqm.iqm_transpilation import IQMReplaceGateWithUnitaryPass
+from iqm.qiskit_iqm.move_gate import MOVE_GATE_UNITARY
+
+GATE_TO_UNITARY = {
+    "move": MOVE_GATE_UNITARY,
+}
 
 
 # pylint: disable=too-many-instance-attributes
@@ -281,9 +286,7 @@ class IQMFakeBackend(IQMBackendBase):
     def max_circuits(self) -> Optional[int]:
         return None
 
-    def run(
-        self, run_input: Union[QuantumCircuit, list[QuantumCircuit], IQMCircuit, list[IQMCircuit]], **options
-    ) -> JobV1:
+    def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
         """
         Run `run_input` on the fake backend using a simulator.
 
@@ -302,64 +305,22 @@ class IQMFakeBackend(IQMBackendBase):
         Raises:
             ValueError: If empty list of circuits is provided.
         """
-        circuits_aux = [run_input] if isinstance(run_input, (QuantumCircuit, IQMCircuit)) else run_input
+        circuits_aux = [run_input] if isinstance(run_input, (QuantumCircuit)) else run_input
 
         if len(circuits_aux) == 0:
             raise ValueError("Empty list of circuits submitted for execution.")
-
-        this = self
-
-        class check_move_validity(TransformationPass):
-            """Checks that the placement of move gates is valid in the circuit."""
-
-            def run(self, dag):
-                qubits_involved_in_last_move = None  # Store which qubit was last used for MOVE IN
-                for node in dag.op_nodes():
-                    if node.op.name not in this.noise_model.basis_gates + ["id", "barrier", "measure"]:
-                        raise ValueError("Operation '" + node.op.name + "' is not supported by the backend.")
-                    if qubits_involved_in_last_move is not None:
-                        # Verify that no single qubit gate is performed on the qubit between MOVE IN and MOVE OUT
-                        if (
-                            node.op.name not in ["move", "barrier", "measure"]
-                            and len(node.qargs) == 1
-                            and node.qargs[0] == qubits_involved_in_last_move[0]
-                        ):
-                            raise ValueError(
-                                f"Operations to qubits {node.qargs[0]} while their states are moved to a resonator."
-                            )
-                    if node.op.name == "move":
-                        if qubits_involved_in_last_move is None:
-                            # MOVE IN was performed
-                            qubits_involved_in_last_move = node.qargs
-                        elif qubits_involved_in_last_move != node.qargs:
-                            raise ValueError(
-                                f"Cannot apply MOVE on {node.qargs[0]} because COMP_R already holds the state of "
-                                + f"{qubits_involved_in_last_move[0]}."
-                            )
-                        else:
-                            # MOVE OUT was performed
-                            qubits_involved_in_last_move = None
-
-                if qubits_involved_in_last_move is not None:
-                    raise ValueError(
-                        "The following resonators are still holding qubit states at the end of the circuit: "
-                        + f"{qubits_involved_in_last_move[0]}."
-                    )
-
-                return dag
 
         circuits = []
 
         for circ in circuits_aux:
             circ_to_add = circ
 
-            if "move" in self.noise_model.basis_gates:
-                check_move_validity()(circ)
+            validate_circuit(circ_to_add, self)
 
             for iqm_gate in [
                 g for g in self.noise_model.basis_gates if g not in list(IQM_TO_QISKIT_GATE_NAME.values())
             ]:
-                circ_to_add = circ.decompose(gates_to_decompose=iqm_gate)
+                circ_to_add = IQMReplaceGateWithUnitaryPass(iqm_gate, GATE_TO_UNITARY[iqm_gate])(circ_to_add)
             circuits.append(circ_to_add)
 
         shots = options.get("shots", self.options.shots)

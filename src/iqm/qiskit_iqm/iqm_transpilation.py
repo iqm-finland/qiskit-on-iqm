@@ -16,7 +16,7 @@
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
-from qiskit.circuit.library import RGate
+from qiskit.circuit.library import RGate, UnitaryGate
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition, RemoveBarriers
@@ -107,3 +107,23 @@ def optimize_single_qubit_gates(
         optimised circuit
     """
     return PassManager(IQMOptimizeSingleQubitGates(drop_final_rz, ignore_barriers)).run(circuit)
+
+
+class IQMReplaceGateWithUnitaryPass(TransformationPass):
+    """Transpiler pass that replaces all gates with given name in a circuit with a UnitaryGate.
+
+    Args:
+        gate: The name of the gate to replace.
+        unitary: The unitary matrix to replace the gate with.
+    """
+
+    def __init__(self, gate: str, unitary: list[list[float]]):
+        super().__init__()
+        self.gate = gate
+        self.unitary = unitary
+
+    def run(self, dag):
+        for node in dag.op_nodes():
+            if node.name == self.gate:
+                dag.substitute_node(node, UnitaryGate(self.unitary))
+        return dag

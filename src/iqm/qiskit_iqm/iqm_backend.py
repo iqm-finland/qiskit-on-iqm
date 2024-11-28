@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from abc import ABC
 from copy import deepcopy
+import re
 from typing import Final, Union
 from uuid import UUID
 
@@ -51,7 +52,7 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
     """
     # NOTE this prefix-based heuristic for identifying the qubits and resonators is not always guaranteed to work
     qubits = [qb for qb in sqa.qubits if qb.startswith('QB')]
-    computational_resonators = [qb for qb in sqa.qubits if qb.startswith('COMP')]
+    computational_resonators = [qb for qb in sqa.qubits if qb.lower().startswith('comp')]
     gates = {
         gate_name: GateInfo(
             implementations={'__fake': GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
@@ -60,12 +61,25 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
         )
         for gate_name, gate_loci in sqa.operations.items()
     }
+    gates['measure'] = GateInfo(
+        implementations={'__fake': GateImplementationInfo(loci=tuple(tuple([locus]) for locus in qubits))},
+        default_implementation='__fake',
+        override_default_implementation={},
+    )
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('00000000-0000-0000-0000-000000000000'),
         qubits=qubits,
         computational_resonators=computational_resonators,
         gates=gates,
     )
+
+
+def _component_sort_key(component_name: str) -> tuple[str, int, str]:
+    def get_numeric_id(name: str) -> int:
+        match = re.search(r'(\d+)', name)
+        return int(match.group(1)) if match else 0
+
+    return re.sub(r'[^a-zA-Z]', '', component_name), get_numeric_id(component_name), component_name
 
 
 class IQMBackendBase(BackendV2, ABC):
@@ -90,9 +104,17 @@ class IQMBackendBase(BackendV2, ABC):
         self.architecture = arch
 
         # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
-        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.components)}
+        # Because of the way the Target and the transpiler interact, the resonators need to have higher indices than
+        # qubits, or else transpiling with optimization_level=0 will fail because of lacking resonator indices.
+        qb_to_idx = {
+            qb: idx
+            for idx, qb in enumerate(
+                sorted(arch.qubits, key=_component_sort_key)
+                + sorted(arch.computational_resonators, key=_component_sort_key)
+            )
+        }
 
-        self._target = IQMStarTarget(arch, qb_to_idx)
+        self._target = IQMTarget(arch, qb_to_idx)
         self._qb_to_idx = qb_to_idx
         self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
         self.name = 'IQMBackend'
@@ -106,6 +128,10 @@ class IQMBackendBase(BackendV2, ABC):
     def physical_qubits(self) -> list[str]:
         """Return the list of physical qubits in the backend."""
         return list(self._qb_to_idx)
+
+    def has_resonators(self) -> bool:
+        """Return whether the backend has resonators."""
+        return bool(self.architecture.computational_resonators)
 
     def qubit_name_to_index(self, name: str) -> int:
         """Given an IQM-style qubit name, return the corresponding index in the register.
@@ -142,8 +168,8 @@ class IQMBackendBase(BackendV2, ABC):
         return 'move_routing'
 
 
-class IQMStarTarget(Target):
-    """A target representing an IQM backend with resonators.
+class IQMTarget(Target):
+    """A target representing an IQM backends that could have resonators.
 
     This target is used to represent the physical layout of the backend, including the resonators as well as a fake
     coupling map to .
@@ -154,7 +180,7 @@ class IQMStarTarget(Target):
         self.iqm_dynamic_architecture = architecture
         self.iqm_component_to_idx = component_to_idx
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
-        self._iqm_create_instructions(architecture, component_to_idx)
+        self.real_target = self._iqm_create_instructions(architecture, component_to_idx)
 
     def _iqm_create_instructions(self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]):
         """Converts a QuantumArchitectureSpecification object to a Qiskit Target object.
@@ -165,6 +191,7 @@ class IQMStarTarget(Target):
         Returns:
             A Qiskit Target object representing the given quantum architecture specification.
         """
+        # pylint: disable=too-many-branches
         operations = architecture.gates
 
         # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
@@ -201,14 +228,18 @@ class IQMStarTarget(Target):
             self.add_instruction(Measure(), _create_connections('measure'))
 
         # Special work for devices with a MoveGate.
-        real_target = deepcopy(self)
-        if 'cz' in operations:
-            real_target.add_instruction(CZGate(), _create_connections('cz', True))
+        real_target: IQMTarget = deepcopy(self)
+
         if 'move' in operations:
             real_target.add_instruction(MoveGate(), _create_connections('move'))
-            if 'cz' in operations:
+
+        fake_target_with_moves = deepcopy(real_target)
+        if 'cz' in operations:
+            real_target.add_instruction(CZGate(), _create_connections('cz', True))
+            if 'move' in operations:
                 fake_cz_connections: dict[tuple[int, int], None] = {}
                 cz_loci = operations['cz'].implementations[operations['cz'].default_implementation].loci
+                move_cz_connections: dict[tuple[int, int], None] = {}
                 for qb1, qb2 in cz_loci:
                     if (
                         qb1 not in architecture.computational_resonators
@@ -216,12 +247,28 @@ class IQMStarTarget(Target):
                     ):
                         fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                         fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
-                for qb1, res in operations['move']:
+                    else:
+                        move_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
+                        move_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
+                for qb1, res in operations['move'].implementations[operations['move'].default_implementation].loci:
                     for qb2 in [q for q in architecture.qubits if q not in [qb1, res]]:
-                        if [qb2, res] in cz_loci or [res, qb2] in cz_loci:
+                        if (qb2, res) in cz_loci or (res, qb2) in cz_loci:
                             fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                             fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
                 self.add_instruction(CZGate(), fake_cz_connections)
-        else:
-            self.add_instruction(CZGate(), _create_connections('cz', True))
+                fake_cz_connections.update(move_cz_connections)
+                fake_target_with_moves.add_instruction(CZGate(), fake_cz_connections)
+            else:
+                self.add_instruction(CZGate(), _create_connections('cz', True))
+                fake_target_with_moves.add_instruction(CZGate(), _create_connections('cz', True))
+        fake_target_with_moves.set_real_target(real_target)
+        self.fake_target_with_moves: IQMTarget = fake_target_with_moves
+        return real_target
+
+    def set_real_target(self, real_target: IQMTarget) -> None:
+        """Set the real target for this target.
+
+        Args:
+            real_target: The real target to set.
+        """
         self.real_target = real_target
