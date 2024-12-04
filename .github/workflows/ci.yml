@@ -82,4 +82,4 @@ jobs:
       - name: Run Resonance example integration test
         run: tox -e test_resonance_example
         env:
-          RESONANCE_API_KEY: ${{ environments.resonance-test.secrets.RESONANCE_API_KEY }}
+          RESONANCE_API_KEY: ${{ secrets.RESONANCE_API_KEY }}
