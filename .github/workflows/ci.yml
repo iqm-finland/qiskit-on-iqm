@@ -57,7 +57,11 @@ jobs:
     needs: [test, approve_resonance_tests]
     if: |
       always() &&
-      (needs.approve_resonance_tests.result == 'success' || needs.approve_resonance_tests.result == 'skipped')
+      (needs.test.result == 'success') &&
+      (needs.approve_resonance_tests.result == 'success' ||
+       (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) ||
+       github.event_name == 'schedule' ||
+       github.event_name == 'workflow_dispatch')
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
