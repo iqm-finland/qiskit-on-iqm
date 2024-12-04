@@ -44,26 +44,11 @@ jobs:
       - name: Test if docs can be built
         run: tox -e docs
 
-  approve_resonance_tests:
-      needs: [test]
-      runs-on: ubuntu-latest
-      if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true
-      environment: resonance-test
-      steps:
-        - name: Approve
-          run: echo "Approved!"
-
-  resonance_integration_test:
-    needs: [test, approve_resonance_tests]
-    if: |
-      always() &&
-      (needs.test.result == 'success') &&
-      (needs.approve_resonance_tests.result == 'success' ||
-       (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) ||
-       github.event_name == 'schedule' ||
-       github.event_name == 'workflow_dispatch')
+  run_resonance_integration_test:
+    needs: [test]
+    if: success()
     runs-on: ${{ matrix.platform }}
-    environment: resonance-test
+    environment: ${{ github.event.pull_request.head.repo.fork == true && 'resonance-test' || '' }}
     strategy:
       matrix:
         platform: [ ubuntu-latest, macos-latest, windows-latest ]
