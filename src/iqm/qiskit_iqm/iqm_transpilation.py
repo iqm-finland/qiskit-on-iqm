@@ -27,11 +27,11 @@ from qiskit.transpiler.passmanager import PassManager
 class IQMOptimizeSingleQubitGates(TransformationPass):
     r"""Optimize the decomposition of single-qubit gates for the IQM gate set.
 
-    This optimisation pass expects the circuit to be correctly layouted and translated to the IQM architecture
+    This optimization pass expects the circuit to be correctly layouted and translated to the IQM architecture
     and raises an error otherwise.
-    The optimisation logic follows the steps:
+    The optimization logic follows the steps:
 
-    1. Convert single-qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
+    1. Convert single-qubit gates to :math:`U` gates and combine all neighboring :math:`U` gates.
     2. Convert :math:`U` gates according to
        :math:`U(\theta , \phi , \lambda) = ~ RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
     3. Commute `RZ` gates to the end of the circuit using the fact that `RZ` and `CZ` gates commute, and
@@ -115,7 +115,7 @@ def optimize_single_qubit_gates(
     """Optimize number of single-qubit gates in a transpiled circuit exploiting the IQM specific gate set.
 
     Args:
-        circuit: quantum circuit to optimise
+        circuit: quantum circuit to optimize
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
             It is recommended always to set this to true as the final RZ gates do no change the measurement outcomes of
@@ -123,7 +123,7 @@ def optimize_single_qubit_gates(
         ignore_barriers (bool): Removes barriers from the circuit if they exist (default = False) before optimization.
 
     Returns:
-        optimised circuit
+        optimized circuit
     """
     warnings.warn(
         DeprecationWarning(

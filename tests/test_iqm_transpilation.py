@@ -95,7 +95,7 @@ def test_optimize_single_qubit_gates_reduces_gate_count():
 
 
 def test_optimize_single_qubit_gates_raises_on_invalid_basis():
-    """Test that optimisation pass raises error if gates other than ``RZ`` and ``CZ`` are provided."""
+    """Test that optimization pass raises error if gates other than ``RZ`` and ``CZ`` are provided."""
     circuit = QuantumCircuit(1, 1)
     circuit.h(0)
 
