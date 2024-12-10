@@ -19,6 +19,10 @@ import pytest
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 
+from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
+from iqm.qiskit_iqm.fake_backends.fake_aphrodite import IQMFakeAphrodite
+from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
+from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
 from tests.utils import get_transpiled_circuit_json
 
@@ -127,3 +131,35 @@ def test_submitted_circuit(adonis_architecture):
         'measure:QB3',
         'measure:QB5',
     ]
+
+
+@pytest.mark.parametrize('backend', [IQMFakeAdonis(), IQMFakeDeneb(), IQMFakeAphrodite()])
+def test_optimize_single_qubit_gates_preserves_layout(backend):
+    """Test that a circuit submitted via IQM backend gets transpiled into proper JSON."""
+
+    qc = QuantumCircuit(3)
+    qc.h(0)
+    qc.cx(0, 1)
+    qc.cx(0, 2)
+    qc.measure_all()
+
+    # In case the layout is not set
+    qc_optimized = optimize_single_qubit_gates(transpile(qc, basis_gates=['r', 'cz']))
+    assert qc_optimized.layout is None
+
+    # In case the layout is set by the user
+    initial_layout = generate_initial_layout(backend, qc)
+    transpiled_circuit_alt = transpile(qc, backend=backend, initial_layout=initial_layout)
+    for physical_qubit, logical_qubit in initial_layout.get_physical_bits().items():
+        assert transpiled_circuit_alt.layout.initial_layout[logical_qubit] == physical_qubit
+
+    # In case the layout is set by the transpiler
+    transpiled_circuit = transpile(qc, backend=backend)
+    layout = transpiled_circuit.layout
+    qc_optimized = optimize_single_qubit_gates(transpiled_circuit)
+    assert layout == qc_optimized.layout
+    # Transpile automatically runs the optimization pass followed by move gate transpilation,
+    # so the two circuits should be exactly the same if there are no moves.
+    # Otherwise, some MoveGate and RGate might be swapped when drawing the circuit
+    if 'move' not in transpiled_circuit.count_ops():
+        assert str(transpiled_circuit.draw(output='text')) == str(qc_optimized.draw(output='text'))

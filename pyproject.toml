@@ -174,4 +174,5 @@ move_routing_Rz_optimization_ignores_barriers = "iqm.qiskit_iqm:MoveGateRoutingW
 only_Rz_optimization = "iqm.qiskit_iqm:OnlyRzOptimizationPlugin"
 only_Rz_optimization_exact_global_phase = "iqm.qiskit_iqm:OnlyRzOptimizationExactPlugin"
 only_Rz_optimization_ignore_barriers = "iqm.qiskit_iqm:OnlyRzOptimizationIgnoreBarriersPlugin"
+iqm_default_scheduling = "iqm.qiskit_iqm:IQMDefaultSchedulingPlugin"
 

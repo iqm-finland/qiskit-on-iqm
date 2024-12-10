@@ -24,12 +24,17 @@ from iqm.qiskit_iqm.qiskit_to_iqm import serialize_instructions
 
 
 def validate_circuit(
-    circuit: QuantumCircuit, backend: IQMBackendBase, validate_moves: Optional[MoveGateValidationMode] = None
+    circuit: QuantumCircuit,
+    backend: IQMBackendBase,
+    validate_moves: Optional[MoveGateValidationMode] = None,
+    qubit_mapping: Optional[dict[int, str]] = None,
 ):
     """Validate a circuit against the backend."""
+    if qubit_mapping is None:
+        qubit_mapping = backend._idx_to_qb
     new_circuit = IQMClientCircuit(
         name="Validation circuit",
-        instructions=serialize_instructions(circuit=circuit, qubit_index_to_name=backend._idx_to_qb),
+        instructions=serialize_instructions(circuit=circuit, qubit_index_to_name=qubit_mapping),
     )
     if validate_moves is None:
         validate_moves = MoveGateValidationMode.STRICT

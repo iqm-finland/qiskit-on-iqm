@@ -4,15 +4,18 @@
 import pytest
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import QuantumVolume
+from qiskit.compiler import transpile
 from qiskit.quantum_info import Operator
 
-from iqm.iqm_client import Circuit as IQMCircuit
+from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
+from iqm.qiskit_iqm.fake_backends.fake_aphrodite import IQMFakeAphrodite
+from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
+from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.iqm_naive_move_pass import transpile_to_IQM
 from iqm.qiskit_iqm.iqm_transpilation import IQMReplaceGateWithUnitaryPass
 from iqm.qiskit_iqm.move_gate import MOVE_GATE_UNITARY
-from iqm.qiskit_iqm.qiskit_to_iqm import serialize_instructions
 
-from .utils import get_mocked_backend
+from .utils import capture_submitted_circuits, get_mocked_backend
 
 
 @pytest.mark.parametrize("n_qubits", list(range(2, 6)))
@@ -37,36 +40,47 @@ def test_transpile_to_IQM_star_semantically_preserving(
         assert circuit_operator.equiv(transpiled_operator)
 
 
-def test_allowed_gates_only(ndonis_architecture):
+@pytest.mark.parametrize("n_qubits", list(range(2, 6)))
+def test_transpile_to_IQM_valid_result(ndonis_architecture, n_qubits):
     """Test that transpiled circuit has gates that are allowed by the backend"""
-    backend, _client = get_mocked_backend(ndonis_architecture)
-    n_qubits = backend.num_qubits
-    print("test allowed ops backend size", n_qubits)
+    backend, _ = get_mocked_backend(ndonis_architecture)
     for i in range(2, n_qubits):
         circuit = QuantumVolume(i)
-        transpiled_circuit = transpile_to_IQM(circuit, backend)
-        iqm_circuit = IQMCircuit(
-            name="Transpiling Circuit",
-            instructions=serialize_instructions(transpiled_circuit, backend._idx_to_qb),
-        )
-        _client._validate_circuit_instructions(
-            backend.architecture,
-            [iqm_circuit],
-        )
+        transpiled_circuit = transpile_to_IQM(circuit, backend, optimize_single_qubits=False)
+        validate_circuit(transpiled_circuit, backend)
 
 
-def test_moves_with_zero_state(ndonis_architecture):
+@pytest.mark.parametrize("n_qubits", list(range(2, 6)))
+def test_qiskit_transpile_valid_result(ndonis_architecture, n_qubits):
     """Test that move gate is applied only when one qubit is in zero state."""
-    backend, _client = get_mocked_backend(ndonis_architecture)
-    n_qubits = backend.num_qubits
+    backend, _ = get_mocked_backend(ndonis_architecture)
     for i in range(2, n_qubits):
         circuit = QuantumVolume(i)
-        transpiled_circuit = transpile_to_IQM(circuit, backend)
-        iqm_json = IQMCircuit(
-            name="Transpiling Circuit",
-            instructions=serialize_instructions(
-                transpiled_circuit,
-                {backend.qubit_name_to_index(qubit_name): qubit_name for qubit_name in backend.physical_qubits},
-            ),
-        )
-        _client._validate_circuit_moves(backend.architecture, iqm_json)
+        transpiled_circuit = transpile(circuit, backend)
+        validate_circuit(transpiled_circuit, backend)
+
+
+@pytest.mark.parametrize(
+    "fake_backend,restriction",
+    [
+        (IQMFakeAdonis(), ["QB4", "QB3", "QB1"]),
+        (IQMFakeAphrodite(), ["QB18", "QB17", "QB25"]),
+        (IQMFakeDeneb(), ["QB5", "QB3", "QB1", "COMP_R"]),
+    ],
+)
+def test_transpiling_with_restricted_qubits(fake_backend, restriction):
+    """Test that the transpiled circuit only uses the qubits specified in the restriction."""
+    n_qubits = 3
+    circuit = QuantumVolume(n_qubits, seed=42)
+    for backend in [fake_backend, get_mocked_backend(fake_backend.architecture)[0]]:
+        restriction_idxs = [backend.qubit_name_to_index(qubit) for qubit in restriction]
+        for restricted in [restriction, restriction_idxs]:
+            print("Restriction:", restricted)
+            transpiled_circuit = transpile_to_IQM(circuit, backend=backend, restrict_to_qubits=restricted)
+            validate_circuit(transpiled_circuit, backend, qubit_mapping=dict(enumerate(restriction)))
+            assert transpiled_circuit.num_qubits == len(restricted)
+            print(transpiled_circuit)
+            if hasattr(backend, "client"):
+                # Check that the run doesn't fail.
+                capture_submitted_circuits()
+                backend.run(transpiled_circuit, shots=1, qubit_mapping=dict(enumerate(restriction)))

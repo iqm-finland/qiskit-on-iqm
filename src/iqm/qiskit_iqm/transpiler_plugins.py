@@ -209,3 +209,20 @@ class OnlyRzOptimizationIgnoreBarriersPlugin(OnlyRzOptimizationPlugin):
 
     def __init__(self):
         super().__init__(ignore_barriers=True)
+
+
+class IQMDefaultSchedulingPlugin(IQMSchedulingPlugin):
+    """Plugin class for IQM single qubit gate optimization and MoveGate routing as a scheduling stage."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            True, optimize_sqg=True, drop_final_rz=True, ignore_barriers=False, existing_move_handling=None
+        )
+
+    def pass_manager(
+        self, pass_manager_config: PassManagerConfig, optimization_level: Optional[int] = None
+    ) -> PassManager:
+        """Build scheduling stage PassManager"""
+        if optimization_level == 0:
+            self.optimize_sqg = False
+        return super().pass_manager(pass_manager_config, optimization_level)

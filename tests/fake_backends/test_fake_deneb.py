@@ -164,7 +164,7 @@ def test_transpile_to_IQM_for_ghz_with_fake_deneb_noise_model():
         qc.cx(0, qb)
     qc.measure_all()
 
-    transpiled_qc = transpile_to_IQM(qc, backend=backend)
+    transpiled_qc = transpile_to_IQM(qc, backend=backend, optimize_single_qubits=False)
 
     job = backend.run(transpiled_qc, shots=1000)
     res = job.result()

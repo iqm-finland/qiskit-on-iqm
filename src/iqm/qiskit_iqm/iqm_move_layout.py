@@ -13,18 +13,21 @@
 # limitations under the License.
 """A layout algorithm that generates an initial layout for a quantum circuit that is
 valid on the quantum architecture specification of the given IQM backend."""
+from typing import List, Optional, Union
+
 from qiskit import QuantumCircuit
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler import PassManager, TranspilerError
 from qiskit.transpiler.layout import Layout
 from qiskit.transpiler.passes import TrivialLayout
 
+from iqm.qiskit_iqm.iqm_backend import IQMTarget
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 
 class IQMMoveLayout(TrivialLayout):
     r"""Creates a qubit layout that is valid on the quantum architecture specification of the
-    given IQM backend with regard to the move gate. In more detail, assumes that the move
+    given IQM target with regard to the move gate. In more detail, assumes that the move
     operations in the quantum architecture define which physical qubit is the resonator and
     which is a move qubit, and shuffles the logical indices of the circuit so that they match
     the requirements.
@@ -34,10 +37,6 @@ class IQMMoveLayout(TrivialLayout):
 
     Note: This simple version of the mapper only works reliably with a single move qubit
     and resonator, and only if the circuit contains at least one move gate."""
-
-    def __init__(self, backend: IQMBackend):
-        super().__init__(backend.target)
-        self._backend = backend
 
     def run(self, dag: DAGCircuit):
         """Creates the qubit layout for the given quantum circuit.
@@ -113,17 +112,17 @@ class IQMMoveLayout(TrivialLayout):
             a dictionary mapping logical indices to qubit types for those
             qubits where the type is relevant.
         """
-        backend = self._backend
+        target: IQMTarget = self.target
         qubit_types: dict[int, str] = {}
-        for gate_name, gate_info in backend.architecture.gates.items():
+        for gate_name, gate_info in target.iqm_dynamic_architecture.gates.items():
             if gate_name == 'move':
                 for locus in gate_info.loci:
-                    [qubit, resonator] = [backend.qubit_name_to_index(q) for q in locus]
+                    [qubit, resonator] = [target.iqm_component_to_idx[q] for q in locus]
                     if qubit is not None:
                         qubit_types[qubit] = 'move_qubit'
                     if resonator is not None:
                         qubit_types[resonator] = 'resonator'
-        for i in range(backend.num_qubits):
+        for i in range(target.num_qubits):
             if i not in qubit_types:
                 qubit_types[i] = 'qubit'
 
@@ -166,7 +165,11 @@ class IQMMoveLayout(TrivialLayout):
         return required_types
 
 
-def generate_initial_layout(backend: IQMBackend, circuit: QuantumCircuit):
+def generate_initial_layout(
+    backend: IQMBackend,
+    circuit: QuantumCircuit,
+    restrict_to_qubits: Optional[Union[List[int], List[str]]] = None,
+) -> Layout:
     """Generates the initial layout for the given circuit, when run against the given backend.
 
     Args:
@@ -177,7 +180,11 @@ def generate_initial_layout(backend: IQMBackend, circuit: QuantumCircuit):
         a layout that remaps the qubits so that the move qubit and the resonator are using the correct
         indices.
     """
-    layout_gen = IQMMoveLayout(backend)
+    if restrict_to_qubits is not None:
+        target = backend.target.restrict_to_qubits(restrict_to_qubits)
+    else:
+        target = backend.target
+    layout_gen = IQMMoveLayout(target)
     pm = PassManager(layout_gen)
     pm.run(circuit)
     return layout_gen.get_initial_layout()

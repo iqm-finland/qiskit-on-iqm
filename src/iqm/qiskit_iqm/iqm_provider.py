@@ -111,12 +111,14 @@ class IQMBackend(IQMBackendBase):
         job.circuit_metadata = [c.metadata for c in run_request.circuits]
         return job
 
+    # pylint: disable=too-many-arguments
     def create_run_request(
         self,
         run_input: Union[QuantumCircuit, list[QuantumCircuit]],
         shots: int = 1024,
         circuit_compilation_options: Optional[CircuitCompilationOptions] = None,
         circuit_callback: Optional[Callable] = None,
+        qubit_mapping: Optional[dict[int, str]] = None,
         **unknown_options,
     ) -> RunRequest:
         """Creates a run request without submitting it for execution.
@@ -174,7 +176,7 @@ class IQMBackend(IQMBackendBase):
         if circuit_callback:
             circuit_callback(circuits)
 
-        circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit) for circuit in circuits]
+        circuits_serialized: list[Circuit] = [self.serialize_circuit(circuit, qubit_mapping) for circuit in circuits]
 
         if self._use_default_calibration_set:
             default_calset_id = self.client.get_dynamic_quantum_architecture(None).calibration_set_id
@@ -207,7 +209,7 @@ class IQMBackend(IQMBackendBase):
         """Close IQMClient's session with the authentication server."""
         self.client.close_auth_session()
 
-    def serialize_circuit(self, circuit: QuantumCircuit) -> Circuit:
+    def serialize_circuit(self, circuit: QuantumCircuit, qubit_mapping: Optional[dict[int, str]] = None) -> Circuit:
         """Serialize a quantum circuit into the IQM data transfer format.
 
         Serializing is not strictly bound to the native gateset, i.e. some gates that are not explicitly mentioned in
@@ -232,7 +234,9 @@ class IQMBackend(IQMBackendBase):
         Raises:
             ValueError: circuit contains an unsupported instruction or is not transpiled in general
         """
-        instructions = serialize_instructions(circuit, self._idx_to_qb)
+        if qubit_mapping is None:
+            qubit_mapping = self._idx_to_qb
+        instructions = serialize_instructions(circuit, qubit_index_to_name=qubit_mapping)
 
         try:
             metadata = to_json_dict(circuit.metadata)

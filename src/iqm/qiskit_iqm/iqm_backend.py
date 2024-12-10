@@ -18,7 +18,7 @@ from __future__ import annotations
 from abc import ABC
 from copy import deepcopy
 import re
-from typing import Final, Union
+from typing import Final, List, Union
 from uuid import UUID
 
 from qiskit.circuit import Parameter, Reset
@@ -165,7 +165,7 @@ class IQMBackendBase(BackendV2, ABC):
 
     def get_scheduling_stage_plugin(self) -> str:
         """Return the plugin that should be used for scheduling the circuits on this backend."""
-        return 'move_routing'
+        return 'iqm_default_scheduling'
 
 
 class IQMTarget(Target):
@@ -272,3 +272,33 @@ class IQMTarget(Target):
             real_target: The real target to set.
         """
         self.real_target = real_target
+
+    def restrict_to_qubits(self, qubits: Union[List[int], List[str]]) -> IQMTarget:
+        """Restrict the target to only the given qubits.
+
+        Args:
+            qubits: The qubits to restrict the target to. Can be either a list of qubit indices or qubit names.
+        """
+        qubits_str = [self.iqm_idx_to_component[q] if isinstance(q, int) else str(q) for q in qubits]
+        new_gates = {}
+        for gate_name, gate_info in self.iqm_dynamic_architecture.gates.items():
+            new_implementations = {}
+            for implementation_name, implementation_info in gate_info.implementations.items():
+                new_loci = [loci for loci in implementation_info.loci if all(q in qubits_str for q in loci)]
+                if new_loci:
+                    new_implementations[implementation_name] = GateImplementationInfo(loci=new_loci)
+            if new_implementations:
+                new_gates[gate_name] = GateInfo(
+                    implementations=new_implementations,
+                    default_implementation=gate_info.default_implementation,
+                    override_default_implementation=gate_info.override_default_implementation,
+                )
+        new_arch = DynamicQuantumArchitecture(
+            calibration_set_id=self.iqm_dynamic_architecture.calibration_set_id,
+            qubits=[q for q in qubits_str if q in self.iqm_dynamic_architecture.qubits],
+            computational_resonators=[
+                q for q in qubits_str if q in self.iqm_dynamic_architecture.computational_resonators
+            ],
+            gates=new_gates,
+        )
+        return IQMTarget(new_arch, {name: idx for idx, name in enumerate(qubits_str)})

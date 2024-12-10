@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Transpilation tool to optimize the decomposition of single-qubit gates tailored to IQM hardware."""
+import warnings
 
 import numpy as np
 from qiskit import QuantumCircuit
@@ -41,10 +42,12 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
     Args:
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
+            It is recommended always to set this to true as the final RZ gates do no change the measurement outcomes of
+            the circuit.
         ignore_barriers (bool): Removes the barriers from the circuit before optimization (default = False).
     """
 
-    def __init__(self, drop_final_rz: bool = False, ignore_barriers: bool = False):
+    def __init__(self, drop_final_rz: bool = True, ignore_barriers: bool = False):
         super().__init__()
         self._basis = ['r', 'cz', 'move']
         self._intermediate_basis = ['u', 'cz', 'move']
@@ -101,12 +104,24 @@ def optimize_single_qubit_gates(
         circuit: quantum circuit to optimise
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
+            It is recommended always to set this to true as the final RZ gates do no change the measurement outcomes of
+            the circuit.
         ignore_barriers (bool): Removes barriers from the circuit if they exist (default = False) before optimization.
 
     Returns:
         optimised circuit
     """
-    return PassManager(IQMOptimizeSingleQubitGates(drop_final_rz, ignore_barriers)).run(circuit)
+    warnings.warn(
+        DeprecationWarning(
+            'This function is deprecated and will be removed in a later version of `iqm.qiskit_iqm`. '
+            + 'Single qubit gate optimization is now automatically applied when running `qiskit.transpile()` on any '
+            + 'IQM device. If you want to have more fine grained control over the optimization, please use the '
+            + '`iqm.qiskit_iqm.transpile_to_IQM` function.'
+        )
+    )
+    new_circuit = PassManager(IQMOptimizeSingleQubitGates(drop_final_rz, ignore_barriers)).run(circuit)
+    new_circuit._layout = circuit.layout
+    return new_circuit
 
 
 class IQMReplaceGateWithUnitaryPass(TransformationPass):

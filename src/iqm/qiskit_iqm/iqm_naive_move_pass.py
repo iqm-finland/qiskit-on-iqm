@@ -99,6 +99,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     ignore_barriers: bool = False,
     remove_final_rzs: bool = True,
     existing_moves_handling: Optional[ExistingMoveHandlingOptions] = None,
+    restrict_to_qubits: Optional[Union[List[int], List[str]]] = None,
     **qiskit_transpiler_qwargs,
 ) -> QuantumCircuit:
     """Basic function for transpiling to IQM backends. Currently works with Deneb and Garnet
@@ -107,13 +108,16 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         circuit: The circuit to be transpiled without MOVE gates.
         backend: The target backend to compile to. Does not require a resonator.
         target: An alternative target to compile to than the backend, using this option requires intimate knowledge
-        of the transpiler and thus it is not recommended to use.
+            of the transpiler and thus it is not recommended to use.
         initial_layout: The initial layout to use for the transpilation, same as `qiskit.transpile`.
         optimize_single_qubits: Whether to optimize single qubit gates away.
         ignore_barriers: Whether to ignore barriers when optimizing single qubit gates away.
-        remove_final_rzs: Whether to remove the final Rz rotations.
+        remove_final_rzs: Whether to remove the final Rz rotations. It is recommended always to set this to true as
+        the final RZ gates do no change the measurement outcomes of the circuit.
         existing_moves_handling: How to handle existing MOVE gates in the circuit, required if the circuit contains
-        MOVE gates.
+            MOVE gates.
+        restrict_to_qubits: Restrict the transpilation to only use these specific qubits. Note that you will have to
+            pass this information
         qiskit_transpiler_qwargs: Arguments to be passed to the Qiskit transpiler.
 
     Returns:
@@ -121,16 +125,24 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     """
     # pylint: disable=too-many-branches
 
+    if restrict_to_qubits is not None:
+        restrict_to_qubits = [
+            backend.qubit_name_to_index(q) if isinstance(q, str) else int(q) for q in restrict_to_qubits
+        ]
+
     if target is None:
         if circuit.count_ops().get("move", 0) > 0:
             target = backend.target.fake_target_with_moves
             # Create a sensible initial layout if none is provided
             if initial_layout is None:
-                initial_layout = generate_initial_layout(backend, circuit)
+                initial_layout = generate_initial_layout(backend, circuit, restrict_to_qubits)
             if perform_move_routing and existing_moves_handling is None:
                 raise ValueError("The circuit contains MOVE gates but existing_moves_handling is not set.")
         else:
             target = backend.target
+
+    if restrict_to_qubits is not None:
+        target = target.restrict_to_qubits(restrict_to_qubits)
 
     # Determine which scheduling method to use
     scheduling_method = qiskit_transpiler_qwargs.get("scheduling_method", None)
@@ -167,4 +179,5 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
             + "options, ignoring the other arguments."
         )
     qiskit_transpiler_qwargs["scheduling_method"] = scheduling_method
-    return transpile(circuit, target=target, initial_layout=initial_layout, **qiskit_transpiler_qwargs)
+    new_circuit = transpile(circuit, target=target, initial_layout=initial_layout, **qiskit_transpiler_qwargs)
+    return new_circuit

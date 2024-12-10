@@ -23,8 +23,7 @@ from requests import Response
 
 from iqm.iqm_client import Circuit, DynamicQuantumArchitecture, Instruction, IQMClient
 from iqm.qiskit_iqm import transpile_to_IQM
-
-# from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
+from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 
@@ -82,7 +81,7 @@ def get_transpiled_circuit_json(
     Returns:
         the circuit that was transpiled by the IQM backend
     """
-    backend, client = get_mocked_backend(architecture)
+    backend, _ = get_mocked_backend(architecture)
     submitted_circuits_batch = capture_submitted_circuits()
     transpiled_circuit = transpile_to_IQM(
         circuit,
@@ -91,13 +90,13 @@ def get_transpiled_circuit_json(
         optimization_level=optimization_level,
         perform_move_routing=False,
     )
+    validate_circuit(transpiled_circuit, backend)
     job = backend.run(transpiled_circuit, shots=1000)
     assert job.job_id() == '00000001-0002-0003-0004-000000000005'
     assert len(submitted_circuits_batch.all_values) == 1
     return_circuits = submitted_circuits_batch.value['circuits']
     assert len(return_circuits) == 1
     return_circuit = Circuit.model_validate(return_circuits[0])
-    client._validate_circuit_instructions(architecture, [return_circuit])
     return return_circuit
 
 
