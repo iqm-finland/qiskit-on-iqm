@@ -2,10 +2,10 @@
 Changelog
 =========
 
-
 Version 16.0
 =============
 
+* Fixed Deneb Readout errors to closer resemble reality. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/iqm-client/pull/125>`_
 * Refactored :meth:`IQMBackend.create_run_request` to improve user experience when using IQM specific run options.
 * Updated the documentation for using additional run options with IQM backends.
 * :meth:`IQMBackendBase.qubit_name_to_index` and :meth:`IQMBackendBase.index_to_qubit_name` now raises an error when using an invalid qubit name or index, rather than returning None.
