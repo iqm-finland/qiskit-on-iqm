@@ -407,6 +407,7 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
     print(transpiled_circuit.draw(output='text', idle_wires=False))
 
 ::
+
     global phase: 3π/2
               ┌─────────────┐                  ┌─────────────┐ ░       ┌─┐
     q_2 -> 5  ┤ R(π/2,3π/2) ├──────────■───────┤ R(π/2,5π/2) ├─░───────┤M├
@@ -418,14 +419,15 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
       meas: 3/════════════════════════════════════════════════════╩══╩══╩═
                                                                 0  1  2 
 
+
 Under the hood the Qiskit transpiler uses the :class:`.IQMDefaultSchedulingPlugin` plugin that automatically adapts the
 transpiled circuit from Qiskit to the IQM backend. In particular, if the `optimization_level >= 0`, the plugin will use
 the :class:`.IQMOptimizeSingleQubitGates` pass to optimize single-qubit gates, and the :class:`.IQMNaiveResonatorMoving`
 to insert :class:`.MoveGate` instructions for devices that have a support resonators. 
 Alternatively, you can use the :meth:`transpile_to_IQM` function for more precise control over the transpilation process
-as documented :ref:`below <_transpile_to_IQM>`.
+as documented below.
 It is also possible to use one of our other pre-defined transpiler plugins as an argument to :meth:`qiskit.transpile`.
-For example, `transpile(cirucit, backend=backend, scheduling_method="only_move_routing_keep")`. Additionally, you can 
+For example, `transpile(circuit, backend=backend, scheduling_method="only_move_routing_keep")`. Additionally, you can 
 use any of our transpiler passes to define your own :class:`qiskit.transpiler.PassManager` if you want to assemble 
 custom transpilation procedures manually. 
 
@@ -451,6 +453,7 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
     print(transpiled_circuit2.draw(output='text', idle_wires=False))
 
 ::
+
                    ┌─────────────┐┌───────┐                  ┌───────┐                ░ ┌─┐      
           q_0 -> 0 ┤ R(π/2,3π/2) ├┤0      ├──────────────────┤0      ├────────────────░─┤M├──────
                    ├─────────────┤│       │   ┌─────────────┐│       │                ░ └╥┘┌─┐   
@@ -468,20 +471,18 @@ Under the hood, the IQM Backend pretends that the resonators do not exist for th
 transpiler, and then uses an additional transpiler stage defined by the :class:`.IQMDefaultSchedulingPlugin` plugin
 introduce the resonators and add :class:`MOVE gates <.MoveGate>` between qubits and resonators as
 necessary. For more control over the transpilation process, you can use the :meth:`transpile_to_IQM` function documented
-:ref:`here <_transpile_to_IQM>`.
+below.
 
-
-.. _transpile_to_IQM:
 
 The :meth:`transpile_to_IQM` method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As an alternative to the native Qiskit transpiler integration, you can use the :meth:`transpile_to_IQM`. 
 This method is meant for users who want at least one of the following things:
-    - more fine grained control over the transpiler process without having to figure out which IQM transpiler plugin 
-    to use,
-    - transpile circuits that already contain a computational resonator, or
-    - forcefully restrict the transpiler to use a strict subset of qubits on the device.
+
+* more fine grained control over the transpiler process without having to figure out which IQM transpiler plugin to use,
+* transpile circuits that already contain a computational resonator, or
+* forcefully restrict the transpiler to use a strict subset of qubits on the device.
 
 For example, if you want to transpile the circuit with `optimization_level=0` but also apply the single qubit gate 
 optimization pass, you can do the following, equivalent things:
@@ -505,7 +506,9 @@ Similarly, if you want to transpile a circuit that already contains a computatio
     move_circuit.append(MoveGate(), [0, 1])
     # Using transpile() does not work here, as the circuit contains a MoveGate
     transpile_to_IQM(move_circuit, backend=resonator_backend, existing_moves_handling=ExistingMoveHandlingOptions.KEEP)
+
 ::
+
                    ┌─────────────┐┌───────┐   ┌───────┐               
           q_0 -> 0 ┤ R(π/2,3π/2) ├┤0      ├───┤0      ├───────────────
                    └─────────────┘│       │   │       │               
@@ -528,7 +531,9 @@ And if you want force the compiler to use a strict subset of qubits on the devic
     transpile_to_IQM(circuit, backend=backend, restrict_to_qubits=[4,3,8])
     c = transpile_to_IQM(circuit, backend=backend, restrict_to_qubits=['QB5', 'QB4', 'QB9'])
     print(c)
+
 ::
+    
     global phase: 3π/2
              ┌─────────────┐   ┌─────────────┐                ░    ┌─┐   
     q_1 -> 0 ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
