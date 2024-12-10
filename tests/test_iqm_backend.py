@@ -18,12 +18,13 @@ from collections.abc import Sequence
 import re
 import uuid
 
-from mockito import ANY, expect, mock, unstub, verifyNoUnwantedInteractions, when
+from mockito import ANY, expect, matchers, mock, unstub, verifyNoUnwantedInteractions, when
 import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit import ClassicalRegister, Parameter, QuantumRegister
 from qiskit.circuit.library import CZGate, RGate, RXGate, RYGate, XGate, YGate
+import requests
 
 from iqm.iqm_client import (
     APIConfig,
@@ -35,6 +36,7 @@ from iqm.iqm_client import (
     RunRequest,
 )
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMJob
+from tests.utils import get_mock_ok_response
 
 
 @pytest.fixture
@@ -109,12 +111,16 @@ def test_set_max_circuits(backend):
 
 
 def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_3q_architecture):
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
     client = IQMClient(url='http://some_url')
     client._token_manager = None  # Do not use authentication
     when(client).get_dynamic_quantum_architecture(None).thenReturn(linear_3q_architecture)
     when(client).get_dynamic_quantum_architecture(linear_3q_architecture.calibration_set_id).thenReturn(
         linear_3q_architecture
     )
+
     backend = IQMBackend(client)
     circuit = QuantumCircuit(3)
     circuit.cz(0, 2)
@@ -238,13 +244,14 @@ def test_serialize_circuit_id(circuit, backend):
     assert circuit_ser.instructions[0].name == 'prx'
 
 
-def check_measure_cc_prx_pair(measure, cc_prx):
+def check_measure_cc_prx_pair(measure, cc_prx, check_key: bool = True):
     """Makes sure the given measure instruction provides control to the given cc_prx instruction."""
     assert measure.name == 'measure'
     assert cc_prx.name == 'cc_prx'
-    key = measure.args['key']
-    assert measure.args['feedback_key'] == key
-    assert cc_prx.args['feedback_key'] == key
+    feedback_key = cc_prx.args['feedback_key']
+    assert measure.args['feedback_key'] == feedback_key
+    if check_key:
+        assert measure.args['key'] == feedback_key
     assert cc_prx.args['feedback_qubit'] == 'QB1'
 
 
@@ -346,6 +353,21 @@ def test_serialize_circuit_c_if_multiple_cbits(backend, cbits):
 
     with pytest.raises(ValueError, match='conditioned on multiple bits'):
         backend.serialize_circuit(qc)
+
+
+def test_serialize_circuit_reset(backend):
+    """Test that the reset operation is accepted."""
+    qc = QuantumCircuit(2, 2)
+    qc.ry(np.pi / 2, 0)
+    qc.ry(np.pi / 2, 0)
+    qc.cz(0, 1)
+    qc.ry(-np.pi / 2, 0)
+    qc.reset(0)
+    # final measurement
+    qc.measure_all()
+    circuit_ser = backend.serialize_circuit(qc)
+    assert len(circuit_ser.instructions) == 9
+    check_measure_cc_prx_pair(circuit_ser.instructions[4], circuit_ser.instructions[5], False)
 
 
 def test_run_non_native_circuit(backend, circuit, job_id, run_request):

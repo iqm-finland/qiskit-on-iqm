@@ -116,8 +116,8 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         the final RZ gates do no change the measurement outcomes of the circuit.
         existing_moves_handling: How to handle existing MOVE gates in the circuit, required if the circuit contains
             MOVE gates.
-        restrict_to_qubits: Restrict the transpilation to only use these specific qubits. Note that you will have to
-            pass this information
+        restrict_to_qubits: Restrict the transpilation to only use these specific physical qubits. Note that you will
+            have to pass this information to the `backend.run` method as well as a dictionary.
         qiskit_transpiler_qwargs: Arguments to be passed to the Qiskit transpiler.
 
     Returns:
@@ -145,7 +145,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         target = target.restrict_to_qubits(restrict_to_qubits)
 
     # Determine which scheduling method to use
-    scheduling_method = qiskit_transpiler_qwargs.get("scheduling_method", None)
+    scheduling_method = qiskit_transpiler_qwargs.pop("scheduling_method", None)
     if scheduling_method is None:
         if perform_move_routing:
             if optimize_single_qubits:

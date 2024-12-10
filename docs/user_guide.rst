@@ -8,23 +8,53 @@ code snippets and check the output yourself.
 
 .. note::
 
-   At the moment IQM does not provide a quantum computing service open to the general public.
-   Please contact our `sales team <https://www.meetiqm.com/contact-us/>`_ to set up your access to an IQM quantum
-   computer.
+   IQM provides access to its quantum computers via IQM Resonance – IQM's quantum cloud service.
+   Please head over `to our website <https://www.meetiqm.com/products/iqm-resonance/>`_ to learn more.
 
 
 Hello, world!
 -------------
 
-Here's the quickest and easiest way to run a small computation on an IQM quantum computer and check that
-things are set up correctly:
+Here's a quick and easy way to run a small computation on an IQM quantum computer to check that
+things are set up correctly, either
+through the IQM cloud service Resonance, or using an on-premises quantum computer.
 
-1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py>`_ (Save Page As...)
-2. Install Qiskit on IQM as instructed below (feel free to skip the import statement)
-3. Install Cortex CLI and log in as instructed in the `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
-4. Set the environment variable as instructed by Cortex CLI after logging in
-5. Run ``$ python bell_measure.py --cortex_server_url https://demo.qc.iqm.fi/cocos`` – replace the example URL with the correct one
-6. If you're connecting to a real quantum computer, the output should show almost half of the measurements resulting in '00' and almost half in '11' – if this is the case, things are set up correctly!
+IQM Resonance
+~~~~~~~~~~~~~
+
+1. Login to `IQM Resonance <https://resonance.meetiqm.com>` with your credentials.
+2. Upon your first visit to IQM Resonance, you can generate your unique, non-recoverable API token
+   directly from the Dashboard page by selecting ``Generate token``. It's important to copy the token
+   immediately from the window, as you won't be able to do so once the window is closed. If you lose
+   your token, you have the option to regenerate it at any time. However, be aware that regenerating
+   your API token will invalidate any previously generated token.
+3. Download one of the demo notebooks from `IQM Academy <https://www.iqmacademy.com/tutorials/>` or the
+   `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
+   (Save Page As...)
+4. Install Qiskit on IQM as instructed below.
+5. Add your API token to the example (either as the parameter ``token`` to the :class:`.IQMProvider`
+   constructor, or by setting the environment variable :envvar:`IQM_TOKEN`)
+6. Run the Jupyter notebook (or run ``python resonance_example.py`` if you decided to go for the Python script).
+7. If you're connecting to a real quantum computer, the output should show almost half of the
+   measurements resulting in '00000' and almost half in '11111' - if this is the case, things are
+   set up correctly!
+
+You can find a video guide on how to set things up `here <https://www.iqmacademy.com/tutorials/resonance/>`.
+More ready-to-run examples can also be found at `IQM Academy <https://www.iqmacademy.com/tutorials/>`.
+
+
+On-premises device
+~~~~~~~~~~~~~~~~~~
+
+1. Download the `bell_measure.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/bell_measure.py>`_ (Save Page As...).
+2. Install Qiskit on IQM as instructed below.
+3. Install Cortex CLI and log in as instructed in the
+   `documentation <https://iqm-finland.github.io/cortex-cli/readme.html#installing-cortex-cli>`__
+4. Set the environment variable as instructed by Cortex CLI after logging in.
+5. Run ``$ python bell_measure.py --cortex_server_url https://demo.qc.iqm.fi/cocos`` - replace the example URL with the correct one.
+6. If you're connecting to a real quantum computer, the output should show almost half of the
+   measurements resulting in '00' and almost half in '11' - if this is the case, things are set up
+   correctly!
 
 
 Installation
@@ -68,6 +98,7 @@ Running quantum circuits on an IQM quantum computer
 In this section we demonstrate the practicalities of using Qiskit on IQM to execute
 quantum circuits on an IQM quantum computer.
 
+.. _GHZ_circuit:
 
 Executing a circuit
 ~~~~~~~~~~~~~~~~~~~
@@ -249,11 +280,13 @@ time you do not need to deal with IQM-style qubit names when using Qiskit, howev
 Classically controlled gates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Some IQM quantum computers support classically controlled gates, that is, gates that are executed conditionally depending on the result of a measurement preceding them in the quantum circuit. This support currently has several limitations:
+Some IQM quantum computers support classically controlled gates, that is, gates that are executed
+conditionally depending on the result of a measurement preceding them in the quantum circuit. This
+support currently has several limitations:
 
 * Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
 * The gates can only be conditioned on one classical bit, and the only control available is to
-  apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
+  apply the gate if the bit is 1, and apply an identity gate if the bit is 0.
 * The availability of the controlled gates depends on the instrumentation of the quantum computer.
 
 The classical control can be applied on a circuit instruction using :meth:`~qiskit.circuit.Instruction.c_if`:
@@ -287,7 +320,9 @@ The classical control can be applied on a circuit instruction using :meth:`~qisk
                                0  1
 
 
-The first measurement operation stores its result in the 1-bit classical register ``c``. If the result is 1, the ``X`` gate will be applied. If it is zero, an identity gate of corresponding duration is applied instead.
+The first measurement operation stores its result in the 1-bit classical register ``c``. If the
+result is 1, the ``X`` gate will be applied. If it is zero, an identity gate of corresponding
+duration is applied instead.
 
 Executing the above circuit should result in the counts being approximately 50/50 split
 between the '00 0' and '11 1' bins of the histogram (even though the state itself is never entangled).
@@ -296,6 +331,37 @@ between the '00 0' and '11 1' bins of the histogram (even though the state itsel
 
    Because the gates can only take feedback from one classical bit you must place the measurement result
    in a 1-bit classical register, ``c`` in the above example.
+
+
+Resetting qubits
+~~~~~~~~~~~~~~~~
+
+The :class:`qiskit.circuit.Reset` operation can be used to reset qubits to the :math:`|0\rangle` state.
+It is currently implemented as a (projective) measurement followed by a classically controlled X gate conditioned
+on the result.
+
+.. code-block:: python
+
+    from qiskit import QuantumCircuit
+
+    circuit = QuantumCircuit(1, 1)
+    circuit.h(0)
+    circuit.reset(0)
+    circuit.measure(0, 0)
+
+    print(circuit.draw(output='text'))
+
+::
+
+         ┌───┐     ┌─┐
+      q: ┤ H ├─|0>─┤M├
+         └───┘     └╥┘
+    c: 1/═══════════╩═
+                    0
+
+In the above example, the Hadamard gate prepares a uniform superposition of the :math:`|0\rangle` and
+:math:`|1\rangle` states, and the reset then collapses it back into the :math:`|0\rangle` state.
+Executing the circuit should result in (mostly) zeros being measured.
 
 
 Inspecting circuits before submitting them for execution
@@ -330,7 +396,8 @@ Basic transpilation
 ~~~~~~~~~~~~~~~~~~~
 
 On IQM quantum computers without computational resonators
-(the IQM Crystal architecture), we can use the default Qiskit transpiler:
+(the IQM Crystal architecture), we can use the default Qiskit transpiler.
+Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 .. code-block:: python
 
@@ -450,7 +517,7 @@ Batch execution of circuits
 
 It is possible to submit multiple circuits to be executed, as a batch. In many cases this is more
 time efficient than running the circuits one by one. Batch execution has some restrictions: all the
-circuits must measure the same qubits, and be executed for the same number of shots. For starters,
+circuits must be executed for the same number of shots. For starters,
 let's construct two circuits preparing and measuring different Bell states:
 
 .. code-block:: python
@@ -500,6 +567,35 @@ The batch execution functionality can be used to run a parameterized circuit for
 
 Note that it is important to transpile the parameterized circuit before binding the values to ensure a consistent qubit
 measurements across circuits in the batch.
+
+
+Multiplexed measurements
+------------------------
+
+When multiple measurement instructions are present in a circuit, the measurements may be multiplexed, meaning the
+measurement pulses would be simultaneously executed on the quantum hardware, if possible. Multiplexing requires the
+measurement instructions to be grouped continuously, i.e. not have other instructions between them acting on the same
+qubits.
+
+You don't have to do anything special to enable multiplexing, it is automatically attempted by the circuit-to-pulse
+compiler on the server side. However, if you want to ensure multiplexing is applied (whenever possible on the hardware
+level), you have to put a ``barrier`` instruction in front of and after a group of measurements instructions.
+This prevents the transpiler to put other instructions between the measurements.
+There is no concept of multiplexed or simultaneous measurements in Qiskit, so the drawings of the circuits still would
+not indicate multiplexing.
+
+::
+
+          ░ ┌─┐       ░
+    q_0: ─░─┤M├───────░─
+          ░ └╥┘┌─┐    ░
+    q_1: ─░──╫─┤M├────░─
+          ░  ║ └╥┘┌─┐ ░
+    q_2: ─░──╫──╫─┤M├─░─
+          ░  ║  ║ └╥┘ ░
+    meas: 3/════╩══╩══╩═══
+                0  1  2
+
 
 
 Simulation

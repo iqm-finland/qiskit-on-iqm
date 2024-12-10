@@ -29,7 +29,10 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend
 
 def get_mocked_backend(architecture: DynamicQuantumArchitecture) -> tuple[IQMBackend, IQMClient]:
     """Returns an IQM backend running on a mocked IQM client that returns the given architecture."""
-    client = IQMClient(url='http://localhost')
+    when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
+        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+    )
+    client = IQMClient(url='http://some_url')
     when(client).get_dynamic_quantum_architecture(None).thenReturn(architecture)
     when(client).get_dynamic_quantum_architecture(architecture.calibration_set_id).thenReturn(architecture)
     backend = IQMBackend(client)

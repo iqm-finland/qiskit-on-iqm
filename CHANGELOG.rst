@@ -3,7 +3,7 @@ Changelog
 =========
 
 
-Version 15.2
+Version 16.0
 =============
 
 * Refactored :meth:`IQMBackend.create_run_request` to improve user experience when using IQM specific run options.
@@ -11,6 +11,38 @@ Version 15.2
 * :meth:`IQMBackendBase.qubit_name_to_index` and :meth:`IQMBackendBase.index_to_qubit_name` now raises an error when using an invalid qubit name or index, rather than returning None.
 * Introduction of `IQMBackendBase.physical_target` and `IQMBackendBase.fake_target` to represent the physical quantum architectures and a Qiskit-compatible version, respectively.        
 * Added support for ``qiskit == 1.2`` and ``qiskit-aer == 1.5``.
+* Refactoring of the Qiskit transpiler:
+    * The Qiskit transpiler now automatically uses the :class:`IQMOptimizeSingleQubitGates` pass to optimize single-qubit gates if the `optimization_level >= 0`.
+    * You can now use the native Qiskit :meth:`transpile` method to transpile a circuit to the IQM Deneb backend as long as your circuit does not contain any resonators.
+    * There are many new transpiler plugins available that you can use as the `scheduling_method` argument in Qiskit's :meth:`transpile` method. You can find them in following the `Qiskit documentation <https://docs.quantum.ibm.com/guides/transpiler-plugins>`_. 
+    * If your circuit contains resonators, and optionally :class:`MoveGate` operations, you can use the :meth:`transpile_to_IQM` method to transpile your circuit to the IQM Deneb backend.
+    * :meth:`transpile_to_IQM` can now restrict itself to use a restricted set of qubits by specifying the `restrict_to_qubits` argument. You will need to additionally provide a qubit mapping to the :meth:`backend.run` method to ensure that the correct qubits are used.
+    * Bugfix where the :meth:`transpile_to_IQM` did not retain the circuit layout after transpiling.
+* Deprecated features:
+    * :meth:`optimize_single_qubit_gates` has been deprecated in favor of using the new transpiler plugins or :meth:`transpile_to_IQM`. Additionally, this is now incorporated into the Qiskit transpiler as documented above.
+    * In :meth:`IQMBackend.create_run_request`, and as a result in :meth:`IQMBackend.run`, the `max_circuit_duration_over_t2` and `heralding_mode` options have been deprecated in favor of using the `CircuitCompilationOptions` class from :mod:`iqm-client`. 
+    * The :class:`IQMBackend` no longer uses Qiskit's `options` attribute to give run options in favor of using the arguments of the :meth:`IQMBackend.run` method directly.
+
+
+Version 15.5
+============
+
+* Fix compatibility with ``iqm-client`` V2 APIVariant. `#132 <https://github.com/iqm-finland/qiskit-on-iqm/pull/132>`_
+
+Version 15.4
+============
+
+* Update user guide to incorporate IQM Resonance. `#129 <https://github.com/iqm-finland/qiskit-on-iqm/pull/129>`_
+
+Version 15.3
+============
+
+* Multiplexed measurements explained in the user guide. `#130 <https://github.com/iqm-finland/qiskit-on-iqm/pull/130>`_
+
+Version 15.2
+============
+
+* ``reset`` operation explained in the user guide. `#127 <https://github.com/iqm-finland/qiskit-on-iqm/pull/127>`_
 
 Version 15.1
 ============
@@ -31,14 +63,14 @@ Version 15.0
 Version 14.0
 ============
 
-* Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
-* Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
-* Disable attestations on ``gh-action-pypi-publish`` to fix failing PyPI publishing. `#124 <https://github.com/iqm-finland/iqm-client/pull/124>`_
+* Use dynamic quantum architecture as transpilation target for :class:`IQMBackend`. `#124 <https://github.com/iqm-finland/qiskit-on-iqm/pull/124>`_
+* Require ``iqm-client >= 20.0``. `#124 <https://github.com/iqm-finland/qiskit-on-iqm/pull/124>`_
+* Disable attestations on ``gh-action-pypi-publish`` to fix failing PyPI publishing. `#124 <https://github.com/iqm-finland/qiskit-on-iqm/pull/124>`_
 
 Version 13.16
 =============
 
-* Remove unnecessary build files when publishing documentation. `#122 <https://github.com/iqm-finland/iqm-client/pull/122>`_
+* Remove unnecessary build files when publishing documentation. `#122 <https://github.com/iqm-finland/qiskit-on-iqm/pull/122>`_
 
 Version 13.15
 =============
