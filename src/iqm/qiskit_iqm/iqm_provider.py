@@ -144,6 +144,8 @@ class IQMBackend(IQMBackendBase):
                 As a side effect, you can also use this callback to modify the transpiled circuits
                 in-place, just before execution; however, we do not recommend to use it for this
                 purpose.
+            qubit_mapping: Mapping from qubit indices in the circuit to qubit names on the device. If not provided,
+                `self.index_to_qubit` will be used.
 
         Returns:
             The created run request object
@@ -227,6 +229,8 @@ class IQMBackend(IQMBackendBase):
 
         Args:
             circuit: quantum circuit to serialize
+            qubit_mapping: Mapping from qubit indices in the circuit to qubit names on the device. If not provided,
+                `self.index_to_qubit` will be used.
 
         Returns:
             data transfer object representing the circuit

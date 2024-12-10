@@ -11,6 +11,7 @@ Version 16.0
 * :meth:`IQMBackendBase.qubit_name_to_index` and :meth:`IQMBackendBase.index_to_qubit_name` now raises an error when using an invalid qubit name or index, rather than returning None.
 * Introduction of `IQMBackendBase.physical_target` and `IQMBackendBase.fake_target` to represent the physical quantum architectures and a Qiskit-compatible version, respectively.        
 * Added support for ``qiskit == 1.2`` and ``qiskit-aer == 1.5``.
+* Moved the circuit serialization logic from :class:`IQMProvider` to :mod:`iqm.qiskit_iqm.qiskit_to_iqm`.
 * Refactoring of the Qiskit transpiler:
     * The Qiskit transpiler now automatically uses the :class:`IQMOptimizeSingleQubitGates` pass to optimize single-qubit gates if the `optimization_level >= 0`.
     * You can now use the native Qiskit :meth:`transpile` method to transpile a circuit to the IQM Deneb backend as long as your circuit does not contain any resonators.
