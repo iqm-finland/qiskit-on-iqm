@@ -143,10 +143,10 @@ class IQMBackendBase(BackendV2, ABC):
             Index of the given qubit in the quantum register.
 
         Raises:
-            ValueError if qubit name cannot be found.
+            ValueError: Qubit name cannot be found on the backend.
         """
         if name not in self._qb_to_idx:
-            raise ValueError(f"Qubit name '{name}' is not part of the backend.")
+            raise ValueError(f"Qubit '{name}' is not found on the backend.")
         return self._qb_to_idx[name]
 
     def index_to_qubit_name(self, index: int) -> str:
@@ -156,11 +156,13 @@ class IQMBackendBase(BackendV2, ABC):
             index: Qubit index in the quantum register.
 
         Returns:
-            Corresponding IQM-style qubit name ('QB1', 'QB2', etc.), or ``None`` if
-            the given index does not correspond to any qubit on the backend.
+            Corresponding IQM-style qubit name ('QB1', 'QB2', etc.).
+
+        Raises:
+            ValueError: Qubit index cannot be found on the backend.
         """
         if index not in self._idx_to_qb:
-            raise ValueError(f"Qubit index '{index}' is not part of the backend.")
+            raise ValueError(f"Qubit index {index} is not found on the backend.")
         return self._idx_to_qb[index]
 
     def get_scheduling_stage_plugin(self) -> str:

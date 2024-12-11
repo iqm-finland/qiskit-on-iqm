@@ -121,7 +121,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         qiskit_transpiler_qwargs: Arguments to be passed to the Qiskit transpiler.
 
     Returns:
-        QuantumCircuit: The transpiled circuit ready for running on the backend.
+        The transpiled circuit ready for running on the backend.
     """
     # pylint: disable=too-many-branches
 

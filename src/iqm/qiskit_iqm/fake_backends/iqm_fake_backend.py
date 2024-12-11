@@ -288,14 +288,14 @@ class IQMFakeBackend(IQMBackendBase):
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
         """
-        Run `run_input` on the fake backend using a simulator.
+        Run ``run_input`` on the fake backend using a simulator.
 
         This method runs circuit jobs (an individual or a list of QuantumCircuit or IQMCircuit )
         and returns a :class:`~qiskit.providers.JobV1` object.
 
         It will run the simulation with a noise model of the fake backend (e.g. Adonis, Deneb).
-        Validity of move gates is also checked. The method also transpiles circuit
-        to the native gates so that moves are implemented as unitaries.
+        Validity of MOVE gates is also checked. The method also transpiles circuit
+        to the native gates so that MOVEs are implemented as unitaries.
 
         Args:
             run_input: One or more quantum circuits to simulate on the backend.
@@ -305,7 +305,7 @@ class IQMFakeBackend(IQMBackendBase):
         Raises:
             ValueError: If empty list of circuits is provided.
         """
-        circuits_aux = [run_input] if isinstance(run_input, (QuantumCircuit)) else run_input
+        circuits_aux = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
         if len(circuits_aux) == 0:
             raise ValueError("Empty list of circuits submitted for execution.")
@@ -313,15 +313,12 @@ class IQMFakeBackend(IQMBackendBase):
         circuits = []
 
         for circ in circuits_aux:
-            circ_to_add = circ
+            validate_circuit(circ, self)
 
-            validate_circuit(circ_to_add, self)
-
-            for iqm_gate in [
-                g for g in self.noise_model.basis_gates if g not in list(IQM_TO_QISKIT_GATE_NAME.values())
-            ]:
-                circ_to_add = IQMReplaceGateWithUnitaryPass(iqm_gate, GATE_TO_UNITARY[iqm_gate])(circ_to_add)
-            circuits.append(circ_to_add)
+            for g in self.noise_model.basis_gates:
+                if g not in IQM_TO_QISKIT_GATE_NAME.values():
+                    circ = IQMReplaceGateWithUnitaryPass(g, GATE_TO_UNITARY[g])(circ)
+            circuits.append(circ)
 
         shots = options.get("shots", self.options.shots)
 

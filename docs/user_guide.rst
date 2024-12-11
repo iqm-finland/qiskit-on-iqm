@@ -420,16 +420,20 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
                                                                 0  1  2 
 
 
-Under the hood the Qiskit transpiler uses the :class:`.IQMDefaultSchedulingPlugin` plugin that automatically adapts the
-transpiled circuit from Qiskit to the IQM backend. In particular, if the `optimization_level >= 0`, the plugin will use
-the :class:`.IQMOptimizeSingleQubitGates` pass to optimize single-qubit gates, and the :class:`.IQMNaiveResonatorMoving`
-to insert :class:`.MoveGate` instructions for devices that have a support resonators. 
-Alternatively, you can use the :meth:`transpile_to_IQM` function for more precise control over the transpilation process
-as documented below.
-It is also possible to use one of our other pre-defined transpiler plugins as an argument to :meth:`qiskit.transpile`.
-For example, `transpile(circuit, backend=backend, scheduling_method="only_move_routing_keep")`. Additionally, you can 
-use any of our transpiler passes to define your own :class:`qiskit.transpiler.PassManager` if you want to assemble 
-custom transpilation procedures manually. 
+Under the hood the Qiskit transpiler uses the :class:`.IQMDefaultSchedulingPlugin` plugin that
+automatically adapts the transpiled circuit from Qiskit to the IQM backend. In particular, if the
+``optimization_level >= 0``, the plugin will use the :class:`.IQMOptimizeSingleQubitGates` pass to
+optimize single-qubit gates, and the :class:`.IQMNaiveResonatorMoving` to insert :class:`.MoveGate`
+instructions for devices that have the IQM Star architecture. Alternatively, you can
+use the :func:`transpile_to_IQM` function for more precise control over the transpilation process as
+documented below.
+
+It is also possible to use one of our other pre-defined transpiler plugins as an argument to
+:func:`qiskit.transpile`.  For example,
+``transpile(circuit, backend=backend, scheduling_method="only_move_routing_keep")``.
+Additionally, you can use any of our transpiler passes
+to define your own :class:`qiskit.transpiler.PassManager` if you want to assemble custom
+transpilation procedures manually.
 
 
 Computational resonators
@@ -474,11 +478,11 @@ necessary. For more control over the transpilation process, you can use the :met
 below.
 
 
-The :meth:`transpile_to_IQM` method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The :func:`transpile_to_IQM` function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As an alternative to the native Qiskit transpiler integration, you can use the :meth:`transpile_to_IQM`. 
-This method is meant for users who want at least one of the following things:
+As an alternative to the native Qiskit transpiler integration, you can use the :func:`transpile_to_IQM` function.
+It is meant for users who want at least one of the following things:
 
 * more fine grained control over the transpiler process without having to figure out which IQM transpiler plugin to use,
 * transpile circuits that already contain a computational resonator, or
