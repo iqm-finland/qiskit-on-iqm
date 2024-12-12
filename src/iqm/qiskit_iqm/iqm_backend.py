@@ -174,7 +174,11 @@ class IQMTarget(Target):
     """A target representing an IQM backends that could have resonators.
 
     This target is used to represent the physical layout of the backend, including the resonators as well as a fake
-    coupling map to .
+    coupling map to present to the Qiskit transpiler.
+
+    Args:
+        architecture: The quantum architecture specification representing the backend.
+        component_to_idx: A mapping from component names to integer indices.
     """
 
     def __init__(self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]):
