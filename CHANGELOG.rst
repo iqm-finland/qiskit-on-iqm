@@ -5,6 +5,11 @@ Changelog
 Version 15.5
 ============
 
+* Qiskit Target now contains CZ with the directions are calibrated on the hardwared. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
+
+Version 15.5
+============
+
 * Fix compatibility with ``iqm-client`` V2 APIVariant. `#132 <https://github.com/iqm-finland/qiskit-on-iqm/pull/132>`_
 
 Version 15.4
