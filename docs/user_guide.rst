@@ -530,6 +530,7 @@ Similarly, if you want to transpile a circuit that already contains a computatio
                                   └───────┘   └───────┘               
 
 And if you want force the compiler to use a strict subset of qubits on the device, you can do the following:
+
 .. code-block:: python
 
     transpile_to_IQM(circuit, backend=backend, restrict_to_qubits=[4,3,8])
@@ -548,6 +549,27 @@ And if you want force the compiler to use a strict subset of qubits on the devic
              └─────────────┘                  └─────────────┘ ░  ║  ║ └╥┘
      meas: 3/════════════════════════════════════════════════════╩══╩══╩═
                                                                  0  1  2 
+
+Note that if you do this, you do need to provide the :meth:`.IBMBackend.run` method with the qubit restriction:
+
+.. code-block:: python
+
+    restricted_qubits = [4, 3, 8]
+    restricted_circuit = transpile_to_IQM(circuit, backend=backend, restrict_to_qubits=restricted_qubits)
+    job = backend.run(restricted_circuit, qubit_mapping={i: backend.index_to_qubit_name(q) for i, q in enumerate(restricted_qubits)})
+
+Using custom IQM transpiler plugins
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For convenient native integration of the custom IQM transpiler passes with the Qiskit transpiler, we have implemented
+several scheduling plugins for the Qiskit transpiler. These plugins can be used as the ``scheduling_method`` argument 
+which is provided as a string, not a python object. The string is defined in the `pyproject.toml` file of this package
+and it points to class that would be used by the Qiskit transpiler. For maintainability, the documentation of these 
+plugins in found in their respective plugin classes. 
+
+If you are unsure which plugin to use, you can use :meth:`transpile_to_IQM` with the appropriate arguments. This function
+determines which plugin to use based on the backend and the provided arguments.
+Note that the Qiskit transpiler automatically uses the IQMDefaultSchedulingPlugin when the backend is an IQM backend.
 
 Batch execution of circuits
 ---------------------------
