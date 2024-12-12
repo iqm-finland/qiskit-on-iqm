@@ -32,7 +32,7 @@ def test_move_gate_trivial_layout(move_architecture):
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
         'move:6,0',
-        'cz:0,3',
+        'cz:3,0',
         'cz:2,0',
         'move:6,0',
     ]
@@ -56,10 +56,10 @@ def test_mapped_move_qubit(move_architecture):
     """
     qc = QuantumCircuit(7)
     qc.append(MoveGate(), [3, 0])
-    qc.cz(0, 2)
+    qc.cz(2, 0)
     qc.append(MoveGate(), [3, 0])
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture, create_move_layout=True)
-    assert [describe_instruction(i) for i in submitted_circuit.instructions] == ['move:6,0', 'cz:0,2', 'move:6,0']
+    assert [describe_instruction(i) for i in submitted_circuit.instructions] == ['move:6,0', 'cz:2,0', 'move:6,0']
 
 
 def test_mapped_move_qubit_and_resonator(move_architecture):
@@ -73,10 +73,10 @@ def test_mapped_move_qubit_and_resonator(move_architecture):
     qc.h(5)
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture, create_move_layout=True)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
-        'cz:0,4',
+        'cz:4,0',
         'move:6,0',
-        'cz:0,1',
-        'cz:0,2',
+        'cz:1,0',
+        'cz:2,0',
         'move:6,0',
         'prx:6',
         'prx:6',
@@ -120,7 +120,7 @@ def test_transpiled_circuit(move_architecture):
         # move(6, 0)
         'move:6,0',
         # cz(0, 3)
-        'cz:0,3',
+        'cz:3,0',
         # cz(4, 0) is optimized before h(6)
         'cz:4,0',
         # h(6)

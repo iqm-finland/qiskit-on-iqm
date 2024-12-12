@@ -36,9 +36,7 @@ def test_backend_configuration_new(move_architecture):
     check_instruction(backend.instructions, 'r', [(1,), (2,), (3,), (4,), (5,), (6,)])
     check_instruction(backend.instructions, 'measure', [(1,), (2,), (3,), (4,), (5,), (6,)])
     check_instruction(backend.instructions, 'id', [(0,), (1,), (2,), (3,), (4,), (5,), (6,)])
-    check_instruction(
-        backend.instructions, 'cz', [(1, 0), (0, 1), (2, 0), (0, 2), (3, 0), (0, 3), (4, 0), (0, 4), (5, 0), (0, 5)]
-    )
+    check_instruction(backend.instructions, 'cz', [(i, 0) for i in range(1, 6)])
     check_instruction(backend.instructions, 'move', [(6, 0)])
 
 
@@ -58,7 +56,7 @@ def test_backend_configuration_adonis(adonis_architecture):
     check_instruction(backend.instructions, 'r', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'measure', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'id', [(0,), (1,), (2,), (3,), (4,)])
-    check_instruction(backend.instructions, 'cz', [(0, 2), (2, 0), (1, 2), (2, 1), (3, 2), (2, 3), (4, 2), (2, 4)])
+    check_instruction(backend.instructions, 'cz', [(0, 2), (1, 2), (3, 2), (4, 2)])
 
 
 def check_instruction(
