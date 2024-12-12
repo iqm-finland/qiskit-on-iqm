@@ -247,13 +247,12 @@ class IQMTarget(Target):
                         and qb2 not in architecture.computational_resonators
                     ):
                         fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
-                        fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
                     else:
                         move_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
-                        move_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
                 for qb1, res in operations['move'].implementations[operations['move'].default_implementation].loci:
                     for qb2 in [q for q in architecture.qubits if q not in [qb1, res]]:
-                        if (qb2, res) in cz_loci or (res, qb2) in cz_loci:
+                        if (qb2, res) in cz_loci: (res, qb2) in cz_loci:
+                            # This is a fake CZ and can be bidirectional.
                             fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                             fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
                 self.add_instruction(CZGate(), fake_cz_connections)
