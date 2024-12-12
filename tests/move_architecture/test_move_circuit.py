@@ -34,7 +34,7 @@ def test_move_gate_trivial_layout(move_architecture):
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
         'move:QB6,COMP_R',
-        'cz:COMP_R,QB4',
+        'cz:QB4,COMP_R',
         'cz:QB3,COMP_R',
         'move:QB6,COMP_R',
     ]
@@ -61,12 +61,12 @@ def test_mapped_move_qubit(move_architecture):
     """
     qc = QuantumCircuit(7)
     qc.append(MoveGate(), [3, 0])
-    qc.cz(0, 2)
+    qc.cz(2, 0)
     qc.append(MoveGate(), [3, 0])
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
         'move:QB6,COMP_R',
-        'cz:COMP_R,QB3',
+        'cz:QB3,COMP_R',
         'move:QB6,COMP_R',
     ]
 
@@ -82,10 +82,10 @@ def test_mapped_move_qubit_and_resonator(move_architecture):
     qc.h(5)
     submitted_circuit = get_transpiled_circuit_json(qc, move_architecture)
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
-        'cz:COMP_R,QB5',
+        'cz:QB5,COMP_R',
         'move:QB6,COMP_R',
-        'cz:COMP_R,QB2',
-        'cz:COMP_R,QB1',
+        'cz:QB2,COMP_R',
+        'cz:QB1,COMP_R',
         'move:QB6,COMP_R',
         'prx:QB6',
     ]
@@ -124,7 +124,7 @@ def test_transpiled_circuit(move_architecture):
     assert [describe_instruction(i) for i in submitted_circuit.instructions] == [
         'prx:QB5',
         'move:QB6,COMP_R',
-        'cz:COMP_R,QB4',
+        'cz:QB4,COMP_R',
         'cz:QB5,COMP_R',
         'barrier:COMP_R,QB2,QB3,QB4,QB5,QB1,QB6',
         'move:QB6,COMP_R',

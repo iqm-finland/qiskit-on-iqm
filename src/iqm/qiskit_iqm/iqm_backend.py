@@ -236,7 +236,7 @@ class IQMTarget(Target):
 
         fake_target_with_moves = deepcopy(real_target)
         if 'cz' in operations:
-            real_target.add_instruction(CZGate(), _create_connections('cz', True))
+            real_target.add_instruction(CZGate(), _create_connections('cz'))
             if 'move' in operations:
                 fake_cz_connections: dict[tuple[int, int], None] = {}
                 cz_loci = operations['cz'].implementations[operations['cz'].default_implementation].loci
@@ -251,7 +251,7 @@ class IQMTarget(Target):
                         move_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                 for qb1, res in operations['move'].implementations[operations['move'].default_implementation].loci:
                     for qb2 in [q for q in architecture.qubits if q not in [qb1, res]]:
-                        if (qb2, res) in cz_loci: (res, qb2) in cz_loci:
+                        if (qb2, res) in cz_loci or (res, qb2) in cz_loci:
                             # This is a fake CZ and can be bidirectional.
                             fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                             fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
@@ -259,8 +259,8 @@ class IQMTarget(Target):
                 fake_cz_connections.update(move_cz_connections)
                 fake_target_with_moves.add_instruction(CZGate(), fake_cz_connections)
             else:
-                self.add_instruction(CZGate(), _create_connections('cz', True))
-                fake_target_with_moves.add_instruction(CZGate(), _create_connections('cz', True))
+                self.add_instruction(CZGate(), _create_connections('cz'))
+                fake_target_with_moves.add_instruction(CZGate(), _create_connections('cz'))
         fake_target_with_moves.set_real_target(real_target)
         self.fake_target_with_moves: IQMTarget = fake_target_with_moves
         return real_target

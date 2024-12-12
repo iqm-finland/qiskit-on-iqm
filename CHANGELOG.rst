@@ -44,6 +44,11 @@ Version 16.0
     favor of using the arguments of the :meth:`IQMBackend.run` method directly.
 
 
+Version 15.6
+============
+
+* Qiskit Target now contains CZ with the directions are calibrated on the hardwared. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
+
 Version 15.5
 ============
 
