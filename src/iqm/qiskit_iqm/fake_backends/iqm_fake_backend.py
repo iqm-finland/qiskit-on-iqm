@@ -294,8 +294,7 @@ class IQMFakeBackend(IQMBackendBase):
         and returns a :class:`~qiskit.providers.JobV1` object.
 
         It will run the simulation with a noise model of the fake backend (e.g. Adonis, Deneb).
-        Validity of MOVE gates is also checked. The method also transpiles circuit
-        to the native gates so that MOVEs are implemented as unitaries.
+        Validity of MOVE gates is also checked.
 
         Args:
             run_input: One or more quantum circuits to simulate on the backend.
