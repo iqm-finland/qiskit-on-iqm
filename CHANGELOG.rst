@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 15.6
+============
+
+* Added python 3.12 support. `#139 <https://github.com/iqm-finland/qiskit-on-iqm/pull/139>`
+* Python 3.9 support is deprecated and will be removed in the future.
+
 Version 15.5
 ============
 
