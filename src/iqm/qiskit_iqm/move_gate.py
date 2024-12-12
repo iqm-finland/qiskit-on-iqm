@@ -14,8 +14,9 @@
 """MOVE gate to be used on the IQM Star architecture."""
 
 from qiskit.circuit import Gate
-from qiskit.circuit.quantumcircuit import QuantumCircuit, QuantumRegister
 import qiskit.quantum_info as qi
+
+MOVE_GATE_UNITARY = [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
 
 
 class MoveGate(Gate):
@@ -40,21 +41,10 @@ class MoveGate(Gate):
     def __init__(self, label=None):
         """Initializes the move gate"""
         super().__init__("move", 2, [], label=label)
-        self.unitary = qi.Operator(
-            [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
-        )
+        self.unitary = qi.Operator(MOVE_GATE_UNITARY)
 
     def _define(self):
-        """Pretend that this gate is a SWAP for the purpose of matrix checking.
-
-        The |0> needs to be traced out for the resonator 'qubits'.
-
-        gate swap a,b
+        """This function is purposefully not defined so that that the Qiskit transpiler cannot accidentally
+        decompose the MOVE gate into a sequence of other gates, instead it will throw an error.
         """
-
-        q = QuantumRegister(2, "q")
-        qc = QuantumCircuit(q, name=self.label if self.label else self.name)
-
-        qc.unitary(self.unitary, [q[0], q[1]], label=self.name)
-
-        self.definition = qc
+        return

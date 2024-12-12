@@ -75,7 +75,11 @@ class IQMJob(JobV1):
             raise ValueError(
                 f'Cannot format IQM result without measurements. Job status is "{iqm_result.status.value.upper()}"'
             )
-        requested_shots = self.metadata.get('shots', iqm_result.metadata.shots)
+        if iqm_result.metadata.request is None:
+            raise ValueError(
+                f'Cannot format IQM result without original request. Job status is "{iqm_result.status.value.upper()}"'
+            )
+        requested_shots = self.metadata.get('shots', iqm_result.metadata.request.shots)
         # If no heralding, for all circuits we expect the same number of shots which is the shots requested by user.
         expect_exact_shots = iqm_result.metadata.heralding_mode == HeraldingMode.NONE
 
