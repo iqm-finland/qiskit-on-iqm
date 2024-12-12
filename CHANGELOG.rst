@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 15.6
+============
+
+* Added python 3.12 support.
+* Python 3.9 will be removed in the next major release.
+
 Version 15.5
 ============
 
