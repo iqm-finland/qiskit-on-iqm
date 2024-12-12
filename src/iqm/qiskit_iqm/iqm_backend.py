@@ -61,11 +61,6 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
         )
         for gate_name, gate_loci in sqa.operations.items()
     }
-    gates['measure'] = GateInfo(
-        implementations={'__fake': GateImplementationInfo(loci=tuple(tuple([locus]) for locus in qubits))},
-        default_implementation='__fake',
-        override_default_implementation={},
-    )
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('00000000-0000-0000-0000-000000000000'),
         qubits=qubits,

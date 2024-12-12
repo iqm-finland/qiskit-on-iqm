@@ -35,7 +35,11 @@ def reset_mocks_after_tests():
 def linear_3q_architecture_static():
     return QuantumArchitectureSpecification(
         name='3q_line',
-        operations={'prx': [['QB1'], ['QB2'], ['QB3']], 'cz': [['QB1', 'QB2'], ['QB2', 'QB3']]},
+        operations={
+            'prx': [['QB1'], ['QB2'], ['QB3']],
+            'cz': [['QB1', 'QB2'], ['QB2', 'QB3']],
+            'measure': [['QB1'], ['QB2'], ['QB3']],
+        },
         qubits=['QB1', 'QB2', 'QB3'],
         qubit_connectivity=[['QB1', 'QB2'], ['QB2', 'QB3']],
     )
@@ -56,6 +60,11 @@ def linear_3q_architecture():
             'cz': GateInfo(
                 implementations={'tgss': GateImplementationInfo(loci=(('QB1', 'QB2'), ('QB2', 'QB3')))},
                 default_implementation='tgss',
+                override_default_implementation={},
+            ),
+            'measure': GateInfo(
+                implementations={'constant': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',)))},
+                default_implementation='constant',
                 override_default_implementation={},
             ),
         },
