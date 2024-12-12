@@ -57,9 +57,9 @@ def test_qubit_name_to_index_to_qubit_name(adonis_shuffled_names_architecture):
         assert backend.index_to_qubit_name(idx) == name
         assert backend.qubit_name_to_index(name) == idx
 
-    with pytest.raises(ValueError, match="Qubit index '7' is not part of the backend."):
+    with pytest.raises(ValueError, match='Qubit index 7 is not found on the backend.'):
         backend.index_to_qubit_name(7)
-    with pytest.raises(ValueError, match="Qubit name 'Alice' is not part of the backend."):
+    with pytest.raises(ValueError, match='Qubit \'Alice\' is not found on the backend.'):
         backend.qubit_name_to_index('Alice')
 
 
