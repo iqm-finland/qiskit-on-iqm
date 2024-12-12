@@ -113,20 +113,20 @@ def test_submitted_circuit(adonis_architecture):
 
     instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]
     assert instr_names == [
-        # Hadamard on 0 (= physical 0)
+        # CX phase 1: Hadamard on target qubit 1 (= physical 2)
         'prx:2',
         'prx:2',
-        # CX phase 1: Hadamard on target qubit 1 (= physical 4)
+        # Hadamard on target qubit 0 (= physical 4)
         'prx:4',
         'prx:4',
-        # CX phase 2: CZ on 0,1 (= physical 2,4)
-        'cz:2,4',
-        # Hadamard again on target qubit 1 (= physical 4)
-        'prx:4',
-        'prx:4',
+        # CX phase 2: CZ on 0,1 (= physical 4,2)
+        'cz:4,2',
+        # CX phase 3: Hadamard again on target qubit 1 (= physical 2)
+        'prx:2',
+        'prx:2',
         # Barrier before measurements
-        'barrier:2,4',
+        'barrier:4,2',
         # Measurement on both qubits
-        'measure:2',
         'measure:4',
+        'measure:2',
     ]

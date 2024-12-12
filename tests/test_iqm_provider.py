@@ -55,7 +55,7 @@ def test_get_backend(linear_3q_architecture):
     assert isinstance(backend, IQMBackend)
     assert backend.client._api.iqm_server_url == url
     assert backend.num_qubits == 3
-    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 0), (1, 2), (2, 1)}
+    assert set(backend.coupling_map.get_edges()) == {(0, 1), (1, 2)}
     assert backend._calibration_set_id == linear_3q_architecture.calibration_set_id
 
 
