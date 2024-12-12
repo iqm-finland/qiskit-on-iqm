@@ -56,7 +56,7 @@ def test_backend_configuration_adonis(adonis_architecture):
     check_instruction(backend.instructions, 'r', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'measure', [(0,), (1,), (2,), (3,), (4,)])
     check_instruction(backend.instructions, 'id', [(0,), (1,), (2,), (3,), (4,)])
-    check_instruction(backend.instructions, 'cz', [(0, 2), (1, 2), (3, 2), (4, 2)])
+    check_instruction(backend.instructions, 'cz', [(0, 2), (1, 2), (2, 3), (2, 4)])
 
 
 def check_instruction(

@@ -19,17 +19,20 @@ from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFa
 
 def IQMFakeAdonis() -> IQMFakeBackend:
     """Return IQMFakeBackend instance representing IQM's Adonis architecture."""
+
+    qubits = ["QB1", "QB2", "QB3", "QB4", "QB5"]
+    qubit_connectivity = [["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]]
     architecture = QuantumArchitectureSpecification(
         name="Adonis",
         operations={
-            "prx": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"]],
-            "cc_prx": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"]],
-            "cz": [["QB1", "QB3"], ["QB2", "QB3"], ["QB4", "QB3"], ["QB5", "QB3"]],
-            "measure": [["QB1"], ["QB2"], ["QB3"], ["QB4"], ["QB5"]],
+            "prx": [[q] for q in qubits],
+            "cc_prx": [[q] for q in qubits],
+            "cz": list(qubit_connectivity),
+            "measure": [[q] for q in qubits],
             "barrier": [],
         },
-        qubits=["QB1", "QB2", "QB3", "QB4", "QB5"],
-        qubit_connectivity=[["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]],
+        qubits=qubits,
+        qubit_connectivity=qubit_connectivity,
     )
     error_profile = IQMErrorProfile(
         t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},

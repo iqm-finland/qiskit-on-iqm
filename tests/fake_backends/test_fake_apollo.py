@@ -19,14 +19,21 @@ from qiskit_aer.noise.noise_model import NoiseModel
 from iqm.qiskit_iqm import IQMFakeApollo
 
 
+def connectivity_to_coupling_map(connectivity: list[list[str]]) -> set[tuple[int, int]]:
+    """Convert IQMFakeBackend qubit names "QB{i}" to Qiskit indices."""
+    return {tuple(int(q[2:]) - 1 for q in pair) for pair in connectivity}
+
+
 def test_iqm_fake_apollo():
     backend = IQMFakeApollo()
     assert backend.num_qubits == 20
     assert backend.name == 'IQMFakeApolloBackend'
 
 
-def test_iqm_fake_apollo_connectivity(apollo_coupling_map):
+def test_iqm_fake_apollo_connectivity():
     backend = IQMFakeApollo()
+    # for current fake backends, cz connectivity is the same as the QPU connectivity
+    apollo_coupling_map = connectivity_to_coupling_map(backend.architecture.gates['cz'].loci)
     assert set(backend.coupling_map.get_edges()) == apollo_coupling_map
 
 

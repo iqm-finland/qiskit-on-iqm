@@ -119,8 +119,8 @@ def test_submitted_circuit(adonis_architecture):
         # Hadamard on target qubit 0 (= physical 4)
         'prx:4',
         'prx:4',
-        # CX phase 2: CZ on 0,1 (= physical 4,2)
-        'cz:4,2',
+        # CX phase 2: CZ on 0,1 (= physical 2,4)
+        'cz:2,4',
         # CX phase 3: Hadamard again on target qubit 1 (= physical 2)
         'prx:2',
         'prx:2',
