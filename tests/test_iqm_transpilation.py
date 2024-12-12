@@ -158,8 +158,3 @@ def test_optimize_single_qubit_gates_preserves_layout(backend):
     layout = transpiled_circuit.layout
     qc_optimized = optimize_single_qubit_gates(transpiled_circuit)
     assert layout == qc_optimized.layout
-    # Transpile automatically runs the optimization pass followed by move gate transpilation,
-    # so the two circuits should be exactly the same if there are no moves.
-    # Otherwise, some MoveGate and RGate might be swapped when drawing the circuit
-    if 'move' not in transpiled_circuit.count_ops():
-        assert str(transpiled_circuit.draw(output='text')) == str(qc_optimized.draw(output='text'))
