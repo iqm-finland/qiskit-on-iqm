@@ -146,7 +146,7 @@ class IQMBackendBase(BackendV2, ABC):
             ValueError: Qubit name cannot be found on the backend.
         """
         if name not in self._qb_to_idx:
-            raise ValueError(f"Qubit '{name}' is not found on the backend.")
+            raise ValueError(f'Qubit \'{name}\' is not found on the backend.')
         return self._qb_to_idx[name]
 
     def index_to_qubit_name(self, index: int) -> str:
@@ -162,7 +162,7 @@ class IQMBackendBase(BackendV2, ABC):
             ValueError: Qubit index cannot be found on the backend.
         """
         if index not in self._idx_to_qb:
-            raise ValueError(f"Qubit index {index} is not found on the backend.")
+            raise ValueError(f'Qubit index {index} is not found on the backend.')
         return self._idx_to_qb[index]
 
     def get_scheduling_stage_plugin(self) -> str:
