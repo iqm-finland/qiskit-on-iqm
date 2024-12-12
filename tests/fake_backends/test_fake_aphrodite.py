@@ -17,7 +17,6 @@
 from qiskit_aer.noise.noise_model import NoiseModel
 
 from iqm.qiskit_iqm import IQMFakeAphrodite
-
 from tests.fake_backends.test_fake_apollo import connectivity_to_coupling_map
 
 
