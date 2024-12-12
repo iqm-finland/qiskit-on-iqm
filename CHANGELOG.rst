@@ -6,6 +6,7 @@ Version 16.0
 =============
 
 * Added support for ``qiskit == 1.2`` and ``qiskit-aer == 0.15``.
+* Drop support for ``qiskit < 0.45``.
 * :meth:`IQMBackendBase.qubit_name_to_index` and :meth:`IQMBackendBase.index_to_qubit_name` now
   raises an error when using an invalid qubit name or index, rather than returning None.
 * Refactored :meth:`IQMBackend.create_run_request` to improve user experience when using IQM
@@ -30,7 +31,7 @@ Version 16.0
     :meth:`backend.run` method to ensure that the correct qubits are used.
   * Bugfix where the :func:`transpile_to_IQM` did not retain the circuit layout after transpiling.
 
-* Fixed :func:`IQMFakeDeneb` readout errors. Fidelities were reported as errors.
+* Fixed :func:`IQMFakeDeneb` readout errors. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/qiskit-on-iqm/pull/125>`_
 * Deprecated features:
 
   * :func:`optimize_single_qubit_gates` has been deprecated in favor of using the new transpiler
