@@ -5,7 +5,7 @@ Changelog
 Version 15.6
 ============
 
-* Qiskit Target now contains CZ with the directions are calibrated on the hardwared. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
+* CZ gates now appear in the transpilation target only in the direction they are calibrated. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
 
 Version 15.5
 ============
