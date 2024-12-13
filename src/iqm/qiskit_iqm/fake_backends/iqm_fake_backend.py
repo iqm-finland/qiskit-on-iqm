@@ -394,3 +394,24 @@ class IQMFakeBackend(IQMBackendBase):
         connectivity_match = self_connectivity == target_connectivity
 
         return components_match and ops_match and connectivity_match
+
+
+def generation_DQA_from_lists(qubits: list[str], qubit_connectivity: list[list[str]]) -> DynamicQuantumArchitecture:
+    """Generate a Dynamic Quantum Architecture from lists of qubits and qubit connectivity.
+
+    Args:
+        qubits: list of qubit names
+        qubit_connectivity: list of lists of qubit pairs representing connectivity
+    """
+    return QuantumArchitectureSpecification(
+        name="Adonis",
+        operations={
+            "prx": [[q] for q in qubits],
+            "cc_prx": [[q] for q in qubits],
+            "cz": list(qubit_connectivity),
+            "measure": [[q] for q in qubits],
+            "barrier": [],
+        },
+        qubits=qubits,
+        qubit_connectivity=qubit_connectivity,
+    )

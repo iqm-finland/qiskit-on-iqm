@@ -13,8 +13,7 @@
 # limitations under the License.
 """Fake (i.e. simulated) backend for IQM's 54-qubit Aphrodite architecture
 """
-from iqm.iqm_client import QuantumArchitectureSpecification
-from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
+from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend, generation_DQA_from_lists
 
 
 def IQMFakeAphrodite() -> IQMFakeBackend:
@@ -168,17 +167,7 @@ def IQMFakeAphrodite() -> IQMFakeBackend:
         ["QB52", "QB53"],
         ["QB53", "QB54"],
     ]
-    architecture = QuantumArchitectureSpecification(
-        name="Aphrodite",
-        operations={
-            "prx": [[q] for q in qubits],
-            "cz": list(qubit_connectivity),
-            "measure": [[q] for q in qubits],
-            "barrier": [],
-        },
-        qubits=qubits,
-        qubit_connectivity=qubit_connectivity,
-    )
+    architecture = generation_DQA_from_lists(qubits, qubit_connectivity)
 
     error_profile = IQMErrorProfile(
         t1s={

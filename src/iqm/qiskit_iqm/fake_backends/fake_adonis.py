@@ -13,8 +13,7 @@
 # limitations under the License.
 """Fake backend for IQM's 5-qubit Adonis architecture.
 """
-from iqm.iqm_client import QuantumArchitectureSpecification
-from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
+from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend, generation_DQA_from_lists
 
 
 def IQMFakeAdonis() -> IQMFakeBackend:
@@ -22,18 +21,7 @@ def IQMFakeAdonis() -> IQMFakeBackend:
 
     qubits = ["QB1", "QB2", "QB3", "QB4", "QB5"]
     qubit_connectivity = [["QB1", "QB3"], ["QB2", "QB3"], ["QB3", "QB4"], ["QB3", "QB5"]]
-    architecture = QuantumArchitectureSpecification(
-        name="Adonis",
-        operations={
-            "prx": [[q] for q in qubits],
-            "cc_prx": [[q] for q in qubits],
-            "cz": list(qubit_connectivity),
-            "measure": [[q] for q in qubits],
-            "barrier": [],
-        },
-        qubits=qubits,
-        qubit_connectivity=qubit_connectivity,
-    )
+    architecture = generation_DQA_from_lists(qubits, qubit_connectivity)
     error_profile = IQMErrorProfile(
         t1s={"QB1": 27000.0, "QB2": 33000.0, "QB3": 25000.0, "QB4": 40000.0, "QB5": 25000.0},
         t2s={"QB1": 20000.0, "QB2": 26000.0, "QB3": 23000.0, "QB4": 26000.0, "QB5": 7000.0},
