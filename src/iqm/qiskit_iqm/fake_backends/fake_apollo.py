@@ -13,7 +13,11 @@
 # limitations under the License.
 """Fake (i.e. simulated) backend for IQM's 20-qubit Apollo architecture
 """
-from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend, generation_DQA_from_lists
+from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import (
+    IQMErrorProfile,
+    IQMFakeBackend,
+    generate_architecture_from_lists,
+)
 
 
 def IQMFakeApollo() -> IQMFakeBackend:
@@ -72,7 +76,7 @@ def IQMFakeApollo() -> IQMFakeBackend:
         ["QB18", "QB19"],
         ["QB19", "QB20"],
     ]
-    architecture = generation_DQA_from_lists(qubits, qubit_connectivity)
+    architecture = generate_architecture_from_lists(qubits, qubit_connectivity)
     # Note that these specs are ballpark numbers and don't correspond directly to a specific device
     error_profile = IQMErrorProfile(
         t1s={

@@ -396,7 +396,9 @@ class IQMFakeBackend(IQMBackendBase):
         return components_match and ops_match and connectivity_match
 
 
-def generation_DQA_from_lists(qubits: list[str], qubit_connectivity: list[list[str]]) -> DynamicQuantumArchitecture:
+def generate_architecture_from_lists(
+    qubits: list[str], qubit_connectivity: list[list[str]]
+) -> QuantumArchitectureSpecification:
     """Generate a Dynamic Quantum Architecture from lists of qubits and qubit connectivity.
 
     Args:
