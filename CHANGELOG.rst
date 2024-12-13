@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 15.6
+============
+
+* CZ gates now appear in the transpilation target only in the direction they are calibrated. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
+
 Version 15.5
 ============
 

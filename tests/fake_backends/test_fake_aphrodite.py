@@ -17,6 +17,7 @@
 from qiskit_aer.noise.noise_model import NoiseModel
 
 from iqm.qiskit_iqm import IQMFakeAphrodite
+from tests.fake_backends.test_fake_apollo import connectivity_to_coupling_map
 
 
 def test_iqm_fake_aphrodite():
@@ -25,8 +26,10 @@ def test_iqm_fake_aphrodite():
     assert backend.name == 'IQMFakeAphroditeBackend'
 
 
-def test_iqm_fake_aphrodite_connectivity(aphrodite_coupling_map):
+def test_iqm_fake_aphrodite_connectivity():
     backend = IQMFakeAphrodite()
+    # for current fake backends, cz connectivity is the same as the QPU connectivity
+    aphrodite_coupling_map = connectivity_to_coupling_map(backend.architecture.gates['cz'].loci)
     assert set(backend.coupling_map.get_edges()) == aphrodite_coupling_map
 
 

@@ -118,7 +118,7 @@ class IQMBackendBase(BackendV2, ABC):
         if 'prx' in operations:
             target.add_instruction(RGate(Parameter('theta'), Parameter('phi')), _create_properties('prx'))
         if 'cz' in operations:
-            target.add_instruction(CZGate(), _create_properties('cz', symmetric=True))
+            target.add_instruction(CZGate(), _create_properties('cz'))
         if 'move' in operations:
             target.add_instruction(MoveGate(), _create_properties('move'))
         if 'cc_prx' in operations:
