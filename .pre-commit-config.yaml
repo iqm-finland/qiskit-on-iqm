@@ -1,6 +1,15 @@
 repos:
   - repo: local
     hooks:
+      - id: format
+        name: format
+        entry: tox -e format
+        language: system
+        files: \.py$
+        pass_filenames: false
+
+  - repo: local
+    hooks:
       - id: pip-compile
         name: pip-compile
         entry: tox -e pip-compile
