@@ -18,7 +18,7 @@ from __future__ import annotations
 from abc import ABC
 from copy import deepcopy
 import re
-from typing import Final, List, Union
+from typing import Final, Union
 from uuid import UUID
 
 from qiskit.circuit import Parameter, Reset
@@ -272,7 +272,7 @@ class IQMTarget(Target):
         """
         self.real_target = real_target
 
-    def restrict_to_qubits(self, qubits: Union[List[int], List[str]]) -> IQMTarget:
+    def restrict_to_qubits(self, qubits: Union[list[int], list[str]]) -> IQMTarget:
         """Restrict the target to only the given qubits.
 
         Args:

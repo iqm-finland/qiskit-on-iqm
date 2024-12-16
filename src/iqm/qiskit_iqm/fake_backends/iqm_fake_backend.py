@@ -33,10 +33,6 @@ from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.iqm_transpilation import IQMReplaceGateWithUnitaryPass
 from iqm.qiskit_iqm.move_gate import MOVE_GATE_UNITARY
 
-GATE_TO_UNITARY = {
-    "move": MOVE_GATE_UNITARY,
-}
-
 
 # pylint: disable=too-many-instance-attributes
 @dataclass
@@ -288,13 +284,10 @@ class IQMFakeBackend(IQMBackendBase):
 
     def run(self, run_input: Union[QuantumCircuit, list[QuantumCircuit]], **options) -> JobV1:
         """
-        Run ``run_input`` on the fake backend using a simulator.
+        Run quantum circuits on the fake backend (by simulating them).
 
-        This method runs circuit jobs (an individual or a list of QuantumCircuit or IQMCircuit )
-        and returns a :class:`~qiskit.providers.JobV1` object.
-
-        It will run the simulation with a noise model of the fake backend (e.g. Adonis, Deneb).
-        Validity of MOVE gates is also checked.
+        This method will run the simulation with the noise model of the fake backend.
+        Validity of the circuits is also checked.
 
         Args:
             run_input: One or more quantum circuits to simulate on the backend.
@@ -302,7 +295,7 @@ class IQMFakeBackend(IQMBackendBase):
         Returns:
             The job object representing the run.
         Raises:
-            ValueError: If empty list of circuits is provided.
+            ValueError: Empty list of circuits was provided.
         """
         circuits_aux = [run_input] if isinstance(run_input, QuantumCircuit) else run_input
 
@@ -310,6 +303,9 @@ class IQMFakeBackend(IQMBackendBase):
             raise ValueError("Empty list of circuits submitted for execution.")
 
         circuits = []
+        GATE_TO_UNITARY = {
+            "move": MOVE_GATE_UNITARY,
+        }
 
         for circ in circuits_aux:
             validate_circuit(circ, self)
@@ -325,7 +321,6 @@ class IQMFakeBackend(IQMBackendBase):
         sim_noise = AerSimulator(noise_model=self.noise_model)
 
         job = sim_noise.run(circuits, shots=shots)
-
         return job
 
     def validate_compatible_architecture(self, architecture: DynamicQuantumArchitecture) -> bool:
