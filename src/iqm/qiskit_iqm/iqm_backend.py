@@ -84,8 +84,6 @@ class IQMBackendBase(BackendV2, ABC):
         architecture: Description of the quantum architecture associated with the backend instance.
     """
 
-    architecture: DynamicQuantumArchitecture
-
     def __init__(
         self,
         architecture: Union[QuantumArchitectureSpecification, DynamicQuantumArchitecture],
@@ -96,7 +94,8 @@ class IQMBackendBase(BackendV2, ABC):
             arch = _dqa_from_static_architecture(architecture)
         else:
             arch = architecture
-        self.architecture = arch
+        self.architecture: DynamicQuantumArchitecture = arch
+        """Dynamic quantum architecture of the backend instance."""
 
         # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
         # Because of the way the Target and the transpiler interact, the resonators need to have higher indices than

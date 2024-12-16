@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from importlib.metadata import PackageNotFoundError, version
-from typing import Optional, Union
+from typing import Any, Optional, Union
 from uuid import UUID
 import warnings
 
@@ -117,7 +117,7 @@ class IQMBackend(IQMBackendBase):
         run_input: Union[QuantumCircuit, list[QuantumCircuit]],
         shots: int = 1024,
         circuit_compilation_options: Optional[CircuitCompilationOptions] = None,
-        circuit_callback: Optional[Callable] = None,
+        circuit_callback: Optional[Callable[[list[QuantumCircuit]], Any]] = None,
         qubit_mapping: Optional[dict[int, str]] = None,
         **unknown_options,
     ) -> RunRequest:
@@ -128,12 +128,13 @@ class IQMBackend(IQMBackendBase):
         Args:
             run_input: Same as in :meth:`run`.
 
-        Keyword Args:
-            shots (int): Number of repetitions of each circuit, for sampling. Default is 1024.
-            circuit_compilation_options (iqm.iqm_client.models.CircuitCompilationOptions):
-                Compilation options for the circuits, passed on to :mod:`iqm-client`. If not provided, the default is
-                the ``CircuitCompilationOptions`` default.
-            circuit_callback (collections.abc.Callable[[list[QuantumCircuit]], Any]):
+        Args:
+            shots: Number of repetitions of each circuit, for sampling.
+            circuit_compilation_options:
+                Compilation options for the circuits, passed on to :class:`~iqm.iqm_client.iqm_client.IQMClient`.
+                If ``None``, the defaults of the :class:`~iqm.iqm_client.models.CircuitCompilationOptions`
+                class are used.
+            circuit_callback:
                 Callback function that, if provided, will be called for the circuits before sending
                 them to the device.  This may be useful in situations when you do not have explicit
                 control over transpilation, but need some information on how it was done. This can
@@ -144,8 +145,8 @@ class IQMBackend(IQMBackendBase):
                 As a side effect, you can also use this callback to modify the transpiled circuits
                 in-place, just before execution; however, we do not recommend to use it for this
                 purpose.
-            qubit_mapping: Mapping from qubit indices in the circuit to qubit names on the device. If not provided,
-                `self.index_to_qubit` will be used.
+            qubit_mapping: Mapping from qubit indices in the circuit to qubit names on the device. If ``None``,
+                :attr:`.IQMBackendBase.index_to_qubit_name` will be used.
 
         Returns:
             The created run request object
@@ -204,7 +205,14 @@ class IQMBackend(IQMBackendBase):
         return run_request
 
     def retrieve_job(self, job_id: str) -> IQMJob:
-        """Create and return an IQMJob instance associated with this backend with given job id."""
+        """Create and return an IQMJob instance associated with this backend with given job id.
+
+        Args:
+            job_id: ID of the job to retrieve.
+
+        Returns:
+            corresponding job
+        """
         return IQMJob(self, job_id)
 
     def close_client(self) -> None:
@@ -230,7 +238,7 @@ class IQMBackend(IQMBackendBase):
         Args:
             circuit: quantum circuit to serialize
             qubit_mapping: Mapping from qubit indices in the circuit to qubit names on the device. If not provided,
-                `self.index_to_qubit` will be used.
+                :attr:`.IQMBackendBase.index_to_qubit_name` will be used.
 
         Returns:
             data transfer object representing the circuit

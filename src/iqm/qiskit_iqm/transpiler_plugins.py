@@ -30,7 +30,7 @@ class IQMSchedulingPlugin(PassManagerStagePlugin):
     Args:
         move_gate_routing: whether to include MoveGate routing in the scheduling stage.
         optimize_sqg: Whether to include single qubit gate optimization in the scheduling stage.
-        drop_final_rz: Whether to drop trailing Rz gates in the circuit during single qubit gate optimization.
+        drop_final_rz: Whether to drop trailing RZ gates in the circuit during single qubit gate optimization.
         ignore_barriers: Whether to ignore barriers during single qubit gate optimization.
         existing_move_handling: How to handle existing MoveGates in the circuit during MoveGate routing.
     Raises:
@@ -130,16 +130,16 @@ class MoveGateRoutingTrustExistingMovesPlugin(MoveGateRoutingPlugin):
         )
 
 
-class MoveGateRoutingWithExactRzPlugin(MoveGateRoutingPlugin):
+class MoveGateRoutingWithExactRZPlugin(MoveGateRoutingPlugin):
     """Plugin class for single qubit gate optimization and MoveGate routing where
-    trailing Rz Gates are kept in the circuit.
+    trailing RZ gates are kept in the circuit.
     """
 
     def __init__(self):
         super().__init__(optimize_sqg=True, drop_final_rz=False)
 
 
-class MoveGateRoutingWithRzOptimizationIgnoreBarriersPlugin(MoveGateRoutingPlugin):
+class MoveGateRoutingWithRZOptimizationIgnoreBarriersPlugin(MoveGateRoutingPlugin):
     """Plugin class for single qubit gate optimization and MoveGate routing where barriers are ignored during
     optimization.
     """
@@ -184,7 +184,7 @@ class MoveGateRoutingOnlyTrustExistingMovesPlugin(MoveGateRoutingPlugin):
         )
 
 
-class OnlyRzOptimizationPlugin(IQMSchedulingPlugin):
+class OnlyRZOptimizationPlugin(IQMSchedulingPlugin):
     """Plugin class for single qubit gate optimization without MOVE gate routing."""
 
     def __init__(
@@ -195,16 +195,16 @@ class OnlyRzOptimizationPlugin(IQMSchedulingPlugin):
         super().__init__(False, True, drop_final_rz, ignore_barriers, None)
 
 
-class OnlyRzOptimizationExactPlugin(OnlyRzOptimizationPlugin):
+class OnlyRZOptimizationExactPlugin(OnlyRZOptimizationPlugin):
     """Plugin class for single qubit gate optimization without MOVE gate routing and
-    the final Rz gates are not dropped.
+    the final RZ gates are not dropped.
     """
 
     def __init__(self):
         super().__init__(drop_final_rz=False)
 
 
-class OnlyRzOptimizationIgnoreBarriersPlugin(OnlyRzOptimizationPlugin):
+class OnlyRZOptimizationIgnoreBarriersPlugin(OnlyRZOptimizationPlugin):
     """Plugin class for single qubit gate optimization without MOVE gate routing where barriers are ignored."""
 
     def __init__(self):

@@ -6,48 +6,45 @@ Version 16.0
 =============
 
 * Added support for ``qiskit == 1.2`` and ``qiskit-aer == 0.15``.
-* Drop support for ``qiskit < 0.45``.
-* :meth:`IQMBackendBase.qubit_name_to_index` and :meth:`IQMBackendBase.index_to_qubit_name` now
-  raises an error when using an invalid qubit name or index, rather than returning None.
-* Refactored :meth:`IQMBackend.create_run_request` to improve user experience when using IQM
+* Dropped support for ``qiskit < 0.45``.
+* Updated the documentation.
+* :meth:`.IQMBackendBase.qubit_name_to_index` and :meth:`.IQMBackendBase.index_to_qubit_name` now
+  raise an error when using an invalid qubit name or index, rather than returning None.
+* Refactored :meth:`.IQMBackend.create_run_request` to improve user experience when using IQM
   specific run options.
-* Updated the documentation for using additional run options with IQM backends.
-* Introduced :attr:`IQMBackendBase.physical_target` and :attr:`IQMBackendBase.fake_target` to
+* Introduced :attr:`.IQMBackendBase.physical_target` and :attr:`.IQMBackendBase.fake_target` to
   represent the physical quantum architectures and a Qiskit-compatible version, respectively.
-* Moved the circuit serialization logic from :class:`IQMProvider` to :mod:`iqm.qiskit_iqm.qiskit_to_iqm`.
-* Using the Qiskit transpiler with :class:`IQMBackend`:
+* Moved the circuit serialization logic from :class:`.IQMProvider` to :mod:`iqm.qiskit_iqm.qiskit_to_iqm`.
+* Using the Qiskit transpiler with :class:`.IQMBackend`:
 
   * You can now use the native Qiskit :func:`transpile` function to transpile a circuit to the IQM
     Star architecture as long as your initial circuit does not use any resonators.
-  * The Qiskit transpiler now automatically uses the :class:`IQMOptimizeSingleQubitGates` pass to
-    optimize single-qubit gates if ``optimization_level >= 0``.
+  * The Qiskit transpiler now automatically uses the :class:`.IQMOptimizeSingleQubitGates` pass to
+    optimize single-qubit gates if ``optimization_level > 0``.
   * There are many new transpiler plugins available that you can use as the ``scheduling_method``
     argument in Qiskit's :func:`transpile` function. You can find them in the
     `Qiskit documentation <https://docs.quantum.ibm.com/guides/transpiler-plugins>`_.
-  * If your circuit contains resonators, and optionally :class:`MoveGate` operations, you can use
-    the :func:`transpile_to_IQM` function to transpile your circuit for the IQM Star architecture.
-  * :func:`transpile_to_IQM` can now restrict itself to use a subset of the qubits by specifying
+  * If your circuit contains resonators, and optionally :class:`.MoveGate` operations, you can use
+    the :func:`.transpile_to_IQM` function to transpile your circuit for the IQM Star architecture.
+  * :func:`.transpile_to_IQM` can now restrict itself to use a subset of the qubits by specifying
     the ``restrict_to_qubits`` argument. You will need to additionally provide a qubit mapping to the
-    :meth:`backend.run` method to ensure that the correct qubits are used.
-  * Bugfix where the :func:`transpile_to_IQM` did not retain the circuit layout after transpiling.
+    :meth:`.IQMBackend.run` method to ensure that the correct qubits are used.
+  * Bugfix where the :func:`.transpile_to_IQM` did not retain the circuit layout after transpiling.
 
-* Fixed :func:`IQMFakeDeneb` readout errors. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/qiskit-on-iqm/pull/125>`_
+* Fixed :func:`.IQMFakeDeneb` readout errors. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/qiskit-on-iqm/pull/125>`_
+* :attr:`.IQMBackend.target` now contains CZ gates only in direction they appear in the calibration
+  set. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
 * Deprecated features:
 
-  * :func:`optimize_single_qubit_gates` has been deprecated in favor of using the new transpiler
-    plugins or :func:`transpile_to_IQM`. Additionally, this is now incorporated into the Qiskit
+  * :func:`.optimize_single_qubit_gates` has been deprecated in favor of using the new transpiler
+    plugins or :func:`.transpile_to_IQM`. Additionally, this is now incorporated into the Qiskit
     transpiler as documented above.
-  * In :meth:`IQMBackend.create_run_request`, and as a result in :meth:`IQMBackend.run`, the
+  * In :meth:`.IQMBackend.create_run_request`, and as a result in :meth:`.IQMBackend.run`, the
     ``max_circuit_duration_over_t2`` and ``heralding_mode`` options have been deprecated in favor of
-    using the :class:`CircuitCompilationOptions` class from :mod:`iqm.iqm_client`.
-  * The :class:`IQMBackend` no longer uses Qiskit's ``options`` attribute to give run options in
-    favor of using the arguments of the :meth:`IQMBackend.run` method directly.
+    using the :class:`.CircuitCompilationOptions` class from :mod:`iqm.iqm_client`.
+  * The :class:`.IQMBackend` no longer uses Qiskit's ``options`` attribute to give run options in
+    favor of using the arguments of the :meth:`.IQMBackend.run` method directly.
 
-
-Version 15.6
-============
-
-* Qiskit Target now contains CZ with the directions are calibrated on the hardwared. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
 
 Version 15.5
 ============

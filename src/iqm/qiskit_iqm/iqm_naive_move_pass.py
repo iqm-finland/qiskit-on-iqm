@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Naive transpilation for the IQM Star architecture."""
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 import warnings
 
 from pydantic_core import ValidationError
@@ -93,16 +93,18 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     circuit: QuantumCircuit,
     backend: IQMBackendBase,
     target: Optional[IQMTarget] = None,
-    initial_layout: Optional[Union[Layout, Dict, List]] = None,
+    initial_layout: Optional[Union[Layout, dict, list]] = None,
     perform_move_routing: bool = True,
     optimize_single_qubits: bool = True,
     ignore_barriers: bool = False,
     remove_final_rzs: bool = True,
     existing_moves_handling: Optional[ExistingMoveHandlingOptions] = None,
-    restrict_to_qubits: Optional[Union[List[int], List[str]]] = None,
+    restrict_to_qubits: Optional[Union[list[int], list[str]]] = None,
     **qiskit_transpiler_qwargs,
 ) -> QuantumCircuit:
-    """Basic function for transpiling to IQM backends. Currently works with Deneb and Garnet
+    """Customized transpilation to IQM backends.
+
+    Works with both the Crystal and Star architectures.
 
     Args:
         circuit: The circuit to be transpiled without MOVE gates.
@@ -112,22 +114,22 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         initial_layout: The initial layout to use for the transpilation, same as `qiskit.transpile`.
         optimize_single_qubits: Whether to optimize single qubit gates away.
         ignore_barriers: Whether to ignore barriers when optimizing single qubit gates away.
-        remove_final_rzs: Whether to remove the final Rz rotations. It is recommended always to set this to true as
+        remove_final_rzs: Whether to remove the final z rotations. It is recommended always to set this to true as
         the final RZ gates do no change the measurement outcomes of the circuit.
         existing_moves_handling: How to handle existing MOVE gates in the circuit, required if the circuit contains
             MOVE gates.
         restrict_to_qubits: Restrict the transpilation to only use these specific physical qubits. Note that you will
-            have to pass this information to the `backend.run` method as well as a dictionary.
+            have to pass this information to the ``backend.run`` method as well as a dictionary.
         qiskit_transpiler_qwargs: Arguments to be passed to the Qiskit transpiler.
 
     Returns:
-        The transpiled circuit ready for running on the backend.
+        Transpiled circuit ready for running on the backend.
     """
     # pylint: disable=too-many-branches
 
     if restrict_to_qubits is not None:
         restrict_to_qubits = [
-            backend.qubit_name_to_index(q) if isinstance(q, str) else int(q) for q in restrict_to_qubits
+            backend.qubit_name_to_index(q) if isinstance(q, str) else q for q in restrict_to_qubits
         ]
 
     if target is None:
@@ -152,7 +154,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
                 if not remove_final_rzs:
                     scheduling_method = "move_routing_exact_global_phase"
                 elif ignore_barriers:
-                    scheduling_method = "move_routing_Rz_optimization_ignores_barriers"
+                    scheduling_method = "move_routing_rz_optimization_ignores_barriers"
                 else:
                     scheduling_method = "move_routing"
             else:
@@ -166,7 +168,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
                 scheduling_method += "_" + existing_moves_handling.value
         else:
             if optimize_single_qubits:
-                scheduling_method = "only_Rz_optimization"
+                scheduling_method = "only_rz_optimization"
                 if not remove_final_rzs:
                     scheduling_method += "_exact_global_phase"
                 elif ignore_barriers:

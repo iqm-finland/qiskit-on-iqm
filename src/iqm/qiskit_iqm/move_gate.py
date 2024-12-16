@@ -35,7 +35,9 @@ class MoveGate(Gate):
     recommended that no single qubit gates are applied to the qubit in between a
     pair of MOVE operations.
 
-    Note: At this point the locus for the move gate must be defined in the order: ``[qubit, resonator]``.
+    .. note::
+       The MOVE gate must always be be applied on the qubit and the resonator in the
+       order ``[qubit, resonator]``, regardless of which component is currently holding the state.
     """
 
     def __init__(self, label=None):
