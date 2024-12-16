@@ -237,9 +237,8 @@ def test_noise_model_contains_all_errors(backend):
 
 
 def test_validate_compatible_architecture(
-    adonis_architecture, adonis_shuffled_names_architecture, linear_3q_architecture
+    adonis_architecture, linear_3q_architecture
 ):
     backend = IQMFakeAdonis()
     assert backend.validate_compatible_architecture(adonis_architecture) is True
-    assert backend.validate_compatible_architecture(adonis_shuffled_names_architecture) is True
     assert backend.validate_compatible_architecture(linear_3q_architecture) is False

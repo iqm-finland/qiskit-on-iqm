@@ -45,15 +45,10 @@ def backend(linear_3q_architecture):
     return DummyIQMBackend(linear_3q_architecture)
 
 
-def test_qubit_name_to_index_to_qubit_name(adonis_shuffled_names_architecture):
-    backend = DummyIQMBackend(adonis_shuffled_names_architecture)
+def test_qubit_name_to_index_to_qubit_name(adonis_architecture):
+    backend = DummyIQMBackend(adonis_architecture)
 
-    correct_idx_name_associations = set(enumerate(['QB1', 'QB2', 'QB3', 'QB4', 'QB5']))
-
-    print(backend._idx_to_qb)
-    print(backend._qb_to_idx)
-    # Unrolled for debugging purposes
-    for idx, name in correct_idx_name_associations:
+    for idx, name in backend._idx_to_qb.items():
         assert backend.index_to_qubit_name(idx) == name
         assert backend.qubit_name_to_index(name) == idx
 

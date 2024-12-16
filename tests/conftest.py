@@ -113,48 +113,6 @@ def adonis_architecture():
 
 
 @pytest.fixture
-def adonis_shuffled_names_architecture():
-    """Like adonis_architecture, but relative order of loci has been shuffled."""
-    return DynamicQuantumArchitecture(
-        calibration_set_id=UUID('59478539-dcef-4b2e-80c8-122d7ec3fc89'),
-        qubits=['QB2', 'QB3', 'QB1', 'QB5', 'QB4'],
-        computational_resonators=[],
-        gates={
-            'prx': GateInfo(
-                implementations={
-                    'drag_gaussian': GateImplementationInfo(loci=(('QB2',), ('QB3',), ('QB1',), ('QB5',), ('QB4',)))
-                },
-                default_implementation='drag_gaussian',
-                override_default_implementation={},
-            ),
-            'cc_prx': GateInfo(
-                implementations={
-                    'prx_composite': GateImplementationInfo(loci=(('QB5',), ('QB3',), ('QB2',), ('QB4',), ('QB1',)))
-                },
-                default_implementation='prx_composite',
-                override_default_implementation={},
-            ),
-            'cz': GateInfo(
-                implementations={
-                    'tgss': GateImplementationInfo(
-                        loci=(('QB1', 'QB3'), ('QB2', 'QB3'), ('QB4', 'QB3'), ('QB5', 'QB3'))
-                    )
-                },
-                default_implementation='tgss',
-                override_default_implementation={},
-            ),
-            'measure': GateInfo(
-                implementations={
-                    'constant': GateImplementationInfo(loci=(('QB2',), ('QB3',), ('QB1',), ('QB5',), ('QB4',)))
-                },
-                default_implementation='constant',
-                override_default_implementation={},
-            ),
-        },
-    )
-
-
-@pytest.fixture
 def move_architecture():
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),

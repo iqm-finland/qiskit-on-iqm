@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from abc import ABC
 from copy import deepcopy
-import re
 from typing import Final, Union
 from uuid import UUID
 
@@ -69,14 +68,6 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
     )
 
 
-def _component_sort_key(component_name: str) -> tuple[str, int, str]:
-    def get_numeric_id(name: str) -> int:
-        match = re.search(r'(\d+)', name)
-        return int(match.group(1)) if match else 0
-
-    return re.sub(r'[^a-zA-Z]', '', component_name), get_numeric_id(component_name), component_name
-
-
 class IQMBackendBase(BackendV2, ABC):
     """Abstract base class for various IQM-specific backends.
 
@@ -100,13 +91,7 @@ class IQMBackendBase(BackendV2, ABC):
         # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
         # Because of the way the Target and the transpiler interact, the resonators need to have higher indices than
         # qubits, or else transpiling with optimization_level=0 will fail because of lacking resonator indices.
-        qb_to_idx = {
-            qb: idx
-            for idx, qb in enumerate(
-                sorted(arch.qubits, key=_component_sort_key)
-                + sorted(arch.computational_resonators, key=_component_sort_key)
-            )
-        }
+        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.qubits + arch.computational_resonators)}
 
         self._target = IQMTarget(arch, qb_to_idx)
         self._qb_to_idx = qb_to_idx
@@ -165,14 +150,14 @@ class IQMBackendBase(BackendV2, ABC):
 
 
 class IQMTarget(Target):
-    """A target representing an IQM backends that could have resonators.
+    """Transpiler target representing an IQM backend that can have computational resonators.
 
-    This target is used to represent the physical layout of the backend, including the resonators as well as a fake
-    coupling map to present to the Qiskit transpiler.
+    This target represents the physical layout of the backend including the resonators, as
+    well as a fake coupling map without them to present to the Qiskit transpiler.
 
     Args:
-        architecture: The quantum architecture specification representing the backend.
-        component_to_idx: A mapping from component names to integer indices.
+        architecture: Represents the gates (and their loci) available for the transpilation.
+        component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
     """
 
     def __init__(self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]):
@@ -194,12 +179,12 @@ class IQMTarget(Target):
         # pylint: disable=too-many-branches
         operations = architecture.gates
 
-        # There is no dedicated direct way of setting just the qubit connectivity and the native gates to the target.
-        # Such info is automatically deduced once all instruction properties are set. Currently, we do not retrieve
-        # any properties from the server, and we are interested only in letting the target know what is the native gate
-        # set and the connectivity of the device under use. Thus, we populate the target with None properties.
         def _create_connections(name: str, is_symmetric: bool = False) -> dict[tuple[int, ...], None]:
-            """Creates the connection map of allowed loci for this instruction, mapped to None."""
+            """Creates the Qiskit instruction properties dictionary for the given IQM native operation.
+
+            Currently we do not provide any actual properties for the operation, hence the all the
+            allowed loci map to None.
+            """
             gate_info = operations[name]
             all_loci = gate_info.implementations[gate_info.default_implementation].loci
             connections = {tuple(component_to_idx[locus] for locus in loci): None for loci in all_loci}
