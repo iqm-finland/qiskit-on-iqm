@@ -2,6 +2,14 @@
 Changelog
 =========
 
+Version 15.6
+============
+
+* Added requirements lock file that is automatically generated with tox and pre-commit.
+  `#141 <https://github.com/iqm-finland/qiskit-on-iqm/pull/141>`_
+* Added CI test to check that the requirements lock file is up-to-date.
+  `#141 <https://github.com/iqm-finland/qiskit-on-iqm/pull/141>`_
+
 Version 15.5
 ============
 
