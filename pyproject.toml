@@ -35,7 +35,9 @@ changelog = "https://github.com/iqm-finland/qiskit-on-iqm/blob/main/CHANGELOG.rs
 # Add here additional requirements for extra features, to install with:
 # `pip install qiskit-iqm[dev,docs,testing]
 dev = [
-    "tox == 4.11.4"
+    "tox == 4.11.4",
+    "pre_commit == 4.0.1",
+    "pip-tools == 7.4.1"
 ]
 docs = [
     "sphinx == 7.2.6",

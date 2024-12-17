@@ -14,9 +14,10 @@ and install it in editable mode with all the extras:
    $ git clone git@github.com:iqm-finland/qiskit-on-iqm.git
    $ cd qiskit-on-iqm
    $ pip install -e ".[dev,docs,testing]"
+   $ pre-commit install
 
 
-To be able to build the docs `graphviz <https://graphviz.org/>`_ has to be installed. 
+To be able to build the docs `graphviz <https://graphviz.org/>`_ has to be installed.
 Then to build and view the docs run:
 
 .. code-block:: bash
@@ -29,6 +30,12 @@ Format your code:
 .. code-block:: bash
 
    $ tox -e format
+
+Update the requirements:
+
+.. code-block:: bash
+
+   $ tox -e pip-compile
 
 Run the tests:
 
