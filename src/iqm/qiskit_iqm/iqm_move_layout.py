@@ -114,7 +114,7 @@ class IQMMoveLayout(TrivialLayout):
         """
         target: IQMTarget = self.target
         qubit_types: dict[int, str] = {}
-        for gate_name, gate_info in target.iqm_dynamic_architecture.gates.items():
+        for gate_name, gate_info in target.iqm_dqa.gates.items():
             if gate_name == 'move':
                 for locus in gate_info.loci:
                     [qubit, resonator] = [target.iqm_component_to_idx[q] for q in locus]

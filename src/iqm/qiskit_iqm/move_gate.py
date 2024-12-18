@@ -17,8 +17,10 @@ from qiskit.circuit import Gate
 import qiskit.quantum_info as qi
 
 MOVE_GATE_UNITARY = [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
-"""Unitary for simulating the ideal MOVE gate. It is not fully realistic since it applies a zero phase on the
-moved state and does nothing in the :math:`|11\rangle` subspace, thus being equal to the SWAP gate."""
+"""Unitary matrix for simulating the ideal MOVE gate.
+
+This matrix is not a realistic description of MOVE, since it applies a zero phase on the moved
+state, and acts as identity in the :math:`|11\rangle` subspace, thus being equal to the SWAP gate."""
 
 
 class MoveGate(Gate):

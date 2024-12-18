@@ -224,14 +224,14 @@ def deserialize_instructions(
     """Helper function to turn a list of IQM Instructions into a Qiskit QuantumCircuit.
 
     Args:
-        instructions (list[Instruction]): The gates in the circuit.
-        qubit_name_to_index (dict[str, int]): Mapping from qubit names to their indices, as specified in a backend.
+        instructions: The gates in the circuit.
+        qubit_name_to_index: Mapping from qubit names to their indices, as specified in a backend.
 
     Raises:
         ValueError: Thrown when a given instruction is not supported.
 
     Returns:
-        QiskitQuantumCircuit: The circuit represented by the given instructions.
+        Qiskit circuit represented by the given instructions.
     """
     cl_bits: dict[str, int] = {}
     cl_regs: dict[int, ClassicalRegister] = {}

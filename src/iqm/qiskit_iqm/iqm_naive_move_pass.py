@@ -40,6 +40,11 @@ class IQMNaiveResonatorMoving(TransformationPass):
     The pass assumes that all single qubit and two-qubit gates are allowed.
     The resonator is used to swap the qubit states for the two-qubit gates.
     Additionally, it assumes that no single qubit gates are allowed on the resonator.
+
+    Args:
+        target: Transpilation target.
+        gate_set: Basis gates of the target backend.
+        existing_moves_handling: ffff
     """
 
     def __init__(
@@ -48,41 +53,34 @@ class IQMNaiveResonatorMoving(TransformationPass):
         gate_set: list[str],
         existing_moves_handling: Optional[ExistingMoveHandlingOptions] = None,
     ):
-        """WIP Naive transpilation pass for resonator moving
-
-        Args:
-            resonator_register (int): Which qubit/vertex index represents the resonator.
-            move_qubits (int): Which qubits (indices) can be moved into the resonator.
-            gate_set (list[str]): Which gates are allowed by the target backend.
-        """
         super().__init__()
         self.target = target
         self.gate_set = gate_set
         self.existing_moves_handling = existing_moves_handling
 
-    def run(self, dag: DAGCircuit):  # pylint: disable=too-many-branches
-        """Run the IQMNaiveResonatorMoving pass on `dag`.
+    def run(self, dag: DAGCircuit) -> DAGCircuit:
+        """Run the pass on a circuit.
 
         Args:
-            dag (DAGCircuit): DAG to map.
+            dag: DAG to map.
 
         Returns:
-            DAGCircuit: A mapped DAG.
+            Mapped ``dag``.
 
         Raises:
-            TranspilerError: if the layout are not compatible with the DAG, or if the input gate set is incorrect.
+            TranspilerError: The layout is not compatible with the DAG, or if the input gate set is incorrect.
         """
         circuit = dag_to_circuit(dag)
-        iqm_json = IQMClientCircuit(
+        iqm_circuit = IQMClientCircuit(
             name="Transpiling Circuit",
             instructions=tuple(serialize_instructions(circuit, self.target.iqm_idx_to_component)),
         )
         try:
-            routed_json = transpile_insert_moves(
-                iqm_json, self.target.iqm_dynamic_architecture, self.existing_moves_handling
+            routed_iqm_circuit = transpile_insert_moves(iqm_circuit, self.target.iqm_dqa, existing_moves=self.existing_moves_handling)
+            routed_circuit = deserialize_instructions(
+                list(routed_iqm_circuit.instructions), self.target.iqm_component_to_idx
             )
-            routed_circuit = deserialize_instructions(list(routed_json.instructions), self.target.iqm_component_to_idx)
-        except ValidationError as _:  # The Circuit without move gates is empty.
+        except ValidationError:  # The Circuit without move gates is empty.
             circ_args = [circuit.num_qubits, circuit.num_ancillas, circuit.num_clbits]
             routed_circuit = QuantumCircuit(*(arg for arg in circ_args if arg > 0))
         new_dag = circuit_to_dag(routed_circuit)

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from abc import ABC
 from copy import deepcopy
+import itertools
 from typing import Final, Union
 from uuid import UUID
 
@@ -34,6 +35,8 @@ from iqm.iqm_client import (
 from iqm.qiskit_iqm.move_gate import MoveGate
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
+
+Locus = tuple[str, ...]
 
 
 def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
@@ -162,100 +165,104 @@ class IQMTarget(Target):
 
     def __init__(self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]):
         super().__init__()
-        self.iqm_dynamic_architecture = architecture
+        self.iqm_dqa = architecture
         self.iqm_component_to_idx = component_to_idx
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
-        self.real_target = self._iqm_create_instructions(architecture, component_to_idx)
+        self.real_target: IQMTarget = self._iqm_create_instructions(architecture, component_to_idx)
 
-    def _iqm_create_instructions(self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]):
+    def _iqm_create_instructions(
+        self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]
+    ) -> Target:
         """Converts a QuantumArchitectureSpecification object to a Qiskit Target object.
 
         Args:
             architecture: The quantum architecture specification to convert.
+            component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
 
         Returns:
             A Qiskit Target object representing the given quantum architecture specification.
         """
         # pylint: disable=too-many-branches
-        operations = architecture.gates
+        # mapping from op name to all its allowed loci
+        op_loci = {gate_name: gate_info.loci for gate_name, gate_info in architecture.gates.items()}
 
-        def _create_connections(name: str, is_symmetric: bool = False) -> dict[tuple[int, ...], None]:
+        def idx_locus(locus: Locus) -> tuple[int, ...]:
+            """Map the given locus to use component indices instead of component names."""
+            return tuple(component_to_idx[component] for component in locus)
+        
+        def create_properties(name: str, *, symmetrize: bool = False) -> dict[tuple[int, ...], None]:
             """Creates the Qiskit instruction properties dictionary for the given IQM native operation.
 
             Currently we do not provide any actual properties for the operation, hence the all the
             allowed loci map to None.
             """
-            gate_info = operations[name]
-            all_loci = gate_info.implementations[gate_info.default_implementation].loci
-            connections = {tuple(component_to_idx[locus] for locus in loci): None for loci in all_loci}
-            if is_symmetric:
-                # If the gate is symmetric, we need to add the reverse connections as well.
-                connections.update({tuple(reversed(loci)): None for loci in connections})
-            return connections
+            loci = op_loci[name]
+            if symmetrize:
+                # symmetrize the loci
+                loci = tuple(permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus))
+            return {idx_locus(locus): None for locus in loci}
 
-        if 'prx' in operations or 'phased_rx' in operations:
-            self.add_instruction(
-                RGate(Parameter('theta'), Parameter('phi')),
-                _create_connections('prx'),
-            )
-        if 'cc_prx' in operations:
-            # HACK reset gate shares cc_prx loci for now
-            self.add_instruction(Reset(), _create_connections('cc_prx'))
+        if 'measure' in op_loci:
+            self.add_instruction(Measure(), create_properties('measure'))
 
+        # identity gate does nothing and is removed in serialization, so we may as well allow it everywhere
         self.add_instruction(
             IGate(),
-            {(component_to_idx[qb],): None for qb in architecture.computational_resonators + architecture.qubits},
+            {idx_locus((component,)): None for component in architecture.components},
         )
-        # Even though CZ is a symmetric gate, we still need to add properties for both directions. This is because
-        # coupling maps in Qiskit are directed graphs and the gate symmetry is not implicitly planted there. It should
-        # be explicitly supplied. This allows Qiskit to have coupling maps with non-symmetric gates like cx.
-        if 'measure' in operations:
-            self.add_instruction(Measure(), _create_connections('measure'))
+
+        if 'prx' in op_loci:
+            self.add_instruction(
+                RGate(Parameter('theta'), Parameter('phi')),
+                create_properties('prx'),
+            )
+
+        # HACK reset gate shares cc_prx loci for now
+        if 'cc_prx' in op_loci:
+            self.add_instruction(Reset(), create_properties('cc_prx'))
 
         # Special work for devices with a MoveGate.
         real_target: IQMTarget = deepcopy(self)
 
-        if 'move' in operations:
-            real_target.add_instruction(MoveGate(), _create_connections('move'))
+        if 'move' in op_loci:
+            real_target.add_instruction(MoveGate(), create_properties('move'))
 
         fake_target_with_moves = deepcopy(real_target)
-        if 'cz' in operations:
-            real_target.add_instruction(CZGate(), _create_connections('cz'))
-            if 'move' in operations:
+        # self has just single-q stuff, fake and real also have MOVE
+
+        if 'cz' in op_loci:
+            real_target.add_instruction(CZGate(), create_properties('cz'))
+            if 'move' in op_loci:
                 fake_cz_connections: dict[tuple[int, int], None] = {}
-                cz_loci = operations['cz'].implementations[operations['cz'].default_implementation].loci
                 move_cz_connections: dict[tuple[int, int], None] = {}
+                cz_loci = op_loci['cz']
                 for qb1, qb2 in cz_loci:
                     if (
                         qb1 not in architecture.computational_resonators
                         and qb2 not in architecture.computational_resonators
                     ):
+                        # every cz locus that only uses qubits goes to fake_cz_conn
                         fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                     else:
+                        # otherwise it goes to move_cz_conn
                         move_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
-                for qb1, res in operations['move'].implementations[operations['move'].default_implementation].loci:
+                for qb1, res in op_loci['move']:
                     for qb2 in [q for q in architecture.qubits if q not in [qb1, res]]:
+                        # loop over qb2 that is not qb1
                         if (qb2, res) in cz_loci or (res, qb2) in cz_loci:
                             # This is a fake CZ and can be bidirectional.
+                            # cz routable via res between qubits, put into fake_cz_conn both ways
                             fake_cz_connections[(component_to_idx[qb1], component_to_idx[qb2])] = None
                             fake_cz_connections[(component_to_idx[qb2], component_to_idx[qb1])] = None
-                self.add_instruction(CZGate(), fake_cz_connections)
+                self.add_instruction(CZGate(), fake_cz_connections)  # self has fake cz conn
                 fake_cz_connections.update(move_cz_connections)
                 fake_target_with_moves.add_instruction(CZGate(), fake_cz_connections)
             else:
-                self.add_instruction(CZGate(), _create_connections('cz'))
-                fake_target_with_moves.add_instruction(CZGate(), _create_connections('cz'))
-        fake_target_with_moves.set_real_target(real_target)
+                self.add_instruction(CZGate(), create_properties('cz'))
+                fake_target_with_moves.add_instruction(CZGate(), create_properties('cz'))
+        fake_target_with_moves.real_target = real_target
         self.fake_target_with_moves: IQMTarget = fake_target_with_moves
         return real_target
-
-    def set_real_target(self, real_target: IQMTarget) -> None:
-        """Set the real target for this target.
-
-        Args:
-            real_target: The real target to set.
-        """
-        self.real_target = real_target
 
     def restrict_to_qubits(self, qubits: Union[list[int], list[str]]) -> IQMTarget:
         """Restrict the target to only the given qubits.
@@ -265,7 +272,7 @@ class IQMTarget(Target):
         """
         qubits_str = [self.iqm_idx_to_component[q] if isinstance(q, int) else str(q) for q in qubits]
         new_gates = {}
-        for gate_name, gate_info in self.iqm_dynamic_architecture.gates.items():
+        for gate_name, gate_info in self.iqm_dqa.gates.items():
             new_implementations = {}
             for implementation_name, implementation_info in gate_info.implementations.items():
                 new_loci = [loci for loci in implementation_info.loci if all(q in qubits_str for q in loci)]
@@ -278,11 +285,9 @@ class IQMTarget(Target):
                     override_default_implementation=gate_info.override_default_implementation,
                 )
         new_arch = DynamicQuantumArchitecture(
-            calibration_set_id=self.iqm_dynamic_architecture.calibration_set_id,
-            qubits=[q for q in qubits_str if q in self.iqm_dynamic_architecture.qubits],
-            computational_resonators=[
-                q for q in qubits_str if q in self.iqm_dynamic_architecture.computational_resonators
-            ],
+            calibration_set_id=self.iqm_dqa.calibration_set_id,
+            qubits=[q for q in qubits_str if q in self.iqm_dqa.qubits],
+            computational_resonators=[q for q in qubits_str if q in self.iqm_dqa.computational_resonators],
             gates=new_gates,
         )
         return IQMTarget(new_arch, {name: idx for idx, name in enumerate(qubits_str)})

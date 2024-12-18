@@ -648,20 +648,17 @@ circuit-to-pulse compiler on the server side. However, you can ensure multiplexi
 possible on the hardware level) by putting a ``barrier`` instruction before and after a group of
 measurements.  This prevents the transpiler from inserting any other instructions between the
 measurements.  There is no concept of multiplexed or simultaneous measurements in Qiskit, so the
-circuit diagram will not indicate any multiplexing:
+circuit diagram will not indicate any multiplexing::
 
-::
-
-          ░ ┌─┐       ░
-    q_0: ─░─┤M├───────░─
-          ░ └╥┘┌─┐    ░
-    q_1: ─░──╫─┤M├────░─
-          ░  ║ └╥┘┌─┐ ░
-    q_2: ─░──╫──╫─┤M├─░─
-          ░  ║  ║ └╥┘ ░
+             ░ ┌─┐       ░
+       q_0: ─░─┤M├───────░─
+             ░ └╥┘┌─┐    ░
+       q_1: ─░──╫─┤M├────░─
+             ░  ║ └╥┘┌─┐ ░
+       q_2: ─░──╫──╫─┤M├─░─
+             ░  ║  ║ └╥┘ ░
     meas: 3/════╩══╩══╩═══
-             0  1  2
-
+                0  1  2
 
 
 Simulation
