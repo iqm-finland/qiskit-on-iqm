@@ -36,7 +36,6 @@ class IQMNaiveResonatorMoving(TransformationPass):
     A naive transpiler pass for use with the Qiskit PassManager.
     Although it requires a CouplingMap, Target, or Backend, it does not take this into account when adding MOVE gates.
     It assumes target connectivity graph is star shaped with a single resonator in the middle.
-    Which qubit is the resonator is represented with the resonator_register attribute.
     The pass assumes that all single qubit and two-qubit gates are allowed.
     The resonator is used to swap the qubit states for the two-qubit gates.
     Additionally, it assumes that no single qubit gates are allowed on the resonator.
@@ -111,7 +110,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         backend: The target backend to compile to. Does not require a resonator.
         target: An alternative target to compile to than the backend, using this option requires intimate knowledge
             of the transpiler and thus it is not recommended to use.
-        initial_layout: The initial layout to use for the transpilation, same as `qiskit.transpile`.
+        initial_layout: The initial layout to use for the transpilation, same as :func:`~qiskit.compiler.transpile`.
         optimize_single_qubits: Whether to optimize single qubit gates away.
         ignore_barriers: Whether to ignore barriers when optimizing single qubit gates away.
         remove_final_rzs: Whether to remove the final z rotations. It is recommended always to set this to true as

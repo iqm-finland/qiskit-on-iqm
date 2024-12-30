@@ -288,7 +288,7 @@ class IQMTarget(Target):
         for gate_name, gate_info in self.iqm_dqa.gates.items():
             new_implementations = {}
             for implementation_name, implementation_info in gate_info.implementations.items():
-                new_loci = [loci for loci in implementation_info.loci if all(q in qubits_str for q in loci)]
+                new_loci = [locus for locus in implementation_info.loci if all(q in qubits_str for q in locus)]
                 if new_loci:
                     new_implementations[implementation_name] = GateImplementationInfo(loci=new_loci)
             if new_implementations:
