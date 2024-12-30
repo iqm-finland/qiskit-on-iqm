@@ -34,7 +34,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
     """WIP Naive transpilation pass for resonator moving
 
     A naive transpiler pass for use with the Qiskit PassManager.
-    Although it requires a CouplingMap, Target, or Backend, it does not take this into account when adding MoveGates.
+    Although it requires a CouplingMap, Target, or Backend, it does not take this into account when adding MOVE gates.
     It assumes target connectivity graph is star shaped with a single resonator in the middle.
     Which qubit is the resonator is represented with the resonator_register attribute.
     The pass assumes that all single qubit and two-qubit gates are allowed.
@@ -76,7 +76,9 @@ class IQMNaiveResonatorMoving(TransformationPass):
             instructions=tuple(serialize_instructions(circuit, self.target.iqm_idx_to_component)),
         )
         try:
-            routed_iqm_circuit = transpile_insert_moves(iqm_circuit, self.target.iqm_dqa, existing_moves=self.existing_moves_handling)
+            routed_iqm_circuit = transpile_insert_moves(
+                iqm_circuit, self.target.iqm_dqa, existing_moves=self.existing_moves_handling
+            )
             routed_circuit = deserialize_instructions(
                 list(routed_iqm_circuit.instructions), self.target.iqm_component_to_idx
             )
@@ -98,7 +100,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     remove_final_rzs: bool = True,
     existing_moves_handling: Optional[ExistingMoveHandlingOptions] = None,
     restrict_to_qubits: Optional[Union[list[int], list[str]]] = None,
-    **qiskit_transpiler_qwargs,
+    **qiskit_transpiler_kwargs,
 ) -> QuantumCircuit:
     """Customized transpilation to IQM backends.
 
@@ -118,7 +120,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
             MOVE gates.
         restrict_to_qubits: Restrict the transpilation to only use these specific physical qubits. Note that you will
             have to pass this information to the ``backend.run`` method as well as a dictionary.
-        qiskit_transpiler_qwargs: Arguments to be passed to the Qiskit transpiler.
+        qiskit_transpiler_kwargs: Arguments to be passed to the Qiskit transpiler.
 
     Returns:
         Transpiled circuit ready for running on the backend.
@@ -143,7 +145,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         target = target.restrict_to_qubits(restrict_to_qubits)
 
     # Determine which scheduling method to use
-    scheduling_method = qiskit_transpiler_qwargs.pop("scheduling_method", None)
+    scheduling_method = qiskit_transpiler_kwargs.pop("scheduling_method", None)
     if scheduling_method is None:
         if perform_move_routing:
             if optimize_single_qubits:
@@ -176,6 +178,6 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
             f"Scheduling method is set to {scheduling_method}, but it is normally used to pass other transpiler "
             + "options, ignoring the other arguments."
         )
-    qiskit_transpiler_qwargs["scheduling_method"] = scheduling_method
-    new_circuit = transpile(circuit, target=target, initial_layout=initial_layout, **qiskit_transpiler_qwargs)
+    qiskit_transpiler_kwargs["scheduling_method"] = scheduling_method
+    new_circuit = transpile(circuit, target=target, initial_layout=initial_layout, **qiskit_transpiler_kwargs)
     return new_circuit
