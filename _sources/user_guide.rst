@@ -283,7 +283,7 @@ support currently has several limitations:
 
 * Only the ``x``, ``y``, ``rx``, ``ry`` and ``r`` gates can be classically controlled.
 * The gates can only be conditioned on one classical bit, and the only control available is to
-  apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.
+  apply the gate if the bit is 1, and apply an identity gate if the bit is 0.
 * The availability of the controlled gates depends on the instrumentation of the quantum computer.
 
 The classical control can be applied on a circuit instruction using :meth:`~qiskit.circuit.Instruction.c_if`:

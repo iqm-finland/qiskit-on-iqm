@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 15.5 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 15.6 documentation</title>
   
   
   
@@ -16,8 +16,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -27,20 +27,20 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=3f5d0f15"></script>
+    <script src="_static/documentation_options.js?v=28298f73"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="Qiskit on IQM" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="15.5" />
+  <meta name="docsearch:version" content="15.6" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.5 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.5 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.6 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.6 documentation - Home"/>
   
   
 </a></div>
@@ -226,9 +226,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -459,7 +464,7 @@ Python Package Index (PyPI):</p>
 </pre></div>
 </div>
 <p>After installation Qiskit on IQM can be imported in your Python code as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iqm</span> <span class="kn">import</span> <span class="n">qiskit_iqm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">iqm</span><span class="w"> </span><span class="kn">import</span> <span class="n">qiskit_iqm</span>
 </pre></div>
 </div>
 </section>
@@ -483,7 +488,7 @@ quantum circuits on an IQM quantum computer.</p>
 <section id="executing-a-circuit">
 <span id="ghz-circuit"></span><h3>Executing a circuit<a class="headerlink" href="#executing-a-circuit" title="Link to this heading">#</a></h3>
 <p>Let’s consider the following quantum circuit which prepares and measures a GHZ state:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -510,8 +515,8 @@ instance with the IQM server URL, use it to retrieve an <a class="reference inte
 the quantum computer, and use Qiskit’s <code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code> function
 followed by <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> as usual.  <code class="docutils literal notranslate"><span class="pre">shots</span></code> denotes the number of times the quantum
 circuit(s) are sampled:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span>
-<span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">transpile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">iqm.qiskit_iqm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQMProvider</span>
 
 <span class="n">iqm_server_url</span> <span class="o">=</span> <span class="s2">&quot;https://demo.qc.iqm.fi/cocos/&quot;</span>  <span class="c1"># Replace this with the correct URL</span>
 <span class="n">provider</span> <span class="o">=</span> <span class="n">IQMProvider</span><span class="p">(</span><span class="n">iqm_server_url</span><span class="p">)</span>
@@ -547,7 +552,7 @@ You will need to create a new backend if you want to use the new default calibra
 <p>You can optionally set IQM backend specific options as additional keyword arguments to
 <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>, documented at <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>.
 For example, you can enable heralding measurements by passing the appropriate circuit compilation option as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iqm.iqm_client</span> <span class="kn">import</span> <span class="n">CircuitCompilationOptions</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">iqm.iqm_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitCompilationOptions</span>
 
 <span class="n">job</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">circuit_compilation_options</span><span class="o">=</span><span class="n">CircuitCompilationOptions</span><span class="p">(</span><span class="n">heralding_mode</span><span class="o">=</span><span class="n">HeraldingMode</span><span class="o">.</span><span class="n">ZEROS</span><span class="p">))</span>
 </pre></div>
@@ -558,7 +563,7 @@ and then call <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provide
 <section id="inspecting-the-results">
 <h3>Inspecting the results<a class="headerlink" href="#inspecting-the-results" title="Link to this heading">#</a></h3>
 <p>The results of a job that was executed on the IQM quantum computer, represented as a
-<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.result.Result" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> instance, can be inspected using the usual Qiskit methods:</p>
+<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.result.Result" title="(in Qiskit v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> instance, can be inspected using the usual Qiskit methods:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_memory</span><span class="p">())</span>
@@ -633,11 +638,11 @@ support currently has several limitations:</p>
 <ul class="simple">
 <li><p>Only the <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">rx</span></code>, <code class="docutils literal notranslate"><span class="pre">ry</span></code> and <code class="docutils literal notranslate"><span class="pre">r</span></code> gates can be classically controlled.</p></li>
 <li><p>The gates can only be conditioned on one classical bit, and the only control available is to
-apply the gate if the bit is 1, and apply an indentity gate if the bit is 0.</p></li>
+apply the gate if the bit is 1, and apply an identity gate if the bit is 0.</p></li>
 <li><p>The availability of the controlled gates depends on the instrumentation of the quantum computer.</p></li>
 </ul>
-<p>The classical control can be applied on a circuit instruction using <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.Instruction#c_if" title="(in Qiskit v1.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">c_if()</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<p>The classical control can be applied on a circuit instruction using <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.Instruction#c_if" title="(in Qiskit v1.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">c_if()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
 <span class="n">qr</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">)</span>
 <span class="n">cr</span> <span class="o">=</span> <span class="n">ClassicalRegister</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
@@ -676,10 +681,10 @@ in a 1-bit classical register, <code class="docutils literal notranslate"><span 
 </section>
 <section id="resetting-qubits">
 <h3>Resetting qubits<a class="headerlink" href="#resetting-qubits" title="Link to this heading">#</a></h3>
-<p>The <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/circuit#qiskit.circuit.Reset" title="(in Qiskit v1.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.circuit.Reset</span></code></a> operation can be used to reset qubits to the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state.
+<p>The <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/circuit#qiskit.circuit.Reset" title="(in Qiskit v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.circuit.Reset</span></code></a> operation can be used to reset qubits to the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state.
 It is currently implemented as a (projective) measurement followed by a classically controlled X gate conditioned
 on the result.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -704,7 +709,7 @@ Executing the circuit should result in (mostly) zeros being measured.</p>
 <h3>Inspecting circuits before submitting them for execution<a class="headerlink" href="#inspecting-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h3>
 <p>It is possible to inspect the final circuits that would be submitted for execution before actually submitting them,
 which can be useful for debugging purposes. This can be done using <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, which returns
-a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v20.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
+a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v20.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
 parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect the run_request without submitting it for execution</span>
 <span class="n">run_request</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_run_request</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -727,7 +732,7 @@ parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provide
 <p>On IQM quantum computers without computational resonators
 (the IQM Crystal architecture), we can use the default Qiskit transpiler.
 Starting from the <a class="reference internal" href="#ghz-circuit"><span class="std std-ref">GHZ circuit</span></a> we created above:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.compiler</span> <span class="kn">import</span> <span class="n">transpile</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">transpile</span>
 
 <span class="n">transpiled_circuit</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="n">layout_method</span><span class="o">=</span><span class="s1">&#39;sabre&#39;</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">idle_wires</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
@@ -747,7 +752,7 @@ q_1 -&gt; 3 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├─�
 </div>
 <p>We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
 of single-qubit gates. This optimization expects an already transpiled circuit. As an example, let’s apply it to the above circuit:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iqm.qiskit_iqm.iqm_transpilation</span> <span class="kn">import</span> <span class="n">optimize_single_qubit_gates</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">iqm.qiskit_iqm.iqm_transpilation</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize_single_qubit_gates</span>
 
 <span class="n">optimized_circuit</span> <span class="o">=</span> <span class="n">optimize_single_qubit_gates</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">optimized_circuit</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">idle_wires</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
@@ -774,9 +779,9 @@ custom transpilation procedures manually.</p>
 <p>The IQM Star architecture includes computational resonators as additional QPU components.
 Because the resonator is not a real qubit, the standard Qiskit transpiler does not know how to compile for it.
 Thus, we have a custom transpile method <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM.html#iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM" title="iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code></a> that can handle QPUs with resonators.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
-<span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span><span class="p">,</span> <span class="n">transpile_to_IQM</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">iqm.qiskit_iqm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQMProvider</span><span class="p">,</span> <span class="n">transpile_to_IQM</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -852,8 +857,8 @@ let’s construct two circuits preparing and measuring different Bell states:</p
 </pre></div>
 </div>
 <p>The batch execution functionality can be used to run a parameterized circuit for various concrete values of parameters:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">theta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">)</span>
@@ -914,8 +919,8 @@ much as possible.  To this end, Qiskit on IQM provides the class <a class="refer
 be instantiated with properties of a certain QPU, e.g. using functions such as
 <a class="reference internal" href="api/iqm.qiskit_iqm.fake_backends.fake_adonis.IQMFakeAdonis.html#iqm.qiskit_iqm.fake_backends.fake_adonis.IQMFakeAdonis" title="iqm.qiskit_iqm.fake_backends.fake_adonis.IQMFakeAdonis"><code class="xref py py-func docutils literal notranslate"><span class="pre">IQMFakeAdonis()</span></code></a>, <a class="reference internal" href="api/iqm.qiskit_iqm.fake_backends.fake_apollo.IQMFakeApollo.html#iqm.qiskit_iqm.fake_backends.fake_apollo.IQMFakeApollo" title="iqm.qiskit_iqm.fake_backends.fake_apollo.IQMFakeApollo"><code class="xref py py-func docutils literal notranslate"><span class="pre">IQMFakeApollo()</span></code></a> and <a class="reference internal" href="api/iqm.qiskit_iqm.fake_backends.fake_aphrodite.IQMFakeAphrodite.html#iqm.qiskit_iqm.fake_backends.fake_aphrodite.IQMFakeAphrodite" title="iqm.qiskit_iqm.fake_backends.fake_aphrodite.IQMFakeAphrodite"><code class="xref py py-func docutils literal notranslate"><span class="pre">IQMFakeAphrodite()</span></code></a>
 that represent specific IQM quantum architectures with pre-defined, representative noise models.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
-<span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMFakeAdonis</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">iqm.qiskit_iqm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQMFakeAdonis</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -947,8 +952,8 @@ noisy quantum circuit simulation. This way you can both validate your integratio
 <p>To run a circuit this way, use the <code class="docutils literal notranslate"><span class="pre">&quot;facade_adonis&quot;</span></code> backend retrieved from the provider. Note that the provider must be
 initialized with the URL of a quantum computer with the equivalent architecture (i.e. names of qubits, their
 connectivity, and the native gateset should match the 5-qubit Adonis architecture).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
-<span class="kn">from</span> <span class="nn">iqm.qiskit_iqm</span> <span class="kn">import</span> <span class="n">IQMProvider</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">iqm.qiskit_iqm</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQMProvider</span>
 
 <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1143,8 +1148,8 @@ By Qiskit on IQM developers
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>
