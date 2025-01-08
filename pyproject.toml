@@ -17,12 +17,12 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License"
 ]
-requires-python = ">=3.9, <3.12"
+requires-python = ">=3.9, <3.13"
 dependencies = [
     "numpy",
     "qiskit >= 0.46, < 1.3",
     "qiskit-aer >= 0.13.1, < 0.16",
-    "iqm-client >= 20.0, < 21.0"
+    "iqm-client >= 20.9, < 21.0"
 ]
 
 [project.urls]
@@ -146,7 +146,8 @@ disable = [
     "invalid-name",
     "protected-access",
     "too-few-public-methods",
-    "too-many-locals"
+    "too-many-locals",
+    "too-many-positional-arguments" # To be removed when dropping Python 3.11 support.
 ]
 extension-pkg-whitelist = ["pydantic"]
 

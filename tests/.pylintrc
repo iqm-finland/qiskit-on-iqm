@@ -10,6 +10,7 @@ disable=
     fixme,
     duplicate-code,
     redefined-outer-name,  # fixtures violate this
+    too-many-positional-arguments, # To be removed when dropping Python 3.11 support.
 
 [FORMAT]
 max-line-length=120

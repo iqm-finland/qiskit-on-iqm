@@ -70,7 +70,8 @@ def test_client_signature(adonis_architecture):
         'http://some_url/api/v1/calibration/default/gates', headers=matchers.ANY, timeout=matchers.ANY
     ).thenReturn(get_mock_ok_response(adonis_architecture.model_dump()))
     backend = provider.get_backend()
-    assert f'qiskit-iqm {version("qiskit-iqm")}' in backend.client._signature
+    version_string = version('qiskit-iqm')
+    assert f'qiskit-iqm {version_string}' in backend.client._signature
 
 
 def test_get_facade_backend(adonis_architecture, adonis_coupling_map):
