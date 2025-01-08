@@ -445,6 +445,12 @@ Computational resonators
 
 The IQM Star architecture includes computational resonators as additional QPU components.
 Because the resonator is not a real qubit, the standard Qiskit transpiler does not know how to compile for it.
+
+FIXME better explanation needed
+
+One needs to use :class:`.MoveGate` instructions to move qubit states to and from the resonators.
+The standard Qiskit transpiler does not know to use the MOVE gate.
+
 Thus, we have a custom scheduling plugin that adds the necessary :class:`.MoveGate` instructions where necessary.
 This plugin is executed automatically when you use the Qiskit transpiler.
 

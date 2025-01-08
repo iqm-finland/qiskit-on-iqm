@@ -37,6 +37,7 @@ from iqm.qiskit_iqm.move_gate import MoveGate
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
 
 Locus = tuple[str, ...]
+LocusIdx = tuple[int, ...]
 
 
 def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> DynamicQuantumArchitecture:
@@ -170,7 +171,6 @@ class IQMTarget(Target):
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
         self.real_target: IQMTarget = self._iqm_create_instructions(architecture, component_to_idx)
 
-
     def _iqm_create_instructions(
         self, architecture: DynamicQuantumArchitecture, component_to_idx: dict[str, int]
     ) -> Target:
@@ -183,11 +183,11 @@ class IQMTarget(Target):
         Returns:
             A Qiskit Target object representing the given quantum architecture specification.
         """
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-branches,too-many-nested-blocks
         # mapping from op name to all its allowed loci
         op_loci = {gate_name: gate_info.loci for gate_name, gate_info in architecture.gates.items()}
 
-        def locus_to_idx(locus: Locus) -> tuple[int, ...]:
+        def locus_to_idx(locus: Locus) -> LocusIdx:
             """Map the given locus to use component indices instead of component names."""
             return tuple(component_to_idx[component] for component in locus)
 
@@ -236,8 +236,8 @@ class IQMTarget(Target):
 
             if 'move' in op_loci:
                 # CZ and MOVE: star
-                fake_cz_connections: dict[tuple[int, int], None] = {}
-                move_cz_connections: dict[tuple[int, int], None] = {}
+                fake_cz_connections: dict[LocusIdx, None] = {}
+                move_cz_connections: dict[LocusIdx, None] = {}
                 cz_loci = op_loci['cz']
                 for c1, c2 in cz_loci:
                     idx_locus = locus_to_idx((c1, c2))
@@ -272,7 +272,6 @@ class IQMTarget(Target):
         fake_target_with_moves.real_target = real_target
         self.fake_target_with_moves: IQMTarget = fake_target_with_moves
         return real_target
-
 
     def restrict_to_qubits(self, qubits: Union[list[int], list[str]]) -> IQMTarget:
         """Restrict the transpilation target to only the given qubits.

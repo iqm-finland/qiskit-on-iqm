@@ -82,6 +82,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
                 list(routed_iqm_circuit.instructions), self.target.iqm_component_to_idx
             )
         except ValidationError:  # The Circuit without move gates is empty.
+            # FIXME seems unsafe, assuming this given a generic Pydantic exception
             circ_args = [circuit.num_qubits, circuit.num_ancillas, circuit.num_clbits]
             routed_circuit = QuantumCircuit(*(arg for arg in circ_args if arg > 0))
         new_dag = circuit_to_dag(routed_circuit)
