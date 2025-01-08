@@ -13,6 +13,7 @@
 # limitations under the License.
 """Qiskit adapter for IQM's quantum computers.
 """
+import sys
 from warnings import warn
 
 from qiskit import __version__ as qiskit_version
@@ -35,3 +36,6 @@ if qiskit_version < "1.0.0":
             + "Support for older versions will be dropped in a future major release."
         )
     )
+
+if sys.version_info < (3, 10):
+    warn(DeprecationWarning("Python 3.9 will no longer be supported in a later release of qiskit-iqm."))
