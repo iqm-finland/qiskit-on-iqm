@@ -129,10 +129,9 @@ def devices_to_test_on():
 class TestTranspilation:
     def test_semantically_preserving(self, circuit, backend, method):
         """Test that the transpiled circuit is semantically equivalent to the original one."""
-        n_backend_qubits = backend.target.num_qubits
         print(backend.name)
         # Only run the test if the circuit fits the device
-        if n_backend_qubits < circuit.num_qubits:
+        if backend.num_qubits < circuit.num_qubits:
             pytest.skip("Circuit does not fit the device")
         # Use layout_method="trivial" to avoid initial qubit remapping.
         # Use fixed seed so that the test is deterministic.
@@ -181,7 +180,7 @@ class TestTranspilation:
     def test_valid_result(self, circuit, backend, method, optimization_level):
         """Test that transpiled circuit has gates that are allowed by the backend"""
         # Only run the test if the circuit fits the device
-        if n_backend_qubits < circuit.num_qubits:
+        if backend.num_qubits < circuit.num_qubits:
             pytest.skip("Circuit does not fit the device")
         if method == "native":
             transpiled_circuit = transpile(circuit, backend, optimization_level=optimization_level)
@@ -192,7 +191,7 @@ class TestTranspilation:
     def test_transpiled_circuit_keeps_layout(self, circuit, backend, method):
         """Test that the layout of the transpiled circuit is preserved."""
         # Only run the test if the circuit fits the device
-        if n_backend_qubits < circuit.num_qubits:
+        if backend.num_qubits < circuit.num_qubits:
             pytest.skip("Circuit does not fit the device")
         # TODO implement
         pytest.xfail("Not implemented yet")
