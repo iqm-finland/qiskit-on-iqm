@@ -76,7 +76,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         print(circuit)
         # For some reason, the dag does not contain the layout, so we need to do a bunch of fixing.
         if self.property_set.get("layout"):
-            layout = self.property_set["layout";]
+            layout = self.property_set["layout"]
         else:
             layout = Layout.generate_trivial_layout(circuit)
         iqm_circuit = IQMClientCircuit(
