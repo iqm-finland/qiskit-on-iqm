@@ -1,17 +1,17 @@
 """Testing IQM transpilation.
 """
 
-import pytest
 from itertools import product
 from typing import Iterable
+
+import pytest
 from qiskit.circuit import QuantumCircuit
-from qiskit.circuit.library import QuantumVolume, PermutationGate
+from qiskit.circuit.library import PermutationGate, QuantumVolume
 from qiskit.compiler import transpile
 from qiskit.quantum_info import Operator, Statevector
 
-from iqm.iqm_client import QuantumArchitectureSpecification, ExistingMoveHandlingOptions
-
-from iqm.qiskit_iqm.fake_backends import IQMFakeBackend, IQMFakeDeneb, IQMFakeAdonis, IQMErrorProfile, IQMFakeAphrodite
+from iqm.iqm_client import ExistingMoveHandlingOptions, QuantumArchitectureSpecification
+from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFakeAphrodite, IQMFakeBackend, IQMFakeDeneb
 from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.iqm_naive_move_pass import transpile_to_IQM
 from iqm.qiskit_iqm.iqm_transpilation import IQMReplaceGateWithUnitaryPass
@@ -125,7 +125,6 @@ def devices_to_test_on():
     ),
 )
 class TestTranspilation:
-
     def test_semantically_preserving(self, circuit, backend, method):
         """Test that the transpiled circuit is semantically equivalent to the original one."""
         n_backend_qubits = backend.target.num_qubits

@@ -18,6 +18,7 @@ import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 
 from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
+
 from .utils import get_transpiled_circuit_json
 
 
