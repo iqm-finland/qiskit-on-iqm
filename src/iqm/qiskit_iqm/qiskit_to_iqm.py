@@ -21,7 +21,8 @@ from typing import Collection
 
 import numpy as np
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
-from qiskit.circuit import ClassicalRegister, Clbit, QuantumRegister
+from qiskit.circuit import ClassicalRegister, Clbit
+from qiskit.transpiler.layout import Layout
 
 from iqm.iqm_client import Instruction
 from iqm.qiskit_iqm.move_gate import MoveGate
@@ -219,7 +220,7 @@ def serialize_instructions(
 
 
 def deserialize_instructions(
-    instructions: list[Instruction], qubit_name_to_index: dict[str, int]
+    instructions: list[Instruction], qubit_name_to_index: dict[str, int], layout: Layout
 ) -> QiskitQuantumCircuit:
     """Helper function to turn a list of IQM Instructions into a Qiskit QuantumCircuit.
 
@@ -240,13 +241,16 @@ def deserialize_instructions(
             mk = MeasurementKey.from_string(instr.args['key'])
             cl_regs[mk.creg_idx] = cl_regs.get(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
             cl_bits[str(mk)] = cl_regs[mk.creg_idx][mk.clbit_idx]
-    qreg = QuantumRegister(max(qubit_name_to_index.values()) + 1, 'q')
+    # qreg = QuantumRegister(max(qubit_name_to_index.values()) + 1, 'q')
     # Add an empty Classical register when the original circuit had unused classical registers
     circuit = QiskitQuantumCircuit(
-        qreg, *(cl_regs.get(i, ClassicalRegister(0)) for i in range(max(cl_regs) + 1 if cl_regs else 0))
+        *layout.get_registers(),
+        *(cl_regs.get(i, ClassicalRegister(0)) for i in range(max(cl_regs) + 1 if cl_regs else 0)),
     )
+    index_to_qiskit_qubit = layout.get_physical_bits()
+    print(index_to_qiskit_qubit)
     for instr in instructions:
-        loci = [qubit_name_to_index[q] for q in instr.qubits]
+        loci = [index_to_qiskit_qubit[qubit_name_to_index[q]] for q in instr.qubits]
         if instr.name == 'prx':
             angle_t = instr.args['angle_t'] * 2 * np.pi
             phase_t = instr.args['phase_t'] * 2 * np.pi
