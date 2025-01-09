@@ -69,7 +69,16 @@ class IQMNaiveResonatorMoving(TransformationPass):
             TranspilerError: The layout is not compatible with the DAG, or if the input gate set is incorrect.
         """
         print("Transpiling circuit")
+        print(self.property_set)
         circuit = dag_to_circuit(dag)
+        if len(circuit) == 0:
+            return dag  # Empty circuit, no need to transpile.
+        print(circuit)
+        # For some reason, the dag does not contain the layout, so we need to do a bunch of fixing.
+        if self.property_set.get("layout"):
+            layout = self.property_set['layout']
+        else:
+            layout = Layout.generate_trivial_layout(circuit)
         iqm_circuit = IQMClientCircuit(
             name="Transpiling Circuit",
             instructions=tuple(serialize_instructions(circuit, self.idx_to_component)),
@@ -78,15 +87,34 @@ class IQMNaiveResonatorMoving(TransformationPass):
             routed_iqm_circuit = transpile_insert_moves(
                 iqm_circuit, self.architecture, existing_moves=self.existing_moves_handling
             )
-            routed_circuit = deserialize_instructions(list(routed_iqm_circuit.instructions), self.component_to_idx)
+            routed_circuit = deserialize_instructions(
+                list(routed_iqm_circuit.instructions), self.component_to_idx, layout
+            )
         except ValidationError as e:  # The Circuit without move gates is empty.
-            # FIXME seems unsafe, assuming this given a generic Pydantic exception
-            if e.title == "Empty Circuit":
-                circ_args = [circuit.num_qubits, circuit.num_ancillas, circuit.num_clbits]
-                routed_circuit = QuantumCircuit(*(arg for arg in circ_args if arg > 0))
+            errors = e.errors()
+            if (
+                len(errors) == 1
+                and errors[0]["msg"] == "Value error, Each circuit should have at least one instruction."
+            ):
+                circ_args = [circuit.num_ancillas, circuit.num_clbits]
+                routed_circuit = QuantumCircuit(*layout.get_registers(), *(arg for arg in circ_args if arg > 0))
             else:
                 raise e
-        new_dag = circuit_to_dag(routed_circuit)
+        # Create the new DAG and make sure that the qubits are properly ordered.
+        ordered_qubits = [layout.get_physical_bits()[i] for i in range(len(layout.get_physical_bits()))]
+        new_dag = circuit_to_dag(routed_circuit, qubit_order=ordered_qubits, clbit_order=routed_circuit.clbits)
+        # Update the final_layout with the correct bits.
+        if "final_layout" in self.property_set:
+            inv_layout = layout.get_physical_bits()
+            self.property_set['final_layout'] = Layout(
+                {
+                    physical: inv_layout[dag.find_bit(virtual).index]
+                    for physical, virtual in self.property_set['final_layout'].get_physical_bits().items()
+                }
+            )
+        else:
+            self.property_set['final_layout'] = layout
+        print(self.property_set['final_layout'])
         return new_dag
 
 
