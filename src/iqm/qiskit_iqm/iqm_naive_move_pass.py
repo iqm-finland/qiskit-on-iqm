@@ -76,7 +76,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         print(circuit)
         # For some reason, the dag does not contain the layout, so we need to do a bunch of fixing.
         if self.property_set.get("layout"):
-            layout = self.property_set['layout']
+            layout = self.property_set["layout";]
         else:
             layout = Layout.generate_trivial_layout(circuit)
         iqm_circuit = IQMClientCircuit(
@@ -106,15 +106,15 @@ class IQMNaiveResonatorMoving(TransformationPass):
         # Update the final_layout with the correct bits.
         if "final_layout" in self.property_set:
             inv_layout = layout.get_physical_bits()
-            self.property_set['final_layout'] = Layout(
+            self.property_set["final_layout"] = Layout(
                 {
                     physical: inv_layout[dag.find_bit(virtual).index]
-                    for physical, virtual in self.property_set['final_layout'].get_physical_bits().items()
+                    for physical, virtual in self.property_set["final_layout"].get_physical_bits().items()
                 }
             )
         else:
-            self.property_set['final_layout'] = layout
-        print(self.property_set['final_layout'])
+            self.property_set["final_layout"] = layout
+        print(self.property_set["final_layout"])
         return new_dag
 
 
