@@ -118,10 +118,12 @@ def devices_to_test_on():
 
 @pytest.mark.parametrize(
     ("circuit", "backend", "method"),
-    product(
-        quantum_volume_circuits(range(2, 9, 3)) + ghz_circuits(range(2, 7, 2)),
-        devices_to_test_on(),
-        ["iqm", "native_integration"],
+    list(
+        product(
+            quantum_volume_circuits(range(2, 9, 3)) + ghz_circuits(range(2, 7, 2)),
+            devices_to_test_on(),
+            ["iqm", "native_integration"],
+        )
     ),
 )
 class TestTranspilation:
@@ -130,55 +132,57 @@ class TestTranspilation:
         n_backend_qubits = backend.target.num_qubits
         print(backend.name)
         # Only run the test if the circuit fits the device
-        if n_backend_qubits >= circuit.num_qubits:
-            # Use layout_method="trivial" to avoid initial qubit remapping.
-            # Use fixed seed so that the test is deterministic.
-            if method == "native_integration":
-                # Use optimization_level=0 to enforce equivalence up to global phase.
-                transpiled_circuit = transpile(circuit, backend, optimization_level=0, seed_transpiler=123)
-            elif method == "qiskit":  # Debug case to check if the issues lies with the Qiskit transpiler.
-                transpiled_circuit = transpile(
-                    circuit, target=backend.target, optimization_level=0, seed_transpiler=123
-                )
+        if n_backend_qubits < circuit.num_qubits:
+            pytest.skip("Circuit does not fit the device")
+        # Use layout_method="trivial" to avoid initial qubit remapping.
+        # Use fixed seed so that the test is deterministic.
+        if method == "native_integration":
+            # Use optimization_level=0 to enforce equivalence up to global phase.
+            transpiled_circuit = transpile(circuit, backend, optimization_level=0, seed_transpiler=123)
+        elif method == "qiskit":  # Debug case to check if the issues lies with the Qiskit transpiler.
+            transpiled_circuit = transpile(circuit, target=backend.target, optimization_level=0, seed_transpiler=123)
 
-            else:
-                # Use remove_final_rzs=False to avoid equivalence up to global phase.
-                transpiled_circuit = transpile_to_IQM(
-                    circuit,
-                    backend,
-                    optimization_level=0,
-                    remove_final_rzs=False,
-                    seed_transpiler=123,
-                )
-            # Fix the dimension of the original circuit to agree with the transpiled_circuit
-            padded_circuit = QuantumCircuit(transpiled_circuit.num_qubits)
-            padded_circuit.compose(circuit, range(circuit.num_qubits), inplace=True)
-            circuit_operator = Operator.from_circuit(padded_circuit)
-            print()
-            print("After transpile", transpiled_circuit.layout)
-            if "move" in transpiled_circuit.count_ops():
-                # Replace the move gate with the iSWAP unitary.
-                transpiled_circuit_without_moves = IQMReplaceGateWithUnitaryPass("move", MOVE_GATE_UNITARY)(
-                    transpiled_circuit
-                )
-                initial_layout = transpiled_circuit.layout.initial_layout if transpiled_circuit.layout else None
-                final_layout = transpiled_circuit.layout.final_layout if transpiled_circuit.layout else None
-                transpiled_operator = Operator.from_circuit(
-                    transpiled_circuit_without_moves,
-                    ignore_set_layout=True,
-                    layout=initial_layout,
-                    final_layout=final_layout,
-                )
-            else:
-                transpiled_operator = Operator.from_circuit(transpiled_circuit, ignore_set_layout=False)
-            print(circuit)
-            print(transpiled_circuit)
-            # TODO figure out why the transpiled circuit is not always semantically equivalent to the original one when the GHZ is a ladder rather than a star.
-            assert circuit_operator.equiv(transpiled_operator)
+        else:
+            # Use remove_final_rzs=False to avoid equivalence up to global phase.
+            transpiled_circuit = transpile_to_IQM(
+                circuit,
+                backend,
+                optimization_level=0,
+                remove_final_rzs=False,
+                seed_transpiler=123,
+            )
+        # Fix the dimension of the original circuit to agree with the transpiled_circuit
+        padded_circuit = QuantumCircuit(transpiled_circuit.num_qubits)
+        padded_circuit.compose(circuit, range(circuit.num_qubits), inplace=True)
+        circuit_operator = Operator.from_circuit(padded_circuit)
+        print()
+        print("After transpile", transpiled_circuit.layout)
+        if "move" in transpiled_circuit.count_ops():
+            # Replace the move gate with the iSWAP unitary.
+            transpiled_circuit_without_moves = IQMReplaceGateWithUnitaryPass("move", MOVE_GATE_UNITARY)(
+                transpiled_circuit
+            )
+            initial_layout = transpiled_circuit.layout.initial_layout if transpiled_circuit.layout else None
+            final_layout = transpiled_circuit.layout.final_layout if transpiled_circuit.layout else None
+            transpiled_operator = Operator.from_circuit(
+                transpiled_circuit_without_moves,
+                ignore_set_layout=True,
+                layout=initial_layout,
+                final_layout=final_layout,
+            )
+        else:
+            transpiled_operator = Operator.from_circuit(transpiled_circuit, ignore_set_layout=False)
+        print(circuit)
+        print(transpiled_circuit)
+        # TODO figure out why the transpiled circuit is not always semantically equivalent to the original one when the GHZ is a ladder rather than a star.
+        assert circuit_operator.equiv(transpiled_operator)
 
     @pytest.mark.parametrize('optimization_level', list(range(4)))
     def test_valid_result(self, circuit, backend, method, optimization_level):
         """Test that transpiled circuit has gates that are allowed by the backend"""
+        # Only run the test if the circuit fits the device
+        if n_backend_qubits < circuit.num_qubits:
+            pytest.skip("Circuit does not fit the device")
         if method == "native":
             transpiled_circuit = transpile(circuit, backend, optimization_level=optimization_level)
         else:
@@ -187,6 +191,9 @@ class TestTranspilation:
 
     def test_transpiled_circuit_keeps_layout(self, circuit, backend, method):
         """Test that the layout of the transpiled circuit is preserved."""
+        # Only run the test if the circuit fits the device
+        if n_backend_qubits < circuit.num_qubits:
+            pytest.skip("Circuit does not fit the device")
         # TODO implement
         pytest.xfail("Not implemented yet")
 
