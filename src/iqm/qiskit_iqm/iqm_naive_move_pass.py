@@ -171,7 +171,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         else:
             target = backend.target
 
-    if restrict_to_qubits is not None:
+    if restrict_to_qubits is not None and target is not None:
         target = target.restrict_to_qubits(restrict_to_qubits)
 
     # Determine which scheduling method to use
