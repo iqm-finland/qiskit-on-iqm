@@ -42,19 +42,18 @@ class IQMNaiveResonatorMoving(TransformationPass):
 
     Args:
         target: Transpilation target.
-        gate_set: Basis gates of the target backend.
-        existing_moves_handling: ffff
+        existing_moves_handling: How to handle existing MOVE gates in the circuit.
     """
 
     def __init__(
         self,
         target: IQMTarget,
-        gate_set: list[str],
-        existing_moves_handling: Optional[ExistingMoveHandlingOptions] = None,
+        existing_moves_handling: ExistingMoveHandlingOptions = ExistingMoveHandlingOptions.KEEP,
     ):
         super().__init__()
-        self.target = target
-        self.gate_set = gate_set
+        self.architecture = target.iqm_dqa
+        self.idx_to_component = target.iqm_idx_to_component
+        self.component_to_idx = target.iqm_component_to_idx
         self.existing_moves_handling = existing_moves_handling
 
     def run(self, dag: DAGCircuit) -> DAGCircuit:
@@ -69,22 +68,24 @@ class IQMNaiveResonatorMoving(TransformationPass):
         Raises:
             TranspilerError: The layout is not compatible with the DAG, or if the input gate set is incorrect.
         """
+        print("Transpiling circuit")
         circuit = dag_to_circuit(dag)
         iqm_circuit = IQMClientCircuit(
             name="Transpiling Circuit",
-            instructions=tuple(serialize_instructions(circuit, self.target.iqm_idx_to_component)),
+            instructions=tuple(serialize_instructions(circuit, self.idx_to_component)),
         )
         try:
             routed_iqm_circuit = transpile_insert_moves(
-                iqm_circuit, self.target.iqm_dqa, existing_moves=self.existing_moves_handling
+                iqm_circuit, self.architecture, existing_moves=self.existing_moves_handling
             )
-            routed_circuit = deserialize_instructions(
-                list(routed_iqm_circuit.instructions), self.target.iqm_component_to_idx
-            )
-        except ValidationError:  # The Circuit without move gates is empty.
+            routed_circuit = deserialize_instructions(list(routed_iqm_circuit.instructions), self.component_to_idx)
+        except ValidationError as e:  # The Circuit without move gates is empty.
             # FIXME seems unsafe, assuming this given a generic Pydantic exception
-            circ_args = [circuit.num_qubits, circuit.num_ancillas, circuit.num_clbits]
-            routed_circuit = QuantumCircuit(*(arg for arg in circ_args if arg > 0))
+            if e.title == "Empty Circuit":
+                circ_args = [circuit.num_qubits, circuit.num_ancillas, circuit.num_clbits]
+                routed_circuit = QuantumCircuit(*(arg for arg in circ_args if arg > 0))
+            else:
+                raise e
         new_dag = circuit_to_dag(routed_circuit)
         return new_dag
 
@@ -112,6 +113,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         target: An alternative target to compile to than the backend, using this option requires intimate knowledge
             of the transpiler and thus it is not recommended to use.
         initial_layout: The initial layout to use for the transpilation, same as :func:`~qiskit.compiler.transpile`.
+        perform_move_routing: Whether to perform MOVE gate routing.
         optimize_single_qubits: Whether to optimize single qubit gates away.
         ignore_barriers: Whether to ignore barriers when optimizing single qubit gates away.
         remove_final_rzs: Whether to remove the final z rotations. It is recommended always to set this to true as
@@ -132,7 +134,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
 
     if target is None:
         if circuit.count_ops().get("move", 0) > 0:
-            target = backend.target.fake_target_with_moves
+            target = backend.target_with_resonators
             # Create a sensible initial layout if none is provided
             if initial_layout is None:
                 initial_layout = generate_initial_layout(backend, circuit, restrict_to_qubits)
@@ -162,7 +164,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
                     raise ValueError(
                         "Existing Move handling options are not compatible with `remove_final_rzs` and \
                         `ignore_barriers` options."
-                    )
+                    )  # No technical reason for this, just hard to maintain all combinations.
                 scheduling_method += "_" + existing_moves_handling.value
         else:
             if optimize_single_qubits:
@@ -176,7 +178,8 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     else:
         warnings.warn(
             f"Scheduling method is set to {scheduling_method}, but it is normally used to pass other transpiler "
-            + "options, ignoring the other arguments."
+            + "options, ignoring the `perform_move_routing`, `optimize_single_qubits`, `remove_final_rzs`, "
+            + "`ignore_barriers`, and `existing_moves_handling` arguments."
         )
     qiskit_transpiler_kwargs["scheduling_method"] = scheduling_method
     new_circuit = transpile(circuit, target=target, initial_layout=initial_layout, **qiskit_transpiler_kwargs)

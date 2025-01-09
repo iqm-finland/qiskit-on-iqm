@@ -241,7 +241,10 @@ def deserialize_instructions(
             cl_regs[mk.creg_idx] = cl_regs.get(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
             cl_bits[str(mk)] = cl_regs[mk.creg_idx][mk.clbit_idx]
     qreg = QuantumRegister(max(qubit_name_to_index.values()) + 1, 'q')
-    circuit = QiskitQuantumCircuit(qreg, *(cl_regs[i] for i in range(len(cl_regs))))
+    # Add an empty Classical register when the original circuit had unused classical registers
+    circuit = QiskitQuantumCircuit(
+        qreg, *(cl_regs.get(i, ClassicalRegister(0)) for i in range(max(cl_regs) + 1 if cl_regs else 0))
+    )
     for instr in instructions:
         loci = [qubit_name_to_index[q] for q in instr.qubits]
         if instr.name == 'prx':
