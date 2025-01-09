@@ -23,6 +23,8 @@ from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.move_gate import MoveGate
 from tests.utils import describe_instruction, get_mocked_backend, get_transpiled_circuit_json
 
+# TODO Most of these tests are not testing what is stated in the documentation. They should be refactored, if not removed.
+
 
 def test_move_gate_trivial_layout(move_architecture):
     """Tests that a trivial 1-to-1 layout is translated correctly."""

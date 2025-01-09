@@ -18,6 +18,7 @@ import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
 
 from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey
+from .utils import get_transpiled_circuit_json
 
 
 @pytest.fixture()
@@ -47,3 +48,33 @@ def test_measurement_key_from_clbit():
 def test_measurement_key_from_string(key_str):
     mk = MeasurementKey.from_string(key_str)
     assert str(mk) == key_str
+
+
+def test_circuit_to_iqm_json(adonis_architecture):
+    """Test that a circuit submitted via IQM backend gets transpiled into proper JSON."""
+    circuit = QuantumCircuit(2, 2)
+    circuit.h(0)
+    circuit.cx(0, 1)
+
+    circuit.measure_all()
+
+    # This transpilation seed maps virtual qubit 0 to physical qubit 2, and virtual qubit 1 to physical qubit 4
+    # Other seeds will switch the mapping, and may also reorder the first prx instructions
+    submitted_circuit = get_transpiled_circuit_json(circuit, adonis_architecture, seed_transpiler=123)
+
+    instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]
+    assert instr_names == [
+        # CX phase 1: Hadamard on target qubit 1 (= QB3)
+        'prx:QB3',
+        # Hadamard on 0 (= QB5)
+        'prx:QB5',
+        # CX phase 2: CZ on 0,1 (= physical QB5, QB3)
+        'cz:QB5,QB3',
+        # CX phase 3: Hadamard again on target qubit 1 (= physical QB3)
+        'prx:QB3',
+        # Barrier before measurements
+        'barrier:QB5,QB3',
+        # Measurement on both qubits
+        'measure:QB5',
+        'measure:QB3',
+    ]

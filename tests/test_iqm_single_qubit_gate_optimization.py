@@ -24,7 +24,6 @@ from iqm.qiskit_iqm.fake_backends.fake_aphrodite import IQMFakeAphrodite
 from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
-from tests.utils import get_transpiled_circuit_json
 
 
 def test_optimize_single_qubit_gates_preserves_unitary():
@@ -101,36 +100,6 @@ def test_optimize_single_qubit_gates_raises_on_invalid_basis():
 
     with pytest.raises(ValueError, match="Invalid operation 'h' found "):
         optimize_single_qubit_gates(circuit)
-
-
-def test_submitted_circuit(adonis_architecture):
-    """Test that a circuit submitted via IQM backend gets transpiled into proper JSON."""
-    circuit = QuantumCircuit(2, 2)
-    circuit.h(0)
-    circuit.cx(0, 1)
-
-    circuit.measure_all()
-
-    # This transpilation seed maps virtual qubit 0 to physical qubit 2, and virtual qubit 1 to physical qubit 4
-    # Other seeds will switch the mapping, and may also reorder the first prx instructions
-    submitted_circuit = get_transpiled_circuit_json(circuit, adonis_architecture, seed_transpiler=123)
-
-    instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]
-    assert instr_names == [
-        # CX phase 1: Hadamard on target qubit 1 (= QB3)
-        'prx:QB3',
-        # Hadamard on 0 (= QB5)
-        'prx:QB5',
-        # CX phase 2: CZ on 0,1 (= physical QB5, QB3)
-        'cz:QB5,QB3',
-        # CX phase 3: Hadamard again on target qubit 1 (= physical QB3)
-        'prx:QB3',
-        # Barrier before measurements
-        'barrier:QB5,QB3',
-        # Measurement on both qubits
-        'measure:QB5',
-        'measure:QB3',
-    ]
 
 
 @pytest.mark.parametrize('backend', [IQMFakeAdonis(), IQMFakeDeneb(), IQMFakeAphrodite()])

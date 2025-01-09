@@ -20,6 +20,7 @@ from qiskit.circuit import Instruction
 from tests.utils import get_mocked_backend
 
 
+# TODO Refactor to check more different architectures
 def test_backend_configuration_new(move_architecture):
     """Check that the extended architecture is configured correctly to the Qiskit backend."""
     assert move_architecture is not None
