@@ -164,16 +164,6 @@ def move_architecture():
 
 
 @pytest.fixture
-def adonis_coupling_map():
-    return {(0, 2), (1, 2), (3, 2), (4, 2)}
-
-
-@pytest.fixture
-def deneb_coupling_map():
-    return {(i, 6) for i in range(6)}
-
-
-@pytest.fixture
 def ndonis_architecture():
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),

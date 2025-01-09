@@ -32,11 +32,15 @@ def test_iqm_fake_deneb():
     assert backend.name == "IQMFakeDenebBackend"
 
 
-def test_iqm_fake_deneb_connectivity(deneb_coupling_map):
+def test_iqm_fake_deneb_connectivity():
     backend = IQMFakeDeneb()
     assert isinstance(backend.target, IQMTarget)
-    assert set(backend.target.real_target.build_coupling_map()) == set(deneb_coupling_map)
-    assert set(backend.coupling_map.get_edges()) == {(qb1, qb2) for qb1 in range(6) for qb2 in range(6) if qb1 != qb2}
+    partial_coupling_map = {(qb1, qb2) for qb1 in range(6) for qb2 in range(6) if qb1 != qb2}
+    assert set(backend.target.build_coupling_map()) == partial_coupling_map
+    assert set(backend.target_with_resonators.build_coupling_map()) == partial_coupling_map.union(
+        ((i, 6) for i in range(6))
+    )
+    assert set(backend.coupling_map.get_edges()) == partial_coupling_map
 
 
 def test_iqm_fake_deneb_noise_model_instantiated():

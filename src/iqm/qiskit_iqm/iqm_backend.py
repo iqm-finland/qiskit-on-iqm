@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from abc import ABC
 import itertools
-from typing import Final, Union
+from typing import Final, Optional, Union
 from uuid import UUID
 
 from qiskit.circuit import Parameter, Reset
@@ -96,8 +96,10 @@ class IQMBackendBase(BackendV2, ABC):
         # qubits, or else transpiling with optimization_level=0 will fail because of lacking resonator indices.
         qb_to_idx = {qb: idx for idx, qb in enumerate(arch.qubits + arch.computational_resonators)}
 
-        self._target = IQMTarget(arch, qb_to_idx, include_moves=False)
-        self._fake_target_with_moves = IQMTarget(arch, qb_to_idx, include_moves=True)
+        self._target = IQMTarget(arch, qb_to_idx, include_resonators=False)
+        self._fake_target_with_moves = (
+            IQMTarget(arch, qb_to_idx, include_resonators=True) if 'move' in arch.gates else None
+        )
         self._qb_to_idx = qb_to_idx
         self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
         self.name = 'IQMBackend'
@@ -108,7 +110,7 @@ class IQMBackendBase(BackendV2, ABC):
         return self._target
 
     @property
-    def target_with_resonators(self) -> Target:
+    def target_with_resonators(self) -> Optional[Target]:
         """Return the target with MOVE gates and resonators included."""
         return self._fake_target_with_moves
 
@@ -124,7 +126,10 @@ class IQMBackendBase(BackendV2, ABC):
     def get_real_target(self) -> Target:
         """Return the real physical target of the backend without virtual CZ gates."""
         return IQMTarget(
-            architecture=self.architecture, component_to_idx=self._qb_to_idx, include_moves=True, include_fake_czs=False
+            architecture=self.architecture,
+            component_to_idx=self._qb_to_idx,
+            include_resonators=True,
+            include_fake_czs=False,
         )
 
     def qubit_name_to_index(self, name: str) -> int:
@@ -181,14 +186,14 @@ class IQMBackendBase(BackendV2, ABC):
 
 
 def _restrict_dqa_to_qubits(
-    architecture: DynamicQuantumArchitecture, qubits: list[str], include_moves: bool, include_fake_czs: bool = True
+    architecture: DynamicQuantumArchitecture, qubits: list[str], include_resonators: bool, include_fake_czs: bool = True
 ) -> IQMTarget:
     """Generated a restricted transpilation target from this backend that only contains the given qubits.
 
     Args:
         architecture: The dynamic quantum architecture to restrict.
         qubits: Qubits to restrict the target to. Can be either a list of qubit indices or qubit names.
-        include_moves: Whether to include MOVE gates in the target.
+        include_resonators: Whether to include MOVE gates in the target.
         include_fake_czs: Whether to include virtual CZs that are not natively supported, but could be routed via MOVE.
 
     Returns:
@@ -213,7 +218,7 @@ def _restrict_dqa_to_qubits(
         computational_resonators=[q for q in qubits if q in architecture.computational_resonators],
         gates=new_gates,
     )
-    return IQMTarget(new_arch, {name: idx for idx, name in enumerate(qubits)}, include_moves, include_fake_czs)
+    return IQMTarget(new_arch, {name: idx for idx, name in enumerate(qubits)}, include_resonators, include_fake_czs)
 
 
 class IQMTarget(Target):
@@ -224,7 +229,7 @@ class IQMTarget(Target):
     Args:
         architecture: The quantum architecture specification to convert.
         component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
-        include_moves: Whether to include MOVE gates in the target.
+        include_resonators: Whether to include MOVE gates in the target.
         include_fake_czs: Whether to include virtual CZs that are not natively supported, but could be routed via MOVE.
     """
 
@@ -232,7 +237,7 @@ class IQMTarget(Target):
         self,
         architecture: DynamicQuantumArchitecture,
         component_to_idx: dict[str, int],
-        include_moves: bool,
+        include_resonators: bool,
         include_fake_czs: bool = True,
     ):
         super().__init__()
@@ -240,7 +245,7 @@ class IQMTarget(Target):
         self.iqm_dqa = architecture
         self.iqm_component_to_idx = component_to_idx
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
-        self.iqm_includes_moves = include_moves
+        self.iqm_includes_resonators = include_resonators
         self.iqm_includes_fake_czs = include_fake_czs
         self._add_connections_from_DQA()
 
@@ -270,7 +275,7 @@ class IQMTarget(Target):
             Currently we do not provide any actual properties for the operation, hence the all the
             allowed loci map to None.
             """
-            if self.iqm_includes_moves:
+            if self.iqm_includes_resonators:
                 loci = op_loci[name]
             else:
                 # Remove the loci that correspond to resonators.
@@ -301,7 +306,7 @@ class IQMTarget(Target):
         if 'cc_prx' in op_loci:
             self.add_instruction(Reset(), create_properties('cc_prx'))
 
-        if self.iqm_includes_moves and 'move' in op_loci:
+        if self.iqm_includes_resonators and 'move' in op_loci:
             self.add_instruction(MoveGate(), create_properties('move'))
 
         if 'cz' in op_loci:
@@ -310,7 +315,7 @@ class IQMTarget(Target):
                 cz_connections: dict[LocusIdx, None] = {}
                 cz_loci = op_loci['cz']
                 for c1, c2 in cz_loci:
-                    if self.iqm_includes_moves or all(component in self.iqm_dqa.qubits for component in (c1, c2)):
+                    if self.iqm_includes_resonators or all(component in self.iqm_dqa.qubits for component in (c1, c2)):
                         idx_locus = locus_to_idx((c1, c2))
                         cz_connections[idx_locus] = None
 
@@ -346,4 +351,6 @@ class IQMTarget(Target):
             restricted target
         """
         qubits_str = [self.iqm_idx_to_component[q] if isinstance(q, int) else str(q) for q in qubits]
-        return _restrict_dqa_to_qubits(self.iqm_dqa, qubits_str, self.iqm_includes_moves, self.iqm_includes_fake_czs)
+        return _restrict_dqa_to_qubits(
+            self.iqm_dqa, qubits_str, self.iqm_includes_resonators, self.iqm_includes_fake_czs
+        )
