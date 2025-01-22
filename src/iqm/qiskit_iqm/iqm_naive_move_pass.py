@@ -68,12 +68,9 @@ class IQMNaiveResonatorMoving(TransformationPass):
         Raises:
             TranspilerError: The layout is not compatible with the DAG, or if the input gate set is incorrect.
         """
-        print("Transpiling circuit")
-        print(self.property_set)
         circuit = dag_to_circuit(dag)
         if len(circuit) == 0:
             return dag  # Empty circuit, no need to transpile.
-        print(circuit)
         # For some reason, the dag does not contain the layout, so we need to do a bunch of fixing.
         if self.property_set.get("layout"):
             layout = self.property_set["layout"]
@@ -114,11 +111,11 @@ class IQMNaiveResonatorMoving(TransformationPass):
             )
         else:
             self.property_set["final_layout"] = layout
-        print(self.property_set["final_layout"])
         return new_dag
 
 
-def transpile_to_IQM(  # pylint: disable=too-many-arguments
+# TODO create tests to see if these work with mid circuit measurements.
+def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests for this
     circuit: QuantumCircuit,
     backend: IQMBackendBase,
     target: Optional[IQMTarget] = None,
