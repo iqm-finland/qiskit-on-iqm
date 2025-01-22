@@ -22,8 +22,10 @@ from qiskit_aer import AerSimulator
 from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
 from iqm.qiskit_iqm.fake_backends.fake_aphrodite import IQMFakeAphrodite
 from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
+from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
+from tests.utils import get_mocked_backend
 
 
 def test_optimize_single_qubit_gates_preserves_unitary():
@@ -127,3 +129,15 @@ def test_optimize_single_qubit_gates_preserves_layout(backend):
     layout = transpiled_circuit.layout
     qc_optimized = optimize_single_qubit_gates(transpiled_circuit)
     assert layout == qc_optimized.layout
+
+
+@pytest.mark.parametrize('optimization_level', list(range(4)))
+def test_qiskit_native_transpiler(move_architecture, optimization_level):
+    """Tests that a simple circuit is transpiled correctly using the Qiskit transpiler."""
+    backend, _ = get_mocked_backend(move_architecture)
+    qc = QuantumCircuit(2)
+    qc.h(0)
+    qc.cx(0, 1)
+    qc.measure_all()
+    transpiled_circuit = transpile(qc, backend=backend, optimization_level=optimization_level)
+    validate_circuit(transpiled_circuit, backend)

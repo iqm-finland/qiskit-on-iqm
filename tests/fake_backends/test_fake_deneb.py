@@ -126,7 +126,7 @@ def test_move_gate_not_closed():
         )
 
 
-def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model_():
+def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model():
     backend = IQMFakeDeneb()
     no_qubits = 6
     comp_r = QuantumRegister(1, "comp_r")  # Computational resonator

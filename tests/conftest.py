@@ -163,6 +163,82 @@ def move_architecture():
     )
 
 
+@pytest.fixture()
+def hypothetical_fake_architecture():
+    """Generate a hypothetical fake device for testing.
+
+          QB1   QB2
+           |    |
+             R1
+           |^    ^
+    QB3 - QB4   QB7 - QB8
+           |v    v
+             CR2
+            |   |
+          QB5   QB6
+
+    Here, the | signifies a CZ connection and the V and ^ signify a move connection.
+
+    """
+    return DynamicQuantumArchitecture(
+        calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
+        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6', 'QB7', 'QB8'],
+        computational_resonators=['R1', 'CR2'],
+        gates={
+            'prx': GateInfo(
+                implementations={
+                    'drag_gaussian': GateImplementationInfo(
+                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',), ('QB7',), ('QB8',))
+                    ),
+                },
+                default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cz': GateInfo(
+                implementations={
+                    'tgss': GateImplementationInfo(
+                        loci=(
+                            ('QB1', 'R1'),
+                            ('QB2', 'R1'),
+                            ('QB3', 'QB4'),
+                            ('QB4', 'R1'),
+                            ('QB4', 'CR2'),
+                            ('QB5', 'CR2'),
+                            ('QB6', 'CR2'),
+                            ('QB7', 'QB8'),
+                        )
+                    ),
+                },
+                default_implementation='tgss',
+                override_default_implementation={},
+            ),
+            'move': GateInfo(
+                implementations={
+                    'tgss_crf': GateImplementationInfo(
+                        loci=(
+                            ('QB4', 'R1'),
+                            ('QB4', 'CR2'),
+                            ('QB7', 'R1'),
+                            ('QB7', 'CR2'),
+                        ),
+                    )
+                },
+                default_implementation='tgss_crf',
+                override_default_implementation={},
+            ),
+            'measure': GateInfo(
+                implementations={
+                    'constant': GateImplementationInfo(
+                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',), ('QB7',), ('QB8',)),
+                    )
+                },
+                default_implementation='constant',
+                override_default_implementation={},
+            ),
+        },
+    )
+
+
 @pytest.fixture
 def ndonis_architecture():
     return DynamicQuantumArchitecture(
@@ -222,6 +298,16 @@ def ndonis_architecture():
             ),
         },
     )
+
+
+@pytest.fixture
+def adonis_coupling_map():
+    return {
+        (0, 2),
+        (1, 2),
+        (3, 2),
+        (4, 2),
+    }
 
 
 @pytest.fixture
