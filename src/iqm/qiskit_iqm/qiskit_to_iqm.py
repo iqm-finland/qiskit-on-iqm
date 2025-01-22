@@ -219,7 +219,7 @@ def serialize_instructions(
     return instructions
 
 
-def deserialize_instructions(
+def deserialize_instructions(  # TODO create test for this
     instructions: list[Instruction], qubit_name_to_index: dict[str, int], layout: Layout
 ) -> QiskitQuantumCircuit:
     """Helper function to turn a list of IQM Instructions into a Qiskit QuantumCircuit.
@@ -248,7 +248,6 @@ def deserialize_instructions(
         *(cl_regs.get(i, ClassicalRegister(0)) for i in range(max(cl_regs) + 1 if cl_regs else 0)),
     )
     index_to_qiskit_qubit = layout.get_physical_bits()
-    print(index_to_qiskit_qubit)
     for instr in instructions:
         loci = [index_to_qiskit_qubit[qubit_name_to_index[q]] for q in instr.qubits]
         if instr.name == 'prx':
