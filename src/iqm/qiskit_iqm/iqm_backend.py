@@ -52,9 +52,6 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
     Returns:
         DQA replicating the properties of ``sqa``
     """
-    # NOTE this prefix-based heuristic for identifying the qubits and resonators is not always guaranteed to work
-    qubits = [qb for qb in sqa.qubits if qb.startswith('QB')]
-    computational_resonators = [qb for qb in sqa.qubits if qb.lower().startswith('comp')]
     gates = {
         gate_name: GateInfo(
             implementations={'__fake': GateImplementationInfo(loci=tuple(tuple(locus) for locus in gate_loci))},
@@ -63,6 +60,15 @@ def _dqa_from_static_architecture(sqa: QuantumArchitectureSpecification) -> Dyna
         )
         for gate_name, gate_loci in sqa.operations.items()
     }
+    # NOTE that this heuristic for defining computational resonators is not perfect, but it should work for more cases
+    # than the name-based heuristic. Computational_resonators will be mapped wrong if the resonator is not used in any
+    # move gates.
+    if 'move' in sqa.operations:
+        computational_resonators = list({res for _, res in sqa.operations['move']})
+    else:
+        computational_resonators = []
+    qubits = [qb for qb in sqa.qubits if qb not in computational_resonators]
+
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('00000000-0000-0000-0000-000000000000'),
         qubits=qubits,
