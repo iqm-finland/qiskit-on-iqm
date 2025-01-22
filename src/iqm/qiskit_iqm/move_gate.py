@@ -12,11 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """MOVE gate to be used on the IQM Star architecture."""
-
+import numpy as np
 from qiskit.circuit import Gate
 import qiskit.quantum_info as qi
 
-MOVE_GATE_UNITARY = [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+# MOVE gate has undefined phases, so we pick two arbitrary phases here
+_phase_1 = np.exp(0.7j)
+_phase_2 = np.exp(1.2j)
+MOVE_GATE_UNITARY = [
+    [1.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, _phase_1, 0.0],
+    [0.0, _phase_1.conj(), 0.0, 0.0],
+    [0.0, 0.0, 0.0, _phase_2],
+]
 """Unitary matrix for simulating the ideal MOVE gate.
 
 This matrix is not a realistic description of MOVE, since it applies a zero phase on the moved
