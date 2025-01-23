@@ -76,6 +76,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         if self.property_set.get("layout"):
             layout = self.property_set["layout"]
         else:
+            # Reconstruct the layout from the dag.
             layout = Layout()
             for qreg in dag.qregs:
                 layout.add_register(qreg)
@@ -124,7 +125,6 @@ class IQMNaiveResonatorMoving(TransformationPass):
         return new_dag
 
 
-# TODO create tests to see if these work with mid circuit measurements.
 def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests for this
     circuit: QuantumCircuit,
     backend: IQMBackendBase,
@@ -178,7 +178,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests 
         else:
             target = backend.target
 
-    if restrict_to_qubits is not None and target is not None:
+    if restrict_to_qubits is not None:
         target = target.restrict_to_qubits(restrict_to_qubits)
 
     # Determine which scheduling method to use
