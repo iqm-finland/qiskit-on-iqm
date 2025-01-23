@@ -75,7 +75,11 @@ class IQMNaiveResonatorMoving(TransformationPass):
         if self.property_set.get("layout"):
             layout = self.property_set["layout"]
         else:
-            layout = Layout.generate_trivial_layout(circuit)
+            layout = Layout()
+            for qreg in dag.qregs:
+                layout.add_register(qreg)
+            for i, qubit in enumerate(dag.qubits):
+                layout.add(qubit, i)
         iqm_circuit = IQMClientCircuit(
             name="Transpiling Circuit",
             instructions=tuple(serialize_instructions(circuit, self.idx_to_component)),
@@ -103,12 +107,18 @@ class IQMNaiveResonatorMoving(TransformationPass):
         # Update the final_layout with the correct bits.
         if "final_layout" in self.property_set:
             inv_layout = layout.get_physical_bits()
-            self.property_set["final_layout"] = Layout(
+            new_final_layout_dict = {
+                physical: inv_layout[dag.find_bit(virtual).index]
+                for physical, virtual in self.property_set["final_layout"].get_physical_bits().items()
+            }
+            new_final_layout_dict.update(
                 {
-                    physical: inv_layout[dag.find_bit(virtual).index]
-                    for physical, virtual in self.property_set["final_layout"].get_physical_bits().items()
+                    phys: inv_layout[new_dag.find_bit(virt).index]
+                    for phys, virt in inv_layout.items()
+                    if phys not in self.property_set["final_layout"].get_physical_bits()
                 }
             )
+            self.property_set["final_layout"] = Layout(new_final_layout_dict)
         else:
             self.property_set["final_layout"] = layout
         return new_dag
@@ -158,7 +168,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests 
         restrict_to_qubits = [backend.qubit_name_to_index(q) if isinstance(q, str) else q for q in restrict_to_qubits]
 
     if target is None:
-        if circuit.count_ops().get("move", 0) > 0 or (restrict_to_qubits is not None and backend.has_resonators()):
+        if circuit.count_ops().get("move", 0) > 0 or restrict_to_qubits is not None:
             target = backend.target_with_resonators
             # Create a sensible initial layout if none is provided
             if initial_layout is None:
