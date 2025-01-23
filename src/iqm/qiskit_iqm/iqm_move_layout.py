@@ -180,9 +180,9 @@ def generate_initial_layout(
         indices.
     """
     if restrict_to_qubits is not None:
-        target = backend.target.restrict_to_qubits(restrict_to_qubits)
+        target = backend.target_with_resonators.restrict_to_qubits(restrict_to_qubits)
     else:
-        target = backend.target
+        target = backend.target_with_resonators
     layout_gen = IQMMoveLayout(target)
     pm = PassManager(layout_gen)
     pm.run(circuit)
