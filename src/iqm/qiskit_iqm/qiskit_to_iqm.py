@@ -21,7 +21,7 @@ from typing import Collection
 
 import numpy as np
 from qiskit import QuantumCircuit as QiskitQuantumCircuit
-from qiskit.circuit import ClassicalRegister, Clbit
+from qiskit.circuit import ClassicalRegister, Clbit, QuantumRegister
 from qiskit.transpiler.layout import Layout
 
 from iqm.iqm_client import Instruction
@@ -241,13 +241,20 @@ def deserialize_instructions(  # TODO create test for this
             mk = MeasurementKey.from_string(instr.args['key'])
             cl_regs[mk.creg_idx] = cl_regs.get(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
             cl_bits[str(mk)] = cl_regs[mk.creg_idx][mk.clbit_idx]
-    # qreg = QuantumRegister(max(qubit_name_to_index.values()) + 1, 'q')
+    # Add resonators
+    n_qubits = len(layout.get_physical_bits())
+    n_resonators = len(qubit_name_to_index) - n_qubits
+    if n_resonators > 0:
+        new_qreg = QuantumRegister(n_resonators, 'resonators')
+        layout.add_register(new_qreg)
+        for idx in range(n_resonators):
+            layout.add(new_qreg[idx], idx + n_qubits)
+    index_to_qiskit_qubit = layout.get_physical_bits()
     # Add an empty Classical register when the original circuit had unused classical registers
     circuit = QiskitQuantumCircuit(
         *layout.get_registers(),
         *(cl_regs.get(i, ClassicalRegister(0)) for i in range(max(cl_regs) + 1 if cl_regs else 0)),
     )
-    index_to_qiskit_qubit = layout.get_physical_bits()
     for instr in instructions:
         loci = [index_to_qiskit_qubit[qubit_name_to_index[q]] for q in instr.qubits]
         if instr.name == 'prx':
