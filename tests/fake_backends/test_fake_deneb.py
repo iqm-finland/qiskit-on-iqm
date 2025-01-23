@@ -28,7 +28,7 @@ from iqm.qiskit_iqm.iqm_backend import IQMTarget
 
 def test_iqm_fake_deneb():
     backend = IQMFakeDeneb()
-    assert backend.num_qubits == 7
+    assert backend.num_qubits == 6
     assert backend.name == "IQMFakeDenebBackend"
 
 
@@ -145,7 +145,7 @@ def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model():
     qc.measure(q, c)
 
     job = backend.run(
-        transpile_to_IQM(qc, backend=backend, perform_move_routing=False),
+        transpile_to_IQM(qc, backend, perform_move_routing=False),
         shots=1000,
     )
 

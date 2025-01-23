@@ -31,7 +31,7 @@ def test_iqm_fake_adonis_connectivity():
     assert isinstance(backend.target, IQMTarget)
     coupling_map = {(0, 2), (1, 2), (3, 2), (4, 2)}
     assert set(backend.target.build_coupling_map()) == coupling_map
-    assert backend.target_with_resonators is None
+    assert backend.target_with_resonators == backend.target
     assert set(backend.coupling_map.get_edges()) == coupling_map
 
 

@@ -44,6 +44,11 @@ class TestIQMTargetReflectsDQA:
         self.dqa = dqa
         self.backend = get_mocked_backend(dqa)[0]
 
+    def test_backend_size(self):
+        assert self.backend.num_qubits == len(self.dqa.qubits)
+        if self.backend._fake_target_with_moves is not None:
+            assert self.backend._fake_target_with_moves.num_qubits == len(self.dqa.components)
+
     def test_physical_qubits(self):
         """Check that the physical qubits are in the correct order: resonators at the end."""
         assert self.backend.physical_qubits == self.dqa.qubits + self.dqa.computational_resonators
@@ -78,7 +83,7 @@ class TestIQMTargetReflectsDQA:
 
     def test_id_gates(self):
         """Check that the id gates are defined for both qubits and components."""
-        self.check_instruction("id", expected_loci=[(q,) for q in self.dqa.components])
+        self.check_instruction("id", expected_loci=[(q,) for q in self.dqa.qubits])
         if self.backend._fake_target_with_moves is not None:
             self.check_instruction(
                 "id", expected_loci=[(q,) for q in self.dqa.components], target=self.backend._fake_target_with_moves
@@ -164,3 +169,44 @@ class TestIQMTargetReflectsDQA:
             for (i, loci) in target.instructions
             if i.name == qiskit_name
         } == set(expected_loci)
+
+
+@pytest.mark.parametrize(
+    "dqa,restriction",
+    [
+        ("adonis_architecture", ["QB4", "QB3", "QB1"]),
+        ("move_architecture", ["QB5", "QB3", "QB1"]),
+        ("move_architecture", ["QB5", "QB3", "QB1", "COMP_R"]),
+    ],
+    indirect=["dqa"],
+)
+def test_target_from_restricted_qubits(dqa, restriction):
+    """Test that the restricted target is properly created."""
+    backend = get_mocked_backend(dqa)[0]
+    restriction_idxs = [backend.qubit_name_to_index(qubit) for qubit in restriction]
+    includes_resonators = any(qb in backend.architecture.computational_resonators for qb in restriction)
+    for restricted in [restriction, restriction_idxs]:  # Check both string and integer restrictions
+        if includes_resonators:
+            restricted_target = backend.target_with_resonators.restrict_to_qubits(restricted)  # Restrict from IQMTarget
+            assert restricted_target.num_qubits >= len(restricted)  # Resonators are included
+        else:
+            restricted_target = backend.target.restrict_to_qubits(restricted)  # Restrict from IQMTarget
+            assert restricted_target.num_qubits == len(restricted)
+        restricted_edges = restricted_target.build_coupling_map().get_edges()
+
+        assert set(restricted_edges) == set(
+            backend.restrict_to_qubits(restricted, include_resonators=includes_resonators)
+            .build_coupling_map()
+            .get_edges()
+        )  # Restrict from backend gives the same result
+
+        # Check if the edges in the restricted target were allowed in the backend
+        for edge in restricted_edges:
+            translated_edge = (
+                backend.qubit_name_to_index(restriction[edge[0]]),
+                backend.qubit_name_to_index(restriction[edge[1]]),
+            )
+            if includes_resonators:
+                assert translated_edge in backend.target_with_resonators.build_coupling_map().get_edges()
+            else:
+                assert translated_edge in backend.coupling_map.get_edges()
