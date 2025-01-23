@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from abc import ABC
 import itertools
-from typing import Final, Optional, Union
+from typing import Final, Union
 from uuid import UUID
 
 from qiskit.circuit import Parameter, Reset
@@ -116,8 +116,10 @@ class IQMBackendBase(BackendV2, ABC):
         return self._target
 
     @property
-    def target_with_resonators(self) -> Optional[Target]:
+    def target_with_resonators(self) -> Target:
         """Return the target with MOVE gates and resonators included."""
+        if self._fake_target_with_moves is None:
+            return self.target
         return self._fake_target_with_moves
 
     @property
@@ -297,10 +299,17 @@ class IQMTarget(Target):
             self.add_instruction(Measure(), create_properties('measure'))
 
         # identity gate does nothing and is removed in serialization, so we may as well allow it everywhere
-        self.add_instruction(
-            IGate(),
-            {locus_to_idx((component,)): None for component in architecture.components},
-        )
+        # Except if it is defined for the resonator, the graph is disconnected and the transpiler will fail.
+        if self.iqm_includes_resonators:
+            self.add_instruction(
+                IGate(),
+                {locus_to_idx((component,)): None for component in architecture.components},
+            )
+        else:
+            self.add_instruction(
+                IGate(),
+                {locus_to_idx((component,)): None for component in architecture.qubits},
+            )
 
         if 'prx' in op_loci:
             self.add_instruction(
