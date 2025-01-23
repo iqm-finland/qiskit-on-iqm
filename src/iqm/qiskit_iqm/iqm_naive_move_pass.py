@@ -51,6 +51,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         existing_moves_handling: ExistingMoveHandlingOptions = ExistingMoveHandlingOptions.KEEP,
     ):
         super().__init__()
+        self.target = target
         self.architecture = target.iqm_dqa
         self.idx_to_component = target.iqm_idx_to_component
         self.component_to_idx = target.iqm_component_to_idx
@@ -111,13 +112,12 @@ class IQMNaiveResonatorMoving(TransformationPass):
                 physical: inv_layout[dag.find_bit(virtual).index]
                 for physical, virtual in self.property_set["final_layout"].get_physical_bits().items()
             }
-            new_final_layout_dict.update(
-                {
-                    phys: inv_layout[new_dag.find_bit(virt).index]
-                    for phys, virt in inv_layout.items()
-                    if phys not in self.property_set["final_layout"].get_physical_bits()
-                }
-            )
+            resonator_dict = {
+                phys: inv_layout[new_dag.find_bit(virt).index]
+                for phys, virt in inv_layout.items()
+                if phys not in self.property_set["final_layout"].get_physical_bits()
+            }
+            new_final_layout_dict.update(resonator_dict)
             self.property_set["final_layout"] = Layout(new_final_layout_dict)
         else:
             self.property_set["final_layout"] = layout

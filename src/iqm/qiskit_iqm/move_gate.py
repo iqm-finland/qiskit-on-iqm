@@ -18,7 +18,7 @@ import qiskit.quantum_info as qi
 
 # MOVE gate has undefined phases, so we pick two arbitrary phases here
 _phase_1 = np.exp(0.7j)
-_phase_2 = np.exp(1.2j)
+_phase_2 = 1.0  # np.exp(1.2j)
 MOVE_GATE_UNITARY = [
     [1.0, 0.0, 0.0, 0.0],
     [0.0, 0.0, _phase_1, 0.0],
