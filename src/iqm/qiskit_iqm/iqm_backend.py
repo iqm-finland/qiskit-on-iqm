@@ -230,12 +230,12 @@ def _restrict_dqa_to_qubits(
 
 
 class IQMTarget(Target):
-    """
-    Represents the IQM target for transpilation containing the mapping of physical qubit name on the device to qubit
-    index in the Target as well as the DQA architecture.
+    """Transpilation target for an IQM architecture.
+
+    Contains the mapping of physical qubit name on the device to qubit index in the Target.
 
     Args:
-        architecture: The quantum architecture specification to convert.
+        architecture: Quantum architecture that defines the target.
         component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
         include_resonators: Whether to include MOVE gates in the target.
         include_fake_czs: Whether to include virtual CZs that are not natively supported, but could be routed via MOVE.
@@ -249,7 +249,7 @@ class IQMTarget(Target):
         include_fake_czs: bool = True,
     ):
         super().__init__()
-        # Using iqm as a prefix to avoid name clashes with other Qiskit targets.
+        # Using iqm as a prefix to avoid name clashes with the base class.
         self.iqm_dqa = architecture
         self.iqm_component_to_idx = component_to_idx
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
@@ -352,7 +352,7 @@ class IQMTarget(Target):
     @property
     def physical_qubits(self) -> list[str]:
         """Return the ordered list of physical qubits in the backend."""
-        # Overwriting the property from the super class to contain the correct information.
+        # Overrides the property from the superclass to contain the correct information.
         return [self.iqm_idx_to_component[i] for i in range(self.num_qubits)]
 
     def restrict_to_qubits(self, qubits: Union[list[int], list[str]]) -> IQMTarget:
