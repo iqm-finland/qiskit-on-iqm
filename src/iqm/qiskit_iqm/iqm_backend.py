@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Qiskit on IQM developers
+# Copyright 2022-2025 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,9 +31,11 @@ from iqm.iqm_client import (
     GateInfo,
     QuantumArchitectureSpecification,
 )
+from iqm.iqm_client.transpile import simplify_architecture
 from iqm.qiskit_iqm.move_gate import MoveGate
 
 IQM_TO_QISKIT_GATE_NAME: Final[dict[str, str]] = {'prx': 'r', 'cz': 'cz'}
+
 
 Locus = tuple[str, ...]
 LocusIdx = tuple[int, ...]
@@ -81,7 +83,7 @@ class IQMBackendBase(BackendV2, ABC):
     """Abstract base class for various IQM-specific backends.
 
     Args:
-        architecture: Description of the quantum architecture associated with the backend instance.
+        architecture: Quantum architecture associated with the backend instance.
     """
 
     def __init__(
@@ -97,17 +99,19 @@ class IQMBackendBase(BackendV2, ABC):
         self.architecture: DynamicQuantumArchitecture = arch
         """Dynamic quantum architecture of the backend instance."""
 
-        # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
-        # Because of the way the Target and the transpiler interact, the resonators need to have higher indices than
-        # qubits, or else transpiling with optimization_level=0 will fail because of lacking resonator indices.
-        qb_to_idx = {qb: idx for idx, qb in enumerate(arch.qubits + arch.computational_resonators)}
+        full_target = IQMTarget(arch)
 
-        self._target = IQMTarget(arch, qb_to_idx, include_resonators=False)
-        self._fake_target_with_moves = (
-            IQMTarget(arch, qb_to_idx, include_resonators=True) if 'move' in arch.gates else None
-        )
-        self._qb_to_idx = qb_to_idx
-        self._idx_to_qb = {v: k for k, v in qb_to_idx.items()}
+        if 'move' in arch.gates:
+            # Create a simplified target for the Qiskit transpiler that does not involve MOVE gates,
+            # but instead implements qubit-resonator gates as fictional qubit-qubit gates.
+            self._target = IQMTarget(arch, simplify=True)
+            self._fake_target_with_moves = full_target
+        else:
+            self._target = full_target
+            self._fake_target_with_moves = None
+
+        self._qb_to_idx = full_target.iqm_component_to_idx
+        self._idx_to_qb = full_target.iqm_idx_to_component
         self.name = 'IQMBackend'
         self._coupling_map = self.target.build_coupling_map()
 
@@ -137,7 +141,7 @@ class IQMBackendBase(BackendV2, ABC):
             architecture=self.architecture,
             component_to_idx=self._qb_to_idx,
             include_resonators=True,
-            include_fake_czs=False,
+            include_fictional_czs=False,
         )
 
     def qubit_name_to_index(self, name: str) -> int:
@@ -177,180 +181,140 @@ class IQMBackendBase(BackendV2, ABC):
         return 'iqm_default_scheduling'
 
     def restrict_to_qubits(
-        self, qubits: Union[list[int], list[str]], include_resonators: bool = False, include_fake_czs: bool = True
+        self, qubits: Union[list[int], list[str]],
     ) -> IQMTarget:
         """Generated a restricted transpilation target from this backend that only contains the given qubits.
 
         Args:
             qubits: Qubits to restrict the target to. Can be either a list of qubit indices or qubit names.
-            include_resonators: Whether to restrict `self.target` or `self.target_with_resonators`.
-            include_fake_czs: Whether to include virtual CZs that are unsupported, but could be routed via MOVE.
 
         Returns:
             restricted target
         """
         qubits_str = [self._idx_to_qb[q] if isinstance(q, int) else str(q) for q in qubits]
-        return _restrict_dqa_to_qubits(self.architecture, qubits_str, include_resonators, include_fake_czs)
+        return _restrict_dqa_to_components(self.architecture, qubits_str)
 
 
-def _restrict_dqa_to_qubits(
-    architecture: DynamicQuantumArchitecture, qubits: list[str], include_resonators: bool, include_fake_czs: bool = True
+def _restrict_dqa_to_components(
+    architecture: DynamicQuantumArchitecture,
+    components: list[str],
 ) -> IQMTarget:
-    """Generated a restricted transpilation target from this backend that only contains the given qubits.
+    """Generated a restricted transpilation target from this backend that only contains the given components.
 
     Args:
-        architecture: The dynamic quantum architecture to restrict.
-        qubits: Qubits to restrict the target to. Can be either a list of qubit indices or qubit names.
-        include_resonators: Whether to include MOVE gates in the target.
-        include_fake_czs: Whether to include virtual CZs that are not natively supported, but could be routed via MOVE.
+        architecture: Quantum architecture to restrict.
+        components: Components to restrict the target to. Can be either a list of qubit indices or qubit names.
 
     Returns:
-        restricted target
+        target corresponding to ``architecture``, restricted
     """
+    components_set = frozenset(components)
+
+    def is_valid(locus: Locus) -> bool:
+        """All components of the given locus belong to components_set."""
+        return set(locus) <= components_set
+
+    # filter out the loci which do not belong to the restricted component set
     new_gates = {}
     for gate_name, gate_info in architecture.gates.items():
         new_implementations = {}
         for implementation_name, implementation_info in gate_info.implementations.items():
-            new_loci = [locus for locus in implementation_info.loci if all(q in qubits for q in locus)]
+            new_loci = tuple(locus for locus in implementation_info.loci if is_valid(locus))
             if new_loci:
                 new_implementations[implementation_name] = GateImplementationInfo(loci=new_loci)
         if new_implementations:
             new_gates[gate_name] = GateInfo(
                 implementations=new_implementations,
                 default_implementation=gate_info.default_implementation,
-                override_default_implementation=gate_info.override_default_implementation,
+                override_default_implementation={
+                    locus: impl_name
+                    for locus, impl_name in gate_info.override_default_implementation.items()
+                    if is_valid(locus)
+                },
             )
     new_arch = DynamicQuantumArchitecture(
         calibration_set_id=architecture.calibration_set_id,
-        qubits=[q for q in qubits if q in architecture.qubits],
-        computational_resonators=[q for q in qubits if q in architecture.computational_resonators],
+        qubits=[q for q in architecture.qubits if q in components_set],
+        computational_resonators=[r for r in architecture.computational_resonators if r in components_set],
         gates=new_gates,
     )
-    return IQMTarget(new_arch, {name: idx for idx, name in enumerate(qubits)}, include_resonators, include_fake_czs)
+    return IQMTarget(new_arch)
 
 
 class IQMTarget(Target):
     """Transpilation target for an IQM architecture.
 
-    Contains the mapping of physical qubit name on the device to qubit index in the Target.
-
     Args:
         architecture: Quantum architecture that defines the target.
-        component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
-        include_resonators: Whether to include MOVE gates in the target.
-        include_fake_czs: Whether to include virtual CZs that are not natively supported, but could be routed via MOVE.
+        simplify: Iff True, abstract away computational resonators in the architecture.
     """
 
     def __init__(
         self,
         architecture: DynamicQuantumArchitecture,
-        component_to_idx: dict[str, int],
-        include_resonators: bool,
-        include_fake_czs: bool = True,
+        *,
+        simplify: bool = False,
     ):
         super().__init__()
+
         # Using iqm as a prefix to avoid name clashes with the base class.
-        self.iqm_dqa = architecture
+        self.iqm_dqa = architecture  # real architecture
+
+        # Qiskit uses integer indices to refer to qubits, so we need to map component names to indices.
+        # Because of the way the Target and the transpiler interact, the resonators need to have higher indices than
+        # qubits, or else transpiling with optimization_level=0 will fail because of lacking resonator indices.
+        component_to_idx = {c: idx for idx, c in enumerate(architecture.qubits + architecture.computational_resonators)}
         self.iqm_component_to_idx = component_to_idx
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
-        self.iqm_includes_resonators = include_resonators
-        self.iqm_includes_fake_czs = include_fake_czs
-        self._add_connections_from_DQA()
 
-    def _add_connections_from_DQA(self):
-        """Converts a QuantumArchitectureSpecification object to a Qiskit Target object.
+        # should we abstract away the computational resonators?
+        if simplify:
+            architecture = simplify_architecture(architecture)
 
-        Args:
-            architecture: The quantum architecture specification to convert.
-            component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
+        # i_res: True, i_fict: True  -> simplified+real arch  (fake target with moves) TODO FIXME
+        # i_res: False, i_fict: True  -> simplified_arch  (basic target)
+        # i_res: True, i_fict: False  -> real arch  (get_real_target)
+        # i_res: False, i_fict: False  -> unusable case, cuts qr gates out
 
-        Returns:
-            A Qiskit Target object representing the given quantum architecture specification.
-        """
-        # pylint: disable=too-many-branches,too-many-nested-blocks
         # mapping from op name to all its allowed loci
-        architecture = self.iqm_dqa
-        component_to_idx = self.iqm_component_to_idx
         op_loci = {gate_name: gate_info.loci for gate_name, gate_info in architecture.gates.items()}
 
         def locus_to_idx(locus: Locus) -> LocusIdx:
             """Map the given locus to use component indices instead of component names."""
             return tuple(component_to_idx[component] for component in locus)
 
-        def create_properties(name: str, *, symmetrize: bool = False) -> dict[tuple[int, ...], None]:
+        def create_properties(name: str, *, symmetrize: bool = False) -> dict[LocusIdx, None]:
             """Creates the Qiskit instruction properties dictionary for the given IQM native operation.
 
             Currently we do not provide any actual properties for the operation, hence the all the
             allowed loci map to None.
             """
-            if self.iqm_includes_resonators:
-                loci = op_loci[name]
-            else:
-                # Remove the loci that correspond to resonators.
-                loci = [
-                    locus for locus in op_loci[name] if all(component in self.iqm_dqa.qubits for component in locus)
-                ]
+            loci = op_loci[name]
             if symmetrize:
-                # symmetrize the loci
+                # symmetrize the loci FIXME probaby not necessary, qiskit transpiler understands symmetric gates
                 loci = tuple(permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus))
             return {locus_to_idx(locus): None for locus in loci}
+
+        ## Special gates/ops which are always available and do not appear in the architecture.
 
         # like barrier, delay is always available for all single-qubit loci
         self.add_instruction(Delay(0), {locus_to_idx((q,)): None for q in architecture.qubits})
 
-        if 'measure' in op_loci:
-            self.add_instruction(Measure(), create_properties('measure'))
+        # identity gate does nothing and is removed in serialization, so we may as well allow it
+        self.add_instruction(IGate(), {locus_to_idx((c,)): None for c in architecture.qubits})
 
-        # identity gate does nothing and is removed in serialization, so we may as well allow it everywhere
-        # Except if it is defined for the resonator, the graph is disconnected and the transpiler will fail.
-        if self.iqm_includes_resonators:
-            self.add_instruction(
-                IGate(),
-                {locus_to_idx((component,)): None for component in architecture.components},
-            )
-        else:
-            self.add_instruction(
-                IGate(),
-                {locus_to_idx((component,)): None for component in architecture.qubits},
-            )
+        # Normal gates/ops that must appear in the architecture.
+        IQM_TO_QISKIT = {
+            'measure': Measure(),
+            'prx': RGate(Parameter('theta'), Parameter('phi')),
+            'cc_prx': Reset(),  # HACK reset gate shares cc_prx loci for now
+            'cz': CZGate(),
+            'move': MoveGate(),
+        }
+        for name, qiskit_gate in IQM_TO_QISKIT.items():
+            if name in op_loci:
+                self.add_instruction(qiskit_gate, create_properties(name))
 
-        if 'prx' in op_loci:
-            self.add_instruction(
-                RGate(Parameter('theta'), Parameter('phi')),
-                create_properties('prx'),
-            )
-
-        # HACK reset gate shares cc_prx loci for now
-        if 'cc_prx' in op_loci:
-            self.add_instruction(Reset(), create_properties('cc_prx'))
-
-        if self.iqm_includes_resonators and 'move' in op_loci:
-            self.add_instruction(MoveGate(), create_properties('move'))
-
-        if 'cz' in op_loci:
-            if self.iqm_includes_fake_czs and 'move' in op_loci:
-                # CZ and MOVE: star
-                cz_connections: dict[LocusIdx, None] = {}
-                cz_loci = op_loci['cz']
-                for c1, c2 in cz_loci:
-                    if self.iqm_includes_resonators or all(component in self.iqm_dqa.qubits for component in (c1, c2)):
-                        idx_locus = locus_to_idx((c1, c2))
-                        cz_connections[idx_locus] = None
-
-                for c1, res in op_loci['move']:
-                    for c2 in architecture.qubits:
-                        if c2 not in [c1, res]:
-                            # loop over c2 that is not c1
-                            if (c2, res) in cz_loci or (res, c2) in cz_loci:
-                                # This is a fake CZ and can be bidirectional.
-                                # cz routable via res between qubits, put into fake_cz_conn both ways
-                                idx_locus = locus_to_idx((c1, c2))
-                                cz_connections[idx_locus] = None
-                                cz_connections[idx_locus[::-1]] = None
-                self.add_instruction(CZGate(), cz_connections)
-            else:
-                # CZ but no MOVE: crystal
-                self.add_instruction(CZGate(), create_properties('cz'))
 
     @property
     def physical_qubits(self) -> list[str]:
@@ -363,12 +327,9 @@ class IQMTarget(Target):
 
         Args:
             qubits: Qubits to restrict the target to. Can be either a list of qubit indices or qubit names.
-            include_fake_czs: Whether to include virtual CZs that are unsupported, but could be routed via MOVE.
 
         Returns:
             restricted target
         """
         qubits_str = [self.iqm_idx_to_component[q] if isinstance(q, int) else str(q) for q in qubits]
-        return _restrict_dqa_to_qubits(
-            self.iqm_dqa, qubits_str, self.iqm_includes_resonators, self.iqm_includes_fake_czs
-        )
+        return _restrict_dqa_to_components(self.iqm_dqa, qubits_str)

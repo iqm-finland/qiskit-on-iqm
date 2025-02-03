@@ -199,7 +199,7 @@ def test_target_from_restricted_qubits(dqa, restriction):
         restricted_edges = restricted_target.build_coupling_map().get_edges()
 
         assert set(restricted_edges) == set(
-            backend.restrict_to_qubits(restricted, include_resonators=includes_resonators)
+            backend.restrict_to_qubits(restricted)
             .build_coupling_map()
             .get_edges()
         )  # Restrict from backend gives the same result
