@@ -86,10 +86,7 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
 
     with pytest.raises(
         CircuitTranspilationError,
-        match=re.escape(
-            "Unable to transpile the circuit after validation error: MOVE instruction ('QB3', 'COMP_R') "
-            + "to an already occupied resonator: {'COMP_R': 'QB2'}."
-        ),
+        match=re.escape("MOVE instruction ('QB3', 'COMP_R') to an already occupied resonator: {'COMP_R': 'QB2'}."),
     ):
         transpile_to_IQM(
             qc, backend=backend, perform_move_routing=True, existing_moves_handling=ExistingMoveHandlingOptions.KEEP
