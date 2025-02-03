@@ -62,7 +62,7 @@ class TestIQMTargetReflectsDQA:
             "measure": "measure",
             "reset": "cc_prx",  # TODO "reset": "reset",
             "delay": None,
-            "id": None
+            "id": None,
         }
         # simplified architecture has no MOVE gate
         target_gates = set(self.backend.target.operation_names)
@@ -199,9 +199,7 @@ def test_target_from_restricted_qubits(dqa, restriction):
         restricted_edges = restricted_target.build_coupling_map().get_edges()
 
         assert set(restricted_edges) == set(
-            backend.restrict_to_qubits(restricted)
-            .build_coupling_map()
-            .get_edges()
+            backend.restrict_to_qubits(restricted).build_coupling_map().get_edges()
         )  # Restrict from backend gives the same result
 
         # Check if the edges in the restricted target were allowed in the backend

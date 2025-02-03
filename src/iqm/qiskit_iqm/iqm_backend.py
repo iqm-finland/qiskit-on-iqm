@@ -176,7 +176,8 @@ class IQMBackendBase(BackendV2, ABC):
         return 'iqm_default_scheduling'
 
     def restrict_to_qubits(
-        self, qubits: Union[list[int], list[str]],
+        self,
+        qubits: Union[list[int], list[str]],
     ) -> IQMTarget:
         """Generated a restricted transpilation target from this backend that only contains the given qubits.
 
@@ -275,7 +276,6 @@ class IQMTarget(Target):
                     gate_info_real = architecture.gates[name]
                     gate_info_real.implementations['__fictional'] = impl
 
-
         # mapping from op name to all its allowed loci
         op_loci = {gate_name: gate_info.loci for gate_name, gate_info in architecture.gates.items()}
 
@@ -314,7 +314,6 @@ class IQMTarget(Target):
         for name, qiskit_gate in IQM_TO_QISKIT.items():
             if name in op_loci:
                 self.add_instruction(qiskit_gate, create_properties(name))
-
 
     @property
     def physical_qubits(self) -> list[str]:
