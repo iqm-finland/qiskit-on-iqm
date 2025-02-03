@@ -100,7 +100,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         return dag
 
     def _validate_ops(self, dag: DAGCircuit):
-        valid_ops = self._basis + ['measure', 'reset', 'barrier']
+        valid_ops = self._basis + ['measure', 'reset', 'delay', 'barrier']
         for node in dag.op_nodes():
             if node.name not in valid_ops:
                 raise ValueError(

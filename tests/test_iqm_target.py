@@ -55,21 +55,25 @@ class TestIQMTargetReflectsDQA:
 
     def test_target_gate_set(self):
         """Check that gate set of the target is the same as we support according to the DQA."""
-        IQM_TO_QISKIT = {
-            "prx": "r",
-            "cc_prx": "reset",
+        QISKIT_TO_IQM = {
+            "r": "prx",
             "cz": "cz",
-            "move": "cz",
+            "move": "move",
             "measure": "measure",
+            "reset": "cc_prx",  # TODO "reset": "reset",
+            "delay": None,
+            "id": None
         }
-        assert set(self.backend.target.operation_names) == set(
-            [IQM_TO_QISKIT[name] for name in self.dqa.gates] + ["id"]
-        )
+        # simplified architecture has no MOVE gate
+        target_gates = set(self.backend.target.operation_names)
+        dqa_gates = set(self.dqa.gates)
+        dqa_gates.discard("move")
+        assert dqa_gates == set([qname for name in target_gates if (qname := QISKIT_TO_IQM[name]) is not None])
+
         if self.backend._fake_target_with_moves is not None:
-            IQM_TO_QISKIT["move"] = "move"
-            assert set(self.backend._fake_target_with_moves.operation_names) == set(
-                [IQM_TO_QISKIT[name] for name in self.dqa.gates] + ["id"]
-            )
+            target_gates = set(self.backend._fake_target_with_moves.operation_names)
+            dqa_gates = set(self.dqa.gates)
+            assert dqa_gates == set([qname for name in target_gates if (qname := QISKIT_TO_IQM[name]) is not None])
 
     @pytest.mark.parametrize(("qiskit_name", "iqm_name"), zip(["r", "measure", "reset"], ["prx", "measure", "cc_prx"]))
     def test_1_to_1_corresponding_gates(self, qiskit_name, iqm_name):

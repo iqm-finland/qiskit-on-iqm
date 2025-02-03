@@ -20,7 +20,7 @@ import itertools
 from typing import Final, Union
 from uuid import UUID
 
-from qiskit.circuit import Parameter, Reset
+from qiskit.circuit import Delay, Parameter, Reset
 from qiskit.circuit.library import CZGate, IGate, Measure, RGate
 from qiskit.providers import BackendV2
 from qiskit.transpiler import Target
@@ -294,6 +294,9 @@ class IQMTarget(Target):
                 # symmetrize the loci
                 loci = tuple(permuted_locus for locus in loci for permuted_locus in itertools.permutations(locus))
             return {locus_to_idx(locus): None for locus in loci}
+
+        # like barrier, delay is always available for all single-qubit loci
+        self.add_instruction(Delay(0), {locus_to_idx((q,)): None for q in architecture.qubits})
 
         if 'measure' in op_loci:
             self.add_instruction(Measure(), create_properties('measure'))
