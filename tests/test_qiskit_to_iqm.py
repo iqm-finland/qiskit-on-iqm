@@ -23,6 +23,8 @@ from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey, deserialize_instruction
 
 from .utils import get_transpiled_circuit_json
 
+from .utils import get_transpiled_circuit_json
+
 
 @pytest.fixture()
 def circuit() -> QuantumCircuit:

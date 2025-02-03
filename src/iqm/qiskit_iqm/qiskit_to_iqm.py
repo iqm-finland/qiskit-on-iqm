@@ -220,7 +220,7 @@ def serialize_instructions(
 
 
 # pylint: disable=too-many-branches
-def deserialize_instructions(  # TODO create test for this
+def deserialize_instructions(
     instructions: list[Instruction], qubit_name_to_index: dict[str, int], layout: Layout
 ) -> QiskitQuantumCircuit:
     """Helper function to turn a list of IQM Instructions into a Qiskit QuantumCircuit.

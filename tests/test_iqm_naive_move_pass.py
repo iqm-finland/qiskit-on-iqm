@@ -42,7 +42,6 @@ def get_test_circuit(kind, size):
         return qc
     raise ValueError(f"Unknown circuit kind: {kind}")
 
-
 @pytest.fixture()
 def backend(request):
     """Fixture that returns a mocked backend."""
@@ -155,6 +154,8 @@ class TestTranspilation:
         ]
         transpiled_circuit = self.transpile(initial_layout=layout, optimization_level=3)
         assert all(x == y for x, y in zip(transpiled_circuit.layout.initial_layout.get_physical_bits(), layout))
+
+
 
 
 @pytest.mark.parametrize(
