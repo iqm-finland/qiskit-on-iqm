@@ -1,4 +1,4 @@
-# Copyright 2022 Qiskit on IQM developers
+# Copyright 2022-2025 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,11 +22,12 @@ from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFake
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
 from iqm.qiskit_iqm.iqm_job import IQMJob
-from iqm.qiskit_iqm.iqm_move_layout import IQMMoveLayout, generate_initial_layout
+from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_naive_move_pass import IQMNaiveResonatorMoving, transpile_to_IQM
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
 from iqm.qiskit_iqm.iqm_transpilation import IQMOptimizeSingleQubitGates, optimize_single_qubit_gates
 from iqm.qiskit_iqm.move_gate import MoveGate
+from iqm.qiskit_iqm.transpiler_plugins import *
 
 if qiskit_version < "1.0.0":
     warn(

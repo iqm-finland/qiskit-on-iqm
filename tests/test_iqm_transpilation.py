@@ -19,8 +19,13 @@ import pytest
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 
+from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
+from iqm.qiskit_iqm.fake_backends.fake_aphrodite import IQMFakeAphrodite
+from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
+from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
+from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
 from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
-from tests.utils import get_transpiled_circuit_json
+from tests.utils import get_mocked_backend
 
 
 def test_optimize_single_qubit_gates_preserves_unitary():
@@ -91,7 +96,7 @@ def test_optimize_single_qubit_gates_reduces_gate_count():
 
 
 def test_optimize_single_qubit_gates_raises_on_invalid_basis():
-    """Test that optimisation pass raises error if gates other than ``RZ`` and ``CZ`` are provided."""
+    """Test that optimization pass raises error if gates other than ``RZ`` and ``CZ`` are provided."""
     circuit = QuantumCircuit(1, 1)
     circuit.h(0)
 
@@ -99,34 +104,40 @@ def test_optimize_single_qubit_gates_raises_on_invalid_basis():
         optimize_single_qubit_gates(circuit)
 
 
-def test_submitted_circuit(adonis_architecture):
+@pytest.mark.parametrize('backend', [IQMFakeAdonis(), IQMFakeDeneb(), IQMFakeAphrodite()])
+def test_optimize_single_qubit_gates_preserves_layout(backend):
     """Test that a circuit submitted via IQM backend gets transpiled into proper JSON."""
-    circuit = QuantumCircuit(2, 2)
-    circuit.h(0)
-    circuit.cx(0, 1)
 
-    circuit.measure_all()
+    qc = QuantumCircuit(3)
+    qc.h(0)
+    qc.cx(0, 1)
+    qc.cx(0, 2)
+    qc.measure_all()
 
-    # This transpilation seed maps virtual qubit 0 to physical qubit 2, and virtual qubit 1 to physical qubit 4
-    # Other seeds will switch the mapping, and may also reorder the first prx instructions
-    submitted_circuit = get_transpiled_circuit_json(circuit, adonis_architecture, seed_transpiler=123)
+    # In case the layout is not set
+    qc_optimized = optimize_single_qubit_gates(transpile(qc, basis_gates=['r', 'cz']))
+    assert qc_optimized.layout is None
 
-    instr_names = [f"{instr.name}:{','.join(instr.qubits)}" for instr in submitted_circuit.instructions]
-    assert instr_names == [
-        # Hadamard on 0 (= physical 0)
-        'prx:2',
-        'prx:2',
-        # CX phase 1: Hadamard on target qubit 1 (= physical 4)
-        'prx:4',
-        'prx:4',
-        # CX phase 2: CZ on 0,1 (= physical 2,4)
-        'cz:2,4',
-        # Hadamard again on target qubit 1 (= physical 4)
-        'prx:4',
-        'prx:4',
-        # Barrier before measurements
-        'barrier:2,4',
-        # Measurement on both qubits
-        'measure:2',
-        'measure:4',
-    ]
+    # In case the layout is set by the user
+    initial_layout = generate_initial_layout(backend, qc)
+    transpiled_circuit_alt = transpile(qc, backend=backend, initial_layout=initial_layout)
+    for physical_qubit, logical_qubit in initial_layout.get_physical_bits().items():
+        assert transpiled_circuit_alt.layout.initial_layout[logical_qubit] == physical_qubit
+
+    # In case the layout is set by the transpiler
+    transpiled_circuit = transpile(qc, backend=backend)
+    layout = transpiled_circuit.layout
+    qc_optimized = optimize_single_qubit_gates(transpiled_circuit)
+    assert layout == qc_optimized.layout
+
+
+@pytest.mark.parametrize('optimization_level', list(range(4)))
+def test_qiskit_native_transpiler(move_architecture, optimization_level):
+    """Tests that a simple circuit is transpiled correctly using the Qiskit transpiler."""
+    backend, _ = get_mocked_backend(move_architecture)
+    qc = QuantumCircuit(2)
+    qc.h(0)
+    qc.cx(0, 1)
+    qc.measure_all()
+    transpiled_circuit = transpile(qc, backend=backend, optimization_level=optimization_level)
+    validate_circuit(transpiled_circuit, backend)

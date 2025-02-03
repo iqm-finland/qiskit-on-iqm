@@ -12,10 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """MOVE gate to be used on the IQM Star architecture."""
-
+import numpy as np
 from qiskit.circuit import Gate
-from qiskit.circuit.quantumcircuit import QuantumCircuit, QuantumRegister
 import qiskit.quantum_info as qi
+
+# MOVE gate has undefined phases, so we pick two arbitrary phases here
+_phase_1 = np.exp(0.7j)
+_phase_2 = 1.0  # np.exp(1.2j)
+MOVE_GATE_UNITARY = [
+    [1.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, _phase_1, 0.0],
+    [0.0, _phase_1.conj(), 0.0, 0.0],
+    [0.0, 0.0, 0.0, _phase_2],
+]
+"""Unitary matrix for simulating the ideal MOVE gate.
+
+This matrix is not a realistic description of MOVE, since it applies a zero phase on the moved
+state, and acts as identity in the :math:`|11\rangle` subspace, thus being equal to the SWAP gate."""
 
 
 class MoveGate(Gate):
@@ -34,27 +47,18 @@ class MoveGate(Gate):
     recommended that no single qubit gates are applied to the qubit in between a
     pair of MOVE operations.
 
-    Note: At this point the locus for the move gate must be defined in the order: ``[qubit, resonator]``.
+    .. note::
+       The MOVE gate must always be be applied on the qubit and the resonator in the
+       order ``[qubit, resonator]``, regardless of which component is currently holding the state.
     """
 
     def __init__(self, label=None):
         """Initializes the move gate"""
         super().__init__("move", 2, [], label=label)
-        self.unitary = qi.Operator(
-            [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
-        )
+        self.unitary = qi.Operator(MOVE_GATE_UNITARY)
 
     def _define(self):
-        """Pretend that this gate is a SWAP for the purpose of matrix checking.
-
-        The |0> needs to be traced out for the resonator 'qubits'.
-
-        gate swap a,b
+        """This function is purposefully not defined so that that the Qiskit transpiler cannot accidentally
+        decompose the MOVE gate into a sequence of other gates, instead it will throw an error.
         """
-
-        q = QuantumRegister(2, "q")
-        qc = QuantumCircuit(q, name=self.label if self.label else self.name)
-
-        qc.unitary(self.unitary, [q[0], q[1]], label=self.name)
-
-        self.definition = qc
+        return

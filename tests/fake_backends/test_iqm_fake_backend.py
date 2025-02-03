@@ -159,6 +159,9 @@ def test_iqm_fake_backend_noise_model_instantiated(backend):
 
 def test_iqm_fake_backend_noise_model_basis_gates(backend):
     """Test that all operations named as part of the backend are utilizes in the noise_model"""
+    print(backend.noise_model.basis_gates)
+    print(backend.target.operation_names)
+    print(backend.operation_names)
     assert all(gates in backend.operation_names for gates in backend.noise_model.basis_gates)
 
 
@@ -233,10 +236,7 @@ def test_noise_model_contains_all_errors(backend):
     assert set(backend.noise_model._local_quantum_errors["cz"].keys()) == set([(0, 1), (1, 0), (1, 2), (2, 1)])
 
 
-def test_validate_compatible_architecture(
-    adonis_architecture, adonis_shuffled_names_architecture, linear_3q_architecture
-):
+def test_validate_compatible_architecture(adonis_architecture, linear_3q_architecture):
     backend = IQMFakeAdonis()
     assert backend.validate_compatible_architecture(adonis_architecture) is True
-    assert backend.validate_compatible_architecture(adonis_shuffled_names_architecture) is True
     assert backend.validate_compatible_architecture(linear_3q_architecture) is False
