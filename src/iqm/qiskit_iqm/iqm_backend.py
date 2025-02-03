@@ -101,14 +101,14 @@ class IQMBackendBase(BackendV2, ABC):
 
         full_target = IQMTarget(arch)
 
-        if 'move' in arch.gates:
-            # Create a simplified target for the Qiskit transpiler that does not involve MOVE gates,
-            # but instead implements qubit-resonator gates as fictional qubit-qubit gates.
+        if arch.computational_resonators:
+            # Create a simplified target for the Qiskit transpiler that does not involve resonators,
+            # but instead implements qubit-resonator gates as fictional qubit-qubit gates whereever possible.
             self._target = IQMTarget(arch, simplify=True)
-            self._fake_target_with_moves = full_target
+            self._full_target = full_target
         else:
             self._target = full_target
-            self._fake_target_with_moves = None
+            self._full_target = None
 
         self._qb_to_idx = full_target.iqm_component_to_idx
         self._idx_to_qb = full_target.iqm_idx_to_component
@@ -122,9 +122,9 @@ class IQMBackendBase(BackendV2, ABC):
     @property
     def target_with_resonators(self) -> Target:
         """Return the target with MOVE gates and resonators included."""
-        if self._fake_target_with_moves is None:
+        if self._full_target is None:
             return self.target
-        return self._fake_target_with_moves
+        return self._full_target
 
     @property
     def physical_qubits(self) -> list[str]:
@@ -136,13 +136,8 @@ class IQMBackendBase(BackendV2, ABC):
         return bool(self.architecture.computational_resonators)
 
     def get_real_target(self) -> Target:
-        """Return the real physical target of the backend without virtual CZ gates."""
-        return IQMTarget(
-            architecture=self.architecture,
-            component_to_idx=self._qb_to_idx,
-            include_resonators=True,
-            include_fictional_czs=False,
-        )
+        """Return the real physical target of the backend without fictional gates."""
+        return IQMTarget(self.architecture)
 
     def qubit_name_to_index(self, name: str) -> int:
         """Given an IQM-style qubit name, return the corresponding index in the register.
@@ -267,14 +262,19 @@ class IQMTarget(Target):
         self.iqm_component_to_idx = component_to_idx
         self.iqm_idx_to_component = {v: k for k, v in component_to_idx.items()}
 
+        simple = simplify_architecture(architecture)
         # should we abstract away the computational resonators?
         if simplify:
-            architecture = simplify_architecture(architecture)
+            # just use the simple arch
+            architecture = simple
+        else:
+            # union of the simple arch and the real arch (modifying it! FIXME?)
+            for name, gate_info in simple.gates.items():
+                impl = gate_info.implementations.get('__fictional')
+                if impl is not None:
+                    gate_info_real = architecture.gates[name]
+                    gate_info_real.implementations['__fictional'] = impl
 
-        # i_res: True, i_fict: True  -> simplified+real arch  (fake target with moves) TODO FIXME
-        # i_res: False, i_fict: True  -> simplified_arch  (basic target)
-        # i_res: True, i_fict: False  -> real arch  (get_real_target)
-        # i_res: False, i_fict: False  -> unusable case, cuts qr gates out
 
         # mapping from op name to all its allowed loci
         op_loci = {gate_name: gate_info.loci for gate_name, gate_info in architecture.gates.items()}
@@ -301,7 +301,7 @@ class IQMTarget(Target):
         self.add_instruction(Delay(0), {locus_to_idx((q,)): None for q in architecture.qubits})
 
         # identity gate does nothing and is removed in serialization, so we may as well allow it
-        self.add_instruction(IGate(), {locus_to_idx((c,)): None for c in architecture.qubits})
+        self.add_instruction(IGate(), {locus_to_idx((c,)): None for c in architecture.components})
 
         # Normal gates/ops that must appear in the architecture.
         IQM_TO_QISKIT = {
