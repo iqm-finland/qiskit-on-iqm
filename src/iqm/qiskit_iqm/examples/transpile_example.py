@@ -28,7 +28,7 @@ def transpile_example(server_url: str) -> tuple[QuantumCircuit, dict[str, int]]:
     """Run a circuit transpiled using transpile_to_IQM function.
 
     Args:
-        server_url: URL of the IQM Cortex server used for execution
+        server_url: URL of the IQM server used for execution
 
     Returns:
         transpiled circuit, a mapping of bitstrings representing qubit measurement results to counts for each result

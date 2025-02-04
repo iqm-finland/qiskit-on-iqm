@@ -1,4 +1,4 @@
-# Copyright 2022 Qiskit on IQM developers
+# Copyright 2022-2025 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -142,6 +142,25 @@ def serialize_instructions(
             native_inst = Instruction(name='move', qubits=qubit_names, args={})
         elif instruction.name == 'barrier':
             native_inst = Instruction(name='barrier', qubits=qubit_names, args={})
+        elif instruction.name == 'delay':
+            duration = float(instruction.params[0])
+            # convert duration to seconds
+            unit = instruction.unit
+            if unit == 'dt':
+                duration *= 1e-9  # we arbitrarily pick dt == 1 ns
+            elif unit == 's':
+                pass
+            elif unit == 'ms':
+                duration *= 1e-3
+            elif unit == 'us':
+                duration *= 1e-6
+            elif unit == 'ns':
+                duration *= 1e-9
+            elif unit == 'ps':
+                duration *= 1e-12
+            else:
+                raise ValueError(f"Delay: Unsupported unit '{unit}'")
+            native_inst = Instruction(name='delay', qubits=qubit_names, args={'duration': duration})
         elif instruction.name == 'measure':
             if len(circuit_instruction.clbits) != 1:
                 raise ValueError(
@@ -278,6 +297,9 @@ def deserialize_instructions(
             circuit.measure(loci[0], cl_bits[str(mk)])
         elif instr.name == 'barrier':
             circuit.barrier(*loci)
+        elif instr.name == 'delay':
+            duration = instr.args['duration']
+            circuit.delay(duration, loci, unit='s')  # native delay instructions always use seconds
         elif instr.name == 'cc_prx':
             angle_t = instr.args['angle_t'] * 2 * np.pi
             phase_t = instr.args['phase_t'] * 2 * np.pi

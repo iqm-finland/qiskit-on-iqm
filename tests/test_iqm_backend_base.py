@@ -36,8 +36,7 @@ class DummyIQMBackend(IQMBackendBase):
     def max_circuits(self) -> Optional[int]:
         return None
 
-    def run(self, run_input, **options):
-        ...
+    def run(self, run_input, **options): ...
 
 
 @pytest.fixture

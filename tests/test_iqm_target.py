@@ -48,8 +48,8 @@ class TestIQMTargetReflectsDQA:
 
     def test_backend_size(self):
         assert self.backend.num_qubits == len(self.dqa.qubits)
-        if self.backend._fake_target_with_moves is not None:
-            assert self.backend._fake_target_with_moves.num_qubits == len(self.dqa.components)
+        if self.backend._full_target is not None:
+            assert self.backend._full_target.num_qubits == len(self.dqa.components)
 
     def test_physical_qubits(self):
         """Check that the physical qubits are in the correct order: resonators at the end."""
@@ -57,21 +57,25 @@ class TestIQMTargetReflectsDQA:
 
     def test_target_gate_set(self):
         """Check that gate set of the target is the same as we support according to the DQA."""
-        IQM_TO_QISKIT = {
-            "prx": "r",
-            "cc_prx": "reset",
+        QISKIT_TO_IQM = {
+            "r": "prx",
             "cz": "cz",
-            "move": "cz",
+            "move": "move",
             "measure": "measure",
+            "reset": "cc_prx",  # TODO "reset": "reset",
+            "delay": None,
+            "id": None,
         }
-        assert set(self.backend.target.operation_names) == set(
-            [IQM_TO_QISKIT[name] for name in self.dqa.gates] + ["id"]
-        )
-        if self.backend._fake_target_with_moves is not None:
-            IQM_TO_QISKIT["move"] = "move"
-            assert set(self.backend._fake_target_with_moves.operation_names) == set(
-                [IQM_TO_QISKIT[name] for name in self.dqa.gates] + ["id"]
-            )
+        # simplified architecture has no MOVE gate
+        target_gates = set(self.backend.target.operation_names)
+        dqa_gates = set(self.dqa.gates)
+        dqa_gates.discard("move")
+        assert dqa_gates == set([qname for name in target_gates if (qname := QISKIT_TO_IQM[name]) is not None])
+
+        if self.backend._full_target is not None:
+            target_gates = set(self.backend._full_target.operation_names)
+            dqa_gates = set(self.dqa.gates)
+            assert dqa_gates == set([qname for name in target_gates if (qname := QISKIT_TO_IQM[name]) is not None])
 
     @pytest.mark.parametrize(("qiskit_name", "iqm_name"), zip(["r", "measure", "reset"], ["prx", "measure", "cc_prx"]))
     def test_1_to_1_corresponding_gates(self, qiskit_name, iqm_name):
@@ -80,15 +84,15 @@ class TestIQMTargetReflectsDQA:
             qiskit_name,
             iqm_name=iqm_name,
         )
-        if self.backend._fake_target_with_moves is not None:
-            self.check_instruction(qiskit_name, iqm_name=iqm_name, target=self.backend._fake_target_with_moves)
+        if self.backend._full_target is not None:
+            self.check_instruction(qiskit_name, iqm_name=iqm_name, target=self.backend._full_target)
 
     def test_id_gates(self):
         """Check that the id gates are defined for both qubits and components."""
         self.check_instruction("id", expected_loci=[(q,) for q in self.dqa.qubits])
-        if self.backend._fake_target_with_moves is not None:
+        if self.backend._full_target is not None:
             self.check_instruction(
-                "id", expected_loci=[(q,) for q in self.dqa.components], target=self.backend._fake_target_with_moves
+                "id", expected_loci=[(q,) for q in self.dqa.components], target=self.backend._full_target
             )
 
     def test_cz_gates(self):
@@ -107,7 +111,7 @@ class TestIQMTargetReflectsDQA:
         """Check that the virtual czs in the target are as expected."""
         target_loci = [
             tuple(self.backend.index_to_qubit_name(qb) for qb in loci)
-            for i, loci in self.backend._fake_target_with_moves.instructions
+            for i, loci in self.backend._full_target.instructions
             if i.name == "cz"
         ]
         real_cz_loci = list(
@@ -128,17 +132,17 @@ class TestIQMTargetReflectsDQA:
                         break
                 assert sandwich_found
 
-    def test_fake_target_with_moves(self):
+    def test_full_target(self):
         """Check that the fake target is correctly generated."""
         if "move" in self.dqa.gates:
             self.validate_move_loci_fake_target()
             self.validate_cz_loci_fake_target()
         else:
-            assert self.backend._fake_target_with_moves is None
+            assert self.backend._full_target is None
 
     def validate_move_loci_fake_target(self):
         """Check that the moves in the fake target are as in the dqa."""
-        self.check_instruction("move", iqm_name="move", target=self.backend._fake_target_with_moves)
+        self.check_instruction("move", iqm_name="move", target=self.backend._full_target)
 
     def validate_cz_loci_fake_target(self):
         """Check that the czs in the fake target are as expected."""
@@ -149,11 +153,11 @@ class TestIQMTargetReflectsDQA:
         )
         fake_loci = [
             tuple(self.backend.index_to_qubit_name(qb) for qb in loci)
-            for i, loci in self.backend._fake_target_with_moves.instructions
+            for i, loci in self.backend._full_target.instructions
             if i.name == "cz"
         ]
         expected_loci = real_loci + fake_loci
-        self.check_instruction("cz", expected_loci=expected_loci, target=self.backend._fake_target_with_moves)
+        self.check_instruction("cz", expected_loci=expected_loci, target=self.backend._full_target)
 
     def check_instruction(self, qiskit_name: str, iqm_name: Optional[str] = None, expected_loci=None, target=None):
         """Checks that the given instruction is defined for the expected qubits (directed)."""
@@ -197,9 +201,7 @@ def test_target_from_restricted_qubits(dqa, restriction):
         restricted_edges = restricted_target.build_coupling_map().get_edges()
 
         assert set(restricted_edges) == set(
-            backend.restrict_to_qubits(restricted, include_resonators=includes_resonators)
-            .build_coupling_map()
-            .get_edges()
+            backend.restrict_to_qubits(restricted).build_coupling_map().get_edges()
         )  # Restrict from backend gives the same result
 
         # Check if the edges in the restricted target were allowed in the backend

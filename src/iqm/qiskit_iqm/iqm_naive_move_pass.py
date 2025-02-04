@@ -184,10 +184,10 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     Works with both the Crystal and Star architectures.
 
     Args:
-        circuit: The circuit to be transpiled without MOVE gates.
-        backend: The target backend to compile to. Does not require a resonator.
-        target: An alternative target to compile to than the backend, using this option requires intimate knowledge
-            of the transpiler and thus it is not recommended to use.
+        circuit: Circuit to be transpiled, without MOVE gates.
+        backend: Backend to transpile to.
+        target: Transpilation target to use. Iff None, use the transpilation target of ``backend``.
+            Using this option requires intimate knowledge of the transpiler.
         initial_layout: The initial layout to use for the transpilation, same as :func:`~qiskit.compiler.transpile`.
         perform_move_routing: Whether to perform MOVE gate routing.
         optimize_single_qubits: Whether to optimize single qubit gates away.
@@ -209,6 +209,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         restrict_to_qubits = [backend.qubit_name_to_index(q) if isinstance(q, str) else q for q in restrict_to_qubits]
 
     if target is None:
+        # use the backend target
         if circuit.count_ops().get("move", 0) > 0 or restrict_to_qubits is not None:
             target = backend.target_with_resonators
             # Create a sensible initial layout if none is provided

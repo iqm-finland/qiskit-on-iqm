@@ -32,8 +32,8 @@ Version 16.0
   * Bugfix where the :func:`.transpile_to_IQM` did not retain the circuit layout after transpiling.
 
 * Fixed :func:`.IQMFakeDeneb` readout errors. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/qiskit-on-iqm/pull/125>`_
-* :attr:`.IQMBackend.target` now contains CZ gates only in direction they appear in the calibration
-  set. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
+* :attr:`.IQMBackend.target` now contains symmetric gates such as CZ only in the direction they appear
+  in the calibration set. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
 * Deprecated features:
 
   * :func:`.optimize_single_qubit_gates` has been deprecated in favor of using the new transpiler
@@ -44,8 +44,6 @@ Version 16.0
     using the :class:`.CircuitCompilationOptions` class from :mod:`iqm.iqm_client`.
   * The :class:`.IQMBackend` no longer uses Qiskit's ``options`` attribute to give run options in
     favor of using the arguments of the :meth:`.IQMBackend.run` method directly.
-
-* Qiskit Target now contains CZ with the directions are calibrated on the hardwared. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
 
 
 Version 15.6
