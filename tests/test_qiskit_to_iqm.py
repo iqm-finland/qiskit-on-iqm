@@ -23,8 +23,6 @@ from iqm.qiskit_iqm.qiskit_to_iqm import MeasurementKey, deserialize_instruction
 
 from .utils import get_transpiled_circuit_json
 
-from .utils import get_transpiled_circuit_json
-
 
 @pytest.fixture()
 def circuit() -> QuantumCircuit:
@@ -113,12 +111,12 @@ def test_deserialize_instructions_without_layout():
         Instruction(name='prx', qubits=['QB1'], args={'phase_t': 0.0, 'angle_t': 0.0}),
         Instruction(name='cz', qubits=['QB1', 'QB2'], args={}),
         Instruction(name='move', qubits=['QB1', 'CR1'], args={}),
-        Instruction(name='measure', qubits=['QB1'], args={'key': 'm_1_2_0'}),
         Instruction(name='barrier', qubits=['QB1', 'QB2'], args={}),
+        Instruction(name='measure', qubits=['QB1'], args={'key': 'm_3_2_1'}),
         Instruction(
             name='cc_prx',
             qubits=['QB1'],
-            args={'phase_t': 0.0, 'feedback_qubit': 'QB1', 'angle_t': 0.0, 'feedback_key': 'm_1_2_0'},
+            args={'phase_t': 0.0, 'feedback_qubit': 'QB1', 'angle_t': 0.0, 'feedback_key': 'm_3_2_1'},
         ),
     ]
     circuit = deserialize_instructions(instructions, {'QB1': 0, 'QB2': 1, 'CR1': 2}, Layout())
@@ -127,13 +125,30 @@ def test_deserialize_instructions_without_layout():
     assert circuit.num_qubits == 3
     assert circuit.num_nonlocal_gates() == 2
     assert circuit.num_ancillas == 0
-    assert circuit.num_clbits == 1
+    assert circuit.num_clbits == 3
+    assert len(circuit.cregs) == 3
+    for circuit_instruction, name in zip(circuit.data, ['r', 'cz', 'move', 'barrier', 'measure', 'r']):
+        assert circuit_instruction.operation.name == name
+
+
+def test_deserialize_instructions_roundtrip():
+    """Check that instructions are retrieved after roundtrip."""
+    instructions = [
+        Instruction(name='prx', qubits=['QB1'], args={'phase_t': 0.0, 'angle_t': 0.0}),
+        Instruction(name='cz', qubits=['QB1', 'QB2'], args={}),
+        Instruction(name='move', qubits=['QB1', 'CR1'], args={}),
+        Instruction(name='barrier', qubits=['QB1', 'QB2'], args={}),
+        Instruction(name='measure', qubits=['QB1'], args={'key': 'm_3_2_1'}),
+    ]
+    circuit = deserialize_instructions(instructions, {'QB1': 0, 'QB2': 1, 'CR1': 2}, Layout())
+    new_instructions = serialize_instructions(circuit, qubit_index_to_name={0: 'QB1', 1: 'QB2', 2: 'CR1'})
+    for instruction, name in zip(new_instructions, ['prx', 'cz', 'move', 'barrier', 'measure']):
+        assert instruction.name == name
 
 
 def test_deserialize_instructions_unsupported_instruction():
-    """Check that invalid instruction raises an error.
-
-    Unsupported instructions always do.
-    """
-    with pytest.raises(ValueError):
-        deserialize_instructions([Instruction(name='cx', qubits=['QB1', 'QB2'])], {}, Layout())
+    """Check that invalid instruction raises an error."""
+    instruction = Instruction(name='cz', qubits=['QB1', 'QB2'], args={})
+    instruction.name = 'cx'  # Purposely creating an instruction with an unsupported name.
+    with pytest.raises(ValueError, match='Unsupported instruction cx in the circuit.'):
+        deserialize_instructions([instruction], {'QB1': 0, 'QB2': 1, 'CR1': 2}, Layout())

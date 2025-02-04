@@ -42,6 +42,7 @@ def get_test_circuit(kind, size):
         return qc
     raise ValueError(f"Unknown circuit kind: {kind}")
 
+
 @pytest.fixture()
 def backend(request):
     """Fixture that returns a mocked backend."""
@@ -156,8 +157,6 @@ class TestTranspilation:
         assert all(x == y for x, y in zip(transpiled_circuit.layout.initial_layout.get_physical_bits(), layout))
 
 
-
-
 @pytest.mark.parametrize(
     "backend,restriction",
     [
@@ -220,6 +219,7 @@ def test_transpile_empty_optimized_circuit(ndonis_architecture):
     ),
 )
 def test_get_scheduling_method(remove_final_rzz, ignore_barriers, existing_moves_handling):
+    """Test scheduling method for each input."""
     scheduling = _get_scheduling_method(False, False, remove_final_rzz, ignore_barriers, existing_moves_handling)
     assert scheduling == "default"
 

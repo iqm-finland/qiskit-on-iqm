@@ -132,6 +132,7 @@ def _get_scheduling_method(
     ignore_barriers: bool,
     existing_moves_handling: Optional[ExistingMoveHandlingOptions],
 ) -> str:
+    """Determine scheduling based on flags."""
     if perform_move_routing:
         if optimize_single_qubits:
             if not remove_final_rzs:
