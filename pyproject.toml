@@ -44,11 +44,11 @@ docs = [
 testing = [
     "black == 24.10.0",
     "isort == 5.13.2",
-    "pylint == 3.0.3",
-    "mypy == 1.7.1",
+    "pylint == 3.3.3",
+    "mypy == 1.14.1",
     "mockito == 1.4.0",
-    "pytest == 7.4.3",
-    "pytest-cov == 4.1.0",
+    "pytest == 8.3.4",
+    "pytest-cov == 6.0.0",
     "pytest-pylint == 0.21.0",
     "types-Jinja2 == 2.11.9"
 ]
@@ -175,5 +175,6 @@ move_routing_rz_optimization_ignores_barriers = "iqm.qiskit_iqm:MoveGateRoutingW
 only_rz_optimization = "iqm.qiskit_iqm:OnlyRZOptimizationPlugin"
 only_rz_optimization_exact_global_phase = "iqm.qiskit_iqm:OnlyRZOptimizationExactPlugin"
 only_rz_optimization_ignore_barriers = "iqm.qiskit_iqm:OnlyRZOptimizationIgnoreBarriersPlugin"
+only_rz_optimization_exact_global_phase_ignore_barriers = "iqm.qiskit_iqm:OnlyRZOptimizationExactIgnoreBarriersPlugin"
 iqm_default_scheduling = "iqm.qiskit_iqm:IQMDefaultSchedulingPlugin"
 

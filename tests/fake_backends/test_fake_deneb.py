@@ -20,7 +20,7 @@ import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from iqm.iqm_client import CircuitTranspilationError, CircuitValidationError, ExistingMoveHandlingOptions
+from iqm.iqm_client import CircuitValidationError
 from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
 from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 from iqm.qiskit_iqm.iqm_backend import IQMTarget
@@ -65,7 +65,7 @@ def test_move_gate_sandwich_interrupted_with_single_qubit_gate():
         CircuitValidationError,
         match=re.escape(
             "Instruction prx acts on ('QB1',) while the state(s) of {'QB1'} are in a resonator. "
-            + "Current resonator occupation: {'COMP_R': 'QB1'}"
+            + "Current resonator occupation: {'CR1': 'QB1'}"
         ),
     ):
         backend.run(transpile_to_IQM(qc, backend=backend, perform_move_routing=False), shots=1000)
@@ -86,7 +86,7 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
 
     with pytest.raises(
         CircuitTranspilationError,
-        match=re.escape("MOVE instruction ('QB3', 'COMP_R') to an already occupied resonator: {'COMP_R': 'QB2'}."),
+        match=re.escape("MOVE instruction ('QB3', 'CR1') to an already occupied resonator: {'CR1': 'QB2'}."),
     ):
         transpile_to_IQM(
             qc, backend=backend, perform_move_routing=True, existing_moves_handling=ExistingMoveHandlingOptions.KEEP
@@ -94,7 +94,7 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
 
     with pytest.raises(
         CircuitValidationError,
-        match=re.escape("MOVE instruction ('QB3', 'COMP_R') to an already occupied resonator: {'COMP_R': 'QB2'}."),
+        match=re.escape("MOVE instruction ('QB3', 'CR1') to an already occupied resonator: {'CR1': 'QB2'}."),
     ):
         backend.run(transpile_to_IQM(qc, backend=backend, perform_move_routing=False), shots=1000)
 
@@ -114,7 +114,7 @@ def test_move_gate_not_closed():
         CircuitValidationError,
         match=re.escape(
             "Instruction measure acts on ('QB2',) while the state(s) of {'QB2'} are in a resonator. "
-            + "Current resonator occupation: {'COMP_R': 'QB2'}."
+            + "Current resonator occupation: {'CR1': 'QB2'}."
         ),
     ):
         backend.run(

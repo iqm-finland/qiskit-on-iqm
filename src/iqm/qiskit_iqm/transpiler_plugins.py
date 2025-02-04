@@ -208,6 +208,15 @@ class OnlyRZOptimizationIgnoreBarriersPlugin(OnlyRZOptimizationPlugin):
         super().__init__(ignore_barriers=True)
 
 
+class OnlyRZOptimizationExactIgnoreBarriersPlugin(OnlyRZOptimizationPlugin):
+    """Plugin class for single qubit gate optimization without MOVE gate routing and
+    the final RZ gates are not dropped.
+    """
+
+    def __init__(self):
+        super().__init__(drop_final_rz=False, ignore_barriers=True)
+
+
 class IQMDefaultSchedulingPlugin(IQMSchedulingPlugin):
     """Plugin class for IQM single qubit gate optimization and MoveGate routing as a scheduling stage."""
 

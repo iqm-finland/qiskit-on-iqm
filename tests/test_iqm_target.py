@@ -13,6 +13,8 @@
 # limitations under the License.
 """Testing extended quantum architecture specification.
 """
+from typing import Optional
+
 import pytest
 
 from tests.utils import get_mocked_backend
@@ -157,7 +159,7 @@ class TestIQMTargetReflectsDQA:
         expected_loci = real_loci + fake_loci
         self.check_instruction("cz", expected_loci=expected_loci, target=self.backend._fake_target_with_moves)
 
-    def check_instruction(self, qiskit_name: str, iqm_name: str = None, expected_loci=None, target=None):
+    def check_instruction(self, qiskit_name: str, iqm_name: Optional[str] = None, expected_loci=None, target=None):
         """Checks that the given instruction is defined for the expected qubits (directed)."""
         if expected_loci is None:
             if iqm_name in self.dqa.gates:
@@ -180,7 +182,7 @@ class TestIQMTargetReflectsDQA:
     [
         ("adonis_architecture", ["QB4", "QB3", "QB1"]),
         ("move_architecture", ["QB5", "QB3", "QB1"]),
-        ("move_architecture", ["QB5", "QB3", "QB1", "COMP_R"]),
+        ("move_architecture", ["QB5", "QB3", "QB1", "CR1"]),
     ],
     indirect=["dqa"],
 )

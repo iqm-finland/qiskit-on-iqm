@@ -5,14 +5,18 @@ from itertools import product
 
 import numpy as np
 import pytest
+import qiskit
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import QuantumVolume
 from qiskit.compiler import transpile
+import qiskit.passmanager
 from qiskit.quantum_info import Operator
+import qiskit.scheduler
+import stevedore
 
 from iqm.iqm_client import ExistingMoveHandlingOptions
 from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
-from iqm.qiskit_iqm.iqm_naive_move_pass import transpile_to_IQM
+from iqm.qiskit_iqm.iqm_naive_move_pass import _get_scheduling_method, transpile_to_IQM
 from iqm.qiskit_iqm.iqm_transpilation import IQMReplaceGateWithUnitaryPass
 from iqm.qiskit_iqm.move_gate import MOVE_GATE_UNITARY, MoveGate
 
@@ -161,7 +165,7 @@ class TestTranspilation:
     "backend,restriction",
     [
         ("adonis_architecture", ["QB4", "QB3", "QB1"]),
-        ("ndonis_architecture", ["QB5", "QB3", "QB1", "COMP_R"]),
+        ("ndonis_architecture", ["QB5", "QB3", "QB1", "CR1"]),
     ],
     indirect=["backend"],
 )
@@ -201,3 +205,166 @@ def test_transpile_empty_optimized_circuit(ndonis_architecture):
 
     transpiled_circuit = transpile(QuantumCircuit(), backend)
     assert len(transpiled_circuit) == 0
+
+
+@pytest.mark.parametrize(
+    ("remove_final_rzs", "ignore_barriers", "existing_moves_handling"),
+    list(
+        product(
+            [True, False],
+            [True, False],
+            [
+                None,
+                ExistingMoveHandlingOptions.KEEP,
+                ExistingMoveHandlingOptions.REMOVE,
+                ExistingMoveHandlingOptions.TRUST,
+            ],
+        )
+    ),
+)
+def test_get_scheduling_method(remove_final_rzs, ignore_barriers, existing_moves_handling):
+    """Test scheduling method for each input."""
+    scheduling = _get_scheduling_method(False, False, remove_final_rzs, ignore_barriers, existing_moves_handling)
+    assert scheduling == "default"
+
+    scheduling = _get_scheduling_method(False, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+    assert scheduling.startswith("only_rz_optimization")
+
+    scheduling = _get_scheduling_method(True, False, remove_final_rzs, ignore_barriers, existing_moves_handling)
+    assert scheduling.startswith("only_move_routing")
+
+    if existing_moves_handling:
+        if remove_final_rzs is False:
+            with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+                _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+        elif remove_final_rzs and ignore_barriers:
+            with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+                _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+        else:
+            scheduling = _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+            assert scheduling.startswith("move_routing")
+    else:
+        if remove_final_rzs is False and ignore_barriers is True:
+            with pytest.raises(ValueError, match="Move gate routing not compatible"):
+                _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+        else:
+            scheduling = _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+            assert scheduling.startswith("move_routing")
+
+
+@pytest.mark.parametrize(
+    (
+        "perform_move_routing",
+        "optimize_single_qubits",
+        "remove_final_rzs",
+        "ignore_barriers",
+        "existing_moves_handling",
+    ),
+    list(
+        product(
+            [True, False],
+            [True, False],
+            [True, False],
+            [True, False],
+            [
+                None,
+                ExistingMoveHandlingOptions.KEEP,
+                ExistingMoveHandlingOptions.REMOVE,
+                ExistingMoveHandlingOptions.TRUST,
+            ],
+        )
+    ),
+)
+# pylint: disable=too-many-arguments
+def test_transpile_to_IQM_flags(
+    ndonis_architecture,
+    perform_move_routing,
+    optimize_single_qubits,
+    remove_final_rzs,
+    ignore_barriers,
+    existing_moves_handling,
+):
+    if existing_moves_handling and remove_final_rzs is False and perform_move_routing and optimize_single_qubits:
+        with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+            transpile_to_IQM(
+                QuantumCircuit(),
+                backend=get_mocked_backend(ndonis_architecture)[0],
+                target=None,
+                perform_move_routing=perform_move_routing,
+                optimize_single_qubits=optimize_single_qubits,
+                remove_final_rzs=remove_final_rzs,
+                ignore_barriers=ignore_barriers,
+                existing_moves_handling=existing_moves_handling,
+            )
+    elif (
+        existing_moves_handling
+        and remove_final_rzs
+        and ignore_barriers
+        and perform_move_routing
+        and optimize_single_qubits
+    ):
+        with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+            transpile_to_IQM(
+                QuantumCircuit(),
+                backend=get_mocked_backend(ndonis_architecture)[0],
+                target=None,
+                perform_move_routing=perform_move_routing,
+                optimize_single_qubits=optimize_single_qubits,
+                remove_final_rzs=remove_final_rzs,
+                ignore_barriers=ignore_barriers,
+                existing_moves_handling=existing_moves_handling,
+            )
+    elif (
+        existing_moves_handling is None
+        and not remove_final_rzs
+        and ignore_barriers
+        and perform_move_routing
+        and optimize_single_qubits
+    ):
+        with pytest.raises(ValueError, match="Move gate routing not compatible"):
+            transpile_to_IQM(
+                QuantumCircuit(),
+                backend=get_mocked_backend(ndonis_architecture)[0],
+                target=None,
+                perform_move_routing=perform_move_routing,
+                optimize_single_qubits=optimize_single_qubits,
+                remove_final_rzs=remove_final_rzs,
+                ignore_barriers=ignore_barriers,
+                existing_moves_handling=existing_moves_handling,
+            )
+    else:
+        schedule_method = _get_scheduling_method(
+            perform_move_routing=perform_move_routing,
+            optimize_single_qubits=optimize_single_qubits,
+            remove_final_rzs=remove_final_rzs,
+            ignore_barriers=ignore_barriers,
+            existing_moves_handling=existing_moves_handling,
+        )
+
+        plugin = stevedore.ExtensionManager(
+            "qiskit.transpiler.scheduling", invoke_on_load=True, propagate_map_exceptions=True
+        )[schedule_method].obj
+
+        if perform_move_routing is False and optimize_single_qubits is False:
+            assert isinstance(
+                plugin, qiskit.transpiler.preset_passmanagers.builtin_plugins.DefaultSchedulingPassManager
+            )
+        # elif perform_move_routing is False:
+        else:
+            assert plugin.move_gate_routing == perform_move_routing
+            assert plugin.optimize_sqg == optimize_single_qubits
+            if plugin.optimize_sqg:
+                assert plugin.drop_final_rz == remove_final_rzs
+                assert plugin.ignore_barriers == ignore_barriers
+
+        circuit = transpile_to_IQM(
+            QuantumCircuit(),
+            backend=get_mocked_backend(ndonis_architecture)[0],
+            target=None,
+            perform_move_routing=perform_move_routing,
+            optimize_single_qubits=optimize_single_qubits,
+            remove_final_rzs=remove_final_rzs,
+            ignore_barriers=ignore_barriers,
+            existing_moves_handling=existing_moves_handling,
+        )
+        assert isinstance(circuit, QuantumCircuit)

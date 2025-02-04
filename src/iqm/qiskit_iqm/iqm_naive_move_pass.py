@@ -125,7 +125,48 @@ class IQMNaiveResonatorMoving(TransformationPass):
         return new_dag
 
 
-def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests for this
+def _get_scheduling_method(
+    perform_move_routing: bool,
+    optimize_single_qubits: bool,
+    remove_final_rzs: bool,
+    ignore_barriers: bool,
+    existing_moves_handling: Optional[ExistingMoveHandlingOptions],
+) -> str:
+    """Determine scheduling based on flags."""
+    if perform_move_routing:
+        if optimize_single_qubits:
+            if not remove_final_rzs and ignore_barriers and existing_moves_handling is None:
+                raise ValueError(
+                    f"Move gate routing not compatible with {optimize_single_qubits=}, {remove_final_rzs=}, and {ignore_barriers=}."
+                )
+            elif not remove_final_rzs:
+                scheduling_method = "move_routing_exact_global_phase"
+            elif ignore_barriers:
+                scheduling_method = "move_routing_rz_optimization_ignores_barriers"
+            else:
+                scheduling_method = "move_routing"
+        else:
+            scheduling_method = "only_move_routing"
+        if existing_moves_handling is not None:
+            if not scheduling_method.endswith("routing"):
+                raise ValueError(
+                    "Existing Move handling options are not compatible with `remove_final_rzs` and \
+                    `ignore_barriers` options."
+                )  # No technical reason for this, just hard to maintain all combinations.
+            scheduling_method += "_" + existing_moves_handling.value
+    else:
+        if optimize_single_qubits:
+            scheduling_method = "only_rz_optimization"
+            if not remove_final_rzs:
+                scheduling_method += "_exact_global_phase"
+            if ignore_barriers:
+                scheduling_method += "_ignore_barriers"
+        else:
+            scheduling_method = "default"
+    return scheduling_method
+
+
+def transpile_to_IQM(  # pylint: disable=too-many-arguments
     circuit: QuantumCircuit,
     backend: IQMBackendBase,
     target: Optional[IQMTarget] = None,
@@ -184,32 +225,13 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests 
     # Determine which scheduling method to use
     scheduling_method = qiskit_transpiler_kwargs.pop("scheduling_method", None)
     if scheduling_method is None:
-        if perform_move_routing:
-            if optimize_single_qubits:
-                if not remove_final_rzs:
-                    scheduling_method = "move_routing_exact_global_phase"
-                elif ignore_barriers:
-                    scheduling_method = "move_routing_rz_optimization_ignores_barriers"
-                else:
-                    scheduling_method = "move_routing"
-            else:
-                scheduling_method = "only_move_routing"
-            if existing_moves_handling is not None:
-                if not scheduling_method.endswith("routing"):
-                    raise ValueError(
-                        "Existing Move handling options are not compatible with `remove_final_rzs` and \
-                        `ignore_barriers` options."
-                    )  # No technical reason for this, just hard to maintain all combinations.
-                scheduling_method += "_" + existing_moves_handling.value
-        else:
-            if optimize_single_qubits:
-                scheduling_method = "only_rz_optimization"
-                if not remove_final_rzs:
-                    scheduling_method += "_exact_global_phase"
-                elif ignore_barriers:
-                    scheduling_method += "_ignores_barriers"
-            else:
-                scheduling_method = "default"
+        scheduling_method = _get_scheduling_method(
+            perform_move_routing=perform_move_routing,
+            optimize_single_qubits=optimize_single_qubits,
+            remove_final_rzs=remove_final_rzs,
+            ignore_barriers=ignore_barriers,
+            existing_moves_handling=existing_moves_handling,
+        )
     else:
         warnings.warn(
             f"Scheduling method is set to {scheduling_method}, but it is normally used to pass other transpiler "

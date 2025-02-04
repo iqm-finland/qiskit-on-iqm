@@ -24,7 +24,6 @@ import requests
 
 from iqm.iqm_client import Instruction, IQMClient, RunRequest, RunResult, RunStatus
 from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMFacadeBackend, IQMProvider
-from iqm.qiskit_iqm.qiskit_to_iqm import serialize_instructions
 from tests.utils import get_mock_ok_response
 
 
@@ -136,18 +135,3 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
 
     with pytest.raises(RuntimeError, match='Remote execution did not succeed'):
         backend.run(circuit)
-
-
-def test_serialize_instructions_can_allow_nonnative_gates():
-    # Majority of the logic is tested in test_iqm_backend, here we only test the non-default behavior
-    nonnative_gate = QuantumCircuit(3, name='nonnative').to_gate()
-    circuit = QuantumCircuit(5)
-    circuit.append(nonnative_gate, [1, 2, 4])
-    circuit.measure_all()
-    mapping = {i: f'QB{i + 1}' for i in range(5)}
-
-    with pytest.raises(ValueError, match='is not natively supported. You need to transpile'):
-        serialize_instructions(circuit, mapping)
-
-    instructions = serialize_instructions(circuit, mapping, allowed_nonnative_gates={'nonnative'})
-    assert instructions[0] == Instruction.model_construct(name='nonnative', qubits=('QB2', 'QB3', 'QB5'), args={})

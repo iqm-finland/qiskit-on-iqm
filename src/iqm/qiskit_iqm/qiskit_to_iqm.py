@@ -238,7 +238,8 @@ def serialize_instructions(
     return instructions
 
 
-def deserialize_instructions(  # TODO create test for this
+# pylint: disable=too-many-branches
+def deserialize_instructions(
     instructions: list[Instruction], qubit_name_to_index: dict[str, int], layout: Layout
 ) -> QiskitQuantumCircuit:
     """Helper function to turn a list of IQM Instructions into a Qiskit QuantumCircuit.
@@ -246,6 +247,7 @@ def deserialize_instructions(  # TODO create test for this
     Args:
         instructions: The gates in the circuit.
         qubit_name_to_index: Mapping from qubit names to their indices, as specified in a backend.
+        layout: Qiskit representation of a layout.
 
     Raises:
         ValueError: Thrown when a given instruction is not supported.
@@ -259,7 +261,13 @@ def deserialize_instructions(  # TODO create test for this
         if instr.name == 'measure':
             mk = MeasurementKey.from_string(instr.args['key'])
             cl_regs[mk.creg_idx] = cl_regs.get(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
-            cl_bits[str(mk)] = cl_regs[mk.creg_idx][mk.clbit_idx]
+            if mk.clbit_idx < len(cl_regs[mk.creg_idx]):
+                cl_bits[str(mk)] = cl_regs[mk.creg_idx][mk.clbit_idx]
+            else:
+                raise IndexError(
+                    f'Index {mk.clbit_idx} of classical bit is out of range for classical register with '
+                    f'length {len(cl_regs[mk.creg_idx])}.'
+                )
     # Add resonators
     n_qubits = len(layout.get_physical_bits())
     n_resonators = len(qubit_name_to_index) - n_qubits

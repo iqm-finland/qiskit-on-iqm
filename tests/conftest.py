@@ -117,7 +117,7 @@ def move_architecture():
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
         qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6'],
-        computational_resonators=['COMP_R'],
+        computational_resonators=['CR1'],
         gates={
             'prx': GateInfo(
                 implementations={
@@ -132,11 +132,11 @@ def move_architecture():
                 implementations={
                     'tgss': GateImplementationInfo(
                         loci=(
-                            ('QB1', 'COMP_R'),
-                            ('QB2', 'COMP_R'),
-                            ('QB3', 'COMP_R'),
-                            ('QB4', 'COMP_R'),
-                            ('QB5', 'COMP_R'),
+                            ('QB1', 'CR1'),
+                            ('QB2', 'CR1'),
+                            ('QB3', 'CR1'),
+                            ('QB4', 'CR1'),
+                            ('QB5', 'CR1'),
                         )
                     ),
                 },
@@ -145,7 +145,7 @@ def move_architecture():
             ),
             'move': GateInfo(
                 implementations={
-                    'tgss_crf': GateImplementationInfo(loci=(('QB6', 'COMP_R'),)),
+                    'tgss_crf': GateImplementationInfo(loci=(('QB6', 'CR1'),)),
                 },
                 default_implementation='tgss_crf',
                 override_default_implementation={},
@@ -169,21 +169,21 @@ def hypothetical_fake_architecture():
 
           QB1   QB2
            |    |
-             R1
-           |^    ^
+             CR1
+           |*    *
     QB3 - QB4   QB7 - QB8
-           |v    v
+           |*    *
              CR2
             |   |
           QB5   QB6
 
-    Here, the | signifies a CZ connection and the V and ^ signify a move connection.
+    Here, '|' signifies a CZ connection and the '*' signify a move connection.
 
     """
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
         qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6', 'QB7', 'QB8'],
-        computational_resonators=['R1', 'CR2'],
+        computational_resonators=['CR1', 'CR2'],
         gates={
             'prx': GateInfo(
                 implementations={
@@ -198,10 +198,10 @@ def hypothetical_fake_architecture():
                 implementations={
                     'tgss': GateImplementationInfo(
                         loci=(
-                            ('QB1', 'R1'),
-                            ('QB2', 'R1'),
+                            ('QB1', 'CR1'),
+                            ('QB2', 'CR1'),
                             ('QB3', 'QB4'),
-                            ('QB4', 'R1'),
+                            ('QB4', 'CR1'),
                             ('QB4', 'CR2'),
                             ('QB5', 'CR2'),
                             ('QB6', 'CR2'),
@@ -216,9 +216,9 @@ def hypothetical_fake_architecture():
                 implementations={
                     'tgss_crf': GateImplementationInfo(
                         loci=(
-                            ('QB4', 'R1'),
+                            ('QB4', 'CR1'),
                             ('QB4', 'CR2'),
-                            ('QB7', 'R1'),
+                            ('QB7', 'CR1'),
                             ('QB7', 'CR2'),
                         ),
                     )
@@ -244,7 +244,7 @@ def ndonis_architecture():
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
         qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6'],
-        computational_resonators=['COMP_R'],
+        computational_resonators=['CR1'],
         gates={
             'prx': GateInfo(
                 implementations={
@@ -259,12 +259,12 @@ def ndonis_architecture():
                 implementations={
                     'tgss': GateImplementationInfo(
                         loci=(
-                            ('QB1', 'COMP_R'),
-                            ('QB2', 'COMP_R'),
-                            ('QB3', 'COMP_R'),
-                            ('QB4', 'COMP_R'),
-                            ('QB5', 'COMP_R'),
-                            ('QB6', 'COMP_R'),
+                            ('QB1', 'CR1'),
+                            ('QB2', 'CR1'),
+                            ('QB3', 'CR1'),
+                            ('QB4', 'CR1'),
+                            ('QB5', 'CR1'),
+                            ('QB6', 'CR1'),
                         )
                     ),
                 },
@@ -275,12 +275,12 @@ def ndonis_architecture():
                 implementations={
                     'tgss_crf': GateImplementationInfo(
                         loci=(
-                            ('QB1', 'COMP_R'),
-                            ('QB2', 'COMP_R'),
-                            ('QB3', 'COMP_R'),
-                            ('QB4', 'COMP_R'),
-                            ('QB5', 'COMP_R'),
-                            ('QB6', 'COMP_R'),
+                            ('QB1', 'CR1'),
+                            ('QB2', 'CR1'),
+                            ('QB3', 'CR1'),
+                            ('QB4', 'CR1'),
+                            ('QB5', 'CR1'),
+                            ('QB6', 'CR1'),
                         )
                     ),
                 },
