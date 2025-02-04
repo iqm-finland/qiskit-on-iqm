@@ -9,7 +9,6 @@ from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import QuantumVolume
 from qiskit.compiler import transpile
 from qiskit.quantum_info import Operator
-from qiskit.transpiler.exceptions import TranspilerError
 
 from iqm.iqm_client import ExistingMoveHandlingOptions
 from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
@@ -205,7 +204,7 @@ def test_transpile_empty_optimized_circuit(ndonis_architecture):
 
 
 @pytest.mark.parametrize(
-    ("remove_final_rzz", "ignore_barriers", "existing_moves_handling"),
+    ("remove_final_rzs", "ignore_barriers", "existing_moves_handling"),
     list(
         product(
             [True, False],
@@ -219,29 +218,29 @@ def test_transpile_empty_optimized_circuit(ndonis_architecture):
         )
     ),
 )
-def test_get_scheduling_method(remove_final_rzz, ignore_barriers, existing_moves_handling):
+def test_get_scheduling_method(remove_final_rzs, ignore_barriers, existing_moves_handling):
     """Test scheduling method for each input."""
-    scheduling = _get_scheduling_method(False, False, remove_final_rzz, ignore_barriers, existing_moves_handling)
+    scheduling = _get_scheduling_method(False, False, remove_final_rzs, ignore_barriers, existing_moves_handling)
     assert scheduling == "default"
 
-    scheduling = _get_scheduling_method(False, True, remove_final_rzz, ignore_barriers, existing_moves_handling)
+    scheduling = _get_scheduling_method(False, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
     assert scheduling.startswith("only_rz_optimization")
 
-    scheduling = _get_scheduling_method(True, False, remove_final_rzz, ignore_barriers, existing_moves_handling)
+    scheduling = _get_scheduling_method(True, False, remove_final_rzs, ignore_barriers, existing_moves_handling)
     assert scheduling.startswith("only_move_routing")
 
     if existing_moves_handling:
-        if remove_final_rzz is False:
-            with pytest.raises(ValueError):
-                _get_scheduling_method(True, True, remove_final_rzz, ignore_barriers, existing_moves_handling)
-        elif remove_final_rzz and ignore_barriers:
-            with pytest.raises(ValueError):
-                _get_scheduling_method(True, True, remove_final_rzz, ignore_barriers, existing_moves_handling)
+        if remove_final_rzs is False:
+            with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+                _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
+        elif remove_final_rzs and ignore_barriers:
+            with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+                _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
         else:
-            scheduling = _get_scheduling_method(True, True, remove_final_rzz, ignore_barriers, existing_moves_handling)
+            scheduling = _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
             assert scheduling.startswith("move_routing")
     else:
-        scheduling = _get_scheduling_method(True, True, remove_final_rzz, ignore_barriers, existing_moves_handling)
+        scheduling = _get_scheduling_method(True, True, remove_final_rzs, ignore_barriers, existing_moves_handling)
         assert scheduling.startswith("move_routing")
 
 
@@ -249,7 +248,7 @@ def test_get_scheduling_method(remove_final_rzz, ignore_barriers, existing_moves
     (
         "perform_move_routing",
         "optimize_single_qubits",
-        "remove_final_rzz",
+        "remove_final_rzs",
         "ignore_barriers",
         "existing_moves_handling",
     ),
@@ -273,11 +272,11 @@ def test_transpile_to_IQM_flags(
     ndonis_architecture,
     perform_move_routing,
     optimize_single_qubits,
-    remove_final_rzz,
+    remove_final_rzs,
     ignore_barriers,
     existing_moves_handling,
 ):
-    if existing_moves_handling and remove_final_rzz is False and perform_move_routing and optimize_single_qubits:
+    if existing_moves_handling and remove_final_rzs is False and perform_move_routing and optimize_single_qubits:
         with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
             transpile_to_IQM(
                 QuantumCircuit(),
@@ -285,13 +284,13 @@ def test_transpile_to_IQM_flags(
                 target=None,
                 perform_move_routing=perform_move_routing,
                 optimize_single_qubits=optimize_single_qubits,
-                remove_final_rzs=remove_final_rzz,
+                remove_final_rzs=remove_final_rzs,
                 ignore_barriers=ignore_barriers,
                 existing_moves_handling=existing_moves_handling,
             )
     elif (
         existing_moves_handling
-        and remove_final_rzz
+        and remove_final_rzs
         and ignore_barriers
         and perform_move_routing
         and optimize_single_qubits
@@ -303,24 +302,7 @@ def test_transpile_to_IQM_flags(
                 target=None,
                 perform_move_routing=perform_move_routing,
                 optimize_single_qubits=optimize_single_qubits,
-                remove_final_rzs=remove_final_rzz,
-                ignore_barriers=ignore_barriers,
-                existing_moves_handling=existing_moves_handling,
-            )
-    elif (
-        perform_move_routing is False
-        and optimize_single_qubits is True
-        and remove_final_rzz is True
-        and ignore_barriers is True
-    ):
-        with pytest.raises(TranspilerError, match="Invalid plugin name"):
-            transpile_to_IQM(
-                QuantumCircuit(),
-                backend=get_mocked_backend(ndonis_architecture)[0],
-                target=None,
-                perform_move_routing=perform_move_routing,
-                optimize_single_qubits=optimize_single_qubits,
-                remove_final_rzs=remove_final_rzz,
+                remove_final_rzs=remove_final_rzs,
                 ignore_barriers=ignore_barriers,
                 existing_moves_handling=existing_moves_handling,
             )
@@ -331,7 +313,7 @@ def test_transpile_to_IQM_flags(
             target=None,
             perform_move_routing=perform_move_routing,
             optimize_single_qubits=optimize_single_qubits,
-            remove_final_rzs=remove_final_rzz,
+            remove_final_rzs=remove_final_rzs,
             ignore_barriers=ignore_barriers,
             existing_moves_handling=existing_moves_handling,
         )

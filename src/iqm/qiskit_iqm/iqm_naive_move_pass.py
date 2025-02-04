@@ -156,7 +156,7 @@ def _get_scheduling_method(
             if not remove_final_rzs:
                 scheduling_method += "_exact_global_phase"
             elif ignore_barriers:
-                scheduling_method += "_ignores_barriers"
+                scheduling_method += "_ignore_barriers"
         else:
             scheduling_method = "default"
     return scheduling_method
