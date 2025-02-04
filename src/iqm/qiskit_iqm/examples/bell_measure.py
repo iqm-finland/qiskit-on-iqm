@@ -27,7 +27,7 @@ def bell_measure(server_url: str) -> dict[str, int]:
     """Run a circuit that prepares and measures a Bell state.
 
     Args:
-        server_url: URL of the IQM Cortex server used for execution
+        server_url: URL of the IQM server used for execution
 
     Returns:
         a mapping of bitstrings representing qubit measurement results to counts for each result
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         '--cortex_server_url',
-        help='URL of the IQM Cortex server',
+        help='URL of the IQM server',
         default='https://demo.qc.iqm.fi/cocos',
     )
     print(bell_measure(argparser.parse_args().cortex_server_url))
