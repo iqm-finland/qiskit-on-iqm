@@ -278,9 +278,35 @@ def test_transpile_to_IQM_flags(
     existing_moves_handling,
 ):
     if existing_moves_handling and remove_final_rzz is False and perform_move_routing and optimize_single_qubits:
-        pass
-    elif remove_final_rzz and ignore_barriers and perform_move_routing and optimize_single_qubits:
-        pass
+        with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+            transpile_to_IQM(
+                QuantumCircuit(),
+                backend=get_mocked_backend(ndonis_architecture)[0],
+                target=None,
+                perform_move_routing=perform_move_routing,
+                optimize_single_qubits=optimize_single_qubits,
+                remove_final_rzs=remove_final_rzz,
+                ignore_barriers=ignore_barriers,
+                existing_moves_handling=existing_moves_handling,
+            )
+    elif (
+        existing_moves_handling
+        and remove_final_rzz
+        and ignore_barriers
+        and perform_move_routing
+        and optimize_single_qubits
+    ):
+        with pytest.raises(ValueError, match="Existing Move handling options are not compatible"):
+            transpile_to_IQM(
+                QuantumCircuit(),
+                backend=get_mocked_backend(ndonis_architecture)[0],
+                target=None,
+                perform_move_routing=perform_move_routing,
+                optimize_single_qubits=optimize_single_qubits,
+                remove_final_rzs=remove_final_rzz,
+                ignore_barriers=ignore_barriers,
+                existing_moves_handling=existing_moves_handling,
+            )
     elif (
         perform_move_routing is False
         and optimize_single_qubits is True
