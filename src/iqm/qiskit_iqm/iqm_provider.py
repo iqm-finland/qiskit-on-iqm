@@ -311,16 +311,13 @@ class IQMFacadeBackend(IQMBackend):
 class IQMProvider:
     """Provider for IQM backends.
 
-    Args:
-        url: URL of the IQM Cortex server
+    IQMProvider connects to a quantum computer through an IQM server.
+    If the server requires user authentication, you can provide it either using environment
+    variables, or as keyword arguments to IQMProvider. The user authentication kwargs are passed
+    through to :class:`.IQMClient` as is, and are documented there.
 
-    Keyword Args:
-        auth_server_url: URL of the user authentication server, if required by the IQM Cortex server.
-            Can also be set in the ``IQM_AUTH_SERVER`` environment variable.
-        username: Username, if required by the IQM Cortex server.
-            Can also be set in the ``IQM_AUTH_USERNAME`` environment variable.
-        password: Password, if required by the IQM Cortex server.
-            Can also be set in the ``IQM_AUTH_PASSWORD`` environment variable.
+    Args:
+        url: URL of the IQM server
     """
 
     def __init__(self, url: str, **user_auth_args):  # contains keyword args auth_server_url, username, password
