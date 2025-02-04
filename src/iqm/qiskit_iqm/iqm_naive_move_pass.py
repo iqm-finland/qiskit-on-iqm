@@ -135,7 +135,11 @@ def _get_scheduling_method(
     """Determine scheduling based on flags."""
     if perform_move_routing:
         if optimize_single_qubits:
-            if not remove_final_rzs:
+            if not remove_final_rzs and ignore_barriers and existing_moves_handling is None:
+                raise ValueError(
+                    f"Move gate routing not compatible with {optimize_single_qubits=}, {remove_final_rzs=}, and {ignore_barriers=}."
+                )
+            elif not remove_final_rzs:
                 scheduling_method = "move_routing_exact_global_phase"
             elif ignore_barriers:
                 scheduling_method = "move_routing_rz_optimization_ignores_barriers"
@@ -155,14 +159,14 @@ def _get_scheduling_method(
             scheduling_method = "only_rz_optimization"
             if not remove_final_rzs:
                 scheduling_method += "_exact_global_phase"
-            elif ignore_barriers:
+            if ignore_barriers:
                 scheduling_method += "_ignore_barriers"
         else:
             scheduling_method = "default"
     return scheduling_method
 
 
-def transpile_to_IQM(  # pylint: disable=too-many-arguments # TODO create tests for this
+def transpile_to_IQM(  # pylint: disable=too-many-arguments
     circuit: QuantumCircuit,
     backend: IQMBackendBase,
     target: Optional[IQMTarget] = None,
