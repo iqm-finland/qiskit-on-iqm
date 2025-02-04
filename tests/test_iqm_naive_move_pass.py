@@ -9,6 +9,7 @@ from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import QuantumVolume
 from qiskit.compiler import transpile
 from qiskit.quantum_info import Operator
+from qiskit.transpiler.exceptions import TranspilerError
 
 from iqm.iqm_client import ExistingMoveHandlingOptions
 from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
@@ -242,3 +243,70 @@ def test_get_scheduling_method(remove_final_rzz, ignore_barriers, existing_moves
     else:
         scheduling = _get_scheduling_method(True, True, remove_final_rzz, ignore_barriers, existing_moves_handling)
         assert scheduling.startswith("move_routing")
+
+
+@pytest.mark.parametrize(
+    (
+        "perform_move_routing",
+        "optimize_single_qubits",
+        "remove_final_rzz",
+        "ignore_barriers",
+        "existing_moves_handling",
+    ),
+    list(
+        product(
+            [True, False],
+            [True, False],
+            [True, False],
+            [True, False],
+            [
+                None,
+                ExistingMoveHandlingOptions.KEEP,
+                ExistingMoveHandlingOptions.REMOVE,
+                ExistingMoveHandlingOptions.TRUST,
+            ],
+        )
+    ),
+)
+# pylint: disable=too-many-arguments
+def test_transpile_to_IQM_flags(
+    ndonis_architecture,
+    perform_move_routing,
+    optimize_single_qubits,
+    remove_final_rzz,
+    ignore_barriers,
+    existing_moves_handling,
+):
+    if existing_moves_handling and remove_final_rzz is False and perform_move_routing and optimize_single_qubits:
+        pass
+    elif remove_final_rzz and ignore_barriers and perform_move_routing and optimize_single_qubits:
+        pass
+    elif (
+        perform_move_routing is False
+        and optimize_single_qubits is True
+        and remove_final_rzz is True
+        and ignore_barriers is True
+    ):
+        with pytest.raises(TranspilerError, match="Invalid plugin name"):
+            transpile_to_IQM(
+                QuantumCircuit(),
+                backend=get_mocked_backend(ndonis_architecture)[0],
+                target=None,
+                perform_move_routing=perform_move_routing,
+                optimize_single_qubits=optimize_single_qubits,
+                remove_final_rzs=remove_final_rzz,
+                ignore_barriers=ignore_barriers,
+                existing_moves_handling=existing_moves_handling,
+            )
+    else:
+        circuit = transpile_to_IQM(
+            QuantumCircuit(),
+            backend=get_mocked_backend(ndonis_architecture)[0],
+            target=None,
+            perform_move_routing=perform_move_routing,
+            optimize_single_qubits=optimize_single_qubits,
+            remove_final_rzs=remove_final_rzz,
+            ignore_barriers=ignore_barriers,
+            existing_moves_handling=existing_moves_handling,
+        )
+        assert isinstance(circuit, QuantumCircuit)

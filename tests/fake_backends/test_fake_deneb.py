@@ -20,7 +20,7 @@ import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from iqm.iqm_client import CircuitTranspilationError, CircuitValidationError, ExistingMoveHandlingOptions
+from iqm.iqm_client import CircuitValidationError
 from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
 from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 from iqm.qiskit_iqm.iqm_backend import IQMTarget
@@ -83,17 +83,6 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
     qc.move(2, 0)
     qc.move(1, 0)
     qc.measure(q, c)
-
-    # with pytest.raises(
-    #     CircuitTranspilationError,
-    #     match=re.escape(
-    #         "Unable to transpile the circuit after validation error: MOVE instruction ('QB3', 'CR1') "
-    #         + "to an already occupied resonator: {'CR1': 'QB2'}."
-    #     ),
-    # ):
-    #     transpile_to_IQM(
-    #         qc, backend=backend, perform_move_routing=True, existing_moves_handling=ExistingMoveHandlingOptions.KEEP
-    #     )
 
     with pytest.raises(
         CircuitValidationError,
