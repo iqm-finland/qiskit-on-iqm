@@ -236,14 +236,17 @@ def test_serialize_circuit_barrier(circuit, backend):
     assert circuit_ser.instructions[1].args == {}
 
 
-@pytest.mark.parametrize("duration,unit,in_seconds", [
-    (3, 'dt', 3e-9),
-    (0.4, 's',  0.4),
-    (1.23, 'ms', 1.23e-3),
-    (240, 'us', 240e-6),
-    (25, 'ns', 25e-9),
-    (50, 'ps', 50e-12),
-])
+@pytest.mark.parametrize(
+    "duration,unit,in_seconds",
+    [
+        (3, 'dt', 3e-9),
+        (0.4, 's', 0.4),
+        (1.23, 'ms', 1.23e-3),
+        (240, 'us', 240e-6),
+        (25, 'ns', 25e-9),
+        (50, 'ps', 50e-12),
+    ],
+)
 def test_serialize_circuit_delay(circuit, backend, duration, unit, in_seconds):
     circuit.delay(duration, 0, unit=unit)
     circuit_ser = backend.serialize_circuit(circuit)

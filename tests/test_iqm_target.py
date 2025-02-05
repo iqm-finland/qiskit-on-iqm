@@ -62,7 +62,7 @@ class TestIQMTargetReflectsDQA:
             "measure": "measure",
             "reset": "cc_prx",  # TODO "reset": "reset",
             "delay": None,
-            "id": None
+            "id": None,
         }
         # simplified architecture has no MOVE gate
         target_gates = set(self.backend.target.operation_names)
