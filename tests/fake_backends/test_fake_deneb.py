@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Qiskit on IQM developers
+# Copyright 2022-2025 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import pytest
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from iqm.iqm_client import CircuitValidationError
+from iqm.iqm_client import CircuitTranspilationError, CircuitValidationError, ExistingMoveHandlingOptions
 from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
 from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 from iqm.qiskit_iqm.iqm_backend import IQMTarget

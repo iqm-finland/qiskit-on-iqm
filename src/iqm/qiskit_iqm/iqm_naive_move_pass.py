@@ -133,13 +133,15 @@ def _get_scheduling_method(
     existing_moves_handling: Optional[ExistingMoveHandlingOptions],
 ) -> str:
     """Determine scheduling based on flags."""
+    # pylint: disable=too-many-branches
     if perform_move_routing:
         if optimize_single_qubits:
             if not remove_final_rzs and ignore_barriers and existing_moves_handling is None:
                 raise ValueError(
-                    f"Move gate routing not compatible with {optimize_single_qubits=}, {remove_final_rzs=}, and {ignore_barriers=}."
+                    f"Move gate routing not compatible with {optimize_single_qubits=}, "
+                    f"{remove_final_rzs=}, and {ignore_barriers=}."
                 )
-            elif not remove_final_rzs:
+            if not remove_final_rzs:
                 scheduling_method = "move_routing_exact_global_phase"
             elif ignore_barriers:
                 scheduling_method = "move_routing_rz_optimization_ignores_barriers"

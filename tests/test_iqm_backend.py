@@ -237,7 +237,7 @@ def test_serialize_circuit_barrier(circuit, backend):
 
 
 @pytest.mark.parametrize(
-    "duration,unit,in_seconds",
+    'duration,unit,in_seconds',
     [
         (3, 'dt', 3e-9),
         (0.4, 's', 0.4),
@@ -253,7 +253,7 @@ def test_serialize_circuit_delay(circuit, backend, duration, unit, in_seconds):
     assert len(circuit_ser.instructions) == 1
     assert circuit_ser.instructions[0].name == 'delay'
     assert circuit_ser.instructions[0].qubits == ('QB1',)
-    assert circuit_ser.instructions[0].args == pytest.approx({"duration": in_seconds})
+    assert circuit_ser.instructions[0].args == pytest.approx({'duration': in_seconds})
 
 
 def test_serialize_circuit_id(circuit, backend):
