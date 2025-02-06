@@ -434,15 +434,19 @@ class IQMProvider:
     """Provider for IQM backends.
 
     Args:
-        url: URL of the IQM Cortex server
+        url: URL of the IQM Quantum Computer (e.g. https://cocos.resonance.meetiqm.com/garnet)
 
     Keyword Args:
         auth_server_url: URL of the user authentication server, if required by the IQM Cortex server.
             Can also be set in the ``IQM_AUTH_SERVER`` environment variable.
-        username: Username, if required by the IQM Cortex server.
+        username: Username, if required by the IQM Cortex server, not required for IQM Resonance.
             Can also be set in the ``IQM_AUTH_USERNAME`` environment variable.
-        password: Password, if required by the IQM Cortex server.
+        password: Password, if required by the IQM Cortex server, not required for IQM Resonance.
             Can also be set in the ``IQM_AUTH_PASSWORD`` environment variable.
+        password: Password, if required by the IQM Cortex server, not required for IQM Resonance.
+            Can also be set in the ``IQM_AUTH_PASSWORD`` environment variable.
+        token: API token retrieved from IQM Resonance, not required for on-premise quantum computers.
+            Can also be set in the ``IQM_TOKEN`` environment variable.
     """
 
     def __init__(self, url: str, **user_auth_args):  # contains keyword args auth_server_url, username, password

@@ -78,6 +78,8 @@ After installation Qiskit on IQM can be imported in your Python code as follows:
 Authentication
 --------------
 
+IQM Server (on-premise devices)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If the IQM server you are connecting to requires authentication, you may use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
@@ -87,9 +89,15 @@ You may also authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
 :envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
 arguments to :class:`.IQMProvider`, however this approach is less secure and considered deprecated.
 
-Finally, if you are using ``IQM Resonance``, authentication is handled differently.
-Use the :envvar:`IQM_TOKEN` environment variable to provide the API Token obtained
-from the server dashboard.
+
+IQM Resonance
+^^^^^^^^^^^^^
+If you are using ``IQM Resonance``, you have two options to authenticate:
+
+1. Set the :envvar:`IQM_TOKEN` environment variable with the API token obtained from the server dashboard.
+2. Pass the `token` parameter to :class:`.IQMProvider`. This will be forwarded to `IQM Client <https://iqm-finland.github.io/docs/iqm-client/>`_. 
+   For an example, see `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
+
 
 
 Running quantum circuits on an IQM quantum computer
