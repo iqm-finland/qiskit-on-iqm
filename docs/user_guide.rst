@@ -79,7 +79,7 @@ Authentication
 --------------
 
 IQM Server (on-premise devices)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+===============================
 If the IQM server you are connecting to requires authentication, you may use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
@@ -91,7 +91,7 @@ arguments to :class:`.IQMProvider`, however this approach is less secure and con
 
 
 IQM Resonance
-^^^^^^^^^^^^^
+=============
 If you are using ``IQM Resonance``, you have two options to authenticate:
 
 1. Set the :envvar:`IQM_TOKEN` environment variable with the API token obtained from the server dashboard.
