@@ -437,7 +437,7 @@ class IQMProvider:
         url: URL of the IQM Quantum Computer (e.g. https://cocos.resonance.meetiqm.com/garnet)
 
     Keyword Args:
-        auth_server_url: URL of the user authentication server, if required by the IQM Cortex server.
+        auth_server_url: URL of the user authentication server, if required by the IQM Cortex server, not required for IQM Resonance.
             Can also be set in the ``IQM_AUTH_SERVER`` environment variable.
         username: Username, if required by the IQM Cortex server, not required for IQM Resonance.
             Can also be set in the ``IQM_AUTH_USERNAME`` environment variable.
