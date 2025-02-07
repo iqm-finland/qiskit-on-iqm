@@ -22,13 +22,13 @@ through the IQM cloud service Resonance, or using an on-premises quantum compute
 IQM Resonance
 ~~~~~~~~~~~~~
 
-1. Login to `IQM Resonance <https://resonance.meetiqm.com>` with your credentials.
+1. Login to `IQM Resonance <https://resonance.meetiqm.com>`_ with your credentials.
 2. Upon your first visit to IQM Resonance, you can generate your unique, non-recoverable API token
    directly from the Dashboard page by selecting ``Generate token``. It's important to copy the token
    immediately from the window, as you won't be able to do so once the window is closed. If you lose
    your token, you have the option to regenerate it at any time. However, be aware that regenerating
    your API token will invalidate any previously generated token.
-3. Download one of the demo notebooks from `IQM Academy <https://www.iqmacademy.com/tutorials/>` or the
+3. Download one of the demo notebooks from `IQM Academy <https://www.iqmacademy.com/tutorials/>`_ or the
    `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
    (Save Page As...)
 4. Install Qiskit on IQM as instructed below.
@@ -39,8 +39,8 @@ IQM Resonance
    measurements resulting in '00000' and almost half in '11111' - if this is the case, things are
    set up correctly!
 
-You can find a video guide on how to set things up `here <https://www.iqmacademy.com/tutorials/resonance/>`.
-More ready-to-run examples can also be found at `IQM Academy <https://www.iqmacademy.com/tutorials/>`.
+You can find a video guide on how to set things up `here <https://www.iqmacademy.com/tutorials/resonance/>`_.
+More ready-to-run examples can also be found at `IQM Academy <https://www.iqmacademy.com/tutorials/>`_.
 
 
 On-premises device
@@ -78,8 +78,19 @@ After installation Qiskit on IQM can be imported in your Python code as follows:
 Authentication
 --------------
 
-IQM Server (on-premise devices)
-===============================
+IQM Resonance
+~~~~~~~~~~~~~
+
+If you are using IQM Resonance, you have two options to authenticate:
+
+1. Set the :envvar:`IQM_TOKEN` environment variable to the API token obtained from the Resonance dashboard.
+2. Pass the ``token`` parameter to :class:`.IQMProvider`. This will be forwarded to
+   :class:`~iqm.iqm_client.iqm_client.IQMClient`. For an example, see the `resonance_example.py file
+   <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
+
+On-premises devices
+~~~~~~~~~~~~~~~~~~~
+
 If the IQM server you are connecting to requires authentication, you may use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
@@ -88,16 +99,6 @@ See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme
 You may also authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
 :envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
 arguments to :class:`.IQMProvider`, however this approach is less secure and considered deprecated.
-
-
-IQM Resonance
-=============
-If you are using ``IQM Resonance``, you have two options to authenticate:
-
-1. Set the :envvar:`IQM_TOKEN` environment variable with the API token obtained from the server dashboard.
-2. Pass the `token` parameter to :class:`.IQMProvider`. This will be forwarded to `IQM Client <https://iqm-finland.github.io/docs/iqm-client/>`_. 
-   For an example, see `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
-
 
 
 Running quantum circuits on an IQM quantum computer
