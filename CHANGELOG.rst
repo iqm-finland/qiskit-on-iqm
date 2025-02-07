@@ -12,9 +12,9 @@ Version 16.0
   raise an error when using an invalid qubit name or index, rather than returning None.
 * Refactored :meth:`.IQMBackend.create_run_request` to improve user experience when using IQM
   specific run options.
-* Introduced :attr:`.IQMBackendBase.physical_target` and :attr:`.IQMBackendBase.fake_target` to
-  represent the physical quantum architectures and a Qiskit-compatible version, respectively.
 * Moved the circuit serialization logic from :class:`.IQMProvider` to :mod:`iqm.qiskit_iqm.qiskit_to_iqm`.
+* For IQM Star quantum architectures, :attr:`.IQMBackendBase.target_with_resonators` represents the
+  full, physical architecture. :attr:`.IQMBackendBase.target` represents a Qiskit-compatible version.
 * Using the Qiskit transpiler with :class:`.IQMBackend`:
 
   * You can now use the native Qiskit :func:`transpile` function to transpile a circuit to the IQM
@@ -29,9 +29,10 @@ Version 16.0
   * :func:`.transpile_to_IQM` can now restrict itself to use a subset of the qubits by specifying
     the ``restrict_to_qubits`` argument. You will need to additionally provide a qubit mapping to the
     :meth:`.IQMBackend.run` method to ensure that the correct qubits are used.
-  * Bugfix where the :func:`.transpile_to_IQM` did not retain the circuit layout after transpiling.
 
-* Fixed :func:`.IQMFakeDeneb` readout errors. Fidelities were reported as errors. `#125 <https://github.com/iqm-finland/qiskit-on-iqm/pull/125>`_
+* Bugfix where the :func:`.transpile_to_IQM` did not retain the circuit layout after transpiling.
+* Fixed :func:`.IQMFakeDeneb` readout errors. Fidelities were reported as errors.
+  `#125 <https://github.com/iqm-finland/qiskit-on-iqm/pull/125>`_
 * :attr:`.IQMBackend.target` now contains symmetric gates such as CZ only in the direction they appear
   in the calibration set. `#140 <https://github.com/iqm-finland/qiskit-on-iqm/pull/140>`_
 * Deprecated features:
