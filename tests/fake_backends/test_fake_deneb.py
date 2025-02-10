@@ -86,7 +86,7 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
 
     with pytest.raises(
         CircuitTranspilationError,
-        match=re.escape("MOVE instruction ('QB3', 'CR1') to an already occupied resonator: {'CR1': 'QB2'}."),
+        match=re.escape("MOVE instruction ('QB2', 'CR1') to an already occupied resonator: {'CR1': 'QB1'}."),
     ):
         transpile_to_IQM(
             qc, backend=backend, perform_move_routing=True, existing_moves_handling=ExistingMoveHandlingOptions.KEEP
@@ -94,7 +94,7 @@ def test_move_gate_sandwich_interrupted_with_second_move_gate():
 
     with pytest.raises(
         CircuitValidationError,
-        match=re.escape("MOVE instruction ('QB3', 'CR1') to an already occupied resonator: {'CR1': 'QB2'}."),
+        match=re.escape("MOVE instruction ('QB2', 'CR1') to an already occupied resonator: {'CR1': 'QB1'}."),
     ):
         backend.run(transpile_to_IQM(qc, backend=backend, perform_move_routing=False), shots=1000)
 
@@ -113,8 +113,8 @@ def test_move_gate_not_closed():
     with pytest.raises(
         CircuitValidationError,
         match=re.escape(
-            "Instruction measure acts on ('QB2',) while the state(s) of {'QB2'} are in a resonator. "
-            + "Current resonator occupation: {'CR1': 'QB2'}."
+            "Instruction measure acts on ('QB1',) while the state(s) of {'QB1'} are in a resonator. "
+            + "Current resonator occupation: {'CR1': 'QB1'}."
         ),
     ):
         backend.run(
@@ -135,7 +135,9 @@ def test_simulate_ghz_circuit_with_iqm_fake_deneb_noise_model():
     qc.move(1, 0)  # MOVE into the resonator
 
     for i in range(2, no_qubits + 1):
-        qc.cx(0, i)
+        qc.h(i)
+        qc.cz(i, 0)
+        qc.h(i)
     qc.move(1, 0)  # MOVE out of the resonator
 
     qc.barrier()

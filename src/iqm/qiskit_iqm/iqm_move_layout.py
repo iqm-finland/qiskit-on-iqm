@@ -1,4 +1,4 @@
-# Copyright 2024 Qiskit on IQM developers
+# Copyright 2024-2025 Qiskit on IQM developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@ valid on the quantum architecture specification of the given backend."""
 from typing import Optional, Union
 
 from qiskit import QuantumCircuit
+from qiskit.circuit import Qubit
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler import PassManager, TranspilerError
 from qiskit.transpiler.layout import Layout
 from qiskit.transpiler.passes import TrivialLayout
 
-from iqm.qiskit_iqm.iqm_backend import IQMTarget
-from iqm.qiskit_iqm.iqm_provider import IQMBackend
+from iqm.qiskit_iqm.iqm_backend import IQMBackendBase, IQMTarget
 
 
-class IQMMoveLayout(TrivialLayout):
+class IQMMoveLayoutOld(TrivialLayout):
     """Creates a qubit layout that is valid on the quantum architecture specification of the
     given IQM target with regard to the MOVE gate. In more detail, assumes that the MOVE
     operations in the quantum architecture define which physical qubit is the resonator and
@@ -49,7 +49,6 @@ class IQMMoveLayout(TrivialLayout):
         """
         # Run TrivialLayout to get the initial 1-to-1 mapping
         super().run(dag)
-
         changes = self._determine_required_changes(dag)
         if len(changes) < 1:
             # No need to shuffle any qubits
@@ -58,6 +57,7 @@ class IQMMoveLayout(TrivialLayout):
         layout = self.get_initial_layout().get_physical_bits()
         new_dict = {}
         # Strict assignments
+        # phys_idx to logical qubit (many logicals want the same physical, so just one of them appears in this map...)
         for src, dst in changes.items():
             new_dict[dst] = layout[src]
 
@@ -93,22 +93,31 @@ class IQMMoveLayout(TrivialLayout):
         """
         reqs = self._calculate_requirements(dag)
         types = self._get_qubit_types()
-
         changes = {}
-        for index, qubit_type in reqs.items():
-            if index not in types or qubit_type != types[index]:
-                # Need to change qubit at index to qubit_type
-                matching_qubit = next((i for i, t in types.items() if qubit_type in t), None)
-                if matching_qubit is None:
-                    raise TranspilerError(f"Cannot find a '{qubit_type}' from the quantum architecture.")
-                changes[index] = matching_qubit
+        for log_idx, required_type in reqs.items():
+            if log_idx not in types or required_type != types[log_idx]:
+                # direct phys_idx = log_idx mapping does not yield correct type
+                # Need to change qubit at log_idx to required_type.
+                # NOTE the in, "qubit" in "move_qubit" is True!
+                # Find the first phys_idx that has compatible type
+                matching_phys_idx = next((i for i, t in types.items() if required_type in t), None)
+                # FIXME maps all qubits of that type in circuit to that same phys_idx,
+                # unless they happen to map directly correctly?
+                # FIXME since measure overwrites move_qubit with qubit in reqs, move qubits are not mapped correctly?!?
+                # probably works because there is just one resonator, and it has the last physical index?
+                if matching_phys_idx is None:
+                    raise TranspilerError(f"Cannot find a '{required_type}' from the quantum architecture.")
+                changes[log_idx] = matching_phys_idx
         return changes
 
     def _get_qubit_types(self) -> dict[int, str]:
-        """Determines the types of qubits in the quantum architecture.
+        """Determine the type of the QPU component for each physical qubit index from the quantum architecture.
+
+        We mark move_qubits and resonators using available MOVE gate loci.
+        All other qubits become just "qubit".
 
         Returns:
-            Mapping of logical qubit indices to qubit types for those
+            Mapping of physical qubit indices to qubit types for those
             qubits where the type is relevant.
         """
         target: IQMTarget = self.target
@@ -129,7 +138,11 @@ class IQMMoveLayout(TrivialLayout):
 
     @staticmethod
     def _calculate_requirements(dag: DAGCircuit) -> dict[int, str]:
-        """Calculates the requirements for each logical qubit in the circuit.
+        """Determine the required type for each logical qubit in the circuit.
+
+        Because MOVE gates have (qubit, resonator) loci, based on the MOVE gates in the circuit
+        we can figure out which logical qubits must be mapped to computational resonators.
+        FIXME also measured qubits are in the dict as "qubit"
 
         Args:
             dag: circuit to check
@@ -141,6 +154,8 @@ class IQMMoveLayout(TrivialLayout):
 
         def _require_type(qubit_index: int, required_type: str, instruction_name: str):
             if qubit_index in required_types and required_types[qubit_index] != required_type:
+                # FIXME measure overwrites other required_types with 'qubit', why?
+                # in proper use cases it overwrites move_qubits, never resonators, unless user made an error
                 if instruction_name != 'measure':
                     raise TranspilerError(
                         f"""Invalid target '{qubit_index}' for the '{instruction_name}' operation,
@@ -164,25 +179,143 @@ class IQMMoveLayout(TrivialLayout):
         return required_types
 
 
+class IQMMoveLayout(TrivialLayout):
+    """Create a qubit layout that is valid on the dynamic quantum architecture of the
+    given IQM target.
+
+    The architecture defines which gate loci are available. This class
+    tries to map the virtual/logical qubits of the circuit to the physical qubits
+    of the architecture, such that the gates in the circuit can be applied on those qubits.
+
+    This class required because Qiskit's basic layout algorithm assumes all connections between
+    two qubits have the same two-qubit gates available.
+
+    .. note::
+
+       This version of the layout generator only works reliably with a single resonator,
+       and can only handle pure Star architecture circuits.
+    """
+
+    def run(self, dag: DAGCircuit):
+        """Creates the qubit layout for the given quantum circuit.
+
+        Args:
+            dag (DAGCircuit): DAG to find layout for.
+
+        Raises:
+            TranspilerError: if dag wider than the target backend or if a valid mapping could not be found
+        """
+        target = self.target
+
+        # NOTE assumes we use the real Star architecture here
+        reqs, resonators = self._calculate_requirements(dag)
+        if len(resonators) > 1:
+            raise TranspilerError(
+                'Circuit requires more than one computational resonator, IQMMoveLayout cannot yet handle this.'
+            )
+        res_idx = target.iqm_component_to_idx[target.iqm_dqa.computational_resonators[0]]
+        layout = {res_idx: dag.wires[next(iter(resonators))]}
+
+        # map unused physical qubits to the gates they support
+        free_qubits: dict[int, set[str]] = {}
+        for op in ['move', 'cz', 'measure', 'r']:
+            for locus in target.qargs_for_operation_name(op):
+                free_qubits.setdefault(locus[0], set()).add(op)
+
+        for log_idx, req_ops in reqs.items():
+            # which physical qubits have the required ops available?
+            mapping_options = [(phys_idx, len(av_ops)) for phys_idx, av_ops in free_qubits.items() if req_ops <= av_ops]
+            # pick the one that has the fewest unneeded ops
+            # TODO this heuristic does not always find a possible layout!
+            if not mapping_options:
+                raise TranspilerError(
+                    f'Cannot find a physical qubit to map logical qubit {log_idx} to, '
+                    f'requires {req_ops}, available: {free_qubits}.'
+                )
+            phys_idx, _ = min(mapping_options, key=lambda x: x[1])
+            layout[phys_idx] = dag.wires[log_idx]
+            del free_qubits[phys_idx]  # it's now taken
+
+        self.property_set['layout'] = Layout(layout)
+
+    def get_initial_layout(self) -> Layout:
+        """Returns the initial layout generated by the algorithm.
+
+        Returns:
+            The initial layout.
+        """
+        return self.property_set['layout']
+
+    @staticmethod
+    def _calculate_requirements(dag: DAGCircuit) -> tuple[dict[int, set[str]], set[int]]:
+        """Determine the requirements for each logical qubit in the circuit.
+
+        Because in the Star architecture two-qubit gates have (qubit, resonator) loci, based on them
+        we can figure out which logical qubits must be mapped to computational resonators.
+
+        Args:
+            dag: circuit to check
+
+        Returns:
+            Mapping of the logical qubit indices to the required gates for that qubit,
+            logical qubit indices that must be resonators.
+        """
+        reqs: dict[int, set[str]] = {}
+        resonators: set[int] = set()
+
+        def _require_qubit_type(qubit: Qubit, required_type: str):
+            """Add a requirement for the given qubit."""
+            idx = dag.qubits.index(qubit)
+            if idx in resonators:
+                raise TranspilerError(
+                    f"Virtual/logical qubit {qubit} for the '{node.name}' operation must be a qubit, "
+                    f'but it is already required to be a resonator.'
+                )
+            reqs.setdefault(idx, set()).add(required_type)
+
+        for node in dag.topological_op_nodes():
+            if node.name in ('barrier',):
+                continue
+            if node.name in ('move', 'cz'):
+                # In the real Star architecture, all arity-2 ops act on a (qubit, resonator) locus.
+                qubit, resonator = node.qargs
+                _require_qubit_type(qubit, node.name)
+                # resonator
+                idx = dag.qubits.index(resonator)
+                if idx in reqs:
+                    raise TranspilerError(
+                        f"Virtual/logical qubit {resonator} for the '{node.name}' operation must be a resonator, "
+                        f'but it is already required to be a qubit({reqs[idx]}).'
+                    )
+                resonators.add(idx)
+            elif node.name == 'measure':
+                _require_qubit_type(node.qargs[0], 'measure')
+            else:
+                # all single-qubit gates are mapped to r
+                _require_qubit_type(node.qargs[0], 'r')
+
+        return reqs, resonators
+
+
 def generate_initial_layout(
-    backend: IQMBackend,
+    backend: IQMBackendBase,
     circuit: QuantumCircuit,
     restrict_to_qubits: Optional[Union[list[int], list[str]]] = None,
 ) -> Layout:
-    """Generates the initial layout for the given circuit, when run against the given backend.
+    """Generates an initial layout for the given circuit, when run against the given backend.
 
     Args:
-        backend: IQM backend to run against
-        circuit: circuit for which a layout is to be generated
+        backend: IQM backend to run against.
+        circuit: Star architecture circuit for which a layout is to be generated.
 
     Returns:
-        Layout that remaps the qubits so that the MOVE qubit and the resonator are using the correct
-        indices.
+        Layout that maps the logical qubits of ``circuit`` to the physical qubits of ``backend`` so that
+        all the gates in ``circuit`` are available on those loci.
     """
+    target = backend.get_real_target()
     if restrict_to_qubits is not None:
-        target = backend.target_with_resonators.restrict_to_qubits(restrict_to_qubits)
-    else:
-        target = backend.target_with_resonators
+        target = target.restrict_to_qubits(restrict_to_qubits)
+
     layout_gen = IQMMoveLayout(target)
     pm = PassManager(layout_gen)
     pm.run(circuit)

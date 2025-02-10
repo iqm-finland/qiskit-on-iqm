@@ -205,13 +205,11 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
     Returns:
         Transpiled circuit ready for running on the backend.
     """
-    # pylint: disable=too-many-branches
-
     if restrict_to_qubits is not None:
         restrict_to_qubits = [backend.qubit_name_to_index(q) if isinstance(q, str) else q for q in restrict_to_qubits]
 
     if target is None:
-        if circuit.count_ops().get("move", 0) > 0 or restrict_to_qubits is not None:
+        if circuit.count_ops().get("move", 0) > 0:
             target = backend.target_with_resonators
             # Create a sensible initial layout if none is provided
             if initial_layout is None:
