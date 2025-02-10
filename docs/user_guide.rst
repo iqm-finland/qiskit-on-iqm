@@ -164,7 +164,7 @@ circuit(s) are sampled:
    to first transpile the circuit and then run as shown in the code above. Alternatively, the function
    :func:`.transpile_to_IQM` can also be used to transpile circuits. In particular, when running
    circuits on devices with computational resonators (the IQM Star architecture),
-   it is recommended to use :func:`.transpile_to_IQM` instead of :func:`~qiskit.compiler.transpile`. FIXME
+   it is recommended to use :func:`.transpile_to_IQM` instead of :func:`~qiskit.compiler.transpile`.
 
 .. note::
 
@@ -452,17 +452,20 @@ transpilation procedures manually.
 Computational resonators
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The IQM Star architecture includes computational resonators as additional QPU components.
-Because the resonator is not a real qubit, the standard Qiskit transpiler does not know how to compile for it.
+The IQM Star architecture includes computational resonators as additional QPU components,
+and uses qubit-resonator gates instead of two-qubit gates. These include
+:class:`.MoveGate` which moves qubit states to and from the resonators.
 
-FIXME better explanation needed
+The standard Qiskit transpiler does not know how to compile qubit-resonator gates.
+This is why IQMBackend provides the Qiskit transpiler a simplified transpilation target in which
+the resonators and MOVE gates have been abstracted away, and replaced with fictional two-qubit gates
+that directly connect qubits that can be made to interact via a resonator. It then
+uses :class:`.IQMDefaultSchedulingPlugin` to re-introduce resonators and add
+:class:`MOVE gates <.MoveGate>` between qubits and resonators as necessary at the scheduling stage.
+For more control over the transpilation process, you can use the :func:`.transpile_to_IQM`
+function documented below.
 
-One needs to use :class:`.MoveGate` instructions to move qubit states to and from the resonators.
-The standard Qiskit transpiler does not know to use the MOVE gate.
-
-Thus, we have a custom scheduling plugin that adds the necessary :class:`.MoveGate` instructions where necessary.
-This plugin is executed automatically when you use the Qiskit transpiler.
-
+IQMDefaultSchedulingPlugin is executed automatically when you use the Qiskit transpiler.
 Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 .. code-block:: python
@@ -490,13 +493,6 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
                                                                                      0  1  2
 
 
-Under the hood, the IQM Backend pretends that the resonators do not exist for the Qiskit transpiler,
-and then uses an additional transpiler stage defined by :class:`.IQMDefaultSchedulingPlugin` to
-introduce resonators and add :class:`MOVE gates <.MoveGate>` between qubits and resonators as
-necessary. For more control over the transpilation process, you can use the :func:`.transpile_to_IQM`
-function documented below.
-
-
 Custom transpilation
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -505,7 +501,7 @@ As an alternative to the native Qiskit transpiler integration, you can use the
 
 * more fine grained control over the transpilation process without having to figure out which IQM
   transpiler plugin to use,
-* transpile circuits that already contain a computational resonator, or
+* transpile Star architecture circuits that already contain qubit-resonator gates, or
 * force the transpiler to use a strict subset of qubits on the device.
 
 For example, if you want to transpile the circuit with ``optimization_level=0`` but also apply the
@@ -519,19 +515,21 @@ single qubit gate optimization pass, you can do one of the following, equivalent
 
     transpile(circuit, backend=backend, optimization_level=0, scheduling_method='only_rz_optimization')
 
-Similarly, if you want to transpile a circuit that already contains :class:`.MoveGate` instances
-(that act on a qubit and a computational resonator), you can do the following:
+Similarly, if you want to transpile a native Star architecture circuit that already contains
+:class:`.MoveGate` instances (that act on a qubit and a computational resonator), you can do the following:
 
 .. code-block:: python
 
     from iqm.iqm_client.transpile import ExistingMoveHandlingOptions
-    from iqm.qiskit_iqm import MoveGate
+    from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
 
-    move_circuit = QuantumCircuit(3)
+    move_circuit = IQMCircuit(3)
     move_circuit.h(0)
-    move_circuit.append(MoveGate(), [0, 1])
-    move_circuit.cx(1, 2)
-    move_circuit.append(MoveGate(), [0, 1])
+    move_circuit.move(0, 1)
+    move_circuit.h(2)
+    move_circuit.cz(2, 1)
+    move_circuit.h(2)
+    move_circuit.move(0, 1)
 
     # Using transpile() does not work here, as the circuit already contains a MoveGate
     transpiled_circuit = transpile_to_IQM(move_circuit, backend=resonator_backend, existing_moves_handling=ExistingMoveHandlingOptions.KEEP)
@@ -592,6 +590,7 @@ If you are unsure which plugin to use, you can use :func:`.transpile_to_IQM` wit
 arguments. This function determines which plugin to use based on the backend and the provided
 arguments.  Note that the Qiskit transpiler automatically uses the
 :class:`.IQMDefaultSchedulingPlugin` when the backend is an IQM backend.
+
 
 Batch execution of circuits
 ---------------------------
