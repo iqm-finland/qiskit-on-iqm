@@ -6,7 +6,7 @@ from itertools import product
 import numpy as np
 import pytest
 import qiskit
-from qiskit.circuit import QuantumCircuit
+from qiskit.circuit import ClassicalRegister, QuantumCircuit, QuantumRegister
 from qiskit.circuit.library import QuantumVolume
 from qiskit.compiler import transpile
 import qiskit.passmanager
@@ -101,8 +101,7 @@ class TestTranspilation:
     @pytest.fixture(autouse=True)
     def init_transpile(self, circuit_kind, circuit_size, backend, transpile_method):
         """Fixture that initializes the test class with shared data to speed up testing."""
-        # pylint: disable=attribute-defined-outside-init
-        # pylint: disable=redefined-outer-name
+        # pylint: disable=attribute-defined-outside-init,redefined-outer-name
         self.transpile_method = transpile_method
         self.backend = backend
         self.circuit_kind = circuit_kind
@@ -159,6 +158,40 @@ class TestTranspilation:
         ]
         transpiled_circuit = self.transpile(initial_layout=layout, optimization_level=3)
         assert all(x == y for x, y in zip(transpiled_circuit.layout.initial_layout.get_physical_bits(), layout))
+
+
+def test_transpiling_with_unused_qubits(ndonis_architecture):
+    """Test that transpile_to_IQM can handle unused qubits in the circuit."""
+
+    backend = get_mocked_backend(ndonis_architecture)[0]
+    n_qubits = 3
+
+    # multiple registers, q[1] and x[1:] are unused
+    cr = QuantumRegister(1, "cr")
+    q = QuantumRegister(n_qubits, "q")
+    x = QuantumRegister(3, "x")
+    c = ClassicalRegister(n_qubits, "c")
+    qc = QuantumCircuit(cr, q, x, c)
+
+    qc.rx(np.pi/2, q[0])
+    qc.append(MoveGate(), [q[0], cr[0]])
+    for i in range(2, n_qubits+1):
+        if i < n_qubits:
+            qubit = q[i]
+        else:
+            qubit = x[i - n_qubits]
+        qc.rx(np.pi/2, qubit)
+        qc.cz(qubit, cr[0])
+        qc.rx(-np.pi/2, qubit)
+    qc.append(MoveGate(), [q[0], cr[0]])
+    qc.barrier()
+    qc.measure(q, c)
+
+    transpile_to_IQM(
+        qc,
+        backend=backend,
+        existing_moves_handling=ExistingMoveHandlingOptions.KEEP,
+    )
 
 
 @pytest.mark.parametrize(
