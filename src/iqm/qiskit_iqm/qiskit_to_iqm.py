@@ -264,6 +264,8 @@ def deserialize_instructions(
     cl_regs: dict[int, ClassicalRegister] = {}
     for instr in instructions:
         if instr.name == 'measure':
+            if instr.args['key'].startswith('_reset'):  # HACK FIXME add the real reset instruction to iqm-client
+                continue
             mk = MeasurementKey.from_string(instr.args['key'])
             cl_regs[mk.creg_idx] = cl_regs.get(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
             if mk.clbit_idx < len(cl_regs[mk.creg_idx]):
@@ -298,6 +300,8 @@ def deserialize_instructions(
         elif instr.name == 'move':
             circuit.append(MoveGate(), loci)
         elif instr.name == 'measure':
+            if instr.args['key'].startswith('_reset'):  # HACK FIXME add the real reset instruction to iqm-client
+                continue
             mk = MeasurementKey.from_string(instr.args['key'])
             circuit.measure(loci[0], cl_bits[str(mk)])
         elif instr.name == 'barrier':
@@ -306,6 +310,9 @@ def deserialize_instructions(
             duration = instr.args['duration']
             circuit.delay(duration, loci, unit='s')  # native delay instructions always use seconds
         elif instr.name == 'cc_prx':
+            if instr.args['feedback_key'] == '_reset':  # HACK FIXME add the real reset instruction to iqm-client
+                circuit.reset(loci[0])
+                continue
             angle_t = instr.args['angle_t'] * 2 * np.pi
             phase_t = instr.args['phase_t'] * 2 * np.pi
             feedback_key = instr.args['feedback_key']
