@@ -219,15 +219,20 @@ def serialize_instructions(
                 )
             native_inst.name = 'cc_prx'
             creg, value = condition
-            if len(creg) != 1:
-                raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
-            if value != 1:
-                raise ValueError(f'{instruction} is conditioned on integer value {value}, only value 1 is supported.')
+            if isinstance(creg, ClassicalRegister):
+                if len(creg) != 1:
+                    raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
+                if value != 1:
+                    raise ValueError(f'{instruction} is conditioned on integer value {value}, only value 1 is supported.')
+                clbit = creg[0]
+            else:
+                clbit = creg  # it is a Clbit
+
             # Set up feedback routing.
             # The latest "measure" instruction to write to that classical bit is modified, it is
             # given an explicit feedback_key equal to its measurement key.
             # The same feedback_key is given to the controlled instruction, along with the feedback qubit.
-            measure_inst = clbit_to_measure[creg[0]]
+            measure_inst = clbit_to_measure[clbit]
             feedback_key = measure_inst.args['key']
             measure_inst.args['feedback_key'] = feedback_key  # this measure is used to provide feedback
             physical_qubit_name = measure_inst.qubits[0]  # single-qubit measurement

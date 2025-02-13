@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Version 16.0
-=============
+Version 17.0
+============
 
 * Added support for ``qiskit == 1.2`` and ``qiskit-aer == 0.15``.
 * Dropped support for ``qiskit < 0.45``.
