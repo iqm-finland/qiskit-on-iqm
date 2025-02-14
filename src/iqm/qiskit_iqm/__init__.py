@@ -28,14 +28,3 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
 from iqm.qiskit_iqm.iqm_transpilation import IQMOptimizeSingleQubitGates, optimize_single_qubit_gates
 from iqm.qiskit_iqm.move_gate import MoveGate
 from iqm.qiskit_iqm.transpiler_plugins import *
-
-if qiskit_version < "1.0.0":
-    warn(
-        DeprecationWarning(
-            "Qiskit on IQM now supports Qiskit version 1.0.0 and later. "
-            + "Support for older versions will be dropped in a future major release."
-        )
-    )
-
-if sys.version_info < (3, 10):
-    warn(DeprecationWarning("Python 3.9 will no longer be supported in a later release of qiskit-iqm."))

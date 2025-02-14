@@ -160,11 +160,9 @@ circuit(s) are sampled:
 
 .. note::
 
-   As of ``qiskit >= 1.0``, Qiskit no longer supports :func:`execute`, but in all supported versions it is possible
-   to first transpile the circuit and then run as shown in the code above. Alternatively, the function
-   :func:`.transpile_to_IQM` can also be used to transpile circuits. In particular, when running
-   circuits on devices with computational resonators (the IQM Star architecture),
-   it is recommended to use :func:`.transpile_to_IQM` instead of :func:`~qiskit.compiler.transpile`.
+   As of ``qiskit >= 1.0``, Qiskit no longer supports :func:`execute`. Instead you should
+   first transpile the circuit and then run it, as shown in the code above.
+   See the :ref:`transpilation` section to learn how transpile circuits in various ways.
 
 .. note::
 
@@ -395,6 +393,8 @@ It is also possible to print a run request when it is actually submitted by sett
 ``IQM_CLIENT_DEBUG=1``.
 
 
+.. _transpilation:
+
 Transpilation
 -------------
 
@@ -462,8 +462,6 @@ the resonators and MOVE gates have been abstracted away, and replaced with ficti
 that directly connect qubits that can be made to interact via a resonator. It then
 uses :class:`.IQMDefaultSchedulingPlugin` to re-introduce resonators and add
 :class:`MOVE gates <.MoveGate>` between qubits and resonators as necessary at the scheduling stage.
-For more control over the transpilation process, you can use the :func:`.transpile_to_IQM`
-function documented below.
 
 IQMDefaultSchedulingPlugin is executed automatically when you use the Qiskit transpiler.
 Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
