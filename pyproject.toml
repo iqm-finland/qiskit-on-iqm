@@ -135,7 +135,8 @@ module = [
     "mockito",
     "qiskit.*",
     "qiskit_aer.*",
-    "requests"
+    "requests",
+    "stevedore",
 ]
 ignore_missing_imports = true
 

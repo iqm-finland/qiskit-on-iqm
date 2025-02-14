@@ -173,16 +173,16 @@ def test_transpiling_with_unused_qubits(ndonis_architecture):
     c = ClassicalRegister(n_qubits, "c")
     qc = QuantumCircuit(cr, q, x, c)
 
-    qc.rx(np.pi/2, q[0])
+    qc.rx(np.pi / 2, q[0])
     qc.append(MoveGate(), [q[0], cr[0]])
-    for i in range(2, n_qubits+1):
+    for i in range(2, n_qubits + 1):
         if i < n_qubits:
             qubit = q[i]
         else:
             qubit = x[i - n_qubits]
-        qc.rx(np.pi/2, qubit)
+        qc.rx(np.pi / 2, qubit)
         qc.cz(qubit, cr[0])
-        qc.rx(-np.pi/2, qubit)
+        qc.rx(-np.pi / 2, qubit)
     qc.append(MoveGate(), [q[0], cr[0]])
     qc.barrier()
     qc.measure(q, c)

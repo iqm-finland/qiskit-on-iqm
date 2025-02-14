@@ -22,7 +22,7 @@ from qiskit.transpiler import PassManager, TranspilerError
 from qiskit.transpiler.layout import Layout
 from qiskit.transpiler.passes import TrivialLayout
 
-from iqm.qiskit_iqm.iqm_backend import IQMBackendBase, IQMTarget
+from iqm.qiskit_iqm.iqm_backend import IQMBackendBase
 
 
 class IQMMoveLayout(TrivialLayout):

@@ -223,7 +223,9 @@ def serialize_instructions(
                 if len(creg) != 1:
                     raise ValueError(f'{instruction} is conditioned on multiple bits, this is not supported.')
                 if value != 1:
-                    raise ValueError(f'{instruction} is conditioned on integer value {value}, only value 1 is supported.')
+                    raise ValueError(
+                        f'{instruction} is conditioned on integer value {value}, only value 1 is supported.'
+                    )
                 clbit = creg[0]
             else:
                 clbit = creg  # it is a Clbit
