@@ -5,8 +5,9 @@ Changelog
 Version 17.0
 ============
 
+* Removed support for Python 3.9.
+* Removed support for ``qiskit < 0.45``.
 * Added support for ``qiskit == 1.2`` and ``qiskit-aer == 0.15``.
-* Dropped support for ``qiskit < 0.45``.
 * Updated the documentation.
 * :meth:`.IQMBackendBase.qubit_name_to_index` and :meth:`.IQMBackendBase.index_to_qubit_name` now
   raise an error when using an invalid qubit name or index, rather than returning None.
