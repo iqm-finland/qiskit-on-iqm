@@ -159,9 +159,6 @@ def test_iqm_fake_backend_noise_model_instantiated(backend):
 
 def test_iqm_fake_backend_noise_model_basis_gates(backend):
     """Test that all operations named as part of the backend are utilizes in the noise_model"""
-    print(backend.noise_model.basis_gates)
-    print(backend.target.operation_names)
-    print(backend.operation_names)
     assert all(gates in backend.operation_names for gates in backend.noise_model.basis_gates)
 
 
