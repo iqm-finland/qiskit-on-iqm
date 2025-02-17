@@ -32,11 +32,14 @@ def bell_measure(server_url: str) -> dict[str, int]:
     Returns:
         a mapping of bitstrings representing qubit measurement results to counts for each result
     """
+    backend = IQMProvider(server_url).get_backend()
+    if backend.num_qubits < 2:
+        raise ValueError('We need two qubits for the Bell state.')
     circuit = QuantumCircuit(2)
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.measure_all()
-    backend = IQMProvider(server_url).get_backend()
+
     new_circuit = transpile(circuit, backend)
     return backend.run(new_circuit, shots=1000).result().get_counts()
 

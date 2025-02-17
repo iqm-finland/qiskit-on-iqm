@@ -18,14 +18,13 @@ https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 
 import argparse
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 
-from iqm.qiskit_iqm import transpile_to_IQM
 from iqm.qiskit_iqm.iqm_provider import IQMProvider
 
 
 def transpile_example(server_url: str) -> tuple[QuantumCircuit, dict[str, int]]:
-    """Run a circuit transpiled using transpile_to_IQM function.
+    """Run a GHZ circuit transpiled using the Qiskit transpile function.
 
     Args:
         server_url: URL of the IQM server used for execution
@@ -35,14 +34,14 @@ def transpile_example(server_url: str) -> tuple[QuantumCircuit, dict[str, int]]:
     """
     backend = IQMProvider(server_url).get_backend()
 
-    num_qubits = min(backend.num_qubits, 5)  # use 5 qubits if available, otherwise maximum number of available qubits
+    num_qubits = min(backend.num_qubits, 5)  # use at most 5 qubits
     circuit = QuantumCircuit(num_qubits)
     circuit.h(0)
     for i in range(1, num_qubits):
         circuit.cx(0, i)
     circuit.measure_all()
 
-    transpiled_circuit = transpile_to_IQM(circuit, backend)
+    transpiled_circuit = transpile(circuit, backend)
     counts = backend.run(transpiled_circuit, shots=1000).result().get_counts()
 
     return transpiled_circuit, counts

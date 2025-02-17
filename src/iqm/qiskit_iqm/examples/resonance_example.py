@@ -20,9 +20,9 @@ https://iqm-finland.github.io/qiskit-on-iqm/user_guide.html
 import argparse
 from typing import Optional
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 
-from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
+from iqm.qiskit_iqm import IQMProvider
 
 
 def resonance_example(server_url: str, api_token: Optional[str]) -> dict[str, int]:
@@ -37,8 +37,11 @@ def resonance_example(server_url: str, api_token: Optional[str]) -> dict[str, in
     """
     SHOTS = 1000
 
+    # Initialize a backend
+    backend = IQMProvider(server_url, token=api_token).get_backend()
+
     # Define a quantum circuit
-    num_qb = 5
+    num_qb = min(backend.num_qubits, 5)  # use at most 5 qubits
     qc = QuantumCircuit(num_qb)
 
     qc.h(0)
@@ -47,11 +50,8 @@ def resonance_example(server_url: str, api_token: Optional[str]) -> dict[str, in
     qc.barrier()
     qc.measure_all()
 
-    # Initialize a backend
-    backend = IQMProvider(server_url, token=api_token).get_backend()
-
     # Transpile the circuit
-    qc_transpiled = transpile_to_IQM(qc, backend)
+    qc_transpiled = transpile(qc, backend)
     print(qc_transpiled.draw(output='text'))
 
     # Run the circuit
