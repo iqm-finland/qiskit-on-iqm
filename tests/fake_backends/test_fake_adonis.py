@@ -20,7 +20,6 @@ from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMTarget
 
 
-
 def test_iqm_fake_adonis():
     backend = IQMFakeAdonis()
     assert backend.num_qubits == 5

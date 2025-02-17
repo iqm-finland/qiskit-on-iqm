@@ -126,7 +126,6 @@ def test_iqm_fake_aphrodite_connectivity():
     assert backend.target_with_resonators == backend.target
 
 
-
 def test_iqm_fake_aphrodite_noise_model_instantiated():
     backend = IQMFakeAphrodite()
     assert isinstance(backend.noise_model, NoiseModel)
