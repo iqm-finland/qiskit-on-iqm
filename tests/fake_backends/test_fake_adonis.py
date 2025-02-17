@@ -20,6 +20,7 @@ from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
 from iqm.qiskit_iqm.iqm_backend import IQMTarget
 
 
+
 def test_iqm_fake_adonis():
     backend = IQMFakeAdonis()
     assert backend.num_qubits == 5
@@ -28,11 +29,11 @@ def test_iqm_fake_adonis():
 
 def test_iqm_fake_adonis_connectivity():
     backend = IQMFakeAdonis()
-    assert isinstance(backend.target, IQMTarget)
     coupling_map = {(0, 2), (1, 2), (3, 2), (4, 2)}
+    assert isinstance(backend.target, IQMTarget)
     assert set(backend.target.build_coupling_map()) == coupling_map
-    assert backend.target_with_resonators == backend.target
     assert set(backend.coupling_map.get_edges()) == coupling_map
+    assert backend.target_with_resonators == backend.target
 
 
 def test_iqm_fake_adonis_noise_model_instantiated():

@@ -258,14 +258,7 @@ class IQMTarget(Target):
         self._add_connections_from_DQA()
 
     def _add_connections_from_DQA(self):
-        """Converts a QuantumArchitectureSpecification object to a Qiskit Target object.
-
-        Args:
-            architecture: The quantum architecture specification to convert.
-            component_to_idx: Mapping from QPU component names to integer indices used by Qiskit to refer to them.
-
-        Returns:
-            A Qiskit Target object representing the given quantum architecture specification.
+        """Initializes the Target, making it represent the dynamic quantum architecture :attr:`iqm_dqa`.
         """
         # pylint: disable=too-many-branches,too-many-nested-blocks
         # mapping from op name to all its allowed loci
@@ -363,7 +356,6 @@ class IQMTarget(Target):
 
         Args:
             qubits: Qubits to restrict the target to. Can be either a list of qubit indices or qubit names.
-            include_fake_czs: Whether to include virtual CZs that are unsupported, but could be routed via MOVE.
 
         Returns:
             restricted target

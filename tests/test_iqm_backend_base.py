@@ -65,7 +65,7 @@ def test_transpile(backend):
     circuit.cx(2, 0)
 
     circuit_transpiled = transpile(circuit, backend=backend)
-    print(backend.target)
+
     assert backend.target is not None
     cmap = backend.target.build_coupling_map()
     assert cmap is not None
