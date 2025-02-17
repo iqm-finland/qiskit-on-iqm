@@ -162,7 +162,7 @@ circuit(s) are sampled:
 
    As of ``qiskit >= 1.0``, Qiskit no longer supports :func:`execute`. Instead you should
    first transpile the circuit and then run it, as shown in the code above.
-   See the :ref:`transpilation` section to learn how transpile circuits in various ways.
+   See the :ref:`transpilation` section to learn how to transpile circuits in various ways.
 
 .. note::
 
@@ -171,7 +171,7 @@ circuit(s) are sampled:
    `Inspecting circuits before submitting them for execution`_ for inspecting the actual run request sent for
    execution.
 
-You can optionally provide IQM backend specific options as additional keyword arguments to
+You can optionally provide IQMBackend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.
 For example, you can enable heralding measurements using ``circuit_compilation_options`` as follows:
 
@@ -254,7 +254,7 @@ Backend properties
 ~~~~~~~~~~~~~~~~~~
 
 The :class:`.IQMBackend` instance we created above provides all the standard backend functionality that one expects from a
-backend in Qiskit. For this example, I am connected to an IQM backend that features a 5-qubit chip with star-like
+backend in Qiskit. For this example, I am connected to an IQMBackend that features a 5-qubit chip with star-like
 connectivity:
 
 ::
@@ -277,7 +277,7 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
     Native operations of the backend: ['id', 'r', 'cz', 'measure']
     Coupling map of the backend: [[0, 2], [2, 0], [1, 2], [2, 1], [2, 3], [3, 2], [2, 4], [4, 2]]
 
-Note that for IQM backends the identity gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
+Note that for IQMBackends the identity gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
@@ -404,8 +404,8 @@ In this section we study how the circuit gets transpiled in more detail.
 Basic transpilation
 ~~~~~~~~~~~~~~~~~~~
 
-On IQM quantum computers without computational resonators
-(the IQM Crystal architecture), we can use the default Qiskit transpiler.
+You can use the default Qiskit transpiler on IQM quantum computers with both
+the Crystal and the Star architectures.
 Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 .. code-block:: python
@@ -430,7 +430,7 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 
 Under the hood the Qiskit transpiler uses the :class:`.IQMDefaultSchedulingPlugin` plugin that
-automatically adapts the transpiled circuit to the IQM backend. In particular,
+automatically adapts the transpiled circuit to the IQMBackend. In particular,
 
 * if ``optimization_level > 0``, the plugin will use the :class:`.IQMOptimizeSingleQubitGates`
   pass to optimize single-qubit gates, and
@@ -457,7 +457,7 @@ and uses qubit-resonator gates instead of two-qubit gates. These include
 :class:`.MoveGate` which moves qubit states to and from the resonators.
 
 The standard Qiskit transpiler does not know how to compile qubit-resonator gates.
-This is why IQMBackend provides the Qiskit transpiler a simplified transpilation target in which
+This is why IQMBackend provides the Qiskit transpiler a *simplified* transpilation target in which
 the resonators and MOVE gates have been abstracted away, and replaced with fictional two-qubit gates
 that directly connect qubits that can be made to interact via a resonator. It then
 uses :class:`.IQMDefaultSchedulingPlugin` to re-introduce resonators and add
@@ -485,7 +485,7 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
                    ├─────────────┤│  Move │ │ └─────────────┘│  Move │┌─────────────┐ ░  ║ └╥┘┌─┐
           q_2 -> 2 ┤ R(π/2,3π/2) ├┤       ├─┼────────■───────┤       ├┤ R(π/2,5π/2) ├─░──╫──╫─┤M├
                    └─────────────┘│       │ │        │       │       │└─────────────┘ ░  ║  ║ └╥┘
-    ancilla_3 -> 6 ───────────────┤1      ├─■────────■───────┤1      ├───────────────────╫──╫──╫─
+        resonators ───────────────┤1      ├─■────────■───────┤1      ├───────────────────╫──╫──╫─
                                   └───────┘                  └───────┘                   ║  ║  ║
            meas: 3/══════════════════════════════════════════════════════════════════════╩══╩══╩═
                                                                                      0  1  2
@@ -587,7 +587,7 @@ The documentation of these plugins in found in the respective plugin classes.
 If you are unsure which plugin to use, you can use :func:`.transpile_to_IQM` with the appropriate
 arguments. This function determines which plugin to use based on the backend and the provided
 arguments.  Note that the Qiskit transpiler automatically uses the
-:class:`.IQMDefaultSchedulingPlugin` when the backend is an IQM backend.
+:class:`.IQMDefaultSchedulingPlugin` when the backend is an IQMBackend.
 
 
 Batch execution of circuits
