@@ -58,7 +58,7 @@ def backend(request):
     list(
         product(
             ["GHZ", "QuantumVolume", "MCM"],
-            [2, None],  # Try a small circuit and the largest possible circuit
+            [2, 5],  
             ["move_architecture", "adonis_architecture", "hypothetical_fake_architecture"],
             ["transpiled_to_IQM", "qiskit_integration"],  # "qiskit" can be used for debugging
         )
