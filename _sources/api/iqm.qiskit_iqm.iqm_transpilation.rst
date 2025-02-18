@@ -27,6 +27,7 @@ iqm.qiskit\_iqm.iqm\_transpilation
       :template: autosummary-class-template.rst
    
       IQMOptimizeSingleQubitGates
+      IQMReplaceGateWithUnitaryPass
    
    
 

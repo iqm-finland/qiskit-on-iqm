@@ -20,6 +20,7 @@ iqm.qiskit\_iqm.iqm\_backend
       :template: autosummary-class-template.rst
    
       IQMBackendBase
+      IQMTarget
    
    
 

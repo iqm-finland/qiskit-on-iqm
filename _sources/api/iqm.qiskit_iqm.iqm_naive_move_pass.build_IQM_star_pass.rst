@@ -1,6 +1,0 @@
-iqm.qiskit\_iqm.iqm\_naive\_move\_pass.build\_IQM\_star\_pass
-=============================================================
-
-.. currentmodule:: iqm.qiskit_iqm.iqm_naive_move_pass
-
-.. autofunction:: build_IQM_star_pass

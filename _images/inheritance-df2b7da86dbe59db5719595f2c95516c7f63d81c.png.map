@@ -1,0 +1,9 @@
+<map id="inheritance62f4a37e08" name="inheritance62f4a37e08">
+<area shape="rect" id="node1" href="https://docs.python.org/3.12/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="4,24,61,44"/>
+<area shape="rect" id="node3" title="Base class of a single pass manager task." alt="" coords="195,24,275,44"/>
+<area shape="rect" id="node4" title="An interface of the pass manager task." alt="" coords="100,44,157,65"/>
+<area shape="rect" id="node2" title="Base class for transpiler passes." alt="" coords="314,24,379,44"/>
+<area shape="rect" id="node6" title="A transformation pass: change DAG, not property set." alt="" coords="417,24,536,44"/>
+<area shape="rect" id="node5" href="iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates.html#iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates" target="_top" title="Optimize the decomposition of single&#45;qubit gates for the IQM gate set." alt="" coords="582,4,756,24"/>
+<area shape="rect" id="node7" href="iqm.qiskit_iqm.iqm_transpilation.IQMReplaceGateWithUnitaryPass.html#iqm.qiskit_iqm.iqm_transpilation.IQMReplaceGateWithUnitaryPass" target="_top" title="Transpiler pass that replaces all gates with given name in a circuit with a UnitaryGate." alt="" coords="574,43,764,64"/>
+</map>

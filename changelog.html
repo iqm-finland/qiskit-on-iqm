@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; Qiskit on IQM 15.6 documentation</title>
+    <title>Changelog &#8212; Qiskit on IQM 17.0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=28298f73"></script>
+    <script src="_static/documentation_options.js?v=2405e226"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="Contributors" href="authors.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="15.6" />
+  <meta name="docsearch:version" content="17.0" />
   </head>
   
   
@@ -130,8 +130,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 15.6 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 15.6 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.0 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.0 documentation - Home"/>
   
   
 </a></div>
@@ -164,10 +164,15 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.html">iqm.qiskit_iqm.iqm_backend</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html">iqm.qiskit_iqm.iqm_backend.IQMBackendBase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMTarget.html">iqm.qiskit_iqm.iqm_backend.IQMTarget</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_circuit.html">iqm.qiskit_iqm.iqm_circuit</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_circuit.IQMCircuit.html">iqm.qiskit_iqm.iqm_circuit.IQMCircuit</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_circuit_validation.html">iqm.qiskit_iqm.iqm_circuit_validation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_circuit_validation.validate_circuit.html">iqm.qiskit_iqm.iqm_circuit_validation.validate_circuit</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_job.html">iqm.qiskit_iqm.iqm_job</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -180,8 +185,6 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.html">iqm.qiskit_iqm.iqm_naive_move_pass</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.build_IQM_star_pass.html">iqm.qiskit_iqm.iqm_naive_move_pass.build_IQM_star_pass</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.build_IQM_star_pass_manager_config.html">iqm.qiskit_iqm.iqm_naive_move_pass.build_IQM_star_pass_manager_config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM.html">iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.IQMNaiveResonatorMoving.html">iqm.qiskit_iqm.iqm_naive_move_pass.IQMNaiveResonatorMoving</a></li>
 </ul>
@@ -195,15 +198,38 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_transpilation.html">iqm.qiskit_iqm.iqm_transpilation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_transpilation.optimize_single_qubit_gates.html">iqm.qiskit_iqm.iqm_transpilation.optimize_single_qubit_gates</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates.html">iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_transpilation.IQMReplaceGateWithUnitaryPass.html">iqm.qiskit_iqm.iqm_transpilation.IQMReplaceGateWithUnitaryPass</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.move_gate.html">iqm.qiskit_iqm.move_gate</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.move_gate.MOVE_GATE_UNITARY.html">iqm.qiskit_iqm.move_gate.MOVE_GATE_UNITARY</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.move_gate.MoveGate.html">iqm.qiskit_iqm.move_gate.MoveGate</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.qiskit_to_iqm.html">iqm.qiskit_iqm.qiskit_to_iqm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.qiskit_to_iqm.deserialize_instructions.html">iqm.qiskit_iqm.qiskit_to_iqm.deserialize_instructions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.qiskit_to_iqm.serialize_instructions.html">iqm.qiskit_iqm.qiskit_to_iqm.serialize_instructions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.qiskit_to_iqm.MeasurementKey.html">iqm.qiskit_iqm.qiskit_to_iqm.MeasurementKey</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError.html">iqm.qiskit_iqm.qiskit_to_iqm.InstructionNotSupportedError</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.html">iqm.qiskit_iqm.transpiler_plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.IQMDefaultSchedulingPlugin.html">iqm.qiskit_iqm.transpiler_plugins.IQMDefaultSchedulingPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.IQMSchedulingPlugin.html">iqm.qiskit_iqm.transpiler_plugins.IQMSchedulingPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingKeepExistingMovesPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingKeepExistingMovesPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyKeepExistingMovesPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyKeepExistingMovesPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyRemoveExistingMovesPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyRemoveExistingMovesPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyTrustExistingMovesPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingOnlyTrustExistingMovesPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingRemoveExistingMovesPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingRemoveExistingMovesPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingTrustExistingMovesPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingTrustExistingMovesPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingWithExactRZPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingWithExactRZPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingWithRZOptimizationIgnoreBarriersPlugin.html">iqm.qiskit_iqm.transpiler_plugins.MoveGateRoutingWithRZOptimizationIgnoreBarriersPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationExactIgnoreBarriersPlugin.html">iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationExactIgnoreBarriersPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationExactPlugin.html">iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationExactPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationIgnoreBarriersPlugin.html">iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationIgnoreBarriersPlugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationPlugin.html">iqm.qiskit_iqm.transpiler_plugins.OnlyRZOptimizationPlugin</a></li>
 </ul>
 </details></li>
 </ul>
@@ -360,6 +386,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-0">Version 17.0</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-15-6">Version 15.6</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-15-5">Version 15.5</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-15-4">Version 15.4</a></li>
@@ -467,10 +494,59 @@
                   
   <section id="changelog">
 <span id="changes"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
+<section id="version-17-0">
+<h2>Version 17.0<a class="headerlink" href="#version-17-0" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Removed support for Python 3.9.</p></li>
+<li><p>Removed support for <code class="docutils literal notranslate"><span class="pre">qiskit</span> <span class="pre">&lt;</span> <span class="pre">1.0</span></code>.</p></li>
+<li><p>Added support for <code class="docutils literal notranslate"><span class="pre">qiskit</span> <span class="pre">==</span> <span class="pre">1.2</span></code> and <code class="docutils literal notranslate"><span class="pre">qiskit-aer</span> <span class="pre">==</span> <span class="pre">0.15</span></code>.</p></li>
+<li><p>Updated the documentation.</p></li>
+<li><p><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.qubit_name_to_index" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.qubit_name_to_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackendBase.qubit_name_to_index()</span></code></a> and <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.index_to_qubit_name" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.index_to_qubit_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackendBase.index_to_qubit_name()</span></code></a> now
+raise an error when using an invalid qubit name or index, rather than returning None.</p></li>
+<li><p>Refactored <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a> to improve user experience when using IQM
+specific run options.</p></li>
+<li><p>Moved the circuit serialization logic from <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a> to <a class="reference internal" href="api/iqm.qiskit_iqm.qiskit_to_iqm.html#module-iqm.qiskit_iqm.qiskit_to_iqm" title="iqm.qiskit_iqm.qiskit_to_iqm"><code class="xref py py-mod docutils literal notranslate"><span class="pre">iqm.qiskit_iqm.qiskit_to_iqm</span></code></a>.</p></li>
+<li><p>For IQM Star quantum architectures, <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target_with_resonators" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target_with_resonators"><code class="xref py py-attr docutils literal notranslate"><span class="pre">IQMBackendBase.target_with_resonators</span></code></a> represents the
+full, physical architecture. <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target" title="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.target"><code class="xref py py-attr docutils literal notranslate"><span class="pre">IQMBackendBase.target</span></code></a> represents a Qiskit-compatible version.</p></li>
+<li><p>Using the Qiskit transpiler with <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="iqm.qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a>:</p>
+<ul>
+<li><p>You can now use the native Qiskit <code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code> function to transpile a circuit to the IQM
+Star architecture as long as your initial circuit does not use any resonators.</p></li>
+<li><p>The Qiskit transpiler now automatically uses the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates.html#iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates" title="iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMOptimizeSingleQubitGates</span></code></a> pass to
+optimize single-qubit gates if <code class="docutils literal notranslate"><span class="pre">optimization_level</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p>There are many new transpiler plugins available that you can use as the <code class="docutils literal notranslate"><span class="pre">scheduling_method</span></code>
+argument in Qiskit’s <code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code> function. You can find them in the
+<a class="reference external" href="https://docs.quantum.ibm.com/guides/transpiler-plugins">Qiskit documentation</a>.</p></li>
+<li><p>If your circuit contains resonators, and optionally <a class="reference internal" href="api/iqm.qiskit_iqm.move_gate.MoveGate.html#iqm.qiskit_iqm.move_gate.MoveGate" title="iqm.qiskit_iqm.move_gate.MoveGate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MoveGate</span></code></a> operations, you can use
+the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM.html#iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM" title="iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code></a> function to transpile your circuit for the IQM Star architecture.</p></li>
+<li><p><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM.html#iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM" title="iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code></a> can now restrict itself to use a subset of the qubits by specifying
+the <code class="docutils literal notranslate"><span class="pre">restrict_to_qubits</span></code> argument. You will need to additionally provide a qubit mapping to the
+<a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> method to ensure that the correct qubits are used.</p></li>
+</ul>
+</li>
+<li><p>Bugfix where the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM.html#iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM" title="iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code></a> did not retain the circuit layout after transpiling.</p></li>
+<li><p>Fixed <a class="reference internal" href="api/iqm.qiskit_iqm.fake_backends.fake_deneb.IQMFakeDeneb.html#iqm.qiskit_iqm.fake_backends.fake_deneb.IQMFakeDeneb" title="iqm.qiskit_iqm.fake_backends.fake_deneb.IQMFakeDeneb"><code class="xref py py-func docutils literal notranslate"><span class="pre">IQMFakeDeneb()</span></code></a> readout errors. Fidelities were reported as errors.
+<a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/125">#125</a></p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">IQMBackend.target</span></code> now contains symmetric gates such as CZ only in the direction they appear
+in the calibration set. <a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/140">#140</a></p></li>
+<li><p>Deprecated features:</p>
+<ul>
+<li><p><a class="reference internal" href="api/iqm.qiskit_iqm.iqm_transpilation.optimize_single_qubit_gates.html#iqm.qiskit_iqm.iqm_transpilation.optimize_single_qubit_gates" title="iqm.qiskit_iqm.iqm_transpilation.optimize_single_qubit_gates"><code class="xref py py-func docutils literal notranslate"><span class="pre">optimize_single_qubit_gates()</span></code></a> has been deprecated in favor of using the new transpiler
+plugins or <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM.html#iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM" title="iqm.qiskit_iqm.iqm_naive_move_pass.transpile_to_IQM"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code></a>. Additionally, this is now incorporated into the Qiskit
+transpiler as documented above.</p></li>
+<li><p>In <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, and as a result in <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>, the
+<code class="docutils literal notranslate"><span class="pre">max_circuit_duration_over_t2</span></code> and <code class="docutils literal notranslate"><span class="pre">heralding_mode</span></code> options have been deprecated in favor of
+using the <code class="xref py py-class docutils literal notranslate"><span class="pre">CircuitCompilationOptions</span></code> class from <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.html#module-iqm.iqm_client" title="(in IQM client v22.1)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">iqm.iqm_client</span></code></a>.</p></li>
+<li><p>The <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="iqm.qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a> no longer uses Qiskit’s <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute to give run options in
+favor of using the arguments of the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> method directly.</p></li>
+</ul>
+</li>
+</ul>
+</section>
 <section id="version-15-6">
 <h2>Version 15.6<a class="headerlink" href="#version-15-6" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Added python 3.12 support. <cite>#139 &lt;https://github.com/iqm-finland/qiskit-on-iqm/pull/139&gt;</cite></p></li>
+<li><p>Added Python 3.12 support. <cite>#139 &lt;https://github.com/iqm-finland/qiskit-on-iqm/pull/139&gt;</cite></p></li>
 <li><p>Python 3.9 support is deprecated and will be removed in the future.</p></li>
 </ul>
 </section>
@@ -1117,6 +1193,7 @@
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-0">Version 17.0</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-15-6">Version 15.6</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-15-5">Version 15.5</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-15-4">Version 15.4</a></li>

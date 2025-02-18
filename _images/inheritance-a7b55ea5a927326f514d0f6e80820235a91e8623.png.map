@@ -1,0 +1,9 @@
+<map id="inheritance1a878bcb56" name="inheritance1a878bcb56">
+<area shape="rect" id="node1" href="https://docs.python.org/3.12/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="4,4,61,24"/>
+<area shape="rect" id="node4" title="Base class of a single pass manager task." alt="" coords="195,4,275,24"/>
+<area shape="rect" id="node5" title="An interface of the pass manager task." alt="" coords="100,24,157,44"/>
+<area shape="rect" id="node2" title="An analysis pass: change property set, not DAG." alt="" coords="417,4,502,24"/>
+<area shape="rect" id="node7" title="Choose a Layout by assigning ``n`` circuit qubits to device qubits ``0, .., n&#45;1``." alt="" coords="540,4,624,24"/>
+<area shape="rect" id="node3" title="Base class for transpiler passes." alt="" coords="314,4,379,24"/>
+<area shape="rect" id="node6" href="iqm.qiskit_iqm.iqm_move_layout.IQMMoveLayout.html#iqm.qiskit_iqm.iqm_move_layout.IQMMoveLayout" target="_top" title="Create a layout that is valid on the dynamic quantum architecture of the" alt="" coords="662,4,764,24"/>
+</map>

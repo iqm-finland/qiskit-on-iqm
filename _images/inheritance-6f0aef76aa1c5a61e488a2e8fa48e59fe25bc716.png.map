@@ -1,8 +1,0 @@
-<map id="inheritance62f4a37e08" name="inheritance62f4a37e08">
-<area shape="rect" id="node1" href="https://docs.python.org/3.9/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="4,4,63,25"/>
-<area shape="rect" id="node3" title="Base class of a single pass manager task." alt="" coords="199,4,281,25"/>
-<area shape="rect" id="node4" title="An interface of the pass manager task." alt="" coords="102,25,160,45"/>
-<area shape="rect" id="node2" title="Base class for transpiler passes." alt="" coords="320,4,387,25"/>
-<area shape="rect" id="node6" title="A transformation pass: change DAG, not property set." alt="" coords="426,4,547,25"/>
-<area shape="rect" id="node5" href="iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates.html#iqm.qiskit_iqm.iqm_transpilation.IQMOptimizeSingleQubitGates" target="_top" title="Optimize the decomposition of single&#45;qubit gates for the IQM gate set." alt="" coords="585,4,764,25"/>
-</map>

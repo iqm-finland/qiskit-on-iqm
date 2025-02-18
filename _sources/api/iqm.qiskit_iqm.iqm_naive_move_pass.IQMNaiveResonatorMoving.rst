@@ -23,8 +23,6 @@ iqm.qiskit\_iqm.iqm\_naive\_move\_pass.IQMNaiveResonatorMoving
 
    .. autosummary::
    
-      ~IQMNaiveResonatorMoving._lookahead_first_qubit_used
-      ~IQMNaiveResonatorMoving._move_resonator
       ~IQMNaiveResonatorMoving.run
    
    

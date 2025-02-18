@@ -1,0 +1,13 @@
+<map id="inheritancea6b5e4ed6f" name="inheritancea6b5e4ed6f">
+<area shape="rect" id="node1" href="https://docs.python.org/3.12/library/abc.html#abc.ABC" target="_top" title="Helper class that provides a standard way to create an ABC using" alt="" coords="12,203,84,228"/>
+<area shape="rect" id="node3" title="Abstract class for Backends" alt="" coords="139,153,233,179"/>
+<area shape="rect" id="node8" href="iqm.qiskit_iqm.iqm_backend.IQMBackendBase.html#iqm.qiskit_iqm.iqm_backend.IQMBackendBase" target="_top" title="Abstract base class for various IQM&#45;specific backends." alt="" coords="281,179,416,204"/>
+<area shape="rect" id="node2" title="Base common type for all versioned Backend abstract classes." alt="" coords="9,153,87,179"/>
+<area shape="rect" id="node4" href="https://docs.python.org/3.12/library/collections.abc.html#collections.abc.Collection" target="_top" title="Collection" alt="" coords="143,55,229,80"/>
+<area shape="rect" id="node11" href="https://docs.python.org/3.12/library/collections.abc.html#collections.abc.Mapping" target="_top" title="A Mapping is a generic container for associating key/value" alt="" coords="309,55,388,80"/>
+<area shape="rect" id="node5" href="https://docs.python.org/3.12/library/collections.abc.html#collections.abc.Sized" target="_top" title="Sized" alt="" coords="12,5,84,31"/>
+<area shape="rect" id="node6" href="https://docs.python.org/3.12/library/collections.abc.html#collections.abc.Iterable" target="_top" title="Iterable" alt="" coords="12,55,84,80"/>
+<area shape="rect" id="node7" href="https://docs.python.org/3.12/library/collections.abc.html#collections.abc.Container" target="_top" title="Container" alt="" coords="5,104,91,129"/>
+<area shape="rect" id="node9" href="iqm.qiskit_iqm.iqm_backend.IQMTarget.html#iqm.qiskit_iqm.iqm_backend.IQMTarget" target="_top" title="Transpilation target for an IQM architecture." alt="" coords="584,55,672,80"/>
+<area shape="rect" id="node10" title="The intent of the ``Target`` object is to inform Qiskit&#39;s compiler about" alt="" coords="464,55,536,80"/>
+</map>

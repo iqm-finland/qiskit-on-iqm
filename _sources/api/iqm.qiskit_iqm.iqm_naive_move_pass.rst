@@ -14,8 +14,6 @@ iqm.qiskit\_iqm.iqm\_naive\_move\_pass
    .. autosummary::
       :toctree:
    
-      build_IQM_star_pass
-      build_IQM_star_pass_manager_config
       transpile_to_IQM
    
    

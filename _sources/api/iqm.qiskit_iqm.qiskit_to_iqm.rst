@@ -9,6 +9,14 @@ iqm.qiskit\_iqm.qiskit\_to\_iqm
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      deserialize_instructions
+      serialize_instructions
+   
    
 
    

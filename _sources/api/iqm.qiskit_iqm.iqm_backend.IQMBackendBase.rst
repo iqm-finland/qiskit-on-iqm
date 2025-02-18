@@ -13,7 +13,9 @@ iqm.qiskit\_iqm.iqm\_backend.IQMBackendBase
 
    .. autosummary::
    
+      ~IQMBackendBase.physical_qubits
       ~IQMBackendBase.target
+      ~IQMBackendBase.target_with_resonators
       ~IQMBackendBase.architecture
       ~IQMBackendBase.name
       ~IQMBackendBase.description
@@ -29,7 +31,11 @@ iqm.qiskit\_iqm.iqm\_backend.IQMBackendBase
 
    .. autosummary::
    
+      ~IQMBackendBase.get_real_target
+      ~IQMBackendBase.get_scheduling_stage_plugin
+      ~IQMBackendBase.has_resonators
       ~IQMBackendBase.index_to_qubit_name
       ~IQMBackendBase.qubit_name_to_index
+      ~IQMBackendBase.restrict_to_qubits
    
    

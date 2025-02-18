@@ -22,13 +22,13 @@ through the IQM cloud service Resonance, or using an on-premises quantum compute
 IQM Resonance
 ~~~~~~~~~~~~~
 
-1. Login to `IQM Resonance <https://resonance.meetiqm.com>` with your credentials.
+1. Login to `IQM Resonance <https://resonance.meetiqm.com>`_ with your credentials.
 2. Upon your first visit to IQM Resonance, you can generate your unique, non-recoverable API token
    directly from the Dashboard page by selecting ``Generate token``. It's important to copy the token
    immediately from the window, as you won't be able to do so once the window is closed. If you lose
    your token, you have the option to regenerate it at any time. However, be aware that regenerating
    your API token will invalidate any previously generated token.
-3. Download one of the demo notebooks from `IQM Academy <https://www.iqmacademy.com/tutorials/>` or the
+3. Download one of the demo notebooks from `IQM Academy <https://www.iqmacademy.com/tutorials/>`_ or the
    `resonance_example.py example file <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
    (Save Page As...)
 4. Install Qiskit on IQM as instructed below.
@@ -39,8 +39,8 @@ IQM Resonance
    measurements resulting in '00000' and almost half in '11111' - if this is the case, things are
    set up correctly!
 
-You can find a video guide on how to set things up `here <https://www.iqmacademy.com/tutorials/resonance/>`.
-More ready-to-run examples can also be found at `IQM Academy <https://www.iqmacademy.com/tutorials/>`.
+You can find a video guide on how to set things up `here <https://www.iqmacademy.com/tutorials/resonance/>`_.
+More ready-to-run examples can also be found at `IQM Academy <https://www.iqmacademy.com/tutorials/>`_.
 
 
 On-premises device
@@ -78,6 +78,19 @@ After installation Qiskit on IQM can be imported in your Python code as follows:
 Authentication
 --------------
 
+IQM Resonance
+~~~~~~~~~~~~~
+
+If you are using IQM Resonance, you have two options to authenticate:
+
+1. Set the :envvar:`IQM_TOKEN` environment variable to the API token obtained from the Resonance dashboard.
+2. Pass the ``token`` parameter to :class:`.IQMProvider`. This will be forwarded to
+   :class:`~iqm.iqm_client.iqm_client.IQMClient`. For an example, see the `resonance_example.py file
+   <https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py>`_
+
+On-premises devices
+~~~~~~~~~~~~~~~~~~~
+
 If the IQM server you are connecting to requires authentication, you may use
 `Cortex CLI <https://github.com/iqm-finland/cortex-cli>`_ to retrieve and automatically refresh access tokens,
 then set the :envvar:`IQM_TOKENS_FILE` environment variable, as instructed, to point to the tokens file.
@@ -86,10 +99,6 @@ See Cortex CLI's `documentation <https://iqm-finland.github.io/cortex-cli/readme
 You may also authenticate yourself using the :envvar:`IQM_AUTH_SERVER`,
 :envvar:`IQM_AUTH_USERNAME` and :envvar:`IQM_AUTH_PASSWORD` environment variables, or pass them as
 arguments to :class:`.IQMProvider`, however this approach is less secure and considered deprecated.
-
-Finally, if you are using ``IQM Resonance``, authentication is handled differently.
-Use the :envvar:`IQM_TOKEN` environment variable to provide the API Token obtained
-from the server dashboard.
 
 
 Running quantum circuits on an IQM quantum computer
@@ -132,7 +141,7 @@ Let's consider the following quantum circuit which prepares and measures a GHZ s
 
 To run this circuit on an IQM quantum computer you need to initialize an :class:`.IQMProvider`
 instance with the IQM server URL, use it to retrieve an :class:`.IQMBackend` instance representing
-the quantum computer, and use Qiskit's :func:`~qiskit.compiler.transpiler.transpile` function
+the quantum computer, and use Qiskit's :func:`~qiskit.compiler.transpile` function
 followed by :meth:`.IQMBackend.run` as usual.  ``shots`` denotes the number of times the quantum
 circuit(s) are sampled:
 
@@ -151,11 +160,9 @@ circuit(s) are sampled:
 
 .. note::
 
-   As of ``qiskit >= 1.0``, Qiskit no longer supports :func:`execute`, but in all supported versions it is possible
-   to first transpile the circuit and then run as shown in the code above. Alternatively, the function
-   :func:`.transpile_to_IQM` can also be used to transpile circuits. In particular, when running
-   circuits on devices with computational resonators (the IQM Star architecture),
-   it is recommended to use :func:`.transpile_to_IQM` instead of :func:`transpile`.
+   As of ``qiskit >= 1.0``, Qiskit no longer supports :func:`execute`. Instead you should
+   first transpile the circuit and then run it, as shown in the code above.
+   See the :ref:`transpilation` section to learn how to transpile circuits in various ways.
 
 .. note::
 
@@ -164,18 +171,9 @@ circuit(s) are sampled:
    `Inspecting circuits before submitting them for execution`_ for inspecting the actual run request sent for
    execution.
 
-The calibration data for an IQM quantum computer is stored in a calibration set. An :class:`.IQMBackend` instance
-always corresponds to a specific calibration set, so that its transpilation target uses only those QPU components
-(qubits and computational resonators) and gates which are available in that calibration set. The server default
-calibration set will be used by default, but you can also use a different calibration set by specifying the
-``calibration_set_id`` parameter for :meth:`.IQMProvider.get_backend` or :class:`.IQMBackend`. If the server default
-calibration set has changed after you have created the backend, the backend will still use the original default calibration
-set when submitting circuits for execution. When this happens you will get a warning.
-You will need to create a new backend if you want to use the new default calibration set instead.
-
-You can optionally set IQM backend specific options as additional keyword arguments to
+You can optionally provide IQMBackend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.
-For example, you can enable heralding measurements by passing the appropriate circuit compilation option as follows:
+For example, you can enable heralding measurements using ``circuit_compilation_options`` as follows:
 
 .. code-block:: python
 
@@ -183,9 +181,18 @@ For example, you can enable heralding measurements by passing the appropriate ci
 
     job = backend.run(transpiled_circuit, shots=1000, circuit_compilation_options=CircuitCompilationOptions(heralding_mode=HeraldingMode.ZEROS))
 
-Alternatively, you can update the values of the options directly in the backend instance using :meth:`.IQMBackend.set_options`
-and then call :meth:`.IQMBackend.run` without specifying additional keyword arguments.
 
+Calibration
+~~~~~~~~~~~
+
+The calibration data for an IQM quantum computer is stored in a *calibration set*. An :class:`.IQMBackend` instance
+always corresponds to a specific calibration set, so that its transpilation target uses only those QPU components
+(qubits and computational resonators) and gates which are available in that calibration set. The server default
+calibration set will be used by default, but you can also use a different calibration set by specifying the
+``calibration_set_id`` parameter to :meth:`.IQMProvider.get_backend` or :class:`.IQMBackend`. If the server default
+calibration set has changed after you have created the backend, the backend will still use the original default calibration
+set when submitting circuits for execution. When this happens you will get a warning.
+You will need to create a new backend if you want to use the new default calibration set instead.
 
 Inspecting the results
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -199,12 +206,14 @@ The results of a job that was executed on the IQM quantum computer, represented 
     print(result.get_counts())
     print(result.get_memory())
 
-The result also contains the original request with e.g. the qubit mapping that was used in execution. You
-can check this mapping as follows:
+The result comes with some metadata, such as the :class:`~iqm.iqm_client.models.RunRequest` that
+produced it in ``result.request``. The request contains e.g. the qubit mapping and the ID of the
+calibration set that were used in the execution:
 
 .. code-block:: python
 
     print(result.request.qubit_mapping)
+    print(result.request.calibration_set_id)
 
 ::
 
@@ -213,9 +222,10 @@ can check this mapping as follows:
       SingleQubitMapping(logical_name='1', physical_name='QB2'),
       SingleQubitMapping(logical_name='2', physical_name='QB3')
     ]
+    1320eae6-f4e2-424d-b299-ef82d556d2c3
 
-The job result also contains metadata on the execution, including timestamps of the various steps of processing the
-job. The timestamps are stored in the dict ``result.timestamps``. The job processing has three steps,
+Another piece of useful metadata are the timestamps of the various steps of processing the job. The
+timestamps are stored in the dict ``result.timestamps``. The job processing has three steps,
 
 * ``compile`` where the circuits are converted to instruction schedules,
 * ``submit`` where the instruction schedules are submitted for execution, and
@@ -244,7 +254,7 @@ Backend properties
 ~~~~~~~~~~~~~~~~~~
 
 The :class:`.IQMBackend` instance we created above provides all the standard backend functionality that one expects from a
-backend in Qiskit. For this example, I am connected to an IQM backend that features a 5-qubit chip with star-like
+backend in Qiskit. For this example, I am connected to an IQMBackend that features a 5-qubit chip with star-like
 connectivity:
 
 ::
@@ -267,11 +277,11 @@ Let's examine its basis gates and the coupling map through the ``backend`` insta
     Native operations of the backend: ['id', 'r', 'cz', 'measure']
     Coupling map of the backend: [[0, 2], [2, 0], [1, 2], [2, 1], [2, 3], [3, 2], [2, 4], [4, 2]]
 
-Note that for IQM backends the identity gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
+Note that for IQMBackends the identity gate ``id`` is not actually a gate that is executed on the device and is simply omitted.
 At IQM we identify qubits by their names, e.g. 'QB1', 'QB2', etc. as demonstrated above. In Qiskit, qubits are
 identified by their indices in the quantum register, as you can see from the printed coupling map above. Most of the
 time you do not need to deal with IQM-style qubit names when using Qiskit, however when you need, the methods
-:meth:`~.IQMBackendBase.qubit_name_to_index` and :meth:`~.IQMBackendBase.index_to_qubit_name` can become handy.
+:meth:`.IQMBackendBase.qubit_name_to_index` and :meth:`.IQMBackendBase.index_to_qubit_name` can become handy.
 
 
 Classically controlled gates
@@ -335,7 +345,7 @@ Resetting qubits
 
 The :class:`qiskit.circuit.Reset` operation can be used to reset qubits to the :math:`|0\rangle` state.
 It is currently implemented as a (projective) measurement followed by a classically controlled X gate conditioned
-on the result.
+on the result, and is only available if the quantum computer supports classically controlled gates.
 
 .. code-block:: python
 
@@ -383,6 +393,8 @@ It is also possible to print a run request when it is actually submitted by sett
 ``IQM_CLIENT_DEBUG=1``.
 
 
+.. _transpilation:
+
 Transpilation
 -------------
 
@@ -392,8 +404,8 @@ In this section we study how the circuit gets transpiled in more detail.
 Basic transpilation
 ~~~~~~~~~~~~~~~~~~~
 
-On IQM quantum computers without computational resonators
-(the IQM Crystal architecture), we can use the default Qiskit transpiler.
+You can use the default Qiskit transpiler on IQM quantum computers with both
+the Crystal and the Star architectures.
 Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 .. code-block:: python
@@ -405,108 +417,177 @@ Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 ::
 
-    global phase: π/2
-             ┌────────────┐┌────────┐                 ┌────────────┐┌────────┐ ░       ┌─┐
-    q_2 -> 0 ┤ R(π/2,π/2) ├┤ R(π,0) ├─────────■───────┤ R(π/2,π/2) ├┤ R(π,0) ├─░───────┤M├
-             ├────────────┤├────────┤         │       └────────────┘└────────┘ ░ ┌─┐   └╥┘
-    q_0 -> 2 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■───────■────────────────────────────────░─┤M├────╫─
-             ├────────────┤├────────┤ │ ┌────────────┐  ┌────────┐             ░ └╥┘┌─┐ ║
-    q_1 -> 3 ┤ R(π/2,π/2) ├┤ R(π,0) ├─■─┤ R(π/2,π/2) ├──┤ R(π,0) ├─────────────░──╫─┤M├─╫─
-             └────────────┘└────────┘   └────────────┘  └────────┘             ░  ║ └╥┘ ║
-     meas: 3/═════════════════════════════════════════════════════════════════════╩══╩══╩═
-                                                                                  0  1  2
-
-
-We also provide an optimization pass specific to the native IQM gate set which aims to reduce the number
-of single-qubit gates. This optimization expects an already transpiled circuit. As an example, let's apply it to the above circuit:
-
-.. code-block:: python
-
-    from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates
-
-    optimized_circuit = optimize_single_qubit_gates(transpiled_circuit)
-    print(optimized_circuit.draw(output='text', idle_wires=False))
-
-::
-
     global phase: 3π/2
-            ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
-       q_0: ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
-            ├─────────────┤ │ └─────────────┘                ░ ┌─┐└╥┘
-       q_2: ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫────
-            ├─────────────┤          │       ┌─────────────┐ ░ └╥┘ ║ ┌─┐
-       q_3: ┤ R(π/2,3π/2) ├──────────■───────┤ R(π/2,5π/2) ├─░──╫──╫─┤M├
-            └─────────────┘                  └─────────────┘ ░  ║  ║ └╥┘
-    meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+              ┌─────────────┐                  ┌─────────────┐ ░       ┌─┐
+    q_2 -> 5  ┤ R(π/2,3π/2) ├──────────■───────┤ R(π/2,5π/2) ├─░───────┤M├
+              ├─────────────┤          │       └─────────────┘ ░ ┌─┐   └╥┘
+    q_0 -> 10 ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├────╫─
+              ├─────────────┤ │ ┌─────────────┐                ░ └╥┘┌─┐ ║
+    q_1 -> 15 ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░──╫─┤M├─╫─
+              └─────────────┘   └─────────────┘                ░  ║ └╥┘ ║
+      meas: 3/════════════════════════════════════════════════════╩══╩══╩═
                                                                 0  1  2
 
-Under the hood :func:`.optimize_single_qubit_gates` uses :class:`.IQMOptimizeSingleQubitGates` which inherits from
-the Qiskit provided class :class:`.TransformationPass` and can also be used directly if you want to assemble
-custom transpilation procedures manually.
+
+Under the hood the Qiskit transpiler uses the :class:`.IQMDefaultSchedulingPlugin` plugin that
+automatically adapts the transpiled circuit to the IQMBackend. In particular,
+
+* if ``optimization_level > 0``, the plugin will use the :class:`.IQMOptimizeSingleQubitGates`
+  pass to optimize single-qubit gates, and
+* for devices that have the IQM Star architecture, the plugin will use the
+  :class:`.IQMNaiveResonatorMoving` pass to automatically insert :class:`.MoveGate` instructions
+  as needed.
+
+Alternatively, you can use the :func:`transpile_to_IQM` function for more precise control over the
+transpilation process as documented below.
+
+It is also possible to use one of our other pre-defined transpiler plugins as an argument to
+:func:`~qiskit.compiler.transpile`, for example
+``transpile(circuit, backend=backend, scheduling_method="only_move_routing_keep")``.
+Additionally, you can use any of our transpiler passes
+to define your own :class:`qiskit.transpiler.PassManager` if you want to assemble custom
+transpilation procedures manually.
 
 
 Computational resonators
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The IQM Star architecture includes computational resonators as additional QPU components.
-Because the resonator is not a real qubit, the standard Qiskit transpiler does not know how to compile for it.
-Thus, we have a custom transpile method :func:`.transpile_to_IQM` that can handle QPUs with resonators.
+The IQM Star architecture includes computational resonators as additional QPU components,
+and uses qubit-resonator gates instead of two-qubit gates. These include
+:class:`.MoveGate` which moves qubit states to and from the resonators.
+
+The standard Qiskit transpiler does not know how to compile qubit-resonator gates.
+This is why IQMBackend provides the Qiskit transpiler a *simplified* transpilation target in which
+the resonators and MOVE gates have been abstracted away, and replaced with fictional two-qubit gates
+that directly connect qubits that can be made to interact via a resonator. It then
+uses :class:`.IQMDefaultSchedulingPlugin` to re-introduce resonators and add
+:class:`MOVE gates <.MoveGate>` between qubits and resonators as necessary at the scheduling stage.
+
+IQMDefaultSchedulingPlugin is executed automatically when you use the Qiskit transpiler.
+Starting from the :ref:`GHZ circuit <GHZ_circuit>` we created above:
 
 .. code-block:: python
 
-    import os
-    from qiskit import QuantumCircuit
-    from iqm.qiskit_iqm import IQMProvider, transpile_to_IQM
+    from qiskit.compiler import transpile
+    from iqm.qiskit_iqm import IQMProvider
 
-    circuit = QuantumCircuit(5)
-    circuit.h(0)
-    for i in range(1, 5):
-        circuit.cx(0, i)
-    circuit.measure_all()
+    resonator_backend = IQMProvider("https://cocos.resonance.meetiqm.com/deneb").get_backend()
+    transpiled_circuit = transpile(circuit, resonator_backend)
 
-    iqm_server_url = "https://cocos.resonance.meetiqm.com/deneb"
-    provider = IQMProvider(iqm_server_url)
-    backend = provider.get_backend()
-    transpiled_circuit = transpile_to_IQM(circuit, backend)
-
-    print(transpiled_circuit)
+    print(transpiled_circuit.draw(output='text', idle_wires=False))
 
 ::
 
-                                                                  ┌───────┐                                                                           ┌───────┐
-    Qubit(QuantumRegister(1, 'resonator'), 0) -> 0 ───────────────┤1      ├─■─────────────────■─────────────────■─────────────────■───────────────────┤1      ├────────────
-                                                   ┌─────────────┐│  Move │ │                 │                 │                 │                 ░ │  Move │         ┌─┐
-            Qubit(QuantumRegister(5, 'q'), 0) -> 1 ┤ R(π/2,3π/2) ├┤0      ├─┼─────────────────┼─────────────────┼─────────────────┼─────────────────░─┤0      ├─────────┤M├
-                                                   ├─────────────┤└───────┘ │ ┌─────────────┐ │                 │                 │                 ░ └──┬─┬──┘         └╥┘
-            Qubit(QuantumRegister(5, 'q'), 1) -> 2 ┤ R(π/2,3π/2) ├──────────■─┤ R(π/2,5π/2) ├─┼─────────────────┼─────────────────┼─────────────────░────┤M├─────────────╫─
-                                                   ├─────────────┤            └─────────────┘ │ ┌─────────────┐ │                 │                 ░    └╥┘   ┌─┐       ║
-            Qubit(QuantumRegister(5, 'q'), 2) -> 3 ┤ R(π/2,3π/2) ├────────────────────────────■─┤ R(π/2,5π/2) ├─┼─────────────────┼─────────────────░─────╫────┤M├───────╫─
-                                                   ├─────────────┤                              └─────────────┘ │ ┌─────────────┐ │                 ░     ║    └╥┘┌─┐    ║
-            Qubit(QuantumRegister(5, 'q'), 3) -> 4 ┤ R(π/2,3π/2) ├──────────────────────────────────────────────■─┤ R(π/2,5π/2) ├─┼─────────────────░─────╫─────╫─┤M├────╫─
-                                                   ├─────────────┤                                                └─────────────┘ │ ┌─────────────┐ ░     ║     ║ └╥┘┌─┐ ║
-            Qubit(QuantumRegister(5, 'q'), 4) -> 5 ┤ R(π/2,3π/2) ├────────────────────────────────────────────────────────────────■─┤ R(π/2,5π/2) ├─░─────╫─────╫──╫─┤M├─╫─
-                                                   └─────────────┘                                                                  └─────────────┘ ░     ║     ║  ║ └╥┘ ║
-      Qubit(QuantumRegister(1, 'ancilla'), 0) -> 6 ───────────────────────────────────────────────────────────────────────────────────────────────────────╫─────╫──╫──╫──╫─
-                                                                                                                                                          ║     ║  ║  ║  ║
-                                              c: 5/═══════════════════════════════════════════════════════════════════════════════════════════════════════╩═════╩══╩══╩══╩═
-                                                                                                                                                          1     2  3  4  0
+                   ┌─────────────┐┌───────┐                  ┌───────┐                ░ ┌─┐
+          q_0 -> 0 ┤ R(π/2,3π/2) ├┤0      ├──────────────────┤0      ├────────────────░─┤M├──────
+                   ├─────────────┤│       │   ┌─────────────┐│       │                ░ └╥┘┌─┐
+          q_1 -> 1 ┤ R(π/2,3π/2) ├┤       ├─■─┤ R(π/2,5π/2) ├┤       ├────────────────░──╫─┤M├───
+                   ├─────────────┤│  Move │ │ └─────────────┘│  Move │┌─────────────┐ ░  ║ └╥┘┌─┐
+          q_2 -> 2 ┤ R(π/2,3π/2) ├┤       ├─┼────────■───────┤       ├┤ R(π/2,5π/2) ├─░──╫──╫─┤M├
+                   └─────────────┘│       │ │        │       │       │└─────────────┘ ░  ║  ║ └╥┘
+        resonators ───────────────┤1      ├─■────────■───────┤1      ├───────────────────╫──╫──╫─
+                                  └───────┘                  └───────┘                   ║  ║  ║
+           meas: 3/══════════════════════════════════════════════════════════════════════╩══╩══╩═
+                                                                                     0  1  2
 
 
-Under the hood, the IQM transpiler pretends that the resonators do not exist for the Qiskit
-transpiler, and then uses an additional transpiler pass :class:`.IQMNaiveResonatorMoving` to
-introduce the resonators and add :class:`MOVE gates <.MoveGate>` between qubits and resonators as
-necessary.  If ``optimize_single_qubits=True``, the :class:`.IQMOptimizeSingleQubitGates` pass is
-also used.  The resulting layout shows a resonator register, a qubit register, a register of unused
-qubits, and how they are mapped to the QPU components of the target device. As you can see in the
-example, qubit 0 in the original circuit is mapped to qubit 0 of the register ``q``, and its state
-is moved into the resonator so that the CZ gates can be performed. Lastly, the state is moved out of
-the resonator and back to the qubit so that it can be measured.
+Custom transpilation
+~~~~~~~~~~~~~~~~~~~~
 
-Additionally, if the IQM transpiler is used to transpile for a device that does not have a
-resonator, it will simply skip the :class:`.IQMNaiveResonatorMoving` step and transpile with the
-Qiskit transpiler and the optional :class:`.IQMOptimizeSingleQubitGates` step.  It is also possible
-for the user to provide :func:`.transpile_to_IQM` with an ``optimization_level`` in the same manner
-as the Qiskit :func:`transpile` function.
+As an alternative to the native Qiskit transpiler integration, you can use the
+:func:`.transpile_to_IQM` function.  It is meant for users who want at least one of the following:
+
+* more fine grained control over the transpilation process without having to figure out which IQM
+  transpiler plugin to use,
+* transpile Star architecture circuits that already contain qubit-resonator gates, or
+* force the transpiler to use a strict subset of qubits on the device.
+
+For example, if you want to transpile the circuit with ``optimization_level=0`` but also apply the
+single qubit gate optimization pass, you can do one of the following, equivalent things:
+
+.. code-block:: python
+
+    transpile_to_IQM(circuit, backend=backend, optimization_level=0, perform_move_routing=False, optimize_single_qubits=True)
+
+.. code-block:: python
+
+    transpile(circuit, backend=backend, optimization_level=0, scheduling_method='only_rz_optimization')
+
+Similarly, if you want to transpile a native Star architecture circuit that already contains
+:class:`.MoveGate` instances (that act on a qubit and a computational resonator), you can do the following:
+
+.. code-block:: python
+
+    from iqm.iqm_client.transpile import ExistingMoveHandlingOptions
+    from iqm.qiskit_iqm import IQMCircuit, transpile_to_IQM
+
+    move_circuit = IQMCircuit(3)
+    move_circuit.h(0)
+    move_circuit.move(0, 1)
+    move_circuit.h(2)
+    move_circuit.cz(2, 1)
+    move_circuit.h(2)
+    move_circuit.move(0, 1)
+
+    # Using transpile() does not work here, as the circuit already contains a MoveGate
+    transpiled_circuit = transpile_to_IQM(move_circuit, backend=resonator_backend, existing_moves_handling=ExistingMoveHandlingOptions.KEEP)
+    print(transpiled_circuit.draw(output='text', idle_wires=False))
+
+::
+
+             ┌─────────────┐┌───────┐   ┌───────┐
+    q_0 -> 0 ┤ R(π/2,3π/2) ├┤0      ├───┤0      ├───────────────
+             ├─────────────┤│       │   │       │┌─────────────┐
+    q_2 -> 1 ┤ R(π/2,3π/2) ├┤  Move ├─■─┤  Move ├┤ R(π/2,5π/2) ├
+             └─────────────┘│       │ │ │       │└─────────────┘
+    q_1 -> 6 ───────────────┤1      ├─■─┤1      ├───────────────
+                            └───────┘   └───────┘
+
+And if you want force the compiler to use a strict subset of qubits on the device, you can do the following:
+
+.. code-block:: python
+
+    qubits = [4, 3, 8]
+    # or qubits = ['QB5', 'QB4', 'QB9']
+    transpiled_circuit = transpile_to_IQM(circuit, backend=backend, restrict_to_qubits=qubits)
+    print(transpiled_circuit.draw(output='text', idle_wires=False))
+
+::
+
+    global phase: 3π/2
+             ┌─────────────┐   ┌─────────────┐                ░    ┌─┐
+    q_1 -> 0 ┤ R(π/2,3π/2) ├─■─┤ R(π/2,5π/2) ├────────────────░────┤M├───
+             ├─────────────┤ │ └─────────────┘                ░ ┌─┐└╥┘
+    q_0 -> 1 ┤ R(π/2,3π/2) ├─■────────■───────────────────────░─┤M├─╫────
+             ├─────────────┤          │       ┌─────────────┐ ░ └╥┘ ║ ┌─┐
+    q_2 -> 2 ┤ R(π/2,3π/2) ├──────────■───────┤ R(π/2,5π/2) ├─░──╫──╫─┤M├
+             └─────────────┘                  └─────────────┘ ░  ║  ║ └╥┘
+     meas: 3/════════════════════════════════════════════════════╩══╩══╩═
+                                                                 0  1  2
+
+Note that if you do this, you do need to provide the :meth:`.IQMBackend.run` method a qubit
+mapping that matches the restriction:
+
+.. code-block:: python
+
+    qubit_mapping = {i: backend.index_to_qubit_name(q) for i, q in enumerate(qubits)}
+    job = backend.run(transpiled_circuit, qubit_mapping=qubit_mapping)
+
+
+Using custom IQM transpiler plugins
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For the native integration of the custom IQM transpiler passes with the Qiskit transpiler, we
+have implemented several scheduling plugins for the Qiskit transpiler. These plugins can be used as
+the ``scheduling_method`` string argument for :func:`~qiskit.compiler.transpile`.
+The mapping between these strings and the classes that implement the plugins is defined in the
+:file:`pyproject.toml` file of this package.
+The documentation of these plugins in found in the respective plugin classes.
+
+If you are unsure which plugin to use, you can use :func:`.transpile_to_IQM` with the appropriate
+arguments. This function determines which plugin to use based on the backend and the provided
+arguments.  Note that the Qiskit transpiler automatically uses the
+:class:`.IQMDefaultSchedulingPlugin` when the backend is an IQMBackend.
 
 
 Batch execution of circuits
@@ -571,28 +652,25 @@ Multiplexed measurements
 
 When multiple measurement instructions are present in a circuit, the measurements may be multiplexed, meaning the
 measurement pulses would be simultaneously executed on the quantum hardware, if possible. Multiplexing requires the
-measurement instructions to be grouped continuously, i.e. not have other instructions between them acting on the same
+measurement instructions to form a convex subgraph, i.e. not have other instructions between them acting on the same
 qubits.
 
-You don't have to do anything special to enable multiplexing, it is automatically attempted by the circuit-to-pulse
-compiler on the server side. However, if you want to ensure multiplexing is applied (whenever possible on the hardware
-level), you have to put a ``barrier`` instruction in front of and after a group of measurements instructions.
-This prevents the transpiler to put other instructions between the measurements.
-There is no concept of multiplexed or simultaneous measurements in Qiskit, so the drawings of the circuits still would
-not indicate multiplexing.
+You don't have to do anything special to enable multiplexing, it is automatically attempted by the
+circuit-to-pulse compiler on the server side. However, you can ensure multiplexing (whenever
+possible on the hardware level) by putting a ``barrier`` instruction before and after a group of
+measurements.  This prevents the transpiler from inserting any other instructions between the
+measurements.  There is no concept of multiplexed or simultaneous measurements in Qiskit, so the
+circuit diagram will not indicate any multiplexing::
 
-::
-
-          ░ ┌─┐       ░
-    q_0: ─░─┤M├───────░─
-          ░ └╥┘┌─┐    ░
-    q_1: ─░──╫─┤M├────░─
-          ░  ║ └╥┘┌─┐ ░
-    q_2: ─░──╫──╫─┤M├─░─
-          ░  ║  ║ └╥┘ ░
+             ░ ┌─┐       ░
+       q_0: ─░─┤M├───────░─
+             ░ └╥┘┌─┐    ░
+       q_1: ─░──╫─┤M├────░─
+             ░  ║ └╥┘┌─┐ ░
+       q_2: ─░──╫──╫─┤M├─░─
+             ░  ║  ║ └╥┘ ░
     meas: 3/════╩══╩══╩═══
                 0  1  2
-
 
 
 Simulation

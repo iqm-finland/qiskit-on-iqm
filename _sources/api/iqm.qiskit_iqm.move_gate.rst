@@ -5,6 +5,13 @@ iqm.qiskit\_iqm.move\_gate
 
    
    
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      MOVE_GATE_UNITARY
+   
    
 
    
