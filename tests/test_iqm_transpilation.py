@@ -104,10 +104,9 @@ def test_optimize_single_qubit_gates_raises_on_invalid_basis():
         optimize_single_qubit_gates(circuit)
 
 
-@pytest.mark.skip(reason='generate_initial_layout only works with Star architecture circuits')
 @pytest.mark.parametrize('backend', [IQMFakeAdonis(), IQMFakeDeneb(), IQMFakeAphrodite()])
 def test_optimize_single_qubit_gates_preserves_layout(backend):
-    """Test that a circuit submitted via IQM backend gets transpiled into proper JSON."""
+    """Test optimize_single_qubit_gates returns a circuit with a layout if the circuit had a layout."""
 
     qc = QuantumCircuit(3)
     qc.h(0)
@@ -120,9 +119,18 @@ def test_optimize_single_qubit_gates_preserves_layout(backend):
     assert qc_optimized.layout is None
 
     # In case the layout is set by the user
-    initial_layout = generate_initial_layout(backend, qc)
+    if backend.has_resonators():
+        initial_layout = generate_initial_layout(backend, qc).get_physical_bits()
+    else:
+        initial_layout = {
+            physical_qubit: qc.qubits[logical_qubit]
+            for logical_qubit, physical_qubit in enumerate(
+                np.random.choice(range(backend.num_qubits), qc.num_qubits, False)
+            )
+        }
     transpiled_circuit_alt = transpile(qc, backend=backend, initial_layout=initial_layout)
-    for physical_qubit, logical_qubit in initial_layout.get_physical_bits().items():
+
+    for physical_qubit, logical_qubit in initial_layout.items():
         assert transpiled_circuit_alt.layout.initial_layout[logical_qubit] == physical_qubit
 
     # In case the layout is set by the transpiler
