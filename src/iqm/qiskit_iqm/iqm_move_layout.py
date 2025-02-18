@@ -176,6 +176,7 @@ def generate_initial_layout(
     Args:
         backend: IQM backend to run against.
         circuit: Star architecture circuit for which a layout is to be generated.
+        restrict_to_qubits: Optional list of qubits to restrict the layout to.
 
     Returns:
         Layout that maps the logical qubits of ``circuit`` to the physical qubits of ``backend`` so that

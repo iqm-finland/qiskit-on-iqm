@@ -31,14 +31,11 @@ from .qiskit_to_iqm import deserialize_instructions, serialize_instructions
 
 
 class IQMNaiveResonatorMoving(TransformationPass):
-    """WIP Naive transpilation pass for resonator moving
+    """Naive transpilation pass for resonator moving.
 
-    A naive transpiler pass for use with the Qiskit PassManager.
-    Although it requires a CouplingMap, Target, or Backend, it does not take this into account when adding MOVE gates.
-    It assumes target connectivity graph is star shaped with a single resonator in the middle.
-    The pass assumes that all single qubit and two-qubit gates are allowed.
-    The resonator is used to swap the qubit states for the two-qubit gates.
-    Additionally, it assumes that no single qubit gates are allowed on the resonator.
+    The logic of this pass is deferred to `iqm-client.transpile_insert_moves`.
+    This pass is a wrapper that converts the circuit into the IQMClient Circuit format, 
+    runs the `transpile_insert_moves` function, and then converts the result back to a Qiskit circuit.
 
     Args:
         target: Transpilation target.
