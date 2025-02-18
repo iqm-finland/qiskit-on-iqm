@@ -27,16 +27,19 @@ def bell_measure(server_url: str) -> dict[str, int]:
     """Run a circuit that prepares and measures a Bell state.
 
     Args:
-        server_url: URL of the IQM Cortex server used for execution
+        server_url: URL of the IQM server used for execution
 
     Returns:
         a mapping of bitstrings representing qubit measurement results to counts for each result
     """
+    backend = IQMProvider(server_url).get_backend()
+    if backend.num_qubits < 2:
+        raise ValueError('We need two qubits for the Bell state.')
     circuit = QuantumCircuit(2)
     circuit.h(0)
     circuit.cx(0, 1)
     circuit.measure_all()
-    backend = IQMProvider(server_url).get_backend()
+
     new_circuit = transpile(circuit, backend)
     return backend.run(new_circuit, shots=1000).result().get_counts()
 
@@ -45,7 +48,7 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
     argparser.add_argument(
         '--cortex_server_url',
-        help='URL of the IQM Cortex server',
+        help='URL of the IQM server',
         default='https://demo.qc.iqm.fi/cocos',
     )
     print(bell_measure(argparser.parse_args().cortex_server_url))

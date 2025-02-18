@@ -17,12 +17,12 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License"
 ]
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.10, <3.13"
 dependencies = [
     "numpy",
-    "qiskit >= 0.45, < 1.2",
-    "qiskit-aer >= 0.13.1, < 0.15",
-    "iqm-client >= 20.9, < 21.0"
+    "qiskit >= 1.0, < 1.3",
+    "qiskit-aer >= 0.13.1, < 0.16",
+    "iqm-client >= 22.0, < 23.0"
 ]
 
 [project.urls]
@@ -42,13 +42,13 @@ docs = [
     "sphinx-book-theme == 1.1.2",
 ]
 testing = [
-    "black == 23.12.0",
+    "black == 24.10.0",
     "isort == 5.13.2",
-    "pylint == 3.0.3",
-    "mypy == 1.7.1",
+    "pylint == 3.3.3",
+    "mypy == 1.14.1",
     "mockito == 1.4.0",
-    "pytest == 7.4.3",
-    "pytest-cov == 4.1.0",
+    "pytest == 8.3.4",
+    "pytest-cov == 6.0.0",
     "pytest-pylint == 0.21.0",
     "types-Jinja2 == 2.11.9"
 ]
@@ -135,7 +135,8 @@ module = [
     "mockito",
     "qiskit.*",
     "qiskit_aer.*",
-    "requests"
+    "requests",
+    "stevedore",
 ]
 ignore_missing_imports = true
 
@@ -159,3 +160,22 @@ ignore-imports = true
 
 [tool.pylint.string]
 check-quote-consistency = true
+
+# Expose the different custom transpiler passes to the Qiskit transpiler using their plugin system.
+[project.entry-points."qiskit.transpiler.scheduling"] 
+move_routing = "iqm.qiskit_iqm:MoveGateRoutingPlugin"
+move_routing_keep = "iqm.qiskit_iqm:MoveGateRoutingKeepExistingMovesPlugin"
+move_routing_remove = "iqm.qiskit_iqm:MoveGateRoutingRemoveExistingMovesPlugin"
+move_routing_trust = "iqm.qiskit_iqm:MoveGateRoutingTrustExistingMovesPlugin"
+only_move_routing = "iqm.qiskit_iqm:MoveGateRoutingOnlyPlugin"
+only_move_routing_keep = "iqm.qiskit_iqm:MoveGateRoutingOnlyKeepExistingMovesPlugin"
+only_move_routing_remove = "iqm.qiskit_iqm:MoveGateRoutingOnlyRemoveExistingMovesPlugin"
+only_move_routing_trust = "iqm.qiskit_iqm:MoveGateRoutingOnlyTrustExistingMovesPlugin"
+move_routing_exact_global_phase = "iqm.qiskit_iqm:MoveGateRoutingWithExactRZPlugin"
+move_routing_rz_optimization_ignores_barriers = "iqm.qiskit_iqm:MoveGateRoutingWithRZOptimizationIgnoreBarriersPlugin"
+only_rz_optimization = "iqm.qiskit_iqm:OnlyRZOptimizationPlugin"
+only_rz_optimization_exact_global_phase = "iqm.qiskit_iqm:OnlyRZOptimizationExactPlugin"
+only_rz_optimization_ignore_barriers = "iqm.qiskit_iqm:OnlyRZOptimizationIgnoreBarriersPlugin"
+only_rz_optimization_exact_global_phase_ignore_barriers = "iqm.qiskit_iqm:OnlyRZOptimizationExactIgnoreBarriersPlugin"
+iqm_default_scheduling = "iqm.qiskit_iqm:IQMDefaultSchedulingPlugin"
+

@@ -62,7 +62,6 @@ def circuit_2() -> QuantumCircuit:
 @pytest.fixture
 def create_run_request_default_kwargs(linear_3q_architecture) -> dict:
     return {
-        'qubit_mapping': None,
         'calibration_set_id': linear_3q_architecture.calibration_set_id,
         'shots': 1024,
         'options': ANY,
@@ -83,11 +82,8 @@ def run_request():
 
 
 def test_default_options(backend):
-    assert backend.options.shots == 1024
-    for k, v in backend.options.circuit_compilation_options.__dict__.items():
-        assert v == CircuitCompilationOptions().__dict__[k]
-    assert backend.options.circuit_compilation_options
-    assert backend.options.circuit_callback is None
+    """Test that there are no default options set. The user specifies defaults through the function calls."""
+    assert len(backend.options) == 0
 
 
 def test_backend_name(backend):
@@ -128,9 +124,7 @@ def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, line
     backend = IQMBackend(client)
     circuit = QuantumCircuit(3)
     circuit.cz(0, 2)
-    with pytest.raises(
-        CircuitValidationError, match=re.escape("'0', '2') = ('QB1', 'QB3') is not allowed as locus for 'cz'")
-    ):
+    with pytest.raises(CircuitValidationError, match=re.escape("('QB1', 'QB3') is not allowed as locus for 'cz'")):
         backend.run(circuit)
 
 
@@ -171,7 +165,7 @@ def test_serialize_circuit_maps_r_gate(circuit, gate, expected_angle, expected_p
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
     assert instr.name == 'prx'
-    assert instr.qubits == ('0',)
+    assert instr.qubits == ('QB1',)
     # Serialized angles should be in full turns
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
@@ -194,7 +188,7 @@ def test_serialize_circuit_maps_x_rx_y_ry_gates(backend, circuit, gate, expected
     assert len(circuit_ser.instructions) == 1
     instr = circuit_ser.instructions[0]
     assert instr.name == 'prx'
-    assert instr.qubits == ('0',)
+    assert instr.qubits == ('QB1',)
     assert instr.args['angle_t'] == expected_angle
     assert instr.args['phase_t'] == expected_phase
 
@@ -204,7 +198,7 @@ def test_serialize_circuit_maps_cz_gate(circuit, backend):
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 1
     assert circuit_ser.instructions[0].name == 'cz'
-    assert circuit_ser.instructions[0].qubits == ('0', '2')
+    assert circuit_ser.instructions[0].qubits == ('QB1', 'QB3')
     assert circuit_ser.instructions[0].args == {}
 
 
@@ -216,7 +210,7 @@ def test_serialize_circuit_maps_individual_measurements(circuit, backend):
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measure'
-        assert instruction.qubits == (f'{i}',)
+        assert instruction.qubits == (f'QB{i+1}',)
         key = f'c_3_0_{i}'
         assert instruction.args == {'key': key}
 
@@ -227,7 +221,7 @@ def test_serialize_circuit_batch_measurement(circuit, backend):
     assert len(circuit_ser.instructions) == 3
     for i, instruction in enumerate(circuit_ser.instructions):
         assert instruction.name == 'measure'
-        assert instruction.qubits == (f'{i}',)
+        assert instruction.qubits == (f'QB{i+1}',)
         key = f'c_3_0_{i}'
         assert instruction.args == {'key': key}
 
@@ -238,8 +232,28 @@ def test_serialize_circuit_barrier(circuit, backend):
     circuit_ser = backend.serialize_circuit(circuit)
     assert len(circuit_ser.instructions) == 2
     assert circuit_ser.instructions[1].name == 'barrier'
-    assert circuit_ser.instructions[1].qubits == ('0', '1')
+    assert circuit_ser.instructions[1].qubits == ('QB1', 'QB2')
     assert circuit_ser.instructions[1].args == {}
+
+
+@pytest.mark.parametrize(
+    'duration,unit,in_seconds',
+    [
+        (3, 'dt', 3e-9),
+        (0.4, 's', 0.4),
+        (1.23, 'ms', 1.23e-3),
+        (240, 'us', 240e-6),
+        (25, 'ns', 25e-9),
+        (50, 'ps', 50e-12),
+    ],
+)
+def test_serialize_circuit_delay(circuit, backend, duration, unit, in_seconds):
+    circuit.delay(duration, 0, unit=unit)
+    circuit_ser = backend.serialize_circuit(circuit)
+    assert len(circuit_ser.instructions) == 1
+    assert circuit_ser.instructions[0].name == 'delay'
+    assert circuit_ser.instructions[0].qubits == ('QB1',)
+    assert circuit_ser.instructions[0].args == pytest.approx({'duration': in_seconds})
 
 
 def test_serialize_circuit_id(circuit, backend):
@@ -392,7 +406,7 @@ def test_run_non_native_circuit(backend, circuit, job_id, run_request):
 def test_run_single_circuit(backend, circuit, create_run_request_default_kwargs, job_id, run_request):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
-    kwargs = create_run_request_default_kwargs | {'qubit_mapping': {'0': 'QB1'}}
+    kwargs = create_run_request_default_kwargs
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
     job = backend.run(circuit)
@@ -427,7 +441,7 @@ def test_run_with_custom_number_of_shots(
 ):
     # pylint: disable=too-many-arguments
     circuit.measure(0, 0)
-    kwargs = create_run_request_default_kwargs | {'shots': shots, 'qubit_mapping': {'0': 'QB1'}}
+    kwargs = create_run_request_default_kwargs | {'shots': shots}
     when(backend.client).create_run_request(ANY, **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
     backend.run(circuit, shots=shots)
@@ -458,7 +472,6 @@ def test_backend_run_with_custom_calibration_set_id(
     circuit_ser = backend.serialize_circuit(circuit)
     kwargs = create_run_request_default_kwargs | {
         'calibration_set_id': expected_id,
-        'qubit_mapping': {'0': 'QB1'},
     }
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
@@ -470,7 +483,7 @@ def test_run_with_duration_check_disabled(backend, circuit, create_run_request_d
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
     options = CircuitCompilationOptions(max_circuit_duration_over_t2=0.0)
-    kwargs = create_run_request_default_kwargs | {'qubit_mapping': {'0': 'QB1'}, 'options': options}
+    kwargs = create_run_request_default_kwargs | {'options': options}
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
 
@@ -482,9 +495,9 @@ def test_run_uses_heralding_mode_none_by_default(
 ):
     circuit.measure(0, 0)
     circuit_ser = backend.serialize_circuit(circuit)
+    default_compilation_options = CircuitCompilationOptions()
     kwargs = create_run_request_default_kwargs | {
-        'options': backend.options.circuit_compilation_options,
-        'qubit_mapping': {'0': 'QB1'},
+        'options': default_compilation_options,
     }
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
@@ -497,7 +510,6 @@ def test_run_with_heralding_mode_zeros(backend, circuit, create_run_request_defa
     options = CircuitCompilationOptions(heralding_mode=HeraldingMode.ZEROS)
     kwargs = create_run_request_default_kwargs | {
         'options': options,
-        'qubit_mapping': {'0': 'QB1'},
     }
     when(backend.client).create_run_request([circuit_ser], **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
@@ -522,7 +534,7 @@ def test_run_with_circuit_callback(backend, job_id, create_run_request_default_k
 
     sample_callback.called = False
 
-    kwargs = create_run_request_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2', '2': 'QB3'}}
+    kwargs = create_run_request_default_kwargs
     when(backend.client).create_run_request(ANY, **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
     backend.run([qc1, qc2], circuit_callback=sample_callback)
@@ -545,7 +557,7 @@ def test_run_batch_of_circuits(backend, circuit, create_run_request_default_kwar
     circuit.cz(0, 1)
     circuits = [circuit.assign_parameters({theta: t}) for t in theta_range]
     circuits_serialized = [backend.serialize_circuit(circuit) for circuit in circuits]
-    kwargs = create_run_request_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2'}}
+    kwargs = create_run_request_default_kwargs
     when(backend.client).create_run_request(circuits_serialized, **kwargs).thenReturn(run_request)
     when(backend.client).submit_run_request(run_request).thenReturn(job_id)
 
@@ -593,7 +605,7 @@ def test_create_run_request(backend, circuit, create_run_request_default_kwargs,
 
     circuit_transpiled = transpile(circuit, backend, **options)
     circuit_serialized = backend.serialize_circuit(circuit_transpiled)
-    kwargs = create_run_request_default_kwargs | {'qubit_mapping': {'0': 'QB1', '1': 'QB2', '2': 'QB3'}}
+    kwargs = create_run_request_default_kwargs
 
     # verifies that backend.create_run_request() and backend.run() call client.create_run_request() with same arguments
     expect(backend.client, times=2).create_run_request(

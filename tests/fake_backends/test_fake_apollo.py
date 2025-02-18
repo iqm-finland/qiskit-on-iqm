@@ -16,7 +16,8 @@
 """
 from qiskit_aer.noise.noise_model import NoiseModel
 
-from iqm.qiskit_iqm import IQMFakeApollo
+from iqm.qiskit_iqm.fake_backends.fake_apollo import IQMFakeApollo
+from iqm.qiskit_iqm.iqm_backend import IQMTarget
 
 
 def test_iqm_fake_apollo():
@@ -25,9 +26,44 @@ def test_iqm_fake_apollo():
     assert backend.name == 'IQMFakeApolloBackend'
 
 
-def test_iqm_fake_apollo_connectivity(apollo_coupling_map):
+def test_iqm_fake_apollo_connectivity():
     backend = IQMFakeApollo()
-    assert set(backend.coupling_map.get_edges()) == apollo_coupling_map
+    coupling_map = {
+        (0, 1),
+        (0, 3),
+        (1, 4),
+        (2, 3),
+        (7, 2),
+        (3, 4),
+        (8, 3),
+        (4, 5),
+        (9, 4),
+        (5, 6),
+        (10, 5),
+        (11, 6),
+        (7, 8),
+        (7, 12),
+        (8, 9),
+        (8, 13),
+        (9, 10),
+        (9, 14),
+        (10, 11),
+        (15, 10),
+        (16, 11),
+        (12, 13),
+        (13, 14),
+        (17, 13),
+        (15, 14),
+        (18, 14),
+        (15, 16),
+        (15, 19),
+        (17, 18),
+        (18, 19),
+    }
+    assert isinstance(backend.target, IQMTarget)
+    assert set(backend.target.build_coupling_map()) == coupling_map
+    assert set(backend.coupling_map.get_edges()) == coupling_map
+    assert backend.target_with_resonators == backend.target
 
 
 def test_iqm_fake_apollo_noise_model_instantiated():

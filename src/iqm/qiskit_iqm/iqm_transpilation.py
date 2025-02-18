@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Transpilation tool to optimize the decomposition of single-qubit gates tailored to IQM hardware."""
+import warnings
 
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
-from qiskit.circuit.library import RGate
+from qiskit.circuit.library import RGate, UnitaryGate
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition, RemoveBarriers
@@ -26,11 +27,11 @@ from qiskit.transpiler.passmanager import PassManager
 class IQMOptimizeSingleQubitGates(TransformationPass):
     r"""Optimize the decomposition of single-qubit gates for the IQM gate set.
 
-    This optimisation pass expects the circuit to be correctly layouted and translated to the IQM architecture
+    This optimization pass expects the circuit to be correctly layouted and translated to the IQM architecture
     and raises an error otherwise.
-    The optimisation logic follows the steps:
+    The optimization logic follows the steps:
 
-    1. Convert single-qubit gates to :math:`U` gates and combine all neighbouring :math:`U` gates.
+    1. Convert single-qubit gates to :math:`U` gates and combine all neighboring :math:`U` gates.
     2. Convert :math:`U` gates according to
        :math:`U(\theta , \phi , \lambda) = ~ RZ(\phi + \lambda) R(\theta, \pi / 2  - \lambda)`.
     3. Commute `RZ` gates to the end of the circuit using the fact that `RZ` and `CZ` gates commute, and
@@ -41,13 +42,15 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
     Args:
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
+            It is recommended always to set this to true as the final RZ gates do no change the measurement outcomes of
+            the circuit.
         ignore_barriers (bool): Removes the barriers from the circuit before optimization (default = False).
     """
 
-    def __init__(self, drop_final_rz: bool = False, ignore_barriers: bool = False):
+    def __init__(self, drop_final_rz: bool = True, ignore_barriers: bool = False):
         super().__init__()
-        self._basis = ['r', 'cz']
-        self._intermediate_basis = ['u', 'cz']
+        self._basis = ['r', 'cz', 'move']
+        self._intermediate_basis = ['u', 'cz', 'move']
         self._drop_final_rz = drop_final_rz
         self._ignore_barriers = ignore_barriers
 
@@ -97,7 +100,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         return dag
 
     def _validate_ops(self, dag: DAGCircuit):
-        valid_ops = self._basis + ['measure', 'reset', 'barrier']
+        valid_ops = self._basis + ['measure', 'reset', 'delay', 'barrier']
         for node in dag.op_nodes():
             if node.name not in valid_ops:
                 raise ValueError(
@@ -112,12 +115,45 @@ def optimize_single_qubit_gates(
     """Optimize number of single-qubit gates in a transpiled circuit exploiting the IQM specific gate set.
 
     Args:
-        circuit: quantum circuit to optimise
+        circuit: quantum circuit to optimize
         drop_final_rz: Drop terminal RZ gates even if there are no measurements following them (since they do not affect
             the measurement results). Note that this will change the unitary propagator of the circuit.
+            It is recommended always to set this to true as the final RZ gates do no change the measurement outcomes of
+            the circuit.
         ignore_barriers (bool): Removes barriers from the circuit if they exist (default = False) before optimization.
 
     Returns:
-        optimised circuit
+        optimized circuit
     """
-    return PassManager(IQMOptimizeSingleQubitGates(drop_final_rz, ignore_barriers)).run(circuit)
+    warnings.warn(
+        DeprecationWarning(
+            'This function is deprecated and will be removed in a later version of `iqm.qiskit_iqm`. '
+            + 'Single qubit gate optimization is now automatically applied when running `qiskit.transpile()` on any '
+            + 'IQM device. If you want to have more fine grained control over the optimization, please use the '
+            + '`iqm.qiskit_iqm.transpile_to_IQM` function.'
+        )
+    )
+    # Code not updated to use transpile_to_IQM due to circular imports
+    new_circuit = PassManager(IQMOptimizeSingleQubitGates(drop_final_rz, ignore_barriers)).run(circuit)
+    new_circuit._layout = circuit.layout
+    return new_circuit
+
+
+class IQMReplaceGateWithUnitaryPass(TransformationPass):
+    """Transpiler pass that replaces all gates with given name in a circuit with a UnitaryGate.
+
+    Args:
+        gate: The name of the gate to replace.
+        unitary: The unitary matrix to replace the gate with.
+    """
+
+    def __init__(self, gate: str, unitary: list[list[float]]):
+        super().__init__()
+        self.gate = gate
+        self.unitary = unitary
+
+    def run(self, dag):
+        for node in dag.op_nodes():
+            if node.name == self.gate:
+                dag.substitute_node(node, UnitaryGate(self.unitary))
+        return dag
