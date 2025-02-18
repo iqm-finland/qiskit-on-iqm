@@ -14,13 +14,11 @@
 
 """Testing IQMJob.
 """
-import io
 import uuid
 
 import mockito
 from mockito import mock, unstub, verify, when
 import pytest
-import qiskit
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
 from qiskit.result import Counts
