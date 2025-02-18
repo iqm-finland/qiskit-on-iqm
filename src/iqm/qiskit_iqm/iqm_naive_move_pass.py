@@ -34,7 +34,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
     """Naive transpilation pass for resonator moving.
 
     The logic of this pass is deferred to `iqm-client.transpile_insert_moves`.
-    This pass is a wrapper that converts the circuit into the IQMClient Circuit format, 
+    This pass is a wrapper that converts the circuit into the IQMClient Circuit format,
     runs the `transpile_insert_moves` function, and then converts the result back to a Qiskit circuit.
 
     Args:
