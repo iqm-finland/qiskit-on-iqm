@@ -58,7 +58,6 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         self._ignore_barriers = ignore_barriers
 
     def run(self, dag: DAGCircuit) -> DAGCircuit:
-        print("Start")
         self._validate_ops(dag)
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
@@ -73,7 +72,6 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
             if node.name == 'u':
                 qubit_index = dag.find_bit(node.qargs[0])[0]
                 if math.isclose(node.op.params[0], 0, abs_tol=TOLERANCE):
-                    print("removing node")
                     dag.remove_op_node(node)
                 else:
                     dag.substitute_node(
