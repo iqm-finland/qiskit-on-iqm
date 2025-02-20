@@ -379,15 +379,17 @@ def test_serialize_circuit_reset(backend):
     """Test that the reset operation is accepted."""
     qc = QuantumCircuit(2, 2)
     qc.ry(np.pi / 2, 0)
-    qc.ry(np.pi / 2, 0)
+    qc.ry(np.pi / 2, 1)
     qc.cz(0, 1)
     qc.ry(-np.pi / 2, 0)
     qc.reset(0)
     # final measurement
     qc.measure_all()
     circuit_ser = backend.serialize_circuit(qc)
-    assert len(circuit_ser.instructions) == 9
-    check_measure_cc_prx_pair(circuit_ser.instructions[4], circuit_ser.instructions[5], False)
+
+    assert len(circuit_ser.instructions) == 8
+    reset = circuit_ser.instructions[4]
+    assert reset.name == 'reset'
 
 
 def test_run_non_native_circuit(backend, circuit, job_id, run_request):
