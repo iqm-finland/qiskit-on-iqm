@@ -101,9 +101,6 @@ class IQMJob(JobV1):
         # Mapping from creg index (in the circuit) to an array with shape (shots, len(creg)) with the results.
         formatted_results: dict[int, np.ndarray] = {}
         for k, v in measurement_results.items():
-            if k.startswith('_reset'):
-                # HACK ignore keys associated with reset instructions
-                continue
             # measurement keys encode data about the classical registers in the original Qiskit circuit
             mk = MeasurementKey.from_string(k)
             res = np.array(v, dtype=int)

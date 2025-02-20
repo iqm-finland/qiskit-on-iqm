@@ -2,10 +2,15 @@
 Changelog
 =========
 
+Version 17.2
+============
+
+* Use the native ``reset`` operation to implement :class:`qiskit.circuit.Reset`.
+
 Version 17.1
 ============
 
-* Small note about IQM Client's API deprecation warning added to the user guide. 
+* Small note about IQM Client's API deprecation warning added to the user guide.
   `#146 <https://github.com/iqm-finland/qiskit-on-iqm/pull/146>`_
 
 Version 17.0
