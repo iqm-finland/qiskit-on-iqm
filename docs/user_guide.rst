@@ -171,6 +171,14 @@ circuit(s) are sampled:
    `Inspecting circuits before submitting them for execution`_ for inspecting the actual run request sent for
    execution.
 
+.. note::
+
+   IQM Client is transitioning from server-side API ``APIVariant.V1`` to a new ``APIVariant.V2``.
+   You may see a deprecation warning in the terminal. You can ignore it; when ``V2`` becomes the default, 
+   Qiskit-on-IQM will transparently start using it. Alternatively, you can set an environment variable
+   ``IQM_CLIENT_API_VARIANT`` to value ``APIVariant.V2``. The choice of the API version does not affect the use
+   of Qiskit-on-IQM.
+
 You can optionally provide IQMBackend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.
 For example, you can enable heralding measurements using ``circuit_compilation_options`` as follows:
