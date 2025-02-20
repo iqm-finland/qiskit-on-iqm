@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Transpilation tool to optimize the decomposition of single-qubit gates tailored to IQM hardware."""
+import math
 import warnings
 
 import numpy as np
-import math
 from qiskit import QuantumCircuit
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from qiskit.circuit.library import RGate, UnitaryGate
@@ -24,8 +24,8 @@ from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition, RemoveBarriers
 from qiskit.transpiler.passmanager import PassManager
 
-"""The tolerance for equivalence checking against zero."""
-TOLERANCE = 1e-10
+TOLERANCE = 1e-10  # The tolerance for equivalence checking against zero.
+
 
 class IQMOptimizeSingleQubitGates(TransformationPass):
     r"""Optimize the decomposition of single-qubit gates for the IQM gate set.
@@ -58,6 +58,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         self._ignore_barriers = ignore_barriers
 
     def run(self, dag: DAGCircuit) -> DAGCircuit:
+        # pylint: disable=too-many-branches
         self._validate_ops(dag)
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
@@ -99,9 +100,11 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 qb, res = dag.find_bit(node.qargs[0])[0], dag.find_bit(node.qargs[1])[0]
                 rz_angles[res], rz_angles[qb] = rz_angles[qb], rz_angles[res]
             elif node.name == 'cz':
-                pass # rz_angles are commute through CZ gates
+                pass  # rz_angles are commute through CZ gates
             else:
-                raise ValueError(f'Unexpected operation {node.name} in circuit given to IQMOptimizeSingleQubitGates pass')
+                raise ValueError(
+                    f'Unexpected operation {node.name} in circuit given to IQMOptimizeSingleQubitGates pass'
+                )
 
         if not self._drop_final_rz:
             for qubit_index, rz_angle in enumerate(rz_angles):

@@ -14,21 +14,22 @@
 """Testing IQM transpilation.
 """
 
-import numpy as np
 import math
+
+import numpy as np
 import pytest
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
-from qiskit_aer import AerSimulator
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.passes import BasisTranslator
+from qiskit_aer import AerSimulator
 
 from iqm.qiskit_iqm.fake_backends.fake_adonis import IQMFakeAdonis
 from iqm.qiskit_iqm.fake_backends.fake_aphrodite import IQMFakeAphrodite
 from iqm.qiskit_iqm.fake_backends.fake_deneb import IQMFakeDeneb
 from iqm.qiskit_iqm.iqm_circuit_validation import validate_circuit
 from iqm.qiskit_iqm.iqm_move_layout import generate_initial_layout
-from iqm.qiskit_iqm.iqm_transpilation import optimize_single_qubit_gates, IQMOptimizeSingleQubitGates, TOLERANCE
+from iqm.qiskit_iqm.iqm_transpilation import TOLERANCE, IQMOptimizeSingleQubitGates, optimize_single_qubit_gates
 from iqm.qiskit_iqm.move_gate import MoveGate
 from tests.utils import get_mocked_backend
 
@@ -156,6 +157,7 @@ def test_qiskit_native_transpiler(move_architecture, optimization_level):
     transpiled_circuit = transpile(qc, backend=backend, optimization_level=optimization_level)
     validate_circuit(transpiled_circuit, backend)
 
+
 def test_optimize_single_qubit_gates_works_on_invalid_move_sandwich():
     """Tests that the optimization pass works on a circuit with an invalid MOVE sandwich.
     In case the user is wanting to use the higher energy levels but also optimize the SQGs in the circuit."""
@@ -164,13 +166,13 @@ def test_optimize_single_qubit_gates_works_on_invalid_move_sandwich():
     qc.append(MoveGate(), [1, 0])
     qc.x(1)
     qc.append(MoveGate(), [1, 0])
-    basis_circuit =  PassManager([BasisTranslator(SessionEquivalenceLibrary, ['r', 'cz', 'move'])]).run(qc)
-    transpiled_circuit =  PassManager([BasisTranslator(SessionEquivalenceLibrary, ['r', 'cz', 'move']), IQMOptimizeSingleQubitGates(True, True)]).run(basis_circuit)
+    basis_circuit = PassManager([BasisTranslator(SessionEquivalenceLibrary, ['r', 'cz', 'move'])]).run(qc)
+    transpiled_circuit = PassManager(
+        [BasisTranslator(SessionEquivalenceLibrary, ['r', 'cz', 'move']), IQMOptimizeSingleQubitGates(True, True)]
+    ).run(basis_circuit)
     assert transpiled_circuit.count_ops()['r'] == 1
     assert transpiled_circuit.count_ops()['move'] == 2
     for gate in transpiled_circuit:
         if gate.operation.name == 'r':
             assert math.isclose(gate.operation.params[0], np.pi, rel_tol=TOLERANCE)
             assert math.isclose(gate.operation.params[1], 0, abs_tol=TOLERANCE)
-
-
