@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 17.0 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 17.1 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=2405e226"></script>
+    <script src="_static/documentation_options.js?v=9ff9603b"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="Qiskit on IQM" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="17.0" />
+  <meta name="docsearch:version" content="17.1" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.0 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.0 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.1 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.1 documentation - Home"/>
   
   
 </a></div>
@@ -580,6 +580,14 @@ See the <a class="reference internal" href="#transpilation"><span class="std std
 keyword argument of <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>. See also
 <a class="reference internal" href="#inspecting-circuits-before-submitting-them-for-execution">Inspecting circuits before submitting them for execution</a> for inspecting the actual run request sent for
 execution.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>IQM Client is transitioning from server-side API <code class="docutils literal notranslate"><span class="pre">APIVariant.V1</span></code> to a new <code class="docutils literal notranslate"><span class="pre">APIVariant.V2</span></code>.
+You may see a deprecation warning in the terminal. You can ignore it; when <code class="docutils literal notranslate"><span class="pre">V2</span></code> becomes the default,
+Qiskit-on-IQM will transparently start using it. Alternatively, you can set an environment variable
+<code class="docutils literal notranslate"><span class="pre">IQM_CLIENT_API_VARIANT</span></code> to value <code class="docutils literal notranslate"><span class="pre">APIVariant.V2</span></code>. The choice of the API version does not affect the use
+of Qiskit-on-IQM.</p>
 </div>
 <p>You can optionally provide IQMBackend specific options as additional keyword arguments to
 <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>, documented at <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>.
