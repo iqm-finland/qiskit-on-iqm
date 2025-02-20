@@ -15,6 +15,7 @@
 import warnings
 
 import numpy as np
+import math
 from qiskit import QuantumCircuit
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from qiskit.circuit.library import RGate, UnitaryGate
@@ -23,6 +24,8 @@ from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.transpiler.passes import BasisTranslator, Optimize1qGatesDecomposition, RemoveBarriers
 from qiskit.transpiler.passmanager import PassManager
 
+"""The tolerance for equivalence checking against zero."""
+TOLERANCE = 1e-10
 
 class IQMOptimizeSingleQubitGates(TransformationPass):
     r"""Optimize the decomposition of single-qubit gates for the IQM gate set.
@@ -55,6 +58,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         self._ignore_barriers = ignore_barriers
 
     def run(self, dag: DAGCircuit) -> DAGCircuit:
+        print("Start")
         self._validate_ops(dag)
         # accumulated RZ angles for each qubit, from the beginning of the circuit to the current gate
         rz_angles: list[float] = [0] * dag.num_qubits()
@@ -68,9 +72,13 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         for node in dag.topological_op_nodes():
             if node.name == 'u':
                 qubit_index = dag.find_bit(node.qargs[0])[0]
-                dag.substitute_node(
-                    node, RGate(node.op.params[0], np.pi / 2 - node.op.params[2] - rz_angles[qubit_index])
-                )
+                if math.isclose(node.op.params[0], 0, abs_tol=TOLERANCE):
+                    print("removing node")
+                    dag.remove_op_node(node)
+                else:
+                    dag.substitute_node(
+                        node, RGate(node.op.params[0], np.pi / 2 - node.op.params[2] - rz_angles[qubit_index])
+                    )
                 phase = node.op.params[1] + node.op.params[2]
                 dag.global_phase += phase / 2
                 rz_angles[qubit_index] += phase
@@ -89,6 +97,13 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 # been transformed). This choice of local phases is in principle arbitrary, so maybe it
                 # makes no sense to convert it into active z rotations if we hit a barrier?
                 pass
+            elif node.name == 'move':
+                qb, res = dag.find_bit(node.qargs[0])[0], dag.find_bit(node.qargs[1])[0]
+                rz_angles[res], rz_angles[qb] = rz_angles[qb], rz_angles[res]
+            elif node.name == 'cz':
+                pass # rz_angles are commute through CZ gates
+            else:
+                raise ValueError(f'Unexpected operation {node.name} in circuit given to IQMOptimizeSingleQubitGates pass')
 
         if not self._drop_final_rz:
             for qubit_index, rz_angle in enumerate(rz_angles):

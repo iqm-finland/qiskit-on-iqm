@@ -2,6 +2,14 @@
 Changelog
 =========
 
+
+Version 17.1
+============
+
+* Bugfix in :class:`IQMOptimizeSingleQubitGates`` where the angles are not properly computed for circuits 
+  with prx gates on qubits holding a resonator state, i.e. circuits that require running without move gate validation.
+
+
 Version 17.0
 ============
 
