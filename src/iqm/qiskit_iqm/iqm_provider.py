@@ -336,7 +336,7 @@ class IQMProvider:
         """
         client = IQMClient(self.url, client_signature=f'qiskit-iqm {__version__}', **self.user_auth_args)
 
-        if name.startswith('facade_'):
+        if name and name.startswith('facade_'):
             if name == 'facade_adonis':
                 return IQMFacadeBackend(client)
 
