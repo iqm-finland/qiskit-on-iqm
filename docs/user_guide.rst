@@ -173,11 +173,11 @@ circuit(s) are sampled:
 
 .. note::
 
-   IQM Client is transitioning from server-side API ``APIVariant.V1`` to a new ``APIVariant.V2``.
+   IQM Client is transitioning from server-side API ``V1`` to a new ``V2``.
    You may see a deprecation warning in the terminal. You can ignore it; when ``V2`` becomes the default, 
    Qiskit-on-IQM will transparently start using it. Alternatively, you can set an environment variable
-   ``IQM_CLIENT_API_VARIANT`` to value ``APIVariant.V2``. The choice of the API version does not affect the use
-   of Qiskit-on-IQM.
+   ``IQM_CLIENT_API_VARIANT`` to value ``V2`` and change the backend URL (normally, this means removing
+   the ``/cocos`` part from the url). The choice of the API version does not affect the use of Qiskit-on-IQM.
 
 You can optionally provide IQMBackend specific options as additional keyword arguments to
 :meth:`.IQMBackend.run`, documented at :meth:`.IQMBackend.create_run_request`.
