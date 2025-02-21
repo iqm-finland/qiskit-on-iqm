@@ -204,18 +204,21 @@ def test_qiskit_transpile_for_ghz_with_fake_deneb_noise_model():
 
 def test_transpiling_works_but_backend_run_doesnt_with_unsupported_gates():
     backend = IQMFakeDeneb()
-    num_qb = 6
+    num_qb = 1
     qc_list = []
     for _ in range(4):
         qc_list.append(QuantumCircuit(num_qb))
 
-    qc_list[0].h(1)
-    qc_list[1].sdg(2)
-    qc_list[2].t(3)
-    qc_list[3].s(4)
+    qc_list[0].h(0)
+    qc_list[1].sdg(0)
+    qc_list[2].t(0)
+    qc_list[3].s(0)
+
+    for i in range(4):
+        qc_list[i].measure_all()
 
     for qc in qc_list:
-        backend.run(transpile(qc, backend=backend), shots=1000)
+        backend.run(transpile_to_IQM(qc, backend=backend), shots=1000)
 
         with pytest.raises(
             ValueError,
