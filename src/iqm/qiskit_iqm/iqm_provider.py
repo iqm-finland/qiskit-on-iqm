@@ -339,9 +339,7 @@ class IQMProvider:
         if name.startswith('facade_'):
             if name == 'facade_adonis':
                 return IQMFacadeBackend(client)
-            else:
-                warnings.warn(
-                    f'Unknown facade backend: {name}. A regular backend associated with {self.url} will be used.'
-                )
+
+            warnings.warn(f'Unknown facade backend: {name}. A regular backend associated with {self.url} will be used.')
 
         return IQMBackend(client, calibration_set_id=calibration_set_id)
