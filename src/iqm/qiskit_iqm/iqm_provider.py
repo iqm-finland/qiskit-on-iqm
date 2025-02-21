@@ -335,6 +335,11 @@ class IQMProvider:
                 If None, the server default calibration set will be used.
         """
         client = IQMClient(self.url, client_signature=f'qiskit-iqm {__version__}', **self.user_auth_args)
-        if name == 'facade_adonis':
-            return IQMFacadeBackend(client)
+
+        if name and name.startswith('facade_'):
+            if name == 'facade_adonis':
+                return IQMFacadeBackend(client)
+
+            warnings.warn(f'Unknown facade backend: {name}. A regular backend associated with {self.url} will be used.')
+
         return IQMBackend(client, calibration_set_id=calibration_set_id)
