@@ -6,7 +6,7 @@ Version 17.3
 ============
 
 * Use the native ``reset`` operation to implement :class:`qiskit.circuit.Reset`.
- `#148 <https://github.com/iqm-finland/qiskit-on-iqm/pull/148>`_
+  `#148 <https://github.com/iqm-finland/qiskit-on-iqm/pull/148>`_
 
 Version 17.2
 ============
