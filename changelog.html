@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; Qiskit on IQM 17.2 documentation</title>
+    <title>Changelog &#8212; Qiskit on IQM 17.3 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=888de05d"></script>
+    <script src="_static/documentation_options.js?v=33716240"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -51,7 +51,7 @@
     <link rel="prev" title="Contributors" href="authors.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="17.2" />
+  <meta name="docsearch:version" content="17.3" />
   </head>
   
   
@@ -130,8 +130,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.2 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.2 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.3 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.3 documentation - Home"/>
   
   
 </a></div>
@@ -386,6 +386,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-3">Version 17.3</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-2">Version 17.2</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-1">Version 17.1</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-0">Version 17.0</a></li>
@@ -496,6 +497,13 @@
                   
   <section id="changelog">
 <span id="changes"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
+<section id="version-17-3">
+<h2>Version 17.3<a class="headerlink" href="#version-17-3" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Use the native <code class="docutils literal notranslate"><span class="pre">reset</span></code> operation to implement <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/circuit#qiskit.circuit.Reset" title="(in Qiskit v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.circuit.Reset</span></code></a>.
+<a class="reference external" href="https://github.com/iqm-finland/qiskit-on-iqm/pull/148">#148</a></p></li>
+</ul>
+</section>
 <section id="version-17-2">
 <h2>Version 17.2<a class="headerlink" href="#version-17-2" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -553,7 +561,7 @@ plugins or <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_naive_move
 transpiler as documented above.</p></li>
 <li><p>In <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, and as a result in <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>, the
 <code class="docutils literal notranslate"><span class="pre">max_circuit_duration_over_t2</span></code> and <code class="docutils literal notranslate"><span class="pre">heralding_mode</span></code> options have been deprecated in favor of
-using the <code class="xref py py-class docutils literal notranslate"><span class="pre">CircuitCompilationOptions</span></code> class from <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.html#module-iqm.iqm_client" title="(in IQM client v22.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">iqm.iqm_client</span></code></a>.</p></li>
+using the <code class="xref py py-class docutils literal notranslate"><span class="pre">CircuitCompilationOptions</span></code> class from <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.html#module-iqm.iqm_client" title="(in IQM client v22.3)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">iqm.iqm_client</span></code></a>.</p></li>
 <li><p>The <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="iqm.qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a> no longer uses Qiskit’s <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute to give run options in
 favor of using the arguments of the <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> method directly.</p></li>
 </ul>
@@ -1210,6 +1218,7 @@ favor of using the arguments of the <a class="reference internal" href="api/iqm.
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-3">Version 17.3</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-2">Version 17.2</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-1">Version 17.1</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-17-0">Version 17.0</a></li>
