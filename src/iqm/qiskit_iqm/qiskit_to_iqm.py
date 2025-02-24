@@ -171,34 +171,7 @@ def serialize_instructions(
             native_inst = Instruction(name='measure', qubits=qubit_names, args={'key': mk})
             clbit_to_measure[clbit] = native_inst
         elif instruction.name == 'reset':
-            # implemented using a measure instruction to measure the qubits, and
-            # one cc_prx per qubit to conditionally flip it to |0>
-            feedback_key = '_reset'
-            instructions.append(
-                Instruction(
-                    name='measure',
-                    qubits=qubit_names,
-                    args={
-                        # HACK to get something unique, remove when key can be omitted
-                        'key': f'_reset_{len(instructions)}',
-                        'feedback_key': feedback_key,
-                    },
-                )
-            )
-            for q in qubit_names:
-                instructions.append(
-                    Instruction(
-                        name='cc_prx',
-                        qubits=[q],
-                        args={
-                            'angle_t': 0.5,
-                            'phase_t': 0.0,
-                            'feedback_key': feedback_key,
-                            'feedback_qubit': q,
-                        },
-                    )
-                )
-            continue
+            native_inst = Instruction(name='reset', qubits=qubit_names, args={})
         elif instruction.name == 'id':
             continue
         elif instruction.name in allowed_nonnative_gates:
@@ -211,6 +184,7 @@ def serialize_instructions(
             )
 
         # classically controlled gates (using the c_if method)
+        # TODO we do not check anywhere if cc_prx is available for this locus!
         condition = instruction.condition
         if condition is not None:
             if native_inst.name != 'prx':
@@ -262,21 +236,31 @@ def deserialize_instructions(
     Returns:
         Qiskit circuit represented by the given instructions.
     """
-    cl_bits: dict[str, int] = {}
+    # maps measurement key to the corresponding clbit
+    mk_to_clbit: dict[str, Clbit] = {}
+    # maps feedback key to the corresponding clbit
+    fk_to_clbit: dict[str, Clbit] = {}
+
+    # maps creg index to creg in the circuit
     cl_regs: dict[int, ClassicalRegister] = {}
+
+    def register_key(key: str, mapping: dict[str, Clbit]) -> None:
+        """Update the classical registers and the given key-to-clbit mapping with the given key."""
+        mk = MeasurementKey.from_string(key)
+        # find/create the corresponding creg
+        creg = cl_regs.setdefault(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
+        # add the key to the given mapping
+        if mk.clbit_idx < len(creg):
+            mapping[str(mk)] = creg[mk.clbit_idx]
+        else:
+            raise IndexError(f'{mk}: Clbit index {mk.clbit_idx} is out of range for {creg}.')
+
     for instr in instructions:
         if instr.name == 'measure':
-            if instr.args['key'].startswith('_reset'):  # HACK FIXME add the real reset instruction to iqm-client
-                continue
-            mk = MeasurementKey.from_string(instr.args['key'])
-            cl_regs[mk.creg_idx] = cl_regs.get(mk.creg_idx, ClassicalRegister(size=mk.creg_len, name=mk.creg_name))
-            if mk.clbit_idx < len(cl_regs[mk.creg_idx]):
-                cl_bits[str(mk)] = cl_regs[mk.creg_idx][mk.clbit_idx]
-            else:
-                raise IndexError(
-                    f'Index {mk.clbit_idx} of classical bit is out of range for classical register with '
-                    f'length {len(cl_regs[mk.creg_idx])}.'
-                )
+            register_key(instr.args['key'], mk_to_clbit)
+            if (key := instr.args.get('feedback_key')) is not None:
+                register_key(key, fk_to_clbit)
+
     # Add resonators
     n_qubits = len(layout.get_physical_bits())
     n_resonators = len(qubit_name_to_index) - n_qubits
@@ -292,33 +276,32 @@ def deserialize_instructions(
         *(cl_regs.get(i, ClassicalRegister(0)) for i in range(max(cl_regs) + 1 if cl_regs else 0)),
     )
     for instr in instructions:
-        loci = [index_to_qiskit_qubit[qubit_name_to_index[q]] for q in instr.qubits]
+        locus = [index_to_qiskit_qubit[qubit_name_to_index[q]] for q in instr.qubits]
         if instr.name == 'prx':
             angle_t = instr.args['angle_t'] * 2 * np.pi
             phase_t = instr.args['phase_t'] * 2 * np.pi
-            circuit.r(angle_t, phase_t, loci[0])
+            circuit.r(angle_t, phase_t, locus[0])
         elif instr.name == 'cz':
-            circuit.cz(loci[0], loci[1])
+            circuit.cz(*locus)
         elif instr.name == 'move':
-            circuit.append(MoveGate(), loci)
+            circuit.append(MoveGate(), locus)
         elif instr.name == 'measure':
-            if instr.args['key'].startswith('_reset'):  # HACK FIXME add the real reset instruction to iqm-client
-                continue
             mk = MeasurementKey.from_string(instr.args['key'])
-            circuit.measure(loci[0], cl_bits[str(mk)])
+            circuit.measure(locus[0], mk_to_clbit[str(mk)])
         elif instr.name == 'barrier':
-            circuit.barrier(*loci)
+            circuit.barrier(*locus)
         elif instr.name == 'delay':
             duration = instr.args['duration']
-            circuit.delay(duration, loci, unit='s')  # native delay instructions always use seconds
+            circuit.delay(duration, locus, unit='s')  # native delay instructions always use seconds
         elif instr.name == 'cc_prx':
-            if instr.args['feedback_key'] == '_reset':  # HACK FIXME add the real reset instruction to iqm-client
-                circuit.reset(loci[0])
-                continue
             angle_t = instr.args['angle_t'] * 2 * np.pi
             phase_t = instr.args['phase_t'] * 2 * np.pi
             feedback_key = instr.args['feedback_key']
-            circuit.r(angle_t, phase_t, loci[0]).c_if(cl_bits[feedback_key], 1)
+            # NOTE: 'feedback_qubit' is not needed, because in Qiskit you only have single-qubit measurements.
+            circuit.r(angle_t, phase_t, locus[0]).c_if(fk_to_clbit[feedback_key], 1)
+        elif instr.name == 'reset':
+            for qubit in locus:
+                circuit.reset(qubit)
         else:
             raise ValueError(f'Unsupported instruction {instr.name} in the circuit.')
     return circuit
