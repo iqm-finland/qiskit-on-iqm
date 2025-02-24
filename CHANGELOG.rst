@@ -2,10 +2,18 @@
 Changelog
 =========
 
-Version 17.2
+Version 17.3
 ============
 
 * Use the native ``reset`` operation to implement :class:`qiskit.circuit.Reset`.
+ `#148 <https://github.com/iqm-finland/qiskit-on-iqm/pull/148>`_
+
+Version 17.2
+============
+
+* Bugfix in :class:`IQMOptimizeSingleQubitGates`` where the angles are not properly computed for circuits
+  with prx gates on qubits holding a resonator state, i.e. circuits that require running without move gate validation.
+  `#147 <https://github.com/iqm-finland/qiskit-on-iqm/pull/147>`_
 
 Version 17.1
 ============
