@@ -192,7 +192,7 @@ def transpile_to_IQM(  # pylint: disable=too-many-arguments
         optimize_single_qubits: Whether to optimize single qubit gates away.
         ignore_barriers: Whether to ignore barriers when optimizing single qubit gates away.
         remove_final_rzs: Whether to remove the final z rotations. It is recommended always to set this to true as
-        the final RZ gates do no change the measurement outcomes of the circuit.
+            the final RZ gates do no change the measurement outcomes of the circuit.
         existing_moves_handling: How to handle existing MOVE gates in the circuit, required if the circuit contains
             MOVE gates.
         restrict_to_qubits: Restrict the transpilation to only use these specific physical qubits. Note that you will
