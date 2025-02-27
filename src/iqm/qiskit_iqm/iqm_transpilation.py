@@ -88,7 +88,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 # angles results in fewest changes to the circuit.
                 for qubit in node.qargs:
                     rz_angles[dag.find_bit(qubit)[0]] = 0
-            elif node.name == 'barrier':
+            elif node.name in {'barrier', 'delay'}:
                 # TODO barriers are meant to restrict circuit optimization, so strictly speaking
                 # we should output any accumulated ``rz_angles`` here as explicit z rotations (like
                 # the final rz:s). However, ``rz_angles`` simply represents a choice of phases for the
@@ -103,7 +103,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 pass  # rz_angles are commute through CZ gates
             else:
                 raise ValueError(
-                    f'Unexpected operation {node.name} in circuit given to IQMOptimizeSingleQubitGates pass'
+                    f"Unexpected operation '{node.name}' in circuit given to IQMOptimizeSingleQubitGates pass"
                 )
 
         if not self._drop_final_rz:
