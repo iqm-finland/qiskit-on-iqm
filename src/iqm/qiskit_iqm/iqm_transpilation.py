@@ -71,6 +71,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
         dag = Optimize1qGatesDecomposition(self._intermediate_basis).run(dag)
         for node in dag.topological_op_nodes():
             if node.name == 'u':
+                # convert into PRX + RZ
                 qubit_index = dag.find_bit(node.qargs[0])[0]
                 if math.isclose(node.op.params[0], 0, abs_tol=TOLERANCE):
                     dag.remove_op_node(node)
@@ -97,13 +98,14 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
                 # makes no sense to convert it into active z rotations if we hit a barrier?
                 pass
             elif node.name == 'move':
+                # acts like iSWAP with RZ, moving it to the other component
                 qb, res = dag.find_bit(node.qargs[0])[0], dag.find_bit(node.qargs[1])[0]
                 rz_angles[res], rz_angles[qb] = rz_angles[qb], rz_angles[res]
-            elif node.name == 'cz':
-                pass  # rz_angles are commute through CZ gates
+            elif node.name in {'cz', 'delay'}:
+                pass  # commutes with RZ gates
             else:
                 raise ValueError(
-                    f'Unexpected operation {node.name} in circuit given to IQMOptimizeSingleQubitGates pass'
+                    f"Unexpected operation '{node.name}' in circuit given to IQMOptimizeSingleQubitGates pass"
                 )
 
         if not self._drop_final_rz:

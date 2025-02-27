@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 17.4
+============
+
+* Bugfix: The ``delay`` operation is now accepted by the standard transpiler.
+  `#151 <https://github.com/iqm-finland/qiskit-on-iqm/pull/151>`_
+
 Version 17.3
 ============
 
