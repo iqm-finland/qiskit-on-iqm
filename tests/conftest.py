@@ -45,7 +45,7 @@ def linear_3q_architecture_static():
     )
 
 
-def _1q_loci(qubits: list[str]) -> tuple[tuple[str]]:
+def _1q_loci(qubits: list[str]) -> tuple[tuple[str, ...], ...]:
     """One-qubit loci for the given qubits."""
     return tuple((q,) for q in qubits)
 
