@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User guide &#8212; Qiskit on IQM 17.3 documentation</title>
+    <title>User guide &#8212; Qiskit on IQM 17.4 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=33716240"></script>
+    <script src="_static/documentation_options.js?v=a664e091"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
@@ -54,7 +54,7 @@
     <link rel="prev" title="Qiskit on IQM" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="17.3" />
+  <meta name="docsearch:version" content="17.4" />
   </head>
   
   
@@ -133,8 +133,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.3 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.3 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Qiskit on IQM 17.4 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Qiskit on IQM 17.4 documentation - Home"/>
   
   
 </a></div>
@@ -509,7 +509,7 @@ Python Package Index (PyPI):</p>
 <ol class="arabic simple">
 <li><p>Set the <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">IQM_TOKEN</span></code> environment variable to the API token obtained from the Resonance dashboard.</p></li>
 <li><p>Pass the <code class="docutils literal notranslate"><span class="pre">token</span></code> parameter to <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>. This will be forwarded to
-<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v22.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMClient</span></code></a>. For an example, see the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py">resonance_example.py file</a></p></li>
+<a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.iqm_client.IQMClient.html#iqm.iqm_client.iqm_client.IQMClient" title="(in IQM client v22.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMClient</span></code></a>. For an example, see the <a class="reference external" href="https://raw.githubusercontent.com/iqm-finland/qiskit-on-iqm/main/src/iqm/qiskit_iqm/examples/resonance_example.py">resonance_example.py file</a></p></li>
 </ol>
 </section>
 <section id="on-premises-devices">
@@ -554,7 +554,7 @@ meas: 3/═══════════════════╩══╩═
 </div>
 <p>To run this circuit on an IQM quantum computer you need to initialize an <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMProvider.html#iqm.qiskit_iqm.iqm_provider.IQMProvider" title="iqm.qiskit_iqm.iqm_provider.IQMProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMProvider</span></code></a>
 instance with the IQM server URL, use it to retrieve an <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend" title="iqm.qiskit_iqm.iqm_provider.IQMBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">IQMBackend</span></code></a> instance representing
-the quantum computer, and use Qiskit’s <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/compiler#qiskit.compiler.transpile" title="(in Qiskit v1.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code></a> function
+the quantum computer, and use Qiskit’s <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/compiler#qiskit.compiler.transpile" title="(in Qiskit v1.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code></a> function
 followed by <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a> as usual.  <code class="docutils literal notranslate"><span class="pre">shots</span></code> denotes the number of times the quantum
 circuit(s) are sampled:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">transpile</span>
@@ -612,13 +612,13 @@ You will need to create a new backend if you want to use the new default calibra
 <section id="inspecting-the-results">
 <h3>Inspecting the results<a class="headerlink" href="#inspecting-the-results" title="Link to this heading">#</a></h3>
 <p>The results of a job that was executed on the IQM quantum computer, represented as a
-<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.result.Result" title="(in Qiskit v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> instance, can be inspected using the usual Qiskit methods:</p>
+<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.result.Result" title="(in Qiskit v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code></a> instance, can be inspected using the usual Qiskit methods:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_counts</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_memory</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>The result comes with some metadata, such as the <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v22.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> that
+<p>The result comes with some metadata, such as the <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v22.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> that
 produced it in <code class="docutils literal notranslate"><span class="pre">result.request</span></code>. The request contains e.g. the qubit mapping and the ID of the
 calibration set that were used in the execution:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">qubit_mapping</span><span class="p">)</span>
@@ -693,7 +693,7 @@ support currently has several limitations:</p>
 apply the gate if the bit is 1, and apply an identity gate if the bit is 0.</p></li>
 <li><p>The availability of the controlled gates depends on the instrumentation of the quantum computer.</p></li>
 </ul>
-<p>The classical control can be applied on a circuit instruction using <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.Instruction#c_if" title="(in Qiskit v1.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">c_if()</span></code></a>:</p>
+<p>The classical control can be applied on a circuit instruction using <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.Instruction#c_if" title="(in Qiskit v1.4)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">c_if()</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
 <span class="n">qr</span> <span class="o">=</span> <span class="n">QuantumRegister</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;q&#39;</span><span class="p">)</span>
@@ -733,7 +733,7 @@ in a 1-bit classical register, <code class="docutils literal notranslate"><span 
 </section>
 <section id="resetting-qubits">
 <h3>Resetting qubits<a class="headerlink" href="#resetting-qubits" title="Link to this heading">#</a></h3>
-<p>The <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/circuit#qiskit.circuit.Reset" title="(in Qiskit v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.circuit.Reset</span></code></a> operation can be used to reset qubits to the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state.
+<p>The <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/circuit#qiskit.circuit.Reset" title="(in Qiskit v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.circuit.Reset</span></code></a> operation can be used to reset qubits to the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state.
 It is currently implemented as a (projective) measurement followed by a classically controlled X gate conditioned
 on the result, and is only available if the quantum computer supports classically controlled gates.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
@@ -761,7 +761,7 @@ Executing the circuit should result in (mostly) zeros being measured.</p>
 <h3>Inspecting circuits before submitting them for execution<a class="headerlink" href="#inspecting-circuits-before-submitting-them-for-execution" title="Link to this heading">#</a></h3>
 <p>It is possible to inspect the final circuits that would be submitted for execution before actually submitting them,
 which can be useful for debugging purposes. This can be done using <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.create_run_request"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.create_run_request()</span></code></a>, which returns
-a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v22.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
+a <a class="reference external" href="https://iqm-finland.github.io/iqm-client/api/iqm.iqm_client.models.RunRequest.html#iqm.iqm_client.models.RunRequest" title="(in IQM client v22.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunRequest</span></code></a> containing the circuits and other data. The method accepts the same
 parameters as <a class="reference internal" href="api/iqm.qiskit_iqm.iqm_provider.IQMBackend.html#iqm.qiskit_iqm.iqm_provider.IQMBackend.run" title="iqm.qiskit_iqm.iqm_provider.IQMBackend.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IQMBackend.run()</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># inspect the run_request without submitting it for execution</span>
 <span class="n">run_request</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_run_request</span><span class="p">(</span><span class="n">transpiled_circuit</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -814,10 +814,10 @@ as needed.</p></li>
 <p>Alternatively, you can use the <code class="xref py py-func docutils literal notranslate"><span class="pre">transpile_to_IQM()</span></code> function for more precise control over the
 transpilation process as documented below.</p>
 <p>It is also possible to use one of our other pre-defined transpiler plugins as an argument to
-<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/compiler#qiskit.compiler.transpile" title="(in Qiskit v1.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code></a>, for example
+<a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/compiler#qiskit.compiler.transpile" title="(in Qiskit v1.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code></a>, for example
 <code class="docutils literal notranslate"><span class="pre">transpile(circuit,</span> <span class="pre">backend=backend,</span> <span class="pre">scheduling_method=&quot;only_move_routing_keep&quot;)</span></code>.
 Additionally, you can use any of our transpiler passes
-to define your own <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.transpiler.PassManager" title="(in Qiskit v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.PassManager</span></code></a> if you want to assemble custom
+to define your own <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/qiskit.transpiler.PassManager" title="(in Qiskit v1.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qiskit.transpiler.PassManager</span></code></a> if you want to assemble custom
 transpilation procedures manually.</p>
 </section>
 <section id="computational-resonators">
@@ -931,7 +931,7 @@ mapping that matches the restriction:</p>
 <h3>Using custom IQM transpiler plugins<a class="headerlink" href="#using-custom-iqm-transpiler-plugins" title="Link to this heading">#</a></h3>
 <p>For the native integration of the custom IQM transpiler passes with the Qiskit transpiler, we
 have implemented several scheduling plugins for the Qiskit transpiler. These plugins can be used as
-the <code class="docutils literal notranslate"><span class="pre">scheduling_method</span></code> string argument for <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/compiler#qiskit.compiler.transpile" title="(in Qiskit v1.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code></a>.
+the <code class="docutils literal notranslate"><span class="pre">scheduling_method</span></code> string argument for <a class="reference external" href="https://docs.quantum.ibm.com/api/qiskit/compiler#qiskit.compiler.transpile" title="(in Qiskit v1.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">transpile()</span></code></a>.
 The mapping between these strings and the classes that implement the plugins is defined in the
 <code class="file docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file of this package.
 The documentation of these plugins in found in the respective plugin classes.</p>
