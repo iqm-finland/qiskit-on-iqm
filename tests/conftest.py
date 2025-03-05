@@ -45,15 +45,21 @@ def linear_3q_architecture_static():
     )
 
 
+def _1q_loci(qubits: list[str]) -> tuple[tuple[str, ...], ...]:
+    """One-qubit loci for the given qubits."""
+    return tuple((q,) for q in qubits)
+
+
 @pytest.fixture
 def linear_3q_architecture():
+    qubits = ['QB1', 'QB2', 'QB3']
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('59478539-dcef-4b2e-80c8-122d7ec3fc89'),
-        qubits=['QB1', 'QB2', 'QB3'],
+        qubits=qubits,
         computational_resonators=[],
         gates={
             'prx': GateInfo(
-                implementations={'drag_gaussian': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',)))},
+                implementations={'drag_gaussian': GateImplementationInfo(loci=_1q_loci(qubits))},
                 default_implementation='drag_gaussian',
                 override_default_implementation={},
             ),
@@ -63,7 +69,7 @@ def linear_3q_architecture():
                 override_default_implementation={},
             ),
             'measure': GateInfo(
-                implementations={'constant': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',)))},
+                implementations={'constant': GateImplementationInfo(loci=_1q_loci(qubits))},
                 default_implementation='constant',
                 override_default_implementation={},
             ),
@@ -73,22 +79,19 @@ def linear_3q_architecture():
 
 @pytest.fixture
 def adonis_architecture():
+    qubits = ['QB1', 'QB2', 'QB3', 'QB4', 'QB5']
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('59478539-dcef-4b2e-80c8-122d7ec3fc89'),
-        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5'],
+        qubits=qubits,
         computational_resonators=[],
         gates={
             'prx': GateInfo(
-                implementations={
-                    'drag_gaussian': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',)))
-                },
+                implementations={'drag_gaussian': GateImplementationInfo(loci=_1q_loci(qubits))},
                 default_implementation='drag_gaussian',
                 override_default_implementation={},
             ),
             'cc_prx': GateInfo(
-                implementations={
-                    'prx_composite': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',)))
-                },
+                implementations={'prx_composite': GateImplementationInfo(loci=_1q_loci(qubits))},
                 default_implementation='prx_composite',
                 override_default_implementation={},
             ),
@@ -102,9 +105,7 @@ def adonis_architecture():
                 override_default_implementation={},
             ),
             'measure': GateInfo(
-                implementations={
-                    'constant': GateImplementationInfo(loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',)))
-                },
+                implementations={'constant': GateImplementationInfo(loci=_1q_loci(qubits))},
                 default_implementation='constant',
                 override_default_implementation={},
             ),
@@ -114,18 +115,22 @@ def adonis_architecture():
 
 @pytest.fixture
 def move_architecture():
+    qubits = ['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6']
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
-        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6'],
+        qubits=qubits,
         computational_resonators=['CR1'],
         gates={
             'prx': GateInfo(
                 implementations={
-                    'drag_gaussian': GateImplementationInfo(
-                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
-                    ),
+                    'drag_gaussian': GateImplementationInfo(loci=_1q_loci(qubits)),
                 },
                 default_implementation='drag_gaussian',
+                override_default_implementation={},
+            ),
+            'cc_prx': GateInfo(
+                implementations={'prx_composite': GateImplementationInfo(loci=_1q_loci(qubits))},
+                default_implementation='prx_composite',
                 override_default_implementation={},
             ),
             'cz': GateInfo(
@@ -152,9 +157,7 @@ def move_architecture():
             ),
             'measure': GateInfo(
                 implementations={
-                    'constant': GateImplementationInfo(
-                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
-                    ),
+                    'constant': GateImplementationInfo(loci=_1q_loci(qubits)),
                 },
                 default_implementation='constant',
                 override_default_implementation={},
@@ -241,16 +244,15 @@ def hypothetical_fake_architecture():
 
 @pytest.fixture
 def ndonis_architecture():
+    qubits = ['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6']
     return DynamicQuantumArchitecture(
         calibration_set_id=UUID('26c5e70f-bea0-43af-bd37-6212ec7d04cb'),
-        qubits=['QB1', 'QB2', 'QB3', 'QB4', 'QB5', 'QB6'],
+        qubits=qubits,
         computational_resonators=['CR1'],
         gates={
             'prx': GateInfo(
                 implementations={
-                    'drag_gaussian': GateImplementationInfo(
-                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
-                    ),
+                    'drag_gaussian': GateImplementationInfo(loci=_1q_loci(qubits)),
                 },
                 default_implementation='drag_gaussian',
                 override_default_implementation={},
@@ -289,9 +291,7 @@ def ndonis_architecture():
             ),
             'measure': GateInfo(
                 implementations={
-                    'constant': GateImplementationInfo(
-                        loci=(('QB1',), ('QB2',), ('QB3',), ('QB4',), ('QB5',), ('QB6',))
-                    ),
+                    'constant': GateImplementationInfo(loci=_1q_loci(qubits)),
                 },
                 default_implementation='constant',
                 override_default_implementation={},
