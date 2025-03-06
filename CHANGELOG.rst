@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 17.5
+============
+
+* Provider tolerates unrecognized job statuses from the server to ensure forward compatibility.
+  `#155 <https://github.com/iqm-finland/qiskit-on-iqm/pull/155>`_
+
 Version 17.4
 ============
 
