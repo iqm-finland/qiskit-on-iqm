@@ -202,17 +202,16 @@ class IQMJob(JobV1):
             return JobStatus.DONE
 
         result = self._client.get_run_status(uuid.UUID(self._job_id))
-        if result.status in [Status.PENDING_COMPILATION, Status.RECEIVED, Status.PROCESSING, Status.ACCEPTED]:
-            return JobStatus.QUEUED
         if result.status == Status.PENDING_EXECUTION:
             return JobStatus.RUNNING
         if result.status == Status.READY:
             return JobStatus.DONE
-        if result.status == Status.FAILED:
+        if result.status in {Status.FAILED, Status.DELETION_FAILED}:
             return JobStatus.ERROR
-        if result.status == Status.ABORTED:
+        if result.status in {Status.ABORTED, Status.DELETED}:
             return JobStatus.CANCELLED
-        raise RuntimeError(f"Unknown run status '{result.status}'")
+        # For everything else, we assume that it's in progress one way or another
+        return JobStatus.QUEUED
 
     def queue_position(self, refresh: bool = False) -> Optional[int]:
         """Return the position of the job in the server queue.
