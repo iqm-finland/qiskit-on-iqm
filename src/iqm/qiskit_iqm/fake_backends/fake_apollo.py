@@ -188,8 +188,8 @@ def IQMFakeApollo() -> IQMFakeBackend:
                 ("QB19", "QB20"): 0.00578,
             }
         },
-        single_qubit_gate_durations={"prx": 42.0},
-        two_qubit_gate_durations={"cz": 130.0},
+        single_qubit_gate_durations={"prx": 20.0},
+        two_qubit_gate_durations={"cz": 40.0},
         readout_errors={
             "QB1": {"0": 0.0255, "1": 0.0260},
             "QB2": {"0": 0.0245, "1": 0.0240},
