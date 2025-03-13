@@ -125,7 +125,7 @@ def test_facade_backend_raises_error_on_remote_execution_fail(adonis_architectur
     when(IQMClient).create_run_request(...).thenReturn(run_request)
     when(IQMClient).submit_run_request(...).thenReturn(uuid.uuid4())
     when(IQMClient).get_run(ANY(uuid.UUID)).thenReturn(RunResult.from_dict(result))
-    when(IQMClient).get_run_status(ANY(uuid.UUID)).thenReturn(RunStatus.from_dict(result_status))
+    when(IQMClient).get_run_status(ANY(uuid.UUID)).thenReturn(RunStatus(**result_status))
     when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
         get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
     )
