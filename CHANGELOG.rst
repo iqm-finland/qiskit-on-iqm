@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 17.6
+============
+
+* Added Garnet backend so that it can be used in simulations. 
+
 Version 17.5
 ============
 
