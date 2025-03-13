@@ -6,7 +6,7 @@ from itertools import product
 import numpy as np
 import pytest
 import qiskit
-from qiskit.circuit import ClassicalRegister, QuantumCircuit, QuantumRegister
+from qiskit.circuit import ClassicalRegister, ParameterVector, QuantumCircuit, QuantumRegister
 from qiskit.circuit.library import QuantumVolume
 from qiskit.compiler import transpile
 import qiskit.passmanager
@@ -401,3 +401,29 @@ def test_transpile_to_IQM_flags(
             existing_moves_handling=existing_moves_handling,
         )
         assert isinstance(circuit, QuantumCircuit)
+
+
+@pytest.mark.parametrize(
+    ("backend"),
+    list(
+        product(
+            ["move_architecture", "adonis_architecture", "hypothetical_fake_architecture"],
+        )
+    ),
+    indirect=["backend"],
+)
+def test_symbolic_gates(backend):
+    """Test that symbolic gates are correctly transpiled."""
+    p_vec = ParameterVector("p", length=2)
+
+    qc = QuantumCircuit(2)
+    qc.rz(p_vec[0], 0)
+    qc.rz(p_vec[1], 1)
+    qc.cz(0, 1)
+    qc.measure_all()
+
+    # Transpiling should not error out
+    qc_t1 = transpile_to_IQM(qc, backend=backend)
+    validate_circuit(qc_t1, backend)
+    qc_t2 = transpile(qc, backend=backend)
+    validate_circuit(qc_t2, backend)
