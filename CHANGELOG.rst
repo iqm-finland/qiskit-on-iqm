@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 17.6
+============
+
+* Fix unit tests compatibility with latest ``iqm-client``.
+  `#157 <https://github.com/iqm-finland/qiskit-on-iqm/pull/157>`_
+
 Version 17.5
 ============
 
