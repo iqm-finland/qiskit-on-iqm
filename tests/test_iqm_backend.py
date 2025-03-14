@@ -112,7 +112,7 @@ def test_set_max_circuits(backend):
 
 def test_serialize_circuit_raises_error_for_non_transpiled_circuit(circuit, linear_3q_architecture):
     when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
-        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+        get_mock_ok_response({'iqm-client': {'name': 'IQM Client', 'min': '0.0', 'max': '999.0'}})
     )
     client = IQMClient(url='http://some_url')
     client._token_manager = None  # Do not use authentication
