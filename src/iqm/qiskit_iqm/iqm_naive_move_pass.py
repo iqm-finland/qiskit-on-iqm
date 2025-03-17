@@ -15,6 +15,7 @@
 from typing import Optional, Union
 import warnings
 
+import numpy as np
 from pydantic_core import ValidationError
 from qiskit import QuantumCircuit, transpile
 from qiskit.converters import circuit_to_dag, dag_to_circuit
@@ -66,6 +67,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         Raises:
             TranspilerError: The layout is not compatible with the DAG, or if the input gate set is incorrect.
         """
+        # pylint: disable=too-many-branches
         circuit = dag_to_circuit(dag)
         if len(circuit) == 0:
             return dag  # Empty circuit, no need to transpile.
@@ -79,6 +81,20 @@ class IQMNaiveResonatorMoving(TransformationPass):
                 layout.add_register(qreg)
             for i, qubit in enumerate(dag.qubits):
                 layout.add(qubit, i)
+
+        # Replace symbolic parameters with indices and store the index to symbol mapping.
+        symbolic_gates = {}
+        symbolic_index = 0.0
+        for circuit_instruction in circuit.data:
+            instruction = circuit_instruction.operation
+            # This only works for prx gates because that has two parameters
+            # We use one to mark that it is a symbolic gate and the other to store the index.
+            if instruction.name == "r" and not all(isinstance(param, float) for param in instruction.params):
+                symbolic_gates[symbolic_index] = instruction.params
+                instruction.params = [np.inf, symbolic_index]
+                symbolic_index += 1.0
+
+        # Convert the circuit to the IQMClientCircuit format and run the transpiler.
         iqm_circuit = IQMClientCircuit(
             name="Transpiling Circuit",
             instructions=tuple(serialize_instructions(circuit, self.idx_to_component)),
@@ -100,6 +116,13 @@ class IQMNaiveResonatorMoving(TransformationPass):
                 routed_circuit = QuantumCircuit(*layout.get_registers(), *(arg for arg in circ_args if arg > 0))
             else:
                 raise e
+
+        # Reinsert the symbolic parameters.
+        for circuit_instruction in routed_circuit.data:
+            instruction = circuit_instruction[0]
+            if instruction.name == "r" and instruction.params[0] == np.inf:
+                instruction.params = symbolic_gates[instruction.params[1]]
+
         # Create the new DAG and make sure that the qubits are properly ordered.
         ordered_qubits = [layout.get_physical_bits()[i] for i in range(len(layout.get_physical_bits()))]
         new_dag = circuit_to_dag(routed_circuit, qubit_order=ordered_qubits, clbit_order=routed_circuit.clbits)

@@ -73,7 +73,7 @@ class IQMOptimizeSingleQubitGates(TransformationPass):
             if node.name == 'u':
                 # convert into PRX + RZ
                 qubit_index = dag.find_bit(node.qargs[0])[0]
-                if math.isclose(node.op.params[0], 0, abs_tol=TOLERANCE):
+                if isinstance(node.op.params[0], float) and math.isclose(node.op.params[0], 0, abs_tol=TOLERANCE):
                     dag.remove_op_node(node)
                 else:
                     dag.substitute_node(

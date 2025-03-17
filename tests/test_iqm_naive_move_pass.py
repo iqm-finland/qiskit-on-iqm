@@ -404,15 +404,16 @@ def test_transpile_to_IQM_flags(
 
 
 @pytest.mark.parametrize(
-    ("backend"),
+    ("backend", "transpile_method"),
     list(
         product(
             ["move_architecture", "adonis_architecture", "hypothetical_fake_architecture"],
+            [transpile_to_IQM, transpile],
         )
     ),
     indirect=["backend"],
 )
-def test_symbolic_gates(backend):
+def test_symbolic_gates(backend, transpile_method):
     """Test that symbolic gates are correctly transpiled."""
     p_vec = ParameterVector("p", length=2)
 
@@ -423,7 +424,10 @@ def test_symbolic_gates(backend):
     qc.measure_all()
 
     # Transpiling should not error out
-    qc_t1 = transpile_to_IQM(qc, backend=backend)
-    validate_circuit(qc_t1, backend)
-    qc_t2 = transpile(qc, backend=backend)
+    qc_t1 = transpile_method(qc, backend=backend)
+    # The resulting circuit contains the symbolic gates so validation should fail
+    with pytest.raises(TypeError, match="ParameterExpression with unbound parameters"):
+        validate_circuit(qc_t1, backend)
+    # When the symbolic gates are bound to parameters, validation should pass
+    qc_t2 = qc_t1.assign_parameters({p_vec[0]: 0.1, p_vec[1]: 0.2})
     validate_circuit(qc_t2, backend)
