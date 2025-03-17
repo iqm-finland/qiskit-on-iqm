@@ -2,7 +2,7 @@
 Changelog
 =========
 
-Version 17.6
+Version 17.7
 ============
 
 * Bugfix: Transpiler now supports symbolic gates again. `#158 <https://github.com/iqm-finland/qiskit-on-iqm/pull/158>`_
