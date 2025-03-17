@@ -13,6 +13,7 @@
 # limitations under the License.
 """Testing and mocking utility functions.
 """
+from json import dumps
 from unittest.mock import Mock
 from uuid import UUID
 
@@ -30,7 +31,7 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend
 def get_mocked_backend(architecture: DynamicQuantumArchitecture) -> tuple[IQMBackend, IQMClient]:
     """Returns an IQM backend running on a mocked IQM client that returns the given architecture."""
     when(requests).get('http://some_url/info/client-libraries', headers=matchers.ANY, timeout=matchers.ANY).thenReturn(
-        get_mock_ok_response({'iqm-client': {'min': '0.0', 'max': '999.0'}})
+        get_mock_ok_response({'iqm-client': {'name': 'IQM Client', 'min': '0.0', 'max': '999.0'}})
     )
     client = IQMClient(url='http://some_url')
     when(client).get_dynamic_quantum_architecture(None).thenReturn(architecture)
@@ -68,6 +69,7 @@ def get_mock_ok_response(json: dict) -> Response:
     mock_response.status_code = 200
     mock_response.history = []
     mock_response.json.return_value = json
+    mock_response.text = dumps(json)
     return mock_response
 
 
