@@ -76,7 +76,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         for node in dag.topological_op_nodes():
             # This only works for prx gates because that has two parameters
             # We use one to mark that it is a symbolic gate (np.inf) and the other to store the index.
-            if node.name == "r" and not all(isinstance(param, float) for param in node.op.params):
+            if node.name == "r" and not all(isinstance(param, (float, int)) for param in node.op.params):
                 symbolic_gates[symbolic_index] = node.op.params
                 dag.substitute_node(node, RGate(np.inf, float(symbolic_index)))
                 symbolic_index += 1
