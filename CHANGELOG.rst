@@ -5,6 +5,12 @@ Changelog
 Version 17.6
 ============
 
+* Bugfix: Transpiler now supports symbolic gates again. `#158 <https://github.com/iqm-finland/qiskit-on-iqm/pull/158>`_
+
+
+Version 17.6
+============
+
 * Fix unit tests compatibility with latest ``iqm-client``.
   `#157 <https://github.com/iqm-finland/qiskit-on-iqm/pull/157>`_
 
