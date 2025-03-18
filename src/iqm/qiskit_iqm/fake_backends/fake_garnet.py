@@ -17,6 +17,7 @@ from iqm.iqm_client import QuantumArchitectureSpecification
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMErrorProfile, IQMFakeBackend
 
 
+# pylint: disable=duplicate-code
 def IQMFakeGarnet() -> IQMFakeBackend:
     """Return IQMFakeBackend instance representing IQM's Garnet architecture."""
     qubits = [
