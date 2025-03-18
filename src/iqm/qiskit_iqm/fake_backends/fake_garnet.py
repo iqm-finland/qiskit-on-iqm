@@ -84,7 +84,6 @@ def IQMFakeGarnet() -> IQMFakeBackend:
         qubits=qubits,
         qubit_connectivity=qubit_connectivity,
     )
-    # Note that these specs are ballpark numbers and don't correspond directly to a specific device
     error_profile = IQMErrorProfile(
         t1s={
             "QB1": 37741.0,
