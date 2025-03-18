@@ -27,6 +27,7 @@ def test_iqm_fake_garnet():
 
 
 def test_iqm_fake_garnet_connectivity():
+    # pylint: disable=duplicate-code
     backend = IQMFakeGarnet()
     coupling_map = {
         (0, 1),
