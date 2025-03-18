@@ -5,7 +5,8 @@ Changelog
 Version 17.6
 ============
 
-* Added Garnet backend so that it can be used in simulations. 
+* Added Garnet backend so that it can be used in simulations.
+  `#156 <https://github.com/iqm-finland/qiskit-on-iqm/pull/156>`_
 
 Version 17.5
 ============
