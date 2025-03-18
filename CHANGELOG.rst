@@ -2,11 +2,17 @@
 Changelog
 =========
 
-Version 17.6
+Version 17.7
 ============
 
 * Added Garnet backend so that it can be used in simulations.
   `#156 <https://github.com/iqm-finland/qiskit-on-iqm/pull/156>`_
+
+Version 17.6
+============
+
+* Fix unit tests compatibility with latest ``iqm-client``.
+  `#157 <https://github.com/iqm-finland/qiskit-on-iqm/pull/157>`_
 
 Version 17.5
 ============
