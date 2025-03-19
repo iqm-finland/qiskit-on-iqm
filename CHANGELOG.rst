@@ -2,6 +2,12 @@
 Changelog
 =========
 
+Version 18.0
+============
+
+* Deprecate the ``qiskit-iqm`` package. New versions of Qiskit on IQM are published as part of iqm-client.
+  `#159 <https://github.com/iqm-finland/qiskit-on-iqm/pull/159>`_
+
 Version 17.7
 ============
 
