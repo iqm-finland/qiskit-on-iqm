@@ -70,6 +70,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
         """
         # pylint: disable=too-many-branches
 
+        # TODO: Temporary hack to get the symbolic parameters to work: replace symbols with (inf, idx).
         # Replace symbolic parameters with indices and store the index to symbol mapping.
         symbolic_gates = {}
         symbolic_index = 0
