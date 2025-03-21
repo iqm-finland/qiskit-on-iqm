@@ -8,6 +8,11 @@ Version 18.0
 * Deprecate the ``qiskit-iqm`` package. New versions of Qiskit on IQM are published as part of iqm-client.
   `#159 <https://github.com/iqm-finland/qiskit-on-iqm/pull/159>`_
 
+Version 17.8
+============
+
+* Bugfix: Transpiler now supports symbolic gates again. `#158 <https://github.com/iqm-finland/qiskit-on-iqm/pull/158>`_
+
 Version 17.7
 ============
 

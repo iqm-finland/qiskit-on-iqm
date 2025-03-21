@@ -6,7 +6,7 @@ from itertools import product
 import numpy as np
 import pytest
 import qiskit
-from qiskit.circuit import ClassicalRegister, QuantumCircuit, QuantumRegister
+from qiskit.circuit import ClassicalRegister, ParameterVector, QuantumCircuit, QuantumRegister
 from qiskit.circuit.library import QuantumVolume
 from qiskit.compiler import transpile
 import qiskit.passmanager
@@ -401,3 +401,33 @@ def test_transpile_to_IQM_flags(
             existing_moves_handling=existing_moves_handling,
         )
         assert isinstance(circuit, QuantumCircuit)
+
+
+@pytest.mark.parametrize(
+    ("backend", "transpile_method"),
+    list(
+        product(
+            ["move_architecture", "adonis_architecture", "hypothetical_fake_architecture"],
+            [transpile_to_IQM, transpile],
+        )
+    ),
+    indirect=["backend"],
+)
+def test_symbolic_gates(backend, transpile_method):
+    """Test that symbolic gates are correctly transpiled."""
+    p_vec = ParameterVector("p", length=2)
+
+    qc = QuantumCircuit(2)
+    qc.rz(p_vec[0], 0)
+    qc.rz(p_vec[1], 1)
+    qc.cz(0, 1)
+    qc.measure_all()
+
+    # Transpiling should not error out
+    qc_t1 = transpile_method(qc, backend=backend)
+    # The resulting circuit contains the symbolic gates so validation should fail
+    with pytest.raises(TypeError, match="ParameterExpression with unbound parameters"):
+        validate_circuit(qc_t1, backend)
+    # When the symbolic gates are bound to parameters, validation should pass
+    qc_t2 = qc_t1.assign_parameters({p_vec[0]: 0.1, p_vec[1]: 0.2})
+    validate_circuit(qc_t2, backend)
