@@ -28,3 +28,10 @@ from iqm.qiskit_iqm.iqm_provider import IQMBackend, IQMProvider, __version__
 from iqm.qiskit_iqm.iqm_transpilation import IQMOptimizeSingleQubitGates, optimize_single_qubit_gates
 from iqm.qiskit_iqm.move_gate import MoveGate
 from iqm.qiskit_iqm.transpiler_plugins import *
+
+warn(
+    DeprecationWarning(
+        "The qiskit-iqm package is deprecated and new versions of Qiskit on IQM will be published as part of "
+        "iqm-client. Please uninstall qiskit-iqm and install iqm-client[qiskit] to get the newest version."
+    )
+)
