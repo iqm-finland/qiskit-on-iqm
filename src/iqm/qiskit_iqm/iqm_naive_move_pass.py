@@ -15,8 +15,10 @@
 from typing import Optional, Union
 import warnings
 
+import numpy as np
 from pydantic_core import ValidationError
 from qiskit import QuantumCircuit, transpile
+from qiskit.circuit.library import RGate
 from qiskit.converters import circuit_to_dag, dag_to_circuit
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.transpiler.basepasses import TransformationPass
@@ -66,6 +68,20 @@ class IQMNaiveResonatorMoving(TransformationPass):
         Raises:
             TranspilerError: The layout is not compatible with the DAG, or if the input gate set is incorrect.
         """
+        # pylint: disable=too-many-branches
+
+        # TODO: Temporary hack to get the symbolic parameters to work: replace symbols with (inf, idx).
+        # Replace symbolic parameters with indices and store the index to symbol mapping.
+        symbolic_gates = {}
+        symbolic_index = 0
+        for node in dag.topological_op_nodes():
+            # This only works for prx gates because that has two parameters
+            # We use one to mark that it is a symbolic gate (np.inf) and the other to store the index.
+            if node.name == "r" and not all(isinstance(param, (float, int)) for param in node.op.params):
+                symbolic_gates[symbolic_index] = node.op.params
+                dag.substitute_node(node, RGate(np.inf, float(symbolic_index)))
+                symbolic_index += 1
+
         circuit = dag_to_circuit(dag)
         if len(circuit) == 0:
             return dag  # Empty circuit, no need to transpile.
@@ -79,6 +95,8 @@ class IQMNaiveResonatorMoving(TransformationPass):
                 layout.add_register(qreg)
             for i, qubit in enumerate(dag.qubits):
                 layout.add(qubit, i)
+
+        # Convert the circuit to the IQMClientCircuit format and run the transpiler.
         iqm_circuit = IQMClientCircuit(
             name="Transpiling Circuit",
             instructions=tuple(serialize_instructions(circuit, self.idx_to_component)),
@@ -100,9 +118,18 @@ class IQMNaiveResonatorMoving(TransformationPass):
                 routed_circuit = QuantumCircuit(*layout.get_registers(), *(arg for arg in circ_args if arg > 0))
             else:
                 raise e
+
         # Create the new DAG and make sure that the qubits are properly ordered.
         ordered_qubits = [layout.get_physical_bits()[i] for i in range(len(layout.get_physical_bits()))]
         new_dag = circuit_to_dag(routed_circuit, qubit_order=ordered_qubits, clbit_order=routed_circuit.clbits)
+
+        # Reinsert the symbolic parameters.
+        for node in new_dag.topological_op_nodes():
+            # This only works for prx gates because that has two parameters
+            # We use one to mark that it is a symbolic gate (np.inf) and the other to store the index.
+            if node.name == "r" and not np.isfinite(node.op.params[0]):
+                new_dag.substitute_node(node, RGate(*symbolic_gates[int(node.op.params[1])]))
+
         # Update the final_layout with the correct bits.
         if "final_layout" in self.property_set:
             inv_layout = layout.get_physical_bits()
@@ -119,6 +146,7 @@ class IQMNaiveResonatorMoving(TransformationPass):
             self.property_set["final_layout"] = Layout(new_final_layout_dict)
         else:
             self.property_set["final_layout"] = layout
+
         return new_dag
 
 
