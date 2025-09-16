@@ -13,11 +13,6 @@
 # limitations under the License.
 """Qiskit adapter for IQM's quantum computers.
 """
-import sys
-from warnings import warn
-
-from qiskit import __version__ as qiskit_version
-
 from iqm.qiskit_iqm.fake_backends import IQMErrorProfile, IQMFakeAdonis, IQMFakeAphrodite, IQMFakeApollo, IQMFakeDeneb
 from iqm.qiskit_iqm.fake_backends.iqm_fake_backend import IQMFakeBackend
 from iqm.qiskit_iqm.iqm_circuit import IQMCircuit
@@ -29,9 +24,7 @@ from iqm.qiskit_iqm.iqm_transpilation import IQMOptimizeSingleQubitGates, optimi
 from iqm.qiskit_iqm.move_gate import MoveGate
 from iqm.qiskit_iqm.transpiler_plugins import *
 
-warn(
-    DeprecationWarning(
-        "The qiskit-iqm package is deprecated and new versions of Qiskit on IQM will be published as part of "
-        "iqm-client. Please uninstall qiskit-iqm and install iqm-client[qiskit] to get the newest version."
-    )
+raise RuntimeError(
+    "The qiskit-iqm package is obsolete. If you are using IQM Resonance or your qccsw_version>=4.0.0, please use "
+    "iqm-client[qiskit] instead, otherwise use qiskit-iqm<18.0."
 )
