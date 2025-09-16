@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 18.1
+============
+
+* Change the package deprecation warning into an error. `#160 <https://github.com/iqm-finland/qiskit-on-iqm/pull/160>`_
+
 Version 18.0
 ============
 
