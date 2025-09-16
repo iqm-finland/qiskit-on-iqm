@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 18.2
+============
+
+* Restrict ``iqm-client`` version to ``<22.10``. `#161 <https://github.com/iqm-finland/qiskit-on-iqm/pull/161>`_
+
 Version 18.1
 ============
 
